@@ -12,7 +12,7 @@ public class GameCountdown implements Runnable {
 		this.game = game;
 		countdown = num;
 		taskId = Plugin.scheduleTask(this, 20L, 20L);
-		Plugin.broadcast(String.format("starting %s in %d second(s)...",
+		Plugin.broadcast(String.format("Starting %s in %d second(s)...",
 				game.getName(), countdown));
 	}
 

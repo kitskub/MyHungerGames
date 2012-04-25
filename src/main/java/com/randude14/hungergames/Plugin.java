@@ -320,7 +320,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!frozenPlayers.containsKey(player)) {
+		if (!frozenPlayers.containsKey(player) || !GameManager.getSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();
@@ -592,6 +592,14 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	public static Plugin getInstance() {
 		return instance;
+	}
+	
+	public static boolean checkPermission(Player player, String perm){
+	    if (!Plugin.hasPermission(player, perm)){
+		error(player, "You do not have permission.");
+		return false;
+	    }
+	    return true;
 	}
 
 }

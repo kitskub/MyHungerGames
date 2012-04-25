@@ -22,7 +22,7 @@ public class Commands implements CommandExecutor {
 			String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("In-game use only.");
-			return false;
+			return true;
 		}
 		if (cmd.getLabel().equals(Plugin.CMD_USER)) {
 			handleUserCommand((Player) sender, cmd, args);
@@ -36,18 +36,12 @@ public class Commands implements CommandExecutor {
 		GameManager GameManager = Plugin.getGameManager();
 
 		if (args.length == 0) {
-			if (!Plugin.hasPermission(player, Perm.user_help)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_help)) return;
 			getUserCommands(player, cmd);
 		}
 
 		else if ("list".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_list)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_list)) return;
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 			Collection<HungerGame> games = GameManager.getGames();
 			if (games.isEmpty()) {
@@ -61,10 +55,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("join".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_join)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_join)) return;
 
 			else {
 				String name = (args.length == 1) ? Config.getDefaultGame() : args[1];
@@ -84,11 +75,10 @@ public class Commands implements CommandExecutor {
 				}
 				HungerGame currentSession = GameManager.getSession(player);
 				if (currentSession != null) {
-					Plugin.error(
-							player,
-							String.format(
-									"You are already in the game '%s'. Leave that game before joining another.",
-									currentSession.getName()));
+					Plugin.error(player,
+						String.format(
+						"You are already in the game '%s'. Leave that game before joining another.",
+						currentSession.getName()));
 					return;
 				}
 				if (game.join(player)) {
@@ -103,10 +93,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("leave".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_leave)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_leave)) return;
 			HungerGame game = GameManager.getSession(player);
 			if (game == null) {
 				Plugin.error(player, "You are currently not in a game.");
@@ -123,10 +110,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("rejoin".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_rejoin)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_rejoin)) return;
 			HungerGame game = GameManager.getSession(player);
 			if (game != null) {
 				if (game.rejoin(player)) {
@@ -152,10 +136,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("sponsor".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_sponsor)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_sponsor)) return;
 
 			if (args.length < 2) {
 				Plugin.send(player, ChatColor.GOLD,
@@ -180,28 +161,22 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("vote".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_vote)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_vote)) return;
 
 			HungerGame game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(
-						player,
-						String.format(
-								"You must be in a game to vote. You can a game join by '/%s join <game name>'",
-								Plugin.CMD_USER));
+				Plugin.error(player,
+					String.format(
+					"You must be in a game to vote. You can a game join by '/%s join <game name>'",
+					Plugin.CMD_USER));
 				return;
 			}
 			game.addReadyPlayer(player);
+			Plugin.send(player, "You have voted that you are ready.");
 		}
 
 		else if ("stat".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.user_stat)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.user_stat)) return;
 
 			if (args.length == 1) {
 				Plugin.send(player, ChatColor.GOLD,
@@ -222,11 +197,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else {
-			if (!Plugin.hasPermission(player, Perm.user_help)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
-
+			if (!Plugin.checkPermission(player, Perm.user_help)) return;
 			getUserCommands(player, cmd);
 		}
 
@@ -236,10 +207,7 @@ public class Commands implements CommandExecutor {
 		GameManager GameManager = Plugin.getGameManager();
 
 		if (args.length == 0) {
-			if (!Plugin.hasPermission(player, Perm.admin_help)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.hasPermission(player, Perm.admin_help)) return;
 			getAdminCommands(player, cmd);
 		}
 
@@ -497,10 +465,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("kick".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.admin_kick)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.admin_kick)) return;
 
 			if (args.length == 1) {
 				Plugin.send(player, ChatColor.GOLD,
@@ -536,10 +501,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("start".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.admin_start)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.admin_start)) return;
 
 			else if (args.length == 1) {
 				Plugin.help(
@@ -582,22 +544,15 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("reload".equals(args[0])) {
-			if (!Plugin.hasPermission(player, Perm.admin_reload)) {
-				Plugin.error(player, "You do not have permission.");
-			}
+			if (!Plugin.checkPermission(player, Perm.admin_reload)) return;
 			Plugin.reload();
-			Plugin.send(
-					player,
-					Plugin.getPrefix()
-							+ String.format("reloaded v%s", Plugin
-									.getDescription().getVersion()));
+			Plugin.send(player,
+				Plugin.getPrefix() 
+				+ String.format("Reloaded v%s", 
+				Plugin.getDescription().getVersion()));
 		}
-
 		else {
-			if (!Plugin.hasPermission(player, Perm.admin_help)) {
-				Plugin.error(player, "You do not have permission.");
-				return;
-			}
+			if (!Plugin.checkPermission(player, Perm.admin_help)) return;
 			getAdminCommands(player, cmd);
 		}
 

@@ -24,13 +24,21 @@ public class GameManager implements Listener {
 
 	public static boolean createGame(String name) {
 		HungerGame game = new HungerGame(name);
-		return games.add(game);
+		boolean attempt = games.add(game);
+		if(attempt){
+		    saveGames();
+		}
+		return attempt;
 	}
 
 	public static boolean removeGame(String name) {
 	    HungerGame game = getGame(name);
 	    if(game == null) return false;
-	    return games.remove(game);
+	    boolean attempt = games.remove(game);
+	    if(attempt){
+		saveGames();
+	    }
+	    return attempt;
 	}
 
 	public static Set<HungerGame> getGames() {

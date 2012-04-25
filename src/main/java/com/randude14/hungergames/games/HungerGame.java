@@ -338,9 +338,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		stats.remove(player.getName());
 		readyToPlay.remove(player.getName());
 		spawnsTaken.remove(player.getName());
-		if (Plugin.isPlayerFrozen(player)) {
-			Plugin.unfreezePlayer(player);
-		}
+		Plugin.unfreezePlayer(player);
 		Plugin.takeMultiversePermission(player);
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
@@ -376,7 +374,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		if (isOver()) {
 			Player winner = getSurvivor();
 			if (winner == null) {
-				Plugin.broadcast("strangly there was no winner left.");
+				Plugin.broadcast("Strangely, there was no winner left.");
 			} else {
 				Plugin.broadcast(String.format(
 						"%s has won the game %s! Congratulations!",
