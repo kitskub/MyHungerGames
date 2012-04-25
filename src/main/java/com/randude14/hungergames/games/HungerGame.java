@@ -248,6 +248,11 @@ public class HungerGame implements Comparable<HungerGame> {
 	public void fillChests() {
 		for (int cntr = 0; cntr < chests.size(); cntr++) {
 			Location loc = chests.get(cntr);
+			if(!(loc.getBlock().getState() instanceof Chest)){
+			    chests.remove(loc);
+			    cntr--;
+			    continue;
+			}
 			Chest chest = (Chest) loc.getBlock().getState();
 			Plugin.fillChest(chest);
 		}
