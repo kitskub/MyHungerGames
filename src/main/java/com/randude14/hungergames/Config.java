@@ -10,45 +10,41 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class Config {
-	private final Plugin plugin;
+	private static final Plugin plugin = Plugin.getInstance();
 	
-	public Config(final Plugin plugin) {
-		this.plugin = plugin;
-	}
-	
-	public String getJoinMessage() {
+	public static String getJoinMessage() {
 		return plugin.getConfig().getString("properties.join-message");
 	}
 	
-	public String getRejoinMessage() {
+	public static String getRejoinMessage() {
 		return plugin.getConfig().getString("properties.rejoin-message");
 	}
 	
-	public String getLeaveMessage() {
+	public static String getLeaveMessage() {
 		return plugin.getConfig().getString("properties.leave-message");
 	}
 	
-	public String getKillMessage() {
+	public static String getKillMessage() {
 		return plugin.getConfig().getString("properties.kill-message");
 	}
 	
-	public String getVoteMessage() {
+	public static String getVoteMessage() {
 		return plugin.getConfig().getString("properties.vote-message");
 	}
 	
-	public String getDefaultGame() {
+	public static String getDefaultGame() {
 		return plugin.getConfig().getString("properties.default-game");
 	}
 	
-	public int getMinVote() {
+	public static int getMinVote() {
 		return plugin.getConfig().getInt("properties.min-vote");
 	}
 	
-	public int getDefaultTime() {
+	public static int getDefaultTime() {
 		return plugin.getConfig().getInt("properties.default-time");
 	}
 	
-	public Map<ItemStack, Float> getChestLoot() {
+	public static Map<ItemStack, Float> getChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
@@ -90,7 +86,7 @@ public class Config {
 		return chestLoot;
 	}
 	
-	public Map<ItemStack, Double> getSponsorLoot() {
+	public static Map<ItemStack, Double> getSponsorLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();

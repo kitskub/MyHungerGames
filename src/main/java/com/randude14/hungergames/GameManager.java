@@ -18,32 +18,28 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.randude14.hungergames.games.HungerGame;
 
 public class GameManager implements Listener {
-	private final Plugin plugin;
-	private final Set<HungerGame> games;
-	private CustomYaml yaml;
+	private static final Plugin plugin = Plugin.getInstance();
+	private static Set<HungerGame> games = new TreeSet<HungerGame>();
+	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
 
-	public GameManager(final Plugin plugin) {
-		this.plugin = plugin;
-		this.games = new TreeSet<HungerGame>();
-		yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
-	}
-
-	public boolean createGame(String name) {
+	public static boolean createGame(String name) {
 		HungerGame game = new HungerGame(name);
 		return games.add(game);
 	}
 
-	public boolean removeGame(String name) {
-		return games.remove(name);
+	public static boolean removeGame(String name) {
+	    HungerGame game = getGame(name);
+	    if(game == null) return false;
+	    return games.remove(game);
 	}
 
-	public Set<HungerGame> getGames() {
+	public static Set<HungerGame> getGames() {
 		return games;
 	}
 
-	public HungerGame getGame(String name) {
+	public static HungerGame getGame(String name) {
 		for (HungerGame game : games) {
-			if (game.equals(name)) {
+			if (game.getName().equals(name)) {
 				return game;
 			}
 
@@ -51,7 +47,7 @@ public class GameManager implements Listener {
 		return null;
 	}
 
-	public HungerGame getSession(Player player) {
+	public static HungerGame getSession(Player player) {
 		for (HungerGame game : games) {
 			if (game.contains(player)) {
 				return game;
@@ -61,15 +57,15 @@ public class GameManager implements Listener {
 		return null;
 	}
 
-	public boolean doesNameExist(String name) {
+	public static boolean doesNameExist(String name) {
 		return getGame(name) != null;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void playerKilled(PlayerDeathEvent event) {
+	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
 		HungerGame gameKilled = getSession(killed);
-		plugin.info(1 + "");
+		Plugin.info(1 + "");
 		if (gameKilled == null) {
 			return;
 		}
@@ -79,7 +75,7 @@ public class GameManager implements Listener {
 			HungerGame gameKiller = getSession(killer);
 
 			if (gameKilled.equals(gameKiller)) {
-				String mess = plugin.getPluginConfig().getKillMessage()
+				String mess = Config.getKillMessage()
 						.replace("<killer>", killer.getName())
 						.replace("<killed>", killed.getName())
 						.replace("<game>", gameKiller.getName());
@@ -96,28 +92,28 @@ public class GameManager implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void playerQuit(PlayerQuitEvent event) {
+	public static void playerQuit(PlayerQuitEvent event) {
 		playerLeft(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void playerKick(PlayerKickEvent event) {
+	public static void playerKick(PlayerKickEvent event) {
 		playerLeft(event.getPlayer());
 	}
 
-	private void playerLeft(Player player) {
+	private static void playerLeft(Player player) {
 		HungerGame game = getSession(player);
 		if (game == null) {
 			return;
 		}
 		game.leave(player);
-		String mess = plugin.getPluginConfig().getLeaveMessage();
+		String mess = Config.getLeaveMessage();
 		mess = mess.replace("<player>", player.getName()).replace("<game>",
 				game.getName());
-		plugin.broadcast(mess);
+		Plugin.broadcast(mess);
 	}
 
-	public void loadGames() {
+	public static void loadGames() {
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection gamesSection = config
 				.getConfigurationSection("games");
@@ -135,7 +131,7 @@ public class GameManager implements Listener {
 		
 	}
 
-	public void saveGames() {
+	public static void saveGames() {
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection section = config.createSection("games");
 		for (HungerGame game : games) {

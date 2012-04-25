@@ -9,7 +9,7 @@ import org.bukkit.Location;
 import com.randude14.hungergames.Plugin;
 
 public class LocationList {
-	private List<Location> locs;
+	private static List<Location> locs;
 	
 	public LocationList(Location... args) {
 		this();
@@ -23,7 +23,7 @@ public class LocationList {
 		locs = new ArrayList<Location>();
 	}
 	
-	public boolean add(Location loc) {
+	public static boolean add(Location loc) {
 		if(contains(loc)) {
 			return false;
 		}
@@ -31,29 +31,29 @@ public class LocationList {
 		return true;
 	}
 	
-	public Location get(int index) {
+	public static Location get(int index) {
 		if(index >= locs.size()) {
 			return null;
 		}
 		return locs.get(index);
 	}
 	
-	public boolean isEmpty() {
+	public static boolean isEmpty() {
 		return locs.isEmpty();
 	}
 	
-	public int getSize() {
+	public static int getSize() {
 		return locs.size();
 	}
 	
-	public void clear() {
+	public static void clear() {
 		locs.clear();
 	}
 	
-	public boolean remove(Location loc) {
+	public static boolean remove(Location loc) {
 		Plugin plugin = Plugin.getInstance();
 		for(int cntr = 0;cntr < locs.size();cntr++) {
-			if(plugin.equals(locs.get(cntr), loc)) {
+			if(Plugin.equals(locs.get(cntr), loc)) {
 				locs.remove(cntr);
 				return true;
 			}
@@ -62,10 +62,10 @@ public class LocationList {
 		return false;
 	}
 	
-	public boolean contains(Location loc) {
+	public static boolean contains(Location loc) {
 		Plugin plugin = Plugin.getInstance();
 		for(Location comp : locs) {
-			if(plugin.equals(comp, loc)) {
+			if(Plugin.equals(comp, loc)) {
 				return true;
 			}
 			
@@ -73,11 +73,11 @@ public class LocationList {
 		return false;
 	}
 	
-	public Location random() {
+	public static Location random() {
 		if(locs.isEmpty()) {
 			return null;
 		}
-		Random rand = Plugin.getInstance().getRandom();
+		Random rand = Plugin.getRandom();
 		return locs.get( rand.nextInt(locs.size()) );
 	}
 

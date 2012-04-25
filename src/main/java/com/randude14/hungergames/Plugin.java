@@ -37,6 +37,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.randude14.hungergames.games.HungerGame;
+import org.bukkit.Bukkit;
 
 public class Plugin extends JavaPlugin implements Listener {
 	private static final Logger logger = Logger.getLogger("Minecraft");
@@ -45,27 +46,26 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static Plugin instance;
 	private static Permission perm;
 	private static Economy econ;
-	private GameManager manager;
-	private Config config;
-	private Random rand;
-	private Map<Player, Location> frozenPlayers;
-	private Map<Player, String> chestAdders;
-	private Map<Player, String> chestRemovers;
-	private Map<Player, String> spawnAdders;
-	private Map<Player, String> spawnRemovers;
-	private Map<Player, String> sponsors;
-	private Map<ItemStack, Float> chestLoot;
-	private Map<ItemStack, Double> sponsorLoot;
+	private static GameManager manager;
+	private static Random rand;
+	private static Map<Player, Location> frozenPlayers;
+	private static Map<Player, String> chestAdders;
+	private static Map<Player, String> chestRemovers;
+	private static Map<Player, String> spawnAdders;
+	private static Map<Player, String> spawnRemovers;
+	private static Map<Player, String> sponsors;
+	private static Map<ItemStack, Float> chestLoot;
+	private static Map<ItemStack, Double> sponsorLoot;
 
+	@Override
 	public void onEnable() {
 		instance = this;
 		Commands commands = new Commands(this);
 		getCommand(CMD_USER).setExecutor(commands);
 		getCommand(CMD_ADMIN).setExecutor(commands);
 		rand = new Random(getName().hashCode());
-		manager = new GameManager(this);
+		manager = new GameManager();
 		frozenPlayers = new HashMap<Player, Location>();
-		config = new Config(this);
 		chestAdders = new HashMap<Player, String>();
 		chestRemovers = new HashMap<Player, String>();
 		spawnAdders = new HashMap<Player, String>();
@@ -74,8 +74,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
-		chestLoot = config.getChestLoot();
-		sponsorLoot = config.getSponsorLoot();
+		chestLoot = Config.getChestLoot();
+		sponsorLoot = Config.getSponsorLoot();
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
@@ -86,22 +86,23 @@ public class Plugin extends JavaPlugin implements Listener {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		manager.loadGames();
+		GameManager.loadGames();
 		info("games loaded.");
 		info("enabled.");
 	}
 
+	@Override
 	public void onDisable() {
-		manager.saveGames();
+		GameManager.saveGames();
 		info("games saved.");
 		info("disabled.");
 	}
 
 	public void reload() {
 		reloadConfig();
-		chestLoot = config.getChestLoot();
-		sponsorLoot = config.getSponsorLoot();
-		manager.loadGames();
+		chestLoot = Config.getChestLoot();
+		sponsorLoot = Config.getSponsorLoot();
+		GameManager.loadGames();
 		for (Player player : sponsors.keySet()) {
 			error(player,
 					"The items available for sponsoring have recently changed. Here are the new items...");
@@ -110,14 +111,14 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	private void setupPermission() {
-		RegisteredServiceProvider<Permission> provider = getServer()
+	private static void setupPermission() {
+		RegisteredServiceProvider<Permission> provider = Bukkit.getServer()
 				.getServicesManager().getRegistration(Permission.class);
 		perm = provider.getProvider();
 	}
 
-	private boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> provider = getServer()
+	private static boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> provider = Bukkit.getServer()
 				.getServicesManager().getRegistration(Economy.class);
 		if (provider == null) {
 			return false;
@@ -126,38 +127,38 @@ public class Plugin extends JavaPlugin implements Listener {
 		return econ != null;
 	}
 
-	public void info(String mess) {
+	public static void info(String mess) {
 		logger.log(Level.INFO, getLogPrefix() + mess);
 	}
 
-	public void warning(String mess) {
+	public static void warning(String mess) {
 		logger.log(Level.WARNING, getLogPrefix() + mess);
 	}
 
-	public void severe(String mess) {
+	public static void severe(String mess) {
 		logger.log(Level.SEVERE, getLogPrefix() + mess);
 	}
 
-	public String getLogPrefix() {
-		return String.format("[%s] v%s - ", getName(), getDescription()
+	public static String getLogPrefix() {
+		return String.format("[%s] v%s - ", instance.getName(), instance.getDescription()
 				.getVersion());
 	}
 
-	public String getPrefix() {
-		return String.format("[%s] - ", getName());
+	public static String getPrefix() {
+		return String.format("[%s] - ", instance.getName());
 	}
 
-	public String getHeadLiner() {
+	public static String getHeadLiner() {
 		return String.format("--------------------[%s]--------------------",
-				getName());
+				instance.getName());
 	}
 
-	public void broadcast(String message) {
+	public static void broadcast(String message) {
 		broadcast(message, ChatColor.GREEN);
 	}
 
-	public void broadcast(String message, ChatColor color) {
-		for (Player player : getServer().getOnlinePlayers()) {
+	public static void broadcast(String message, ChatColor color) {
+		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			player.sendMessage(color + getPrefix() + message);
 		}
 
@@ -165,12 +166,12 @@ public class Plugin extends JavaPlugin implements Listener {
 		info(message);
 	}
 
-	public void broadcastRaw(String message) {
+	public static void broadcastRaw(String message) {
 		broadcastRaw(message, ChatColor.GREEN);
 	}
 
-	public void broadcastRaw(String message, ChatColor color) {
-		for (Player player : getServer().getOnlinePlayers()) {
+	public static void broadcastRaw(String message, ChatColor color) {
+		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			player.sendMessage(color + message);
 		}
 
@@ -178,88 +179,84 @@ public class Plugin extends JavaPlugin implements Listener {
 		logger.info(message);
 	}
 
-	public void send(Player player, ChatColor color, String mess) {
+	public static void send(Player player, ChatColor color, String mess) {
 		player.sendMessage(color + mess);
 	}
 
-	public void send(Player player, String mess) {
+	public static void send(Player player, String mess) {
 		player.sendMessage(ChatColor.GRAY + mess);
 	}
 
-	public void help(Player player, String mess) {
+	public static void help(Player player, String mess) {
 		player.sendMessage(ChatColor.GOLD + mess);
 	}
 
-	public void error(Player player, String mess) {
+	public static void error(Player player, String mess) {
 		player.sendMessage(ChatColor.RED + mess);
 	}
 
-	public boolean hasPermission(Player p, String permission) {
+	public static boolean hasPermission(Player p, String permission) {
 		String world = p.getWorld().getName();
 		String player = p.getName();
 		return perm.has(world, player, permission);
 	}
 
-	public boolean equals(Location loc1, Location loc2) {
+	public static boolean equals(Location loc1, Location loc2) {
 		return loc1.getBlockX() == loc2.getBlockX()
 				&& loc1.getBlockY() == loc2.getBlockY()
 				&& loc1.getBlockZ() == loc2.getBlockZ();
 	}
 
-	public boolean isChest(Location loc) {
+	public static boolean isChest(Location loc) {
 		return loc.getBlock().getState() instanceof Chest;
 	}
 
-	public Random getRandom() {
+	public static Random getRandom() {
 		return rand;
 	}
 
-	public GameManager getGameManager() {
+	public static GameManager getGameManager() {
 		return manager;
 	}
 
-	public Config getPluginConfig() {
-		return config;
-	}
-
-	public int scheduleTask(Runnable runnable, long initial, long delay) {
-		return getServer().getScheduler().scheduleSyncRepeatingTask(this,
+	public static int scheduleTask(Runnable runnable, long initial, long delay) {
+		return Bukkit.getScheduler().scheduleSyncRepeatingTask(instance,
 				runnable, initial, delay);
 	}
 
-	public void cancelTask(int taskID) {
-		getServer().getScheduler().cancelTask(taskID);
+	public static void cancelTask(int taskID) {
+		Bukkit.getServer().getScheduler().cancelTask(taskID);
 	}
 
-	public void freezePlayer(Player player) {
+	public static void freezePlayer(Player player) {
 		frozenPlayers.put(player, player.getLocation());
 	}
 
-	public void unfreezePlayer(Player player) {
+	public static void unfreezePlayer(Player player) {
 		frozenPlayers.remove(player);
 	}
 
-	public boolean isPlayerFrozen(Player player) {
+	public static boolean isPlayerFrozen(Player player) {
 		return frozenPlayers.containsKey(player);
 	}
 
-	public void addChestAdder(Player player, String name) {
+	public static void addChestAdder(Player player, String name) {
 		chestAdders.put(player, name);
 	}
 
-	public void addChestRemover(Player player, String name) {
+	public static void addChestRemover(Player player, String name) {
 		chestRemovers.put(player, name);
 	}
 
-	public void addSpawnAdder(Player player, String name) {
+	public static void addSpawnAdder(Player player, String name) {
 		spawnAdders.put(player, name);
 	}
 
-	public void addSpawnRemover(Player player, String name) {
+	public static void addSpawnRemover(Player player, String name) {
 		spawnRemovers.put(player, name);
 	}
 
-	public boolean addSponsor(Player player, String playerToBeSponsored) {
+	public static boolean addSponsor(Player player, String playerToBeSponsored) {
 		if (sponsorLoot.isEmpty()) {
 			error(player, "No items are available to sponsor.");
 			return false;
@@ -297,13 +294,13 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	public String parseToString(Location loc) {
+	public static String parseToString(Location loc) {
 		return String.format("%.2f %.2f %.2f %.2f %.2f %s", loc.getX(), loc
 				.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc
 				.getWorld().getName());
 	}
 
-	public Location parseToLoc(String str) {
+	public static Location parseToLoc(String str) {
 		if (str == null) {
 			return null;
 		}
@@ -313,7 +310,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		double z = Double.parseDouble(strs[2]);
 		float yaw = Float.parseFloat(strs[3]);
 		float pitch = Float.parseFloat(strs[4]);
-		World world = getServer().getWorld(strs[5]);
+		World world = Bukkit.getServer().getWorld(strs[5]);
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 
@@ -385,7 +382,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, String.format("'%s' is not online anymore.", sponsor));
 			return;
 		}
-		HungerGame game = manager.getSession(player);
+		HungerGame game = GameManager.getSession(player);
 		if (game == null) {
 			error(player,
 					String.format("'%s' is no longer in a game.", sponsor));
@@ -438,7 +435,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		if (chestAdders.containsKey(player)) {
 			String name = chestAdders.remove(player);
-			HungerGame game = manager.getGame(name);
+			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
 						String.format("%s has been removed recently due to unknown reasons."));
@@ -465,7 +462,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else if (chestRemovers.containsKey(player)) {
 			String name = chestRemovers.remove(player);
-			HungerGame game = manager.getGame(name);
+			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
 						String.format("%s has been removed recently due to unknown reasons."));
@@ -492,7 +489,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else if (spawnAdders.containsKey(player)) {
 			String name = spawnAdders.remove(player);
-			HungerGame game = manager.getGame(name);
+			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
 						String.format("%s has been removed recently due to unknown reasons."));
@@ -520,7 +517,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else if (spawnRemovers.containsKey(player)) {
 			String name = spawnRemovers.remove(player);
-			HungerGame game = manager.getGame(name);
+			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
 						String.format("%s has been removed recently due to unknown reasons."));
@@ -548,15 +545,15 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	public void giveMultiversePermission(Player player) {
+	public static void giveMultiversePermission(Player player) {
 		perm.playerAdd(player, "multiverse.access.survival");
 	}
 
-	public void takeMultiversePermission(Player player) {
+	public static void takeMultiversePermission(Player player) {
 		perm.playerRemove(player, "multiverse.access.survival");
 	}
 
-	public boolean hasInventoryBeenCleared(Player player) {
+	public static boolean hasInventoryBeenCleared(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		for (ItemStack item : inventory.getContents()) {
 			if (item != null && item.getType() != Material.AIR) {
@@ -574,7 +571,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public void fillChest(Chest chest) {
+	public static void fillChest(Chest chest) {
 		if (chestLoot.isEmpty()) {
 			return;
 		}
@@ -593,7 +590,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	public static final Plugin getInstance() {
+	public static Plugin getInstance() {
 		return instance;
 	}
 
