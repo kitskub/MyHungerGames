@@ -1,10 +1,15 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.games.HungerGame;
+
 import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -14,13 +19,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
-import com.randude14.hungergames.games.HungerGame;
+
+
 
 public class GameManager implements Listener {
 	private static final Plugin plugin = Plugin.getInstance();
 	private static Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
+	private static Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
 
 	public static boolean createGame(String name) {
 		HungerGame game = new HungerGame(name);
@@ -55,7 +63,7 @@ public class GameManager implements Listener {
 		return null;
 	}
 
-	public static HungerGame getSession(Player player) {
+	    public static HungerGame getSession(Player player) {
 		for (HungerGame game : games) {
 			if (game.contains(player)) {
 				return game;
@@ -77,8 +85,11 @@ public class GameManager implements Listener {
 		if (gameOfKilled == null) {
 			return;
 		}
+		if(gameOfKilled.getSpawn() != null){
+		    respawnLocation.put(event.getEntity(), gameOfKilled.getSpawn());
+		}
+		
 		Player killer = killed.getKiller();
-
 		if (killer != null) {
 			HungerGame gameOfKiller = getSession(killer);
 
@@ -90,13 +101,19 @@ public class GameManager implements Listener {
 				event.setDeathMessage(ChatColor.GREEN + mess);
 				gameOfKiller.killed(killer, killed);
 			}
-
 		}
-
 		else {
 			gameOfKilled.killed(killed);
 		}
-
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public static void playerRespawn(PlayerRespawnEvent event) {
+	    if(respawnLocation.containsKey(event.getPlayer())){
+		event.setRespawnLocation(respawnLocation.get(event.getPlayer()));
+		respawnLocation.remove(event.getPlayer());
+	    }
+	    
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

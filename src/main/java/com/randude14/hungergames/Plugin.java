@@ -550,11 +550,11 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static void giveMultiversePermission(Player player) {
-		perm.playerAdd(player, "multiverse.access.survival");
+		perm.playerAdd(player, "multiverse.access.survival");// TODO survival?
 	}
 
 	public static void takeMultiversePermission(Player player) {
-		perm.playerRemove(player, "multiverse.access.survival");
+		perm.playerRemove(player, "multiverse.access.survival");// TODO survival?
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {

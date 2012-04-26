@@ -16,7 +16,7 @@ public class GameCountdown implements Runnable {
 				game.getName(), countdown));
 	}
 
-	public GameCountdown(final Plugin plugin, final HungerGame game) {
+	public GameCountdown(final HungerGame game) {
 		this(game, DEFAULT_COUNTDOWN);
 	}
 
@@ -24,6 +24,7 @@ public class GameCountdown implements Runnable {
 		if (countdown <= 1) {
 			Plugin.cancelTask(taskId);
 			game.startGame();
+			game.setCounting(false);
 			Plugin.broadcastRaw("Start!!");
 			return;
 		}

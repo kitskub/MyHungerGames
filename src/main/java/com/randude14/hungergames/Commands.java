@@ -29,8 +29,6 @@ public class Commands implements CommandExecutor {
 	}
 
 	private void handleUserCommand(Player player, Command cmd, String[] args) {
-		GameManager GameManager = Plugin.getGameManager();
-
 		if (args.length == 0) {
 			if (!Plugin.checkPermission(player, Perm.user_help)) return;
 			getUserCommands(player, cmd);
@@ -52,44 +50,40 @@ public class Commands implements CommandExecutor {
 
 		else if ("join".equals(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.user_join)) return;
-
-			else {
-				String name = (args.length == 1) ? Config.getDefaultGame() : args[1];
-				if (name == null) {
-					Plugin.send(
-							player,
-							ChatColor.GOLD,
-							String.format("/%s join <game name>",
-									cmd.getLabel()));
-					return;
-				}
-				HungerGame game = GameManager.getGame(name);
-				if (game == null) {
-					Plugin.error(player,
-							String.format("%s does not exist.", name));
-					return;
-				}
-				HungerGame currentSession = GameManager.getSession(player);
-				if (currentSession != null) {
-					Plugin.error(player,
-						String.format(
-						"You are already in the game '%s'. Leave that game before joining another.",
-						currentSession.getName()));
-					return;
-				}
-				if (game.join(player)) {
-					String mess = Config.getJoinMessage();
-					mess = mess.replace("<player>", player.getName()).replace(
-							"<game>", game.getName());
-					Plugin.broadcast(mess);
-				}
-
-			}
-
+			    String name = (args.length == 1) ? Config.getDefaultGame() : args[1];
+			    if (name == null) {
+				    Plugin.send(
+						    player,
+						    ChatColor.GOLD,
+						    String.format("/%s join <game name>",
+								    cmd.getLabel()));
+				    return;
+			    }
+			    HungerGame game = GameManager.getGame(name);
+			    if (game == null) {
+				    Plugin.error(player,
+						    String.format("%s does not exist.", name));
+				    return;
+			    }
+			    HungerGame currentSession = GameManager.getSession(player);
+			    if (currentSession != null) {
+				    Plugin.error(player,
+					    String.format(
+					    "You are already in the game '%s'. Leave that game before joining another.",
+					    currentSession.getName()));
+				    return;
+			    }
+			    if (game.join(player)) {
+				    String mess = Config.getJoinMessage();
+				    mess = mess.replace("<player>", player.getName()).replace(
+						    "<game>", game.getName());
+				    Plugin.broadcast(mess);
+			    }
 		}
 
 		else if ("leave".equals(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.user_leave)) return;
+			
 			HungerGame game = GameManager.getSession(player);
 			if (game == null) {
 				Plugin.error(player, "You are currently not in a game.");
