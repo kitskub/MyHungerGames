@@ -10,13 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.randude14.hungergames.games.HungerGame;
+import org.bukkit.Bukkit;
 
 public class Commands implements CommandExecutor {
-	private final Plugin Plugin;
-
-	public Commands(final Plugin Plugin) {
-		this.Plugin = Plugin;
-	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
@@ -144,7 +140,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			else {
-				Player p = Plugin.getServer().getPlayer(args[1]);
+				Player p = Bukkit.getServer().getPlayer(args[1]);
 				if (p == null) {
 					Plugin.error(player,
 							String.format("%s is not online.", args[1]));
@@ -473,7 +469,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			else {
-				Player kick = Plugin.getServer().getPlayer(args[1]);
+				Player kick = Bukkit.getServer().getPlayer(args[1]);
 				if (kick != null) {
 					HungerGame game = GameManager.getSession(kick);
 					if (game != null) {
@@ -549,7 +545,7 @@ public class Commands implements CommandExecutor {
 			Plugin.send(player,
 				Plugin.getPrefix() 
 				+ String.format("Reloaded v%s", 
-				Plugin.getDescription().getVersion()));
+				Plugin.getInstance().getDescription().getVersion()));
 		}
 		else {
 			if (!Plugin.checkPermission(player, Perm.admin_help)) return;

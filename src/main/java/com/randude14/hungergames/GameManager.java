@@ -72,29 +72,29 @@ public class GameManager implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameKilled = getSession(killed);
+		HungerGame gameOfKilled = getSession(killed);
 		Plugin.info(1 + "");
-		if (gameKilled == null) {
+		if (gameOfKilled == null) {
 			return;
 		}
 		Player killer = killed.getKiller();
 
 		if (killer != null) {
-			HungerGame gameKiller = getSession(killer);
+			HungerGame gameOfKiller = getSession(killer);
 
-			if (gameKilled.equals(gameKiller)) {
+			if (gameOfKilled.equals(gameOfKiller)) {
 				String mess = Config.getKillMessage()
 						.replace("<killer>", killer.getName())
 						.replace("<killed>", killed.getName())
-						.replace("<game>", gameKiller.getName());
+						.replace("<game>", gameOfKiller.getName());
 				event.setDeathMessage(ChatColor.GREEN + mess);
-				gameKiller.killed(killer, killed);
+				gameOfKiller.killed(killer, killed);
 			}
 
 		}
 
 		else {
-			gameKilled.killed(killed);
+			gameOfKilled.killed(killed);
 		}
 
 	}
@@ -115,9 +115,9 @@ public class GameManager implements Listener {
 			return;
 		}
 		game.leave(player);
-		String mess = Config.getLeaveMessage();
-		mess = mess.replace("<player>", player.getName()).replace("<game>",
-				game.getName());
+		String mess = Config.getLeaveMessage()
+			.replace("<player>", player.getName())
+			.replace("<game>", game.getName());
 		Plugin.broadcast(mess);
 	}
 

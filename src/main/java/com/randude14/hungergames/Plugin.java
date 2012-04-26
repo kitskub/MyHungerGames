@@ -56,11 +56,11 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static Map<Player, String> sponsors;
 	private static Map<ItemStack, Float> chestLoot;
 	private static Map<ItemStack, Double> sponsorLoot;
-
+	
 	@Override
 	public void onEnable() {
 		instance = this;
-		Commands commands = new Commands(this);
+		Commands commands = new Commands();
 		getCommand(CMD_USER).setExecutor(commands);
 		getCommand(CMD_ADMIN).setExecutor(commands);
 		rand = new Random(getName().hashCode());
@@ -80,7 +80,11 @@ public class Plugin extends JavaPlugin implements Listener {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
 		}
-		setupPermission();
+		if(!setupPermission()){
+		    info("Permissions were not found, shutting down.");
+		    getServer().getPluginManager().disablePlugin(this);
+		    return;
+		}
 		if (!setupEconomy()) {
 			info("Economy was not found, shutting down.");
 			getServer().getPluginManager().disablePlugin(this);
@@ -98,8 +102,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		info("disabled.");
 	}
 
-	public void reload() {
-		reloadConfig();
+	public static void reload() {
+		instance.reloadConfig();
 		chestLoot = Config.getChestLoot();
 		sponsorLoot = Config.getSponsorLoot();
 		GameManager.loadGames();
@@ -111,18 +115,18 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	private static void setupPermission() {
+	private static boolean setupPermission() {
 		RegisteredServiceProvider<Permission> provider = Bukkit.getServer()
 				.getServicesManager().getRegistration(Permission.class);
+		if(provider == null) return false;
 		perm = provider.getProvider();
+		return perm != null;
 	}
 
 	private static boolean setupEconomy() {
 		RegisteredServiceProvider<Economy> provider = Bukkit.getServer()
 				.getServicesManager().getRegistration(Economy.class);
-		if (provider == null) {
-			return false;
-		}
+		if (provider == null) return false;
 		econ = provider.getProvider();
 		return econ != null;
 	}
@@ -581,6 +585,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		List<ItemStack> items = new ArrayList<ItemStack>(chestLoot.keySet());
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
+			if(inv.getItem(index) != null){
+			    cntr--;
+			    continue;
+			}
 			ItemStack item = items.get(rand.nextInt(items.size()));
 			if (chestLoot.get(item) >= rand.nextFloat()) {
 				inv.setItem(index, item);
