@@ -189,7 +189,7 @@ public class Commands implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.user_help)) return;
 			getUserCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO save less
+		GameManager.saveGames();// TODO saveTo less
 	}
 
 	private void handleAdminCommand(Player player, Command cmd, String[] args) {
@@ -299,7 +299,7 @@ public class Commands implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.admin_help)) return;
 			getAdminCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO save less
+		GameManager.saveGames();// TODO saveTo less
 	}
 
 	private boolean addCommand(Player player , String[] args){

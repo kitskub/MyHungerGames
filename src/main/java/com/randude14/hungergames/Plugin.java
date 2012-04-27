@@ -81,9 +81,9 @@ public class Plugin extends JavaPlugin implements Listener {
 			saveDefaultConfig();
 		}
 		if(!setupPermission()){
-		    info("Permissions were not found, shutting down.");
-		    getServer().getPluginManager().disablePlugin(this);
-		    return;
+			info("Permissions were not found, shutting down.");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 		if (!setupEconomy()) {
 			info("Economy was not found, shutting down.");

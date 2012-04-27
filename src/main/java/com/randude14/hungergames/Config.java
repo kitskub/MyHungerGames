@@ -129,4 +129,12 @@ public class Config {
 		
 	}
 	
+	public static void addChestLoot(ItemStack item, float f){
+	    // TODO chest loot
+	}
+	
+	public static void addSponsorLoot(ItemStack item, float f){
+	    // TODO sponsor loot
+	}
+	
 }

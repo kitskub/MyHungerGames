@@ -150,7 +150,7 @@ public class GameManager implements Listener {
 			ConfigurationSection gameSection = gamesSection
 					.getConfigurationSection(name);
 			HungerGame game = new HungerGame(name);
-			game.load(gameSection);
+			game.loadFrom(gameSection);
 			games.add(game);
 		}
 		
@@ -162,9 +162,29 @@ public class GameManager implements Listener {
 		for (HungerGame game : games) {
 			ConfigurationSection saveSection = section.createSection(game
 					.getName());
-			game.save(saveSection);
+			game.saveTo(saveSection);
 		}
 		yaml.save();
 	}
+	
+	public static void reloadGame(HungerGame game){
+		FileConfiguration config = yaml.getConfig();
+		ConfigurationSection gameSection = config.getConfigurationSection("games." + game.getName());
+		if (gameSection == null) {
+			return;
+		}
+		game.loadFrom(gameSection);
+		games.add(game);
+	}
 
+	public static void saveGame(HungerGame game){
+		FileConfiguration config = yaml.getConfig();
+		ConfigurationSection section = config.getConfigurationSection("games");
+		if(section == null){
+		    section = config.createSection("games");
+		}
+		ConfigurationSection saveSection = section.createSection(game.getName());
+		game.saveTo(saveSection);
+		yaml.save();
+	}
 }

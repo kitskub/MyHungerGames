@@ -43,7 +43,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		enabled = true;
 	}
 
-	public void load(ConfigurationSection section) {
+	public void loadFrom(ConfigurationSection section) {
 		if (section.contains("spawn-points")) {
 			ConfigurationSection spawnPointsSection = section
 					.getConfigurationSection("spawn-points");
@@ -84,7 +84,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawn = Plugin.parseToLoc(section.getString("spawn"));
 	}
 
-	public void save(ConfigurationSection section) {
+	public void saveTo(ConfigurationSection section) {
 		if (!spawnPoints.isEmpty()) {
 			ConfigurationSection spawnPointsSection = section
 					.createSection("spawn-points");
