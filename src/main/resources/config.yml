@@ -1,12 +1,12 @@
 properties:
-		join-message: '<player> has joined the game <game>.'
-		rejoin-message: '<player> has rejoined the game <game>'
-		leave-message: '<player> has left the game <game>.'
-		kill-message: '<killer> killed <killed> in game <game>.'
-		vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
-		default-game: 'Test'
-		default-time: 10
-		min-vote: 5
+    join-message: '<player> has joined the game <game>.'
+    rejoin-message: '<player> has rejoined the game <game>'
+    leave-message: '<player> has left the game <game>.'
+    kill-message: '<killer> killed <killed> in game <game>.'
+    vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
+    default-game: 'Test'
+    default-time: 10
+    min-vote: 5
 chest-loot:
 # Example loot
 #    DIAMOND_PICKAXE:
