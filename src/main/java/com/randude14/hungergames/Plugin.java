@@ -198,6 +198,10 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static void error(Player player, String mess) {
 		player.sendMessage(ChatColor.RED + mess);
 	}
+	
+	public static void sendDoesNotExist(Player player, String s){
+	    Plugin.error(player, String.format("%s does not exist.", s));
+	}
 
 	public static boolean hasPermission(Player p, String permission) {
 		String world = p.getWorld().getName();

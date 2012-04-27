@@ -549,6 +549,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
     private static void dropInventory(Player player) {
 	for(ItemStack i : player.getInventory().getContents()){
+	    if(i == null) continue;
 	    player.getWorld().dropItemNaturally(player.getLocation(), i);
 	}
 	player.getInventory().clear();
