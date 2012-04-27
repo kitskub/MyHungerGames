@@ -328,7 +328,9 @@ public class Plugin extends JavaPlugin implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!frozenPlayers.containsKey(player) || !GameManager.getSession(player).isRunning()) {
+		if (!frozenPlayers.containsKey(player) 
+			|| GameManager.getSession(player) == null 
+			|| GameManager.getSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();
