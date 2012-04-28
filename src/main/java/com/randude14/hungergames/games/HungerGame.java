@@ -166,7 +166,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		return true;
 	}
 
-	public boolean start(Player player, int ticks) {
+	public boolean start(Player player, int ticks) {// TODO stop
 		if (isRunning) {
 			return false;
 		}
@@ -316,6 +316,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		playerLeaving(player);
 		dropInventory(player);
+		if(isRunning) {
+		    stats.get(player).setDead(true);
+		}
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
 			checkForGameOver();
