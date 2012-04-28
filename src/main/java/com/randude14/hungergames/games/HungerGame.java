@@ -51,8 +51,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				String str = spawnPointsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
 				if (loc == null) {
-					Plugin.warning(String.format(
-							"failed to load location '%s'", str));
+					Plugin.warning("failed to load location '%s'", str);
 					continue;
 				}
 				spawnPoints.add(loc);
@@ -72,8 +71,7 @@ public class HungerGame implements Comparable<HungerGame> {
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
-					Plugin.warning(String.format("'%s' is no longer a chest.",
-							str));
+					Plugin.warning("'%s' is no longer a chest.", str);
 					continue;
 				}
 				chests.add(loc);
@@ -139,38 +137,33 @@ public class HungerGame implements Comparable<HungerGame> {
 	public boolean addReadyPlayer(Player player) {
 		if (readyToPlay.contains(player)) {
 			Plugin.error(player,
-				String.format("You have already cast your vote that you are ready to play."));
+					"You have already cast your vote that you are ready to play.");
+			return false;
+		} 
+		if (isCounting) {
+			Plugin.error(player, "%s is already counting down.", name);
 			return false;
 		}
-		else {
-			if (isCounting) {
-				Plugin.error(player,
-						String.format("%s is already counting down.", name));
-				return false;
-			}
-			if (isRunning) {
-				Plugin.error(player,
-						String.format("%s is already running a game.", name));
-				return false;
-			}
-			readyToPlay.add(player);
-			int minVote = Config.getMinVote();
-			if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size()*/) {
-				// TODO add config option to require all who have join to be ready
-				Plugin.broadcast(String.format(
-						//"Everyone is ready to play %s. Starting game...",
-						"Enough players have voted that they are ready. Starting game...",
-						this.name));
-				start(player);
-			} else {
-				String mess = Config.getVoteMessage()
-						.replace("<player>", player.getName())
-						.replace("<game>", this.name);
-				Plugin.broadcast(mess);
-			}
-			return true;
+		if (isRunning) {
+			Plugin.error(player, "%s is already running a game.", name);
+			return false;
 		}
-
+		readyToPlay.add(player);
+		int minVote = Config.getMinVote();
+		if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size()*/){
+			// TODO add config option to require all who have join to be ready
+			Plugin.broadcast(String.format(
+					// "Everyone is ready to play %s. Starting game...",
+					"Enough players have voted that they are ready. Starting game...",
+							this.name));
+			start(player);
+		} else {
+			String mess = Config.getVoteMessage()
+					.replace("<player>", player.getName())
+					.replace("<game>", this.name);
+			Plugin.broadcast(mess);
+		}
+		return true;
 	}
 
 	public boolean start(Player player, int ticks) {
@@ -178,23 +171,20 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 
-		if (stats.size() < 2) {// TODO min number in config
-			Plugin.error(player,
-					String.format("There are not enough players in %s", name));
+		if (stats.size() < Config.getMinPlayers()) {
+			Plugin.error(player, "There are not enough players in %s", name);
 			return false;
 		}
 		if (isCounting) {
-			Plugin.error(player,
-					String.format("%s is already counting down.", name));
+			Plugin.error(player, "%s is already counting down.", name);
 			return false;
 		}
 		if (!enabled) {
-			Plugin.error(player,
-					String.format("%s is currently not enabled.", name));
+			Plugin.error(player, "%s is currently not enabled.", name);
 			return false;
 		}
 		if (ticks <= 0) {
-			Plugin.broadcast(String.format("Starting %s. Go!!", name));
+			Plugin.broadcast("Starting %s. Go!!", name);
 			startGame();
 		} else {
 			new GameCountdown(this, ticks);
@@ -234,8 +224,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	public void fillChests() {
 		for (int cntr = 0; cntr < chests.size(); cntr++) {
 			Location loc = chests.get(cntr);
-			if(!(loc.getBlock().getState() instanceof Chest)){
-			    continue;
+			if (!(loc.getBlock().getState() instanceof Chest)) {
+				continue;
 			}
 			Chest chest = (Chest) loc.getBlock().getState();
 			Plugin.fillChest(chest);
@@ -252,9 +242,12 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean rejoin(Player player) {// TODO config option to allow rejoin
+		if (!Config.shouldAllowRejoin()) {
+			Plugin.error(player, "You are not allowed to rejoin a game.");
+			return false;
+		}
 		if (!stats.containsKey(player) || stats.get(player).isDead()) {
-			Plugin.error(player,
-					String.format("You are not in the game %s.", name));
+			Plugin.error(player, "You are not in the game %s.", name);
 			return false;
 		}
 		Random rand = Plugin.getRandom();
@@ -289,11 +282,11 @@ public class HungerGame implements Comparable<HungerGame> {
 		
 		if (!Plugin.hasInventoryBeenCleared(player)) {// TODO inventory saving
 			Plugin.error(player,
-				"You must clear your inventory first (Be sure to check you're not wearing armor either).");
+					"You must clear your inventory first (Be sure to check you're not wearing armor either).");
 			return false;
 		}
 		if (spawnsTaken.size() >= spawnPoints.size()) {
-			Plugin.error(player, String.format("%s is already full.", name));
+			Plugin.error(player, "%s is already full.", name);
 			return false;
 		}
 		Random rand = Plugin.getRandom();
@@ -303,7 +296,6 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		spawnsTaken.put(player, loc);
 		stats.put(player, new PlayerStat());
-		Plugin.giveMultiversePermission(player);
 		player.teleport(loc);
 		if (!isRunning) {
 			Plugin.freezePlayer(player);
@@ -319,24 +311,21 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public synchronized boolean leave(Player player) {
 		if (!stats.containsKey(player)) {
-			Plugin.error(player,
-					String.format("You are not in the game %s.", name));
+			Plugin.error(player, "You are not in the game %s.", name);
 			return false;
 		}
 		playerLeaving(player);
 		dropInventory(player);
-		stats.get(player).setDead(true);
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
 			checkForGameOver();
 		}
 		return true;
 	}
-	
-	private synchronized void playerLeaving(Player player){
+
+	private synchronized void playerLeaving(Player player) {
 		spawnsTaken.remove(player);
 		Plugin.unfreezePlayer(player);
-		Plugin.takeMultiversePermission(player);   
 	}
 
 	private void clear() {
@@ -352,13 +341,13 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		if (getSpawn() != null) {
 			player.teleport(getSpawn());
-			Plugin.send(player,
-					String.format("Teleporting you to %s's spawn.", name));
+			Plugin.send(player, "Teleporting you to %s's spawn.", name);
 		} else {
-			Plugin.error(player, String.format(
-				"There was no spawn set for %s. Please contact an admin for help.",
-				name));
-			player.setHealth(0); //Should wake up at spawn
+			Plugin.error(
+					player,
+					"There was no spawn set for %s. Please contact an admin for help.",
+					name);
+			player.setHealth(0); // Should wake up at spawn
 		}
 
 	}
@@ -368,15 +357,15 @@ public class HungerGame implements Comparable<HungerGame> {
 			Player winner = getSurvivor();
 			if (winner == null) {
 				Plugin.broadcast("Strangely, there was no winner left.");
-			} else {
-				Plugin.broadcast(String.format(
-						"%s has won the game %s! Congratulations!",
-						winner.getName(), name));
+			} 
+			else {
+				Plugin.broadcast("%s has won the game %s! Congratulations!",
+						winner.getName(), name);
 				playerLeaving(winner);
 				teleportPlayerToSpawn(winner);
 			}
 			isRunning = false;
-			//TODO possible endgame event here
+			// TODO possible end game event here
 			clear();
 		}
 
@@ -419,7 +408,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void killed(Player killer, Player killed) {
 		if (!isRunning || stats.get(killed).isDead()) return;
-		
+
 		PlayerStat killerStat = getPlayerStat(killer);
 		killerStat.kill();
 		killed(killed);
@@ -427,7 +416,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void killed(Player killed) {
 		if (!isRunning || stats.get(killed).isDead()) return;
-		
+
 		PlayerStat killedStat = getPlayerStat(killed);
 		killedStat.setDead(true);
 		playerLeaving(killed);
@@ -462,9 +451,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void listStats(Player player) {
-		Plugin.send(player, String.format(
-				"<name>[kills], %sGreen: alive, %sRed: dead",
-				ChatColor.GREEN.toString(), ChatColor.RED.toString()));
+		Plugin.send(player, "<name>[kills], %sGreen: alive, %sRed: dead",
+				ChatColor.GREEN.toString(), ChatColor.RED.toString());
 		Plugin.send(player, "");
 		List<Player> players = new ArrayList<Player>(stats.keySet());
 		for (int cntr = 0; cntr < stats.size(); cntr += 5) {
@@ -539,9 +527,9 @@ public class HungerGame implements Comparable<HungerGame> {
 					if (Plugin.equals(l, comp)) {
 						spawnsTaken.remove(p);
 						if (p != null) {
-							Plugin.error(p,String.format(
+							Plugin.error(p,
 								"Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'",
-								name));
+								name);
 							leave(p);
 						}
 
@@ -555,20 +543,20 @@ public class HungerGame implements Comparable<HungerGame> {
 		return false;
 	}
 
-    private static void dropInventory(Player player) {
-	for(ItemStack i : player.getInventory().getContents()){
-	    if(i == null) continue;
-	    player.getWorld().dropItemNaturally(player.getLocation(), i);
+	private static void dropInventory(Player player) {
+		for (ItemStack i : player.getInventory().getContents()) {
+			if (i == null) continue;
+			player.getWorld().dropItemNaturally(player.getLocation(), i);
+		}
+		player.getInventory().clear();
 	}
-	player.getInventory().clear();
-    }
 
-    public Location getSpawn() {
-	return spawn;
-    }
+	public Location getSpawn() {
+		return spawn;
+	}
 
-    public void setCounting(boolean counting) {
-	isCounting = counting;
-    }
+	public void setCounting(boolean counting) {
+		isCounting = counting;
+	}
 
 }

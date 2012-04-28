@@ -40,12 +40,24 @@ public class Config {// TODO defaults
 		return plugin.getConfig().getInt("properties.min-vote");
 	}
 	
+	public static int getMinPlayers() {
+		return plugin.getConfig().getInt("properties.min-players");
+	}
+	
 	public static int getDefaultTime() {
 		return plugin.getConfig().getInt("properties.default-time");
 	}
 	
+	public static boolean shouldAllowRejoin() {
+		return plugin.getConfig().getBoolean("properties.allow-rejoin");
+	}
+	
 	public static boolean getAllowJoinWhileRunning() {
 		return plugin.getConfig().getBoolean("properties.allow-join-during-game");
+	}
+	
+	public static long getUpdateDelay() {
+		return plugin.getConfig().getLong("properties.update-delay");
 	}
 	
 	public static Map<ItemStack, Float> getChestLoot() {

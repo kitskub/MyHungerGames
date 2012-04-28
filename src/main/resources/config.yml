@@ -8,6 +8,9 @@ properties:
     default-time: 10
     min-vote: 5
     allow-join-during-game: false
+    update-delay: 30
+    min-players: 2
+    allow-rejoin: true
 chest-loot:
 # Example loot
 #    DIAMOND_PICKAXE:

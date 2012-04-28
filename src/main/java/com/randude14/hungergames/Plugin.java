@@ -9,9 +9,17 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.net.URL;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -56,7 +64,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static Map<Player, String> sponsors;
 	private static Map<ItemStack, Float> chestLoot;
 	private static Map<ItemStack, Double> sponsorLoot;
-	
+
 	@Override
 	public void onEnable() {
 		instance = this;
@@ -80,7 +88,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
 		}
-		if(!setupPermission()){
+		if (!setupPermission()) {
 			info("Permissions were not found, shutting down.");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
@@ -90,9 +98,25 @@ public class Plugin extends JavaPlugin implements Listener {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
+		callTasks();
 		GameManager.loadGames();
 		info("games loaded.");
 		info("enabled.");
+	}
+
+	private void callTasks() {
+		Plugin.scheduleTask(new Runnable() {
+			public void run() {
+				String installedVersion = getDescription().getVersion();
+				String checkVersion = updateCheck(installedVersion);
+				if (!checkVersion.endsWith(installedVersion))
+					Plugin.warning(
+							"There is a new version: %s (You are running %s)",
+							checkVersion, installedVersion);
+			}
+
+		}, 0L, Config.getUpdateDelay() * 20L * 60L);
+
 	}
 
 	@Override
@@ -131,12 +155,24 @@ public class Plugin extends JavaPlugin implements Listener {
 		return econ != null;
 	}
 
+	public static void info(String format, Object... args) {
+		logger.log(Level.INFO, getLogPrefix() + String.format(format, args));
+	}
+
 	public static void info(String mess) {
 		logger.log(Level.INFO, getLogPrefix() + mess);
 	}
 
+	public static void warning(String format, Object... args) {
+		logger.log(Level.WARNING, getLogPrefix() + String.format(format, args));
+	}
+
 	public static void warning(String mess) {
 		logger.log(Level.WARNING, getLogPrefix() + mess);
+	}
+
+	public static void severe(String format, Object... args) {
+		logger.log(Level.SEVERE, getLogPrefix() + String.format(format, args));
 	}
 
 	public static void severe(String mess) {
@@ -144,8 +180,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static String getLogPrefix() {
-		return String.format("[%s] v%s - ", instance.getName(), instance.getDescription()
-				.getVersion());
+		return String.format("[%s] v%s - ", instance.getName(), instance
+				.getDescription().getVersion());
 	}
 
 	public static String getPrefix() {
@@ -161,6 +197,14 @@ public class Plugin extends JavaPlugin implements Listener {
 		broadcast(message, ChatColor.GREEN);
 	}
 
+	public static void broadcast(String format, Object... args) {
+		broadcast(String.format(format, args));
+	}
+
+	public static void broadcast(ChatColor color, String format, Object... args) {
+		broadcast(color, String.format(format, args));
+	}
+
 	public static void broadcast(String message, ChatColor color) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			player.sendMessage(color + getPrefix() + message);
@@ -168,6 +212,10 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		message = ChatColor.stripColor(message);
 		info(message);
+	}
+
+	public static void broadcastRaw(String format, Object... args) {
+		broadcastRaw(String.format(format, args));
 	}
 
 	public static void broadcastRaw(String message) {
@@ -183,24 +231,41 @@ public class Plugin extends JavaPlugin implements Listener {
 		logger.info(message);
 	}
 
+	public static void send(Player player, ChatColor color, String format,
+			Object... args) {
+		player.sendMessage(color + String.format(format, args));
+	}
+
 	public static void send(Player player, ChatColor color, String mess) {
 		player.sendMessage(color + mess);
+	}
+
+	public static void send(Player player, String format, Object... args) {
+		player.sendMessage(ChatColor.GRAY + String.format(format, args));
 	}
 
 	public static void send(Player player, String mess) {
 		player.sendMessage(ChatColor.GRAY + mess);
 	}
 
+	public static void help(Player player, String format, Object... args) {
+		player.sendMessage(ChatColor.GOLD + String.format(format, args));
+	}
+
 	public static void help(Player player, String mess) {
 		player.sendMessage(ChatColor.GOLD + mess);
+	}
+
+	public static void error(Player player, String format, Object... args) {
+		player.sendMessage(ChatColor.RED + String.format(format, args));
 	}
 
 	public static void error(Player player, String mess) {
 		player.sendMessage(ChatColor.RED + mess);
 	}
-	
-	public static void sendDoesNotExist(Player player, String s){
-	    Plugin.error(player, String.format("%s does not exist.", s));
+
+	public static void sendDoesNotExist(Player player, String s) {
+		Plugin.error(player, "%s does not exist.", s);
 	}
 
 	public static boolean hasPermission(Player p, String permission) {
@@ -273,14 +338,14 @@ public class Plugin extends JavaPlugin implements Listener {
 		else {
 			sponsors.put(player, playerToBeSponsored);
 			send(player, ChatColor.GREEN, getHeadLiner());
-			send(player,
-					ChatColor.YELLOW,
-					String.format("Type the number next to the item you would like sponsor to %s.", playerToBeSponsored));
+			send(player, ChatColor.YELLOW,
+					"Type the number next to the item you would like sponsor to %s.",
+					playerToBeSponsored);
 			send(player, "");
 			int num = 1;
 			for (ItemStack item : sponsorLoot.keySet()) {
-				String mess = String.format(">> %d - %s: %d", num, item.getType()
-						.name(), item.getAmount());
+				String mess = String.format(">> %d - %s: %d", num, item
+						.getType().name(), item.getAmount());
 				Set<Enchantment> enchants = item.getEnchantments().keySet();
 				int cntr = 0;
 				if (!enchants.isEmpty()) {
@@ -300,6 +365,31 @@ public class Plugin extends JavaPlugin implements Listener {
 			return true;
 		}
 
+	}
+
+	public String updateCheck(String currentVersion) {
+		try {
+			URL url = new URL(
+					"http://dev.bukkit.org/server-mods/myhungergames/files.rss");
+			Document doc = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder()
+					.parse(url.openConnection().getInputStream());
+			doc.getDocumentElement().normalize();
+			NodeList nodes = doc.getElementsByTagName("item");
+			Node firstNode = nodes.item(0);
+			if (firstNode.getNodeType() == 1) {
+				Element firstElement = (Element) firstNode;
+				NodeList firstElementTagName = firstElement
+						.getElementsByTagName("title");
+				Element firstNameElement = (Element) firstElementTagName
+						.item(0);
+				NodeList firstNodes = firstNameElement.getChildNodes();
+				return firstNodes.item(0).getNodeValue();
+			}
+		} catch (Exception ex) {
+		}
+
+		return currentVersion;
 	}
 
 	public static String parseToString(Location loc) {
@@ -328,9 +418,9 @@ public class Plugin extends JavaPlugin implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!frozenPlayers.containsKey(player) 
-			|| GameManager.getSession(player) == null 
-			|| GameManager.getSession(player).isRunning()) {
+		if (!frozenPlayers.containsKey(player)
+				|| GameManager.getSession(player) == null
+				|| GameManager.getSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();
@@ -378,24 +468,23 @@ public class Plugin extends JavaPlugin implements Listener {
 		try {
 			choice = Integer.parseInt(mess) - 1;
 		} catch (Exception ex) {
-			error(player, String.format("'%s' is not an integer.", mess));
+			error(player, "'%s' is not an integer.", mess);
 			return;
 		}
 
 		int size = sponsorLoot.size();
 		if (choice < 0 || choice >= size) {
-			error(player, String.format("Choice '%d' does not exist."));
+			error(player, "Choice '%d' does not exist.");
 			return;
 		}
 		Player beingSponsored = getServer().getPlayer(sponsor);
 		if (beingSponsored == null) {
-			error(player, String.format("'%s' is not online anymore.", sponsor));
+			error(player, "'%s' is not online anymore.", sponsor);
 			return;
 		}
 		HungerGame game = GameManager.getSession(player);
 		if (game == null) {
-			error(player,
-					String.format("'%s' is no longer in a game.", sponsor));
+			error(player, "'%s' is no longer in a game.", sponsor);
 			return;
 		}
 		ItemStack item = new ArrayList<ItemStack>(sponsorLoot.keySet())
@@ -408,32 +497,29 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		econ.withdrawPlayer(name, price);
 		if (item.getEnchantments().isEmpty()) {
-			send(beingSponsored, String.format(
-					"%s has sponsored you %d %s(s).", player.getName(),
-					item.getAmount(), item.getType().name()));
+			send(beingSponsored, "%s has sponsored you %d %s(s).",
+					player.getName(), item.getAmount(), item.getType().name());
+		} else {
+			send(beingSponsored, "%s has sponsored you %d enchanted %s(s).",
+					player.getName(), item.getAmount(), item.getType().name());
 		}
-		else {
-			send(beingSponsored, String.format(
-					"%s has sponsored you %d enchanted %s(s).", player.getName(),
-					item.getAmount(), item.getType().name()));
-		}
-		
+
 		for (ItemStack drop : beingSponsored.getInventory().addItem(item)
 				.values()) {
 			beingSponsored.getWorld().dropItem(beingSponsored.getLocation(),
 					drop);
 		}
 		if (item.getEnchantments().isEmpty()) {
-			send(beingSponsored, String.format(
-					"You have sponsored %s %d %s(s) for $%.2f.", player.getName(),
-					item.getAmount(), item.getType().name(), price));
+			send(beingSponsored, "You have sponsored %s %d %s(s) for $%.2f.",
+					player.getName(), item.getAmount(), item.getType().name(),
+					price);
+		} else {
+			send(beingSponsored,
+					"You have sponsored %s %d enchanted %s(s) for $%.2f.",
+					player.getName(), item.getAmount(), item.getType().name(),
+					price);
 		}
-		else {
-			send(beingSponsored, String.format(
-					"You have sponsored %s %d enchanted %s(s) for $%.2f.", player.getName(),
-					item.getAmount(), item.getType().name(), price));
-		}
-		
+
 	}
 
 	@EventHandler
@@ -448,7 +534,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
-						String.format("%s has been removed recently due to unknown reasons."));
+						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
 			Block block = event.getBlock();
@@ -457,15 +543,12 @@ public class Plugin extends JavaPlugin implements Listener {
 				return;
 			}
 			if (game.addChest(block.getLocation())) {
-				send(player,
-						String.format("Chest has been added to %s.",
-								game.getName()));
+				send(player, "Chest has been added to %s.", game.getName());
 			}
 
 			else {
-				error(player, String.format(
-						"Chest has already been added to game %s.",
-						game.getName()));
+				error(player, "Chest has already been added to game %s.",
+						game.getName());
 			}
 
 		}
@@ -475,7 +558,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
-						String.format("%s has been removed recently due to unknown reasons."));
+						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
 			Block block = event.getBlock();
@@ -484,15 +567,11 @@ public class Plugin extends JavaPlugin implements Listener {
 				return;
 			}
 			if (game.removeChest(block.getLocation())) {
-				send(player,
-						String.format("Chest has been removed from %s.",
-								game.getName()));
+				send(player, "Chest has been removed from %s.", game.getName());
 			}
 
 			else {
-				error(player,
-						String.format("%s does not contain this chest.",
-								game.getName()));
+				error(player, "%s does not contain this chest.", game.getName());
 			}
 
 		}
@@ -502,7 +581,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
-						String.format("%s has been removed recently due to unknown reasons."));
+						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
 			Location loc = event.getBlock().getLocation();
@@ -512,15 +591,13 @@ public class Plugin extends JavaPlugin implements Listener {
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
 			if (game.addSpawnPoint(loc)) {
-				send(player,
-						String.format("Spawn point has been added to %s.",
-								game.getName()));
+				send(player, "Spawn point has been added to %s.",
+						game.getName());
 			}
 
 			else {
-				error(player,
-						String.format("%s already has this spawn point.",
-								game.getName()));
+				error(player, "%s already has this spawn point.",
+						game.getName());
 			}
 
 		}
@@ -530,7 +607,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			HungerGame game = GameManager.getGame(name);
 			if (game == null) {
 				error(player,
-						String.format("%s has been removed recently due to unknown reasons."));
+						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
 			Location loc = event.getBlock().getLocation();
@@ -540,27 +617,17 @@ public class Plugin extends JavaPlugin implements Listener {
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
 			if (game.removeSpawnPoint(loc)) {
-				send(player,
-						String.format("Spawn point has been removed from %s.",
-								game.getName()));
+				send(player, "Spawn point has been removed from %s.",
+						game.getName());
 			}
 
 			else {
-				error(player,
-						String.format("%s does not contain this spawn point.",
-								game.getName()));
+				error(player, "%s does not contain this spawn point.",
+						game.getName());
 			}
 
 		}
 
-	}
-
-	public static void giveMultiversePermission(Player player) {
-		perm.playerAdd(player, "multiverse.access.survival");// TODO survival?
-	}
-
-	public static void takeMultiversePermission(Player player) {
-		perm.playerRemove(player, "multiverse.access.survival");// TODO survival?
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
@@ -581,7 +648,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest) {// TODO multiple different settings
+	public static void fillChest(Chest chest) {
 		if (chestLoot.isEmpty()) {
 			return;
 		}
@@ -591,9 +658,9 @@ public class Plugin extends JavaPlugin implements Listener {
 		List<ItemStack> items = new ArrayList<ItemStack>(chestLoot.keySet());
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
-			if(inv.getItem(index) != null){
-			    cntr--;
-			    continue;
+			if (inv.getItem(index) != null) {
+				cntr--;
+				continue;
 			}
 			ItemStack item = items.get(rand.nextInt(items.size()));
 			if (chestLoot.get(item) >= rand.nextFloat()) {
@@ -607,13 +674,13 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static Plugin getInstance() {
 		return instance;
 	}
-	
-	public static boolean checkPermission(Player player, String perm){
-	    if (!Plugin.hasPermission(player, perm)){
-		error(player, "You do not have permission.");
-		return false;
-	    }
-	    return true;
+
+	public static boolean checkPermission(Player player, String perm) {
+		if (!Plugin.hasPermission(player, perm)) {
+			error(player, "You do not have permission.");
+			return false;
+		}
+		return true;
 	}
 
 }
