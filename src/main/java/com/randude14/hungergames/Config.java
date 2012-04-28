@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 public class Config {// TODO defaults
 	private static final Plugin plugin = Plugin.getInstance();
@@ -60,7 +61,7 @@ public class Config {// TODO defaults
 		return plugin.getConfig().getLong("properties.update-delay");
 	}
 	
-	public static Map<ItemStack, Float> getChestLoot() {
+	public static Map<ItemStack, Float> getChestLoot() {// TODO multiple different game
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
@@ -70,20 +71,20 @@ public class Config {// TODO defaults
 		}
 		for(String key : itemSection.getKeys(false)) {
 			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			Material mat = Material.matchMaterial(key);
-			if(mat == null)
-				continue;
+			String[] keyParts = key.split(":");
+			Material mat = Material.matchMaterial(keyParts[0]);
+			if(mat == null) continue;
+			MaterialData data = new MaterialData(mat);
+			if(keyParts.length == 2){
+			    try{
+				data.setData(Integer.valueOf(keyParts[1]).byteValue());
+			    }
+			    catch(NumberFormatException e){}
+			}
 			int stackSize = section.getInt("stack-size", 1);
 			float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
-			ItemStack item;
-			if(section.isInt("data")) {
-				byte data = new Integer(section.getInt("data")).byteValue();
-				item = new ItemStack(mat, stackSize, data);
-			}
-			
-			else {
-				item = new ItemStack(mat, stackSize);
-			}
+			ItemStack item = new ItemStack(mat, stackSize);
+			item.setData(data);
 			
 			for(String str : section.getKeys(false)) {
 				Enchantment enchant = Enchantment.getByName(str);
@@ -112,7 +113,7 @@ public class Config {// TODO defaults
 		}
 		for(String key : itemSection.getKeys(false)) {
 			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			Material mat = Material.getMaterial(key);
+			Material mat = Material.matchMaterial(key);
 			if(mat == null)
 				continue;
 			int stackSize = section.getInt("stack-size", 1);
