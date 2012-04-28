@@ -253,6 +253,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "You are not in the game %s.", name);
 			return false;
 		}
+		spawnsTaken.remove(player);
+		if (spawnsTaken.size() >= spawnPoints.size()) {
+			Plugin.error(player, "%s is already full.", name);
+			return false;
+		}
 		Random rand = Plugin.getRandom();
 		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 		while (spawnTaken(loc)) {

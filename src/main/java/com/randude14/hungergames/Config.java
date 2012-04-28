@@ -113,21 +113,21 @@ public class Config {// TODO defaults
 		}
 		for(String key : itemSection.getKeys(false)) {
 			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			Material mat = Material.matchMaterial(key);
-			if(mat == null)
-				continue;
+			String[] keyParts = key.split(":");
+			Material mat = Material.matchMaterial(keyParts[0]);
+			if(mat == null) continue;
+			MaterialData data = new MaterialData(mat);
+			if(keyParts.length == 2){
+			    try{
+				data.setData(Integer.valueOf(keyParts[1]).byteValue());
+			    }
+			    catch(NumberFormatException e){}
+			}
 			int stackSize = section.getInt("stack-size", 1);
+			float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
+			ItemStack item = new ItemStack(mat, stackSize);
+			item.setData(data);
 			double money = section.getDouble("money", 10.00);
-			ItemStack item;
-			if(section.isInt("data")) {
-				byte data = new Integer(section.getInt("data")).byteValue();
-				item = new ItemStack(mat, stackSize, data);
-			}
-			
-			else {
-				item = new ItemStack(mat, stackSize);
-			}
-			
 			for(String str : section.getKeys(false)) {
 				Enchantment enchant = Enchantment.getByName(str);
 				if(enchant == null || !enchant.canEnchantItem(item)) {
