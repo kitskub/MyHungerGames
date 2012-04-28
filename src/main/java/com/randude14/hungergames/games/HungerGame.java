@@ -280,7 +280,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "You are already in this game.");
 			return false;
 		}
-		if (isRunning && !Config.getAllowJoinWhileRunning()){
+		if (isRunning && !Config.getAllowJoinWhileRunning()){// TODO allow for multiple lives
 		    Plugin.error(player, String.format(
 			    "%s is already running and you cannot join while that is so.",
 			    name));
@@ -376,7 +376,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				teleportPlayerToSpawn(winner);
 			}
 			isRunning = false;
-			//TODO possible end game event here
+			//TODO possible endgame event here
 			clear();
 		}
 

@@ -53,33 +53,34 @@ public class Commands implements CommandExecutor {
 
 		else if ("join".equals(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.user_join)) return;
-			    String name = (args.length == 1) ? Config.getDefaultGame() : args[1];
-			    if (name == null) {
-				    Plugin.send(player, ChatColor.GOLD, 
-					    String.format("/%s join <game name>",
-					    cmd.getLabel()));
-				    return;
-			    }
-			    
-			    game = GameManager.getGame(name);
-			    if (game == null) {
-				Plugin.sendDoesNotExist(player, name);
+			
+			String name = (args.length == 1) ? Config.getDefaultGame() : args[1];
+			if (name == null) {
+				Plugin.send(player, ChatColor.GOLD, 
+					String.format("/%s join <game name>",
+					cmd.getLabel()));
 				return;
-			    }
-			    HungerGame currentSession = GameManager.getSession(player);
-			    if (currentSession != null) {
-				    Plugin.error(player,
-					    String.format(
-					    "You are already in the game '%s'. Leave that game before joining another.",
-					    currentSession.getName()));
-				    return;
-			    }
-			    if (game.join(player)) {
-				    String mess = Config.getJoinMessage();
-				    mess = mess.replace("<player>", player.getName()).replace(
-						    "<game>", game.getName());
-				    Plugin.broadcast(mess);
-			    }
+			}
+
+			game = GameManager.getGame(name);
+			if (game == null) {
+			    Plugin.sendDoesNotExist(player, name);
+			    return;
+			}
+			HungerGame currentSession = GameManager.getSession(player);
+			if (currentSession != null) {
+				Plugin.error(player,
+					String.format(
+					"You are already in the game '%s'. Leave that game before joining another.",
+					currentSession.getName()));
+				return;
+			}
+			if (game.join(player)) {
+				String mess = Config.getJoinMessage();
+				mess = mess.replace("<player>", player.getName()).replace(
+						"<game>", game.getName());
+				Plugin.broadcast(mess);
+			}
 		}
 
 		else if ("leave".equals(args[0])) {
@@ -189,7 +190,7 @@ public class Commands implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.user_help)) return;
 			getUserCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO saveTo less
+		GameManager.saveGames();// TODO save less
 	}
 
 	private void handleAdminCommand(Player player, Command cmd, String[] args) {
@@ -299,7 +300,7 @@ public class Commands implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.admin_help)) return;
 			getAdminCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO saveTo less
+		GameManager.saveGames();// TODO save less
 	}
 
 	private boolean addCommand(Player player , String[] args){

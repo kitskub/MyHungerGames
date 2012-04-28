@@ -581,7 +581,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest) {
+	public static void fillChest(Chest chest) {// TODO multiple different settings
 		if (chestLoot.isEmpty()) {
 			return;
 		}
