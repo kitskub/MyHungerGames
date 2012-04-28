@@ -271,10 +271,22 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean join(Player player) {
+		if (!enabled) {
+			Plugin.error(player,
+					String.format("%s is currently not enabled.", name));
+			return false;
+		}
 		if (stats.containsKey(player)) {
 			Plugin.error(player, "You are already in this game.");
 			return false;
 		}
+		if (isRunning && !Config.getAllowJoinWhileRunning()){
+		    Plugin.error(player, String.format(
+			    "%s is already running and you cannot join while that is so.",
+			    name));
+		    return false;
+		}
+		
 		if (!Plugin.hasInventoryBeenCleared(player)) {// TODO inventory saving
 			Plugin.error(player,
 				"You must clear your inventory first (Be sure to check you're not wearing armor either).");
@@ -282,11 +294,6 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		if (spawnsTaken.size() >= spawnPoints.size()) {
 			Plugin.error(player, String.format("%s is already full.", name));
-			return false;
-		}
-		if (!enabled) {
-			Plugin.error(player,
-					String.format("%s is currently not enabled.", name));
 			return false;
 		}
 		Random rand = Plugin.getRandom();
@@ -318,6 +325,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		playerLeaving(player);
 		dropInventory(player);
+		stats.get(player).setDead(true);
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
 			checkForGameOver();

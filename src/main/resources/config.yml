@@ -7,6 +7,7 @@ properties:
     default-game: 'Test'
     default-time: 10
     min-vote: 5
+    allow-join-during-game: false
 chest-loot:
 # Example loot
 #    DIAMOND_PICKAXE:

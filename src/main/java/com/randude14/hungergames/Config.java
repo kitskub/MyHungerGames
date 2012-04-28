@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-public class Config {
+public class Config {// TODO defaults
 	private static final Plugin plugin = Plugin.getInstance();
 	
 	public static String getJoinMessage() {
@@ -42,6 +42,10 @@ public class Config {
 	
 	public static int getDefaultTime() {
 		return plugin.getConfig().getInt("properties.default-time");
+	}
+	
+	public static boolean getAllowJoinWhileRunning() {
+		return plugin.getConfig().getBoolean("properties.allow-join-during-game");
 	}
 	
 	public static Map<ItemStack, Float> getChestLoot() {
