@@ -58,7 +58,7 @@ public class Config {// TODO defaults
 		}
 		for(String key : itemSection.getKeys(false)) {
 			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			Material mat = Material.getMaterial(key);
+			Material mat = Material.matchMaterial(key);
 			if(mat == null)
 				continue;
 			int stackSize = section.getInt("stack-size", 1);
