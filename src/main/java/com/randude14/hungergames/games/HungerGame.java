@@ -33,6 +33,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	private boolean isRunning;
 	private boolean isCounting;
 	private boolean enabled;
+	private String setup;
+	private List<String> itemsets;
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -41,9 +43,16 @@ public class HungerGame implements Comparable<HungerGame> {
 		readyToPlay = new ArrayList<Player>();
 		spawnsTaken = new HashMap<Player, Location>();
 		stats = new TreeMap<Player, PlayerStat>(new PlayerComparator());
+		setup = null;
+		itemsets = new ArrayList<String>();
 		spawn = null;
 		isRunning = isCounting = false;
 		enabled = true;
+	}
+	
+	public HungerGame(String name, String setup){
+		this(name);
+		this.setup = setup;
 	}
 
 	public void loadFrom(ConfigurationSection section) {
@@ -152,7 +161,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		readyToPlay.add(player);
-		int minVote = Config.getGlobalMinVote();
+		int minVote = Config.getMinVote(setup);
 		if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size() */) {
 			// TODO add config option to require all who have join to be ready
 			Plugin.broadcast(String.format(
@@ -161,7 +170,7 @@ public class HungerGame implements Comparable<HungerGame> {
 							this.name));
 			start(player);
 		} else {
-			String mess = Config.getGlobalVoteMessage()
+			String mess = Config.getVoteMessage(setup)
 					.replace("<player>", player.getName())
 					.replace("<game>", this.name);
 			Plugin.broadcast(mess);
@@ -174,7 +183,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 
-		if (stats.size() < Config.getGlobalMinPlayers()) {
+		if (stats.size() < Config.getMinPlayers(setup)) {
 			Plugin.error(player, "There are not enough players in %s", name);
 			return false;
 		}
@@ -197,7 +206,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean start(Player player) {
-		return start(player, Config.getGlobalDefaultTime());
+		return start(player, Config.getDefaultTime(setup));
 	}
 
 	public void startGame() {
@@ -224,7 +233,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-	public void fillChests() {
+	public void fillChests() {// TODO select large areas for filling
 		for (int cntr = 0; cntr < chests.size(); cntr++) {
 			Location loc = chests.get(cntr);
 			if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -244,8 +253,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawn = newSpawn;
 	}
 
-	public synchronized boolean rejoin(Player player) {// TODO config option to allow rejoin
-		if (!Config.getGlobalAllowRejoin()) {
+	public synchronized boolean rejoin(Player player) {
+		if (!Config.getAllowRejoin(setup)) {
 			Plugin.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
@@ -262,7 +271,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "You are already in this game.");
 			return false;
 		}
-		if (isRunning && !Config.getGlobalAllowJoinWhileRunning()){// TODO allow for multiple lives
+		if (isRunning && !Config.getAllowJoinWhileRunning(setup)){
 		    Plugin.error(player, "%s is already running and you cannot join while that is so.",
 							name);
 			return false;
@@ -315,8 +324,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		playerLeaving(player);
 		dropInventory(player);
-		if(isRunning) {
-		    stats.get(player).death();
+		if(isRunning) {// TODO player leave = out of lives config option
+		    stats.get(player).die();
 		}
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
@@ -366,7 +375,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				Plugin.broadcast("%s has won the game %s! Congratulations!",
 						winner.getName(), name);
 				playerLeaving(winner);
-				if(!Config.getGlobalWinnerKeepsItems()){
+				if(!Config.getWinnerKeepsItems(setup)){
 				    dropInventory(winner);
 				}
 				teleportPlayerToSpawn(winner);
@@ -431,7 +440,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		
 		else {
-			if(Config.shouldRespawnAtSpawnPointGlobal()) {
+			if(Config.shouldRespawnAtSpawnPoint(setup)) {
 				Random rand = Plugin.getRandom();
 				Location respawn = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 				GameManager.addPlayerRespawn(killed, respawn);
@@ -576,6 +585,22 @@ public class HungerGame implements Comparable<HungerGame> {
 		isCounting = counting;
 	}
 
+	public String getSetup() {
+	    return (setup == null || "".equals(setup)) ? null : setup;
+	}
+	
+	public List<String> getItemSets(){
+	    return itemsets;
+	}
+	
+	public void addItemSet(String name){
+	    itemsets.add(name);
+	}
+	
+	public void removeItemSet(String name){
+	    itemsets.remove(name);
+	}
+	
 	// sorts players by name ignoring caps
 	private class PlayerComparator implements Comparator<Player> {
 

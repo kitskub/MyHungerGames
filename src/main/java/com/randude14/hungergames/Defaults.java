@@ -63,12 +63,13 @@ public class Defaults {
 	
 	MIN_VOTE(5),
 	MIN_PLAYERS(2),
-	UPDATE_TIME(30),
+	UPDATE_DELAY(30),
 	DEFAULT_TIME(10),
 	ALLOW_REJOIN(true),
 	ALLOW_JOIN_WHILE_RUNNING(false),
 	WINNER_KEEPS_ITEMS(true),
-	RESPAWN_ON_DEATH(false);
+	RESPAWN_ON_DEATH(false),
+	DEFAULT_GAME("Test");
 	
 	private Object value;
 	
@@ -77,15 +78,16 @@ public class Defaults {
 	}
 	
 	public boolean getBoolean(){
-	    if(value instanceof Boolean) return (Boolean) value;
-	    
-	    return false;
+	    return (Boolean) value;
 	}
 	
 	public int getInt(){
-	    if(value instanceof Integer) return (Integer) value;
+	    return (Integer) value;
+	}
+	
+	public String getString(){
+	    return (String) value;
 	    
-	    return 0;
 	}
     }
     

@@ -17,6 +17,10 @@ public class PlayerStat {
 		deaths++;
 	}
 	
+	public void die() {
+	    deaths = 1; // TODO change to deaths >= getBleh(setupName)
+	}
+	
 	public int getKills() {
 		return kills;
 	}

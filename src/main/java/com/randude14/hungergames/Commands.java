@@ -76,7 +76,7 @@ public class Commands implements CommandExecutor {
 				return;
 			}
 			if (game.join(player)) {
-				String mess = Config.getGlobalJoinMessage();
+				String mess = Config.getJoinMessage(currentSession.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
 				Plugin.broadcast(mess);
@@ -94,7 +94,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			if (game.leave(player)) {
-				String mess = Config.getGlobalLeaveMessage();
+				String mess = Config.getLeaveMessage(game.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
 				Plugin.broadcast(mess);
@@ -108,7 +108,7 @@ public class Commands implements CommandExecutor {
 			game = GameManager.getSession(player);
 			if (game != null) {
 				if (game.rejoin(player)) {
-					String mess = Config.getGlobalRejoinMessage();
+					String mess = Config.getRejoinMessage(game.getSetup());
 					mess = mess.replace("<player>", player.getName()).replace(
 							"<game>", game.getName());
 					Plugin.broadcast(mess);
@@ -314,7 +314,7 @@ public class Commands implements CommandExecutor {
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s add chest <game name> - add a chest.", args[0]);
 			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add game <game name> - add a game.", args[0]);
+					"- /%s add game <game name> <setup> - add a game.", args[0]);
 			return true;
 		}
 
@@ -360,12 +360,15 @@ public class Commands implements CommandExecutor {
 
 			if (GameManager.doesNameExist(args[2])) {
 				Plugin.error(player, "%s already exists.", args[2]);
-			} else {
-				GameManager.createGame(args[2]);
-				Plugin.send(player, ChatColor.GREEN, "%s has been created.",
-						args[2]);
+				return true;
 			}
-
+			if(args.length == 3){
+			    GameManager.createGame(args[2]);
+			}
+			else{
+			    GameManager.createGame(args[2], args[3]);
+			}
+			Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[2]);
 		}
 
 		else {

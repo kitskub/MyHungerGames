@@ -13,16 +13,16 @@ import org.bukkit.material.MaterialData;
 import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
 
-public class Config {// TODO defaults
+public class Config {
 	private static final Plugin plugin = Plugin.getInstance();
 	
 	// Global only
 	public static String getDefaultGame() {
-		return plugin.getConfig().getString("global.default-game");
+		return plugin.getConfig().getString("global.default-game", DEFAULT_GAME.getString());
 	}
 	
 	public static long getUpdateDelay() {
-		return plugin.getConfig().getLong("global.update-delay");
+		return plugin.getConfig().getLong("global.update-delay", UPDATE_DELAY.getInt());
 	}
 
 	// Global
@@ -74,7 +74,7 @@ public class Config {// TODO defaults
 		return plugin.getConfig().getBoolean("global.spawnpoint-on-death", RESPAWN_ON_DEATH.getBoolean());
 	}
 	
-	public static Map<ItemStack, Float> getGlobalChestLoot() {// TODO multiple different game
+	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
