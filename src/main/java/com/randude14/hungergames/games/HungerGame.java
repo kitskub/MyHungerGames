@@ -152,7 +152,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		readyToPlay.add(player);
-		int minVote = Config.getMinVote();
+		int minVote = Config.getGlobalMinVote();
 		if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size() */) {
 			// TODO add config option to require all who have join to be ready
 			Plugin.broadcast(String.format(
@@ -161,7 +161,7 @@ public class HungerGame implements Comparable<HungerGame> {
 							this.name));
 			start(player);
 		} else {
-			String mess = Config.getVoteMessage()
+			String mess = Config.getGlobalVoteMessage()
 					.replace("<player>", player.getName())
 					.replace("<game>", this.name);
 			Plugin.broadcast(mess);
@@ -174,7 +174,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 
-		if (stats.size() < Config.getMinPlayers()) {
+		if (stats.size() < Config.getGlobalMinPlayers()) {
 			Plugin.error(player, "There are not enough players in %s", name);
 			return false;
 		}
@@ -197,7 +197,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean start(Player player) {
-		return start(player, Config.getDefaultTime());
+		return start(player, Config.getGlobalDefaultTime());
 	}
 
 	public void startGame() {
@@ -245,7 +245,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean rejoin(Player player) {// TODO config option to allow rejoin
-		if (!Config.shouldAllowRejoin()) {
+		if (!Config.getGlobalAllowRejoin()) {
 			Plugin.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
@@ -262,7 +262,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "You are already in this game.");
 			return false;
 		}
-		if (isRunning && !Config.getAllowJoinWhileRunning()){// TODO allow for multiple lives
+		if (isRunning && !Config.getGlobalAllowJoinWhileRunning()){// TODO allow for multiple lives
 		    Plugin.error(player, "%s is already running and you cannot join while that is so.",
 							name);
 			return false;
@@ -366,7 +366,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				Plugin.broadcast("%s has won the game %s! Congratulations!",
 						winner.getName(), name);
 				playerLeaving(winner);
-				if(!Config.getWinnerKeepsItems()){
+				if(!Config.getGlobalWinnerKeepsItems()){
 				    dropInventory(winner);
 				}
 				teleportPlayerToSpawn(winner);
@@ -431,14 +431,13 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		
 		else {
-			if(Config.shouldRespawnAtSpawnPoint()) {
+			if(Config.shouldRespawnAtSpawnPointGlobal()) {
 				Random rand = Plugin.getRandom();
 				Location respawn = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 				GameManager.addPlayerRespawn(killed, respawn);
 			}
 			// TODO send player amount of lives left -> Plugin.send(killed, "You have x lives left.", livesLeft);
 		}
-		checkForGameOver(false);
 	}
 
 	private Player getSurvivor() {

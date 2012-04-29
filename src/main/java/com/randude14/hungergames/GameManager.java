@@ -94,7 +94,7 @@ public class GameManager implements Listener {
 			HungerGame gameOfKiller = getSession(killer);
 
 			if (gameOfKilled.equals(gameOfKiller)) {
-				String mess = Config.getKillMessage()
+				String mess = Config.getGlobalKillMessage()
 						.replace("<killer>", killer.getName())
 						.replace("<killed>", killed.getName())
 						.replace("<game>", gameOfKiller.getName());
@@ -132,7 +132,7 @@ public class GameManager implements Listener {
 			return;
 		}
 		game.leave(player);
-		String mess = Config.getLeaveMessage()
+		String mess = Config.getGlobalLeaveMessage()
 			.replace("<player>", player.getName())
 			.replace("<game>", game.getName());
 		Plugin.broadcast(mess);
