@@ -272,8 +272,8 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public synchronized boolean join(Player player) {
 		if (!enabled) {
-			Plugin.error(player,
-					String.format("%s is currently not enabled.", name));
+			Plugin.error(player, "%s is currently not enabled.", 
+				name);
 			return false;
 		}
 		if (stats.containsKey(player)) {
@@ -281,9 +281,8 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		if (isRunning && !Config.getAllowJoinWhileRunning()){// TODO allow for multiple lives
-		    Plugin.error(player, String.format(
-							"%s is already running and you cannot join while that is so.",
-							name));
+		    Plugin.error(player, "%s is already running and you cannot join while that is so.",
+							name);
 			return false;
 		}
 
@@ -341,6 +340,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private void clear() {
 		stats.clear();
 		spawnsTaken.clear();
+		readyToPlay.clear();
 		isRunning = false;
 		isCounting = false;
 	}
@@ -384,6 +384,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		
 		if(!notifyOfRemaining) return;
+		
 		List<Player> remaining = new ArrayList<Player>();
 		for (Player player : stats.keySet()) {
 			if (!stats.get(player).isDead()) {
