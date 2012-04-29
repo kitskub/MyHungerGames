@@ -88,7 +88,7 @@ public class Config {// TODO defaults
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
-		ConfigurationSection itemSection = config.getConfigurationSection("sponsor-loot");
+		ConfigurationSection itemSection = config.getConfigurationSection("global.sponsor-loot");
 		if(itemSection == null) return sponsorLoot;
 		
 		return readSponsorLoot(itemSection);
