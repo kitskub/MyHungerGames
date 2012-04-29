@@ -21,8 +21,10 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -38,12 +40,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.randude14.hungergames.games.HungerGame;
-import org.bukkit.Bukkit;
+
 
 public class Plugin extends JavaPlugin implements Listener {
 	private static final Logger logger = Logger.getLogger("Minecraft");
@@ -627,6 +630,24 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		}
 
+	}
+
+	public static boolean hasInventoryBeenCleared(Player player) {//Just in case we want a config option to force clear inv.
+		PlayerInventory inventory = player.getInventory();
+		for (ItemStack item : inventory.getContents()) {
+			if (item != null && item.getType() != Material.AIR) {
+				return false;
+			}
+
+		}
+
+		for (ItemStack item : inventory.getArmorContents()) {
+			if (item != null && item.getType() != Material.AIR) {
+				return false;
+			}
+
+		}
+		return true;
 	}
 
 	public static void fillChest(Chest chest, String[] setups) {
