@@ -608,7 +608,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    itemsets.remove(name);
 	}
 
-	// sorts players by name ignoring caps
+	// sorts players by name ignoring case
 	private class PlayerComparator implements Comparator<Player> {
 
 		public PlayerComparator() {
