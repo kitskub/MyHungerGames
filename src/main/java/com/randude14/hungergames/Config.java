@@ -10,59 +10,64 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import static com.randude14.hungergames.Defaults.Message.*;
+import static com.randude14.hungergames.Defaults.Config.*;
+
 public class Config {// TODO defaults
 	private static final Plugin plugin = Plugin.getInstance();
 	
-	public static String getJoinMessage() {
-		return plugin.getConfig().getString("properties.join-message");
-	}
-	
-	public static String getRejoinMessage() {
-		return plugin.getConfig().getString("properties.rejoin-message");
-	}
-	
-	public static String getLeaveMessage() {
-		return plugin.getConfig().getString("properties.leave-message");
-	}
-	
-	public static String getKillMessage() {
-		return plugin.getConfig().getString("properties.kill-message");
-	}
-	
-	public static String getVoteMessage() {
-		return plugin.getConfig().getString("properties.vote-message");
-	}
-	
+	// Global only
 	public static String getDefaultGame() {
-		return plugin.getConfig().getString("properties.default-game");
-	}
-	
-	public static int getMinVote() {
-		return plugin.getConfig().getInt("properties.min-vote");
-	}
-	
-	public static int getMinPlayers() {
-		return plugin.getConfig().getInt("properties.min-players");
-	}
-	
-	public static int getDefaultTime() {
-		return plugin.getConfig().getInt("properties.default-time");
-	}
-	
-	public static boolean shouldAllowRejoin() {
-		return plugin.getConfig().getBoolean("properties.allow-rejoin");
-	}
-	
-	public static boolean getAllowJoinWhileRunning() {
-		return plugin.getConfig().getBoolean("properties.allow-join-during-game");
+		return plugin.getConfig().getString("global.default-game");
 	}
 	
 	public static long getUpdateDelay() {
-		return plugin.getConfig().getLong("properties.update-delay");
+		return plugin.getConfig().getLong("global.update-delay");
+	}
+
+	// Global
+	public static String getGlobalJoinMessage() {
+		return plugin.getConfig().getString("global.join-message", JOIN.getMessage());
 	}
 	
-	public static boolean getWinnerKeepsItems(){
-		return plugin.getConfig().getBoolean("properties.winner-keeps-items");
+	public static String getGlobalRejoinMessage() {
+		return plugin.getConfig().getString("global.rejoin-message", REJOIN.getMessage());
+	}
+	
+	public static String getGlobalLeaveMessage() {
+		return plugin.getConfig().getString("global.leave-message", LEAVE.getMessage());
+	}
+	
+	public static String getGlobalKillMessage() {
+		return plugin.getConfig().getString("global.kill-message", KILL.getMessage());
+	}
+	
+	public static String getGlobalVoteMessage() {
+		return plugin.getConfig().getString("global.vote-message", VOTE.getMessage());
+	}
+	
+	public static int getGlobalMinVote() {
+		return plugin.getConfig().getInt("global.min-vote", MIN_VOTE.getInt());
+	}
+	
+	public static int getGlobalMinPlayers() {
+		return plugin.getConfig().getInt("global.min-players", MIN_PLAYERS.getInt());
+	}
+	
+	public static int getGlobalDefaultTime() {
+		return plugin.getConfig().getInt("global.default-time", DEFAULT_TIME.getInt());
+	}
+	
+	public static boolean getGlobalAllowRejoin() {
+		return plugin.getConfig().getBoolean("global.allow-rejoin", ALLOW_REJOIN.getBoolean());
+	}
+	
+	public static boolean getGlobalAllowJoinWhileRunning() {
+		return plugin.getConfig().getBoolean("global.allow-join-during-game", ALLOW_JOIN_WHILE_RUNNING.getBoolean());
+	}
+	
+	public static boolean getGlobalWinnerKeepsItems(){
+		return plugin.getConfig().getBoolean("global.winner-keeps-items", WINNER_KEEPS_ITEMS.getBoolean());
 	}
 	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {// TODO multiple different game
@@ -79,46 +84,93 @@ public class Config {// TODO defaults
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
-		ConfigurationSection itemSection = config.getConfigurationSection("sponsor-loot");
+		ConfigurationSection itemSection = config.getConfigurationSection("global.sponsor-loot");
 		if(itemSection == null) return sponsorLoot;
 		
 		return readSponsorLoot(itemSection);
 		
 	}
 	
-	public static Map<ItemStack, Float> getAllChestLootWithGlobal(String[] setups){
+	// Setups
+	public static String getJoinMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".join-message", getGlobalJoinMessage());
+
+	}
+	
+	public static String getRejoinMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".rejoin-message", getGlobalRejoinMessage());
+	}
+	
+	public static String getLeaveMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".leave-message", getGlobalLeaveMessage());
+	}
+	
+	public static String getKillMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".kill-message", getGlobalKillMessage());
+	}
+	
+	public static String getVoteMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".vote-message", getGlobalVoteMessage());
+	}
+	
+	public static int getMinVote(String setup) {
+		return plugin.getConfig().getInt("setups." + setup + ".min-vote", getGlobalMinVote());
+	}
+	
+	public static int getMinPlayers(String setup) {
+		return plugin.getConfig().getInt("setups." + setup + ".min-players", getGlobalMinPlayers());
+	}
+	
+	public static int getDefaultTime(String setup) {
+		return plugin.getConfig().getInt("setups." + setup + ".default-time", getGlobalDefaultTime());
+	}
+	
+	public static boolean getAllowRejoin(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".allow-rejoin", getGlobalAllowRejoin());
+	}
+	
+	public static boolean getAllowJoinWhileRunning(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".allow-join-during-game", getGlobalAllowJoinWhileRunning());
+	}
+	
+	public static boolean getWinnerKeepsItems(String setup){
+		return plugin.getConfig().getBoolean("setups." + setup + ".winner-keeps-items", getGlobalWinnerKeepsItems());
+	}
+	
+	// Itemsets
+	public static Map<ItemStack, Float> getAllChestLootWithGlobal(String[] itemsets){
 	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
-	    for(String s : setups){
+	    for(String s : itemsets){
 		toRet.putAll(getChestLoot(s));
 	    }
 	    toRet.putAll(getGlobalChestLoot());
 	    return toRet;
 	}
 	
-	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(String[] setups){
+	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(String[] itemsets){
 	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
-	    for(String s : setups){
+	    for(String s : itemsets){
 		toRet.putAll(getSponsorLoot(s));
 	    }
 	    toRet.putAll(getGlobalSponsorLoot());
 	    return toRet;
 	}
 	
-	public static Map<ItemStack, Float> getChestLoot(String setup){
+	public static Map<ItemStack, Float> getChestLoot(String itemset){
 	    plugin.reloadConfig();
 	    FileConfiguration config = plugin.getConfig();
 	    Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
-	    ConfigurationSection itemSection = config.getConfigurationSection("setups." + setup + ".chest-loot");
+	    ConfigurationSection itemSection = config.getConfigurationSection("itemsets." + itemset + ".chest-loot");
 	    if(itemSection == null) return chestLoot;
 
 	    return readChestLoot(itemSection);
 	}
 	
-	public static Map<ItemStack, Double> getSponsorLoot(String setup){
+	public static Map<ItemStack, Double> getSponsorLoot(String itemset){
 	    plugin.reloadConfig();
 	    FileConfiguration config = plugin.getConfig();
 	    Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
-	    ConfigurationSection itemSection = config.getConfigurationSection("setups." + setup + ".sponsor-loot");
+	    ConfigurationSection itemSection = config.getConfigurationSection("itemsets." + itemset + ".sponsor-loot");
 	    if(itemSection == null) return chestLoot;
 
 	    return readSponsorLoot(itemSection);

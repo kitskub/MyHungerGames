@@ -76,7 +76,7 @@ public class Commands implements CommandExecutor {
 				return;
 			}
 			if (game.join(player)) {
-				String mess = Config.getJoinMessage();
+				String mess = Config.getGlobalJoinMessage();
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
 				Plugin.broadcast(mess);
@@ -94,7 +94,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			if (game.leave(player)) {
-				String mess = Config.getLeaveMessage();
+				String mess = Config.getGlobalLeaveMessage();
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
 				Plugin.broadcast(mess);
@@ -108,7 +108,7 @@ public class Commands implements CommandExecutor {
 			game = GameManager.getSession(player);
 			if (game != null) {
 				if (game.rejoin(player)) {
-					String mess = Config.getRejoinMessage();
+					String mess = Config.getGlobalRejoinMessage();
 					mess = mess.replace("<player>", player.getName()).replace(
 							"<game>", game.getName());
 					Plugin.broadcast(mess);
