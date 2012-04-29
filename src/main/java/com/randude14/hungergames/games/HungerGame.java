@@ -230,7 +230,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				continue;
 			}
 			Chest chest = (Chest) loc.getBlock().getState();
-			Plugin.fillChest(chest);
+			Plugin.fillChest(chest, null);
 		}
 
 	}

@@ -65,97 +65,145 @@ public class Config {// TODO defaults
 		return plugin.getConfig().getBoolean("properties.winner-keeps-items");
 	}
 	
-	public static Map<ItemStack, Float> getChestLoot() {// TODO multiple different game
+	public static Map<ItemStack, Float> getGlobalChestLoot() {// TODO multiple different game
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
-		ConfigurationSection itemSection = config.getConfigurationSection("chest-loot");
-		if(itemSection == null) {
-			return chestLoot;
-		}
-		for(String key : itemSection.getKeys(false)) {
-			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			String[] keyParts = key.split(":");
-			Material mat = Material.matchMaterial(keyParts[0]);
-			if(mat == null) continue;
-			MaterialData data = new MaterialData(mat);
-			if(keyParts.length == 2){
-			    try{
-				data.setData(Integer.valueOf(keyParts[1]).byteValue());
-			    }
-			    catch(NumberFormatException e){}
-			}
-			int stackSize = section.getInt("stack-size", 1);
-			float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
-			ItemStack item = new ItemStack(mat, stackSize);
-			item.setData(data);
-			
-			for(String str : section.getKeys(false)) {
-				Enchantment enchant = Enchantment.getByName(str);
-				if(enchant == null || !enchant.canEnchantItem(item)) {
-					continue;
-				}
-				int level = section.getInt(str, 1);
-				try {
-					item.addEnchantment(enchant, level);
-				} catch (Exception ex) {
-				}
-				
-			}
-			chestLoot.put(item, chance);
-		}
-		return chestLoot;
+		ConfigurationSection itemSection = config.getConfigurationSection("global.chest-loot");
+		if(itemSection == null) return chestLoot;
+		
+		return readChestLoot(itemSection);
 	}
 	
-	public static Map<ItemStack, Double> getSponsorLoot() {
+	public static Map<ItemStack, Double> getGlobalSponsorLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
 		ConfigurationSection itemSection = config.getConfigurationSection("sponsor-loot");
-		if(itemSection == null) {
-			return sponsorLoot;
-		}
-		for(String key : itemSection.getKeys(false)) {
-			ConfigurationSection section = itemSection.getConfigurationSection(key);
-			String[] keyParts = key.split(":");
-			Material mat = Material.matchMaterial(keyParts[0]);
-			if(mat == null) continue;
-			MaterialData data = new MaterialData(mat);
-			if(keyParts.length == 2){
-			    try{
-				data.setData(Integer.valueOf(keyParts[1]).byteValue());
-			    }
-			    catch(NumberFormatException e){}
-			}
-			int stackSize = section.getInt("stack-size", 1);
-			float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
-			ItemStack item = new ItemStack(mat, stackSize);
-			item.setData(data);
-			double money = section.getDouble("money", 10.00);
-			for(String str : section.getKeys(false)) {
-				Enchantment enchant = Enchantment.getByName(str);
-				if(enchant == null || !enchant.canEnchantItem(item)) {
-					continue;
-				}
-				int level = section.getInt(str, 1);
-				try {
-					item.addEnchantment(enchant, level);
-				} catch (Exception ex) {
-				}
-				
-			}
-			sponsorLoot.put(item, money);
-		}
-		return sponsorLoot;
+		if(itemSection == null) return sponsorLoot;
+		
+		return readSponsorLoot(itemSection);
 		
 	}
 	
-	public static void addChestLoot(ItemStack item, float f){
-	    // TODO chest loot
+	public static Map<ItemStack, Float> getAllChestLootWithGlobal(String[] setups){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    for(String s : setups){
+		toRet.putAll(getChestLoot(s));
+	    }
+	    toRet.putAll(getGlobalChestLoot());
+	    return toRet;
 	}
 	
-	public static void addSponsorLoot(ItemStack item, float f){
-	    // TODO sponsor loot
+	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(String[] setups){
+	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
+	    for(String s : setups){
+		toRet.putAll(getSponsorLoot(s));
+	    }
+	    toRet.putAll(getGlobalSponsorLoot());
+	    return toRet;
+	}
+	
+	public static Map<ItemStack, Float> getChestLoot(String setup){
+	    plugin.reloadConfig();
+	    FileConfiguration config = plugin.getConfig();
+	    Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
+	    ConfigurationSection itemSection = config.getConfigurationSection("setups." + setup + ".chest-loot");
+	    if(itemSection == null) return chestLoot;
+
+	    return readChestLoot(itemSection);
+	}
+	
+	public static Map<ItemStack, Double> getSponsorLoot(String setup){
+	    plugin.reloadConfig();
+	    FileConfiguration config = plugin.getConfig();
+	    Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
+	    ConfigurationSection itemSection = config.getConfigurationSection("setups." + setup + ".sponsor-loot");
+	    if(itemSection == null) return chestLoot;
+
+	    return readSponsorLoot(itemSection);
+	}
+	
+	public static void addChestLoot(ItemStack item, float f){
+	    // TODO chest loot by command
+	}
+	
+	public static void addSponsorLoot(ItemStack item, double f){
+	    // TODO sponsor loot by command
+	}
+	
+	private static Map<ItemStack, Float> readChestLoot(ConfigurationSection itemSection){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    if(itemSection == null) return toRet;
+	    
+	    for(String key : itemSection.getKeys(false)) {
+		    ConfigurationSection section = itemSection.getConfigurationSection(key);
+		    int stackSize = section.getInt("stack-size", 1);
+		    ItemStack item = getItemStack(key, stackSize);
+		    if(item == null) continue;
+		    
+		    for(String str : section.getKeys(false)) {
+			    Enchantment enchant = Enchantment.getByName(str);
+			    if(enchant == null || !enchant.canEnchantItem(item)) {
+				    continue;
+			    }
+			    int level = section.getInt(str, 1);
+			    try {
+				    item.addEnchantment(enchant, level);
+			    } catch (Exception ex) {
+			    }
+		    }
+		    
+		    float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
+		    toRet.put(item, chance);
+	    }
+	    return toRet;
+	}
+	
+	private static Map<ItemStack, Double> readSponsorLoot(ConfigurationSection itemSection){
+	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
+	    if(itemSection == null) return toRet;
+	    
+	    for(String key : itemSection.getKeys(false)) {
+		    ConfigurationSection section = itemSection.getConfigurationSection(key);
+		    int stackSize = section.getInt("stack-size", 1);
+		    ItemStack item = getItemStack(key, stackSize);
+		    if(item == null) continue;
+
+		    for(String str : section.getKeys(false)) {
+			    Enchantment enchant = Enchantment.getByName(str);
+			    if(enchant == null || !enchant.canEnchantItem(item)) {
+				    continue;
+			    }
+			    int level = section.getInt(str, 1);
+			    try {
+				    item.addEnchantment(enchant, level);
+			    } catch (Exception ex) {
+			    }
+
+		    }
+
+		    double money = section.getDouble("money", 10.00);
+		    toRet.put(item, money);
+	    }
+	    return toRet;
+	}
+	
+	private static ItemStack getItemStack(String s, int stackSize){
+	    String[] keyParts = s.split(":");
+	    Material mat = Material.matchMaterial(keyParts[0]);
+	    if(mat == null) return null;
+	    MaterialData data = new MaterialData(mat);
+	    if(keyParts.length == 2){
+		try{
+		    data.setData(Integer.valueOf(keyParts[1]).byteValue());
+		}
+		catch(NumberFormatException e){}
+	    }
+	    ItemStack item = new ItemStack(mat, stackSize);
+	    item.setData(data);
+	    
+	    return item;
 	}
 	
 }

@@ -82,8 +82,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
-		chestLoot = Config.getChestLoot();
-		sponsorLoot = Config.getSponsorLoot();
+		chestLoot = Config.getGlobalChestLoot();
+		sponsorLoot = Config.getGlobalSponsorLoot();
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
@@ -122,14 +122,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		GameManager.saveGames();
-		info("games saved.");
-		info("disabled.");
+		info("Games saved.");
+		info("Disabled.");
 	}
 
 	public static void reload() {
 		instance.reloadConfig();
-		chestLoot = Config.getChestLoot();
-		sponsorLoot = Config.getSponsorLoot();
+		chestLoot = Config.getGlobalChestLoot();
+		sponsorLoot = Config.getGlobalSponsorLoot();
 		GameManager.loadGames();
 		for (Player player : sponsors.keySet()) {
 			error(player,
@@ -648,7 +648,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest) {
+	public static void fillChest(Chest chest, String[] setups) {
 		if (chestLoot.isEmpty()) {
 			return;
 		}
