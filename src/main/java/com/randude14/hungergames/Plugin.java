@@ -57,6 +57,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static GameManager manager;
 	private static Random rand;
 	private static Map<Player, Location> frozenPlayers;
+	private static Map<Player, Location> playerRespawns;
 	private static Map<Player, String> chestAdders;
 	private static Map<Player, String> chestRemovers;
 	private static Map<Player, String> spawnAdders;
@@ -74,6 +75,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		frozenPlayers = new HashMap<Player, Location>();
+		playerRespawns = new HashMap<Player, Location>();
 		chestAdders = new HashMap<Player, String>();
 		chestRemovers = new HashMap<Player, String>();
 		spawnAdders = new HashMap<Player, String>();
@@ -82,8 +84,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
-		chestLoot = Config.getChestLoot();
-		sponsorLoot = Config.getSponsorLoot();
+		chestLoot = Config.getGlobalChestLoot();
+		sponsorLoot = Config.getGlobalSponsorLoot();
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
@@ -122,14 +124,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		GameManager.saveGames();
-		info("games saved.");
-		info("disabled.");
+		info("Games saved.");
+		info("Disabled.");
 	}
 
 	public static void reload() {
 		instance.reloadConfig();
-		chestLoot = Config.getChestLoot();
-		sponsorLoot = Config.getSponsorLoot();
+		chestLoot = Config.getGlobalChestLoot();
+		sponsorLoot = Config.getGlobalSponsorLoot();
 		GameManager.loadGames();
 		for (Player player : sponsors.keySet()) {
 			error(player,
@@ -311,6 +313,10 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	public static boolean isPlayerFrozen(Player player) {
 		return frozenPlayers.containsKey(player);
+	}
+	
+	public static void addPlayerRespawn(Player player, Location respawn) {
+		playerRespawns.put(player, respawn);
 	}
 
 	public static void addChestAdder(Player player, String name) {
@@ -648,7 +654,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest) {
+	public static void fillChest(Chest chest, String[] setups) {
 		if (chestLoot.isEmpty()) {
 			return;
 		}

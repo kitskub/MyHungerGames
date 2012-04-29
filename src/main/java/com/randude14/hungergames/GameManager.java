@@ -76,17 +76,17 @@ public class GameManager implements Listener {
 	public static boolean doesNameExist(String name) {
 		return getGame(name) != null;
 	}
+	
+	public static void addPlayerRespawn(Player player, Location respawn) {
+		respawnLocation.put(player, respawn);
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
 		HungerGame gameOfKilled = getSession(killed);
-		Plugin.info(1 + "");
 		if (gameOfKilled == null) {
 			return;
-		}
-		if(gameOfKilled.getSpawn() != null){
-		    respawnLocation.put(event.getEntity(), gameOfKilled.getSpawn());
 		}
 		
 		Player killer = killed.getKiller();
