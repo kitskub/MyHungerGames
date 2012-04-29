@@ -302,7 +302,7 @@ public class Commands implements CommandExecutor {
 	private boolean addCommand(Player player, String[] args) {
 		if (!Plugin.hasPermission(player, Perm.ADMIN_ADD_CHEST)
 				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)) {
+				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)) {// TODO specific perms for each subcommand
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}

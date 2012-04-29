@@ -1,7 +1,7 @@
 name: HungerGames
 main: com.randude14.hungergames.Plugin
 version: 0.1.4
-authors: Randude14, kitskub
+authors: [Randude14, kitskub]
 
 commands:
     hga:
@@ -32,7 +32,7 @@ permissions:
         children:
             hungergame.user.join: false
             hungergame.user.leave: false
-            hungergame.user.rejoin: false            
+            hungergame.user.rejoin: false    
             hungergame.user.list: false
             hungergame.user.stat: false
             hungergame.user.vote: false
