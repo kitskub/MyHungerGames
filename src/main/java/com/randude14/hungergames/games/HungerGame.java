@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import net.minecraft.server.Material;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 public class HungerGame implements Comparable<HungerGame> {
 	private final Map<Player, PlayerStat> stats;
 	private final Map<Player, Location> spawnsTaken;
+	private final Map<Player, InventorySave> savedInventories;
 	private final List<Location> spawnPoints;
 	private final List<Location> chests;
 	private final List<Player> readyToPlay;
@@ -33,8 +36,6 @@ public class HungerGame implements Comparable<HungerGame> {
 	private boolean isRunning;
 	private boolean isCounting;
 	private boolean enabled;
-	private String setup;
-	private List<String> itemsets;
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -42,17 +43,11 @@ public class HungerGame implements Comparable<HungerGame> {
 		chests = new ArrayList<Location>();
 		readyToPlay = new ArrayList<Player>();
 		spawnsTaken = new HashMap<Player, Location>();
+		savedInventories = new HashMap<Player, InventorySave>();
 		stats = new TreeMap<Player, PlayerStat>(new PlayerComparator());
-		setup = null;
-		itemsets = new ArrayList<String>();
 		spawn = null;
 		isRunning = isCounting = false;
 		enabled = true;
-	}
-	
-	public HungerGame(String name, String setup){
-		this(name);
-		this.setup = setup;
 	}
 
 	public void loadFrom(ConfigurationSection section) {
@@ -78,8 +73,8 @@ public class HungerGame implements Comparable<HungerGame> {
 				String str = chestsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
 				if (loc == null) {
-					Plugin.warning(String.format(
-							"failed to load location '%s'", str));
+					Plugin.warning(
+							"failed to load location '%s'", str);
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -161,7 +156,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		readyToPlay.add(player);
-		int minVote = Config.getMinVote(setup);
+		int minVote = Config.getGlobalMinVote();
 		if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size() */) {
 			// TODO add config option to require all who have join to be ready
 			Plugin.broadcast(String.format(
@@ -170,7 +165,7 @@ public class HungerGame implements Comparable<HungerGame> {
 							this.name));
 			start(player);
 		} else {
-			String mess = Config.getVoteMessage(setup)
+			String mess = Config.getGlobalVoteMessage()
 					.replace("<player>", player.getName())
 					.replace("<game>", this.name);
 			Plugin.broadcast(mess);
@@ -183,7 +178,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 
-		if (stats.size() < Config.getMinPlayers(setup)) {
+		if (stats.size() < Config.getGlobalMinPlayers()) {
 			Plugin.error(player, "There are not enough players in %s", name);
 			return false;
 		}
@@ -206,7 +201,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean start(Player player) {
-		return start(player, Config.getDefaultTime(setup));
+		return start(player, Config.getGlobalDefaultTime());
 	}
 
 	public void startGame() {
@@ -233,7 +228,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-	public void fillChests() {// TODO select large areas for filling
+	public void fillChests() {
 		for (int cntr = 0; cntr < chests.size(); cntr++) {
 			Location loc = chests.get(cntr);
 			if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -253,8 +248,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawn = newSpawn;
 	}
 
-	public synchronized boolean rejoin(Player player) {
-		if (!Config.getAllowRejoin(setup)) {
+	public synchronized boolean rejoin(Player player) {// TODO config option to allow rejoin
+		if (!Config.getGlobalAllowRejoin()) {
 			Plugin.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
@@ -271,7 +266,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "You are already in this game.");
 			return false;
 		}
-		if (isRunning && !Config.getAllowJoinWhileRunning(setup)){
+		if (isRunning && !Config.getGlobalAllowJoinWhileRunning()){
 		    Plugin.error(player, "%s is already running and you cannot join while that is so.",
 							name);
 			return false;
@@ -288,11 +283,6 @@ public class HungerGame implements Comparable<HungerGame> {
 		    Plugin.error(player, "%s is currently not enabled.", name);
 		    return false;
 	    }
-	    if (!Plugin.hasInventoryBeenCleared(player)) {// TODO inventory saving
-		Plugin.error(player, 
-			"You must clear your inventory first (Be sure to check you're not wearing armor either).");
-		return false;
-	    }
 	    
 	    if (spawnsTaken.size() >= spawnPoints.size()) {
 			Plugin.error(player, "%s is already full.", name);
@@ -305,6 +295,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		    loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 	    }
 	    spawnsTaken.put(player, loc);
+	    savedInventories.put(player, new InventorySave(player));
+	    player.getInventory().clear();
 	    player.teleport(loc);
 	    if (!isRunning) {
 		    Plugin.freezePlayer(player);
@@ -324,8 +316,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		playerLeaving(player);
 		dropInventory(player);
-		if(isRunning) {// TODO player leave = out of lives config option
-		    stats.get(player).die();
+		loadSavedInventory(player);
+		if(isRunning) {
+		    stats.get(player).death();
 		}
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
@@ -337,7 +330,13 @@ public class HungerGame implements Comparable<HungerGame> {
 	private synchronized void playerLeaving(Player player) {
 		spawnsTaken.remove(player);
 		Plugin.unfreezePlayer(player);
+		savedInventories.remove(player).loadInventoryTo(player);
 		if(spawn != null) GameManager.addPlayerRespawn(player, spawn);
+	}
+	
+	private void loadSavedInventory(Player player) {
+		if(!savedInventories.containsKey(player)) return;
+		savedInventories.remove(player).loadInventoryTo(player);
 	}
 
 	private void clear() {
@@ -375,10 +374,11 @@ public class HungerGame implements Comparable<HungerGame> {
 				Plugin.broadcast("%s has won the game %s! Congratulations!",
 						winner.getName(), name);
 				playerLeaving(winner);
-				if(!Config.getWinnerKeepsItems(setup)){
+				if(!Config.getGlobalWinnerKeepsItems()){
 				    dropInventory(winner);
 				}
 				teleportPlayerToSpawn(winner);
+				loadSavedInventory(winner);
 			}
 			isRunning = false;
 			// TODO possible end game event here
@@ -437,10 +437,11 @@ public class HungerGame implements Comparable<HungerGame> {
 		killedStat.death();
 		if(killedStat.hasRunOutOfLives()) {
 			playerLeaving(killed);
+			loadSavedInventory(killed);
 		}
 		
 		else {
-			if(Config.shouldRespawnAtSpawnPoint(setup)) {
+			if(Config.shouldRespawnAtSpawnPointGlobal()) {
 				Random rand = Plugin.getRandom();
 				Location respawn = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 				GameManager.addPlayerRespawn(killed, respawn);
@@ -477,7 +478,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void listStats(Player player) {
-		Plugin.send(player, "<name>[kills], %sGreen: alive, %sRed: dead",
+		Plugin.send(player, "<name>[lives/kills]",
 				ChatColor.GREEN.toString(), ChatColor.RED.toString());
 		Plugin.send(player, "");
 		List<Player> players = new ArrayList<Player>(stats.keySet());
@@ -486,10 +487,8 @@ public class HungerGame implements Comparable<HungerGame> {
 			for (int i = cntr; i < cntr + 5 && i < stats.size(); i++) {
 				Player p = players.get(i);
 				PlayerStat stat = stats.get(p);
-				ChatColor color = stat.hasRunOutOfLives() ? ChatColor.RED
-						: ChatColor.GREEN;
-				mess += String.format("%s%s[%d]", color.toString(), p,
-						stat.getKills());
+				mess += String.format("%s[%d/%d]", p,
+						stat.getDeaths(), stat.getKills()); //TODO stat.getDeaths() - maxLives
 				if (i < cntr + 4 && cntr < stats.size() - 1) {
 					mess += ", ";
 				}
@@ -571,7 +570,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	private static void dropInventory(Player player) {
 		for (ItemStack i : player.getInventory().getContents()) {
-			if (i == null) continue;
+			if (i == null || i.getType().equals(Material.AIR)) continue;
 			player.getWorld().dropItemNaturally(player.getLocation(), i);
 		}
 		player.getInventory().clear();
@@ -585,22 +584,6 @@ public class HungerGame implements Comparable<HungerGame> {
 		isCounting = counting;
 	}
 
-	public String getSetup() {
-	    return (setup == null || "".equals(setup)) ? null : setup;
-	}
-	
-	public List<String> getItemSets(){
-	    return itemsets;
-	}
-	
-	public void addItemSet(String name){
-	    itemsets.add(name);
-	}
-	
-	public void removeItemSet(String name){
-	    itemsets.remove(name);
-	}
-	
 	// sorts players by name ignoring caps
 	private class PlayerComparator implements Comparator<Player> {
 
