@@ -61,6 +61,10 @@ public class Config {// TODO defaults
 		return plugin.getConfig().getLong("properties.update-delay");
 	}
 	
+	public static boolean getWinnerKeepsItems(){
+		return plugin.getConfig().getBoolean("properties.winner-keeps-items");
+	}
+	
 	public static Map<ItemStack, Float> getChestLoot() {// TODO multiple different game
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();

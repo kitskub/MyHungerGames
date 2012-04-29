@@ -328,7 +328,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
-			checkForGameOver();
+			checkForGameOver(false);
 		}
 		return true;
 	}
@@ -362,7 +362,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-	public void checkForGameOver() {
+	public void checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 		if (isOver()) {
 			Player winner = getSurvivor();
 			if (winner == null) {
@@ -372,33 +372,35 @@ public class HungerGame implements Comparable<HungerGame> {
 				Plugin.broadcast("%s has won the game %s! Congratulations!",
 						winner.getName(), name);
 				playerLeaving(winner);
+				if(!Config.getWinnerKeepsItems()){
+				    dropInventory(winner);
+				}
 				teleportPlayerToSpawn(winner);
 			}
 			isRunning = false;
 			// TODO possible end game event here
 			clear();
+			return;
 		}
-
-		else {
-			List<Player> remaining = new ArrayList<Player>();
-			for (Player player : stats.keySet()) {
-				if (!stats.get(player).isDead()) {
-					remaining.add(player);
-				}
-
+		
+		if(!notifyOfRemaining) return;
+		List<Player> remaining = new ArrayList<Player>();
+		for (Player player : stats.keySet()) {
+			if (!stats.get(player).isDead()) {
+				remaining.add(player);
 			}
 
-			String mess = "Remaining players: ";
-			for (int cntr = 0; cntr < remaining.size(); cntr++) {
-				mess += remaining.get(cntr);
-				if (cntr < remaining.size() - 1) {
-					mess += ", ";
-				}
-
-			}
-			Plugin.broadcastRaw(mess, ChatColor.WHITE);
 		}
 
+		String mess = "Remaining players: ";
+		for (int cntr = 0; cntr < remaining.size(); cntr++) {
+			mess += remaining.get(cntr).getName();
+			if (cntr < remaining.size() - 1) {
+				mess += ", ";
+			}
+
+		}
+		Plugin.broadcastRaw(mess, ChatColor.WHITE);
 	}
 
 	public String getInfo() {
@@ -430,7 +432,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		PlayerStat killedStat = getPlayerStat(killed);
 		killedStat.setDead(true);
 		playerLeaving(killed);
-		checkForGameOver();
+		checkForGameOver(false);
 	}
 
 	private Player getSurvivor() {

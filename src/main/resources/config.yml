@@ -11,6 +11,7 @@ properties:
     update-delay: 30
     min-players: 2
     allow-rejoin: true
+    winner-keeps-items: true
 chest-loot:
 # Example loot. Note DURABIlITY is an enchantment
 #    DIAMOND_PICKAXE:
