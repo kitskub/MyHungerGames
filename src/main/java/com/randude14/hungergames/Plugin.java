@@ -11,9 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URL;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,10 +37,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.register.BukkitPermission;
+import com.randude14.hungergames.register.Economy;
+import com.randude14.hungergames.register.Permission;
+import com.randude14.hungergames.register.VaultPermission;
+
 import org.bukkit.Bukkit;
 
 public class Plugin extends JavaPlugin implements Listener {
@@ -87,16 +88,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
 		}
-		if (!setupPermission()) {
-			info("Permissions were not found, shutting down.");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-		if (!setupEconomy()) {
-			info("Economy was not found, shutting down.");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
+		loadRegistry();
 		callTasks();
 		GameManager.loadGames();
 		info("Games loaded.");
@@ -124,36 +116,41 @@ public class Plugin extends JavaPlugin implements Listener {
 		info("Games saved.");
 		info("Disabled.");
 	}
+	
+	private static void loadRegistry() {
+		if (!VaultPermission.isVaultInstalled()) {
+			info("Vault is not installed, defaulting to Bukkit perms.");
+			perm = new BukkitPermission();
+			return;
+		}
+		else {
+			perm = new VaultPermission();
+		}
+		
+		if(!Economy.isVaultInstalled()) {
+			warning("Vault is not installed, economy use disabled.");
+			econ = null;
+		}
+		else {
+			econ = new Economy();
+		}
+		
+	}
 
 	public static void reload() {
 		instance.reloadConfig();
 		chestLoot = Config.getGlobalChestLoot();
 		sponsorLoot = Config.getGlobalSponsorLoot();
 		GameManager.loadGames();
+		loadRegistry();
 		for (Player player : sponsors.keySet()) {
 			error(player,
 					"The items available for sponsoring have recently changed. Here are the new items...");
-			addSponsor(player, sponsors.get(player));
+			addSponsor(player, sponsors.remove(player));
 		}
 
 	}
-
-	private static boolean setupPermission() {
-		RegisteredServiceProvider<Permission> provider = Bukkit.getServer()
-				.getServicesManager().getRegistration(Permission.class);
-		if(provider == null) return false;
-		perm = provider.getProvider();
-		return perm != null;
-	}
-
-	private static boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> provider = Bukkit.getServer()
-				.getServicesManager().getRegistration(Economy.class);
-		if (provider == null) return false;
-		econ = provider.getProvider();
-		return econ != null;
-	}
-
+	
 	public static void info(String format, Object... args) {
 		logger.log(Level.INFO, getLogPrefix() + String.format(format, args));
 	}
@@ -271,13 +268,41 @@ public class Plugin extends JavaPlugin implements Listener {
 		String world = p.getWorld().getName();
 		String player = p.getName();
 		String permission = perm.getPermission();
-		return Plugin.perm.has(world, player, permission);
+		return Plugin.perm.hasPermission(player, world, permission);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
 		return loc1.getBlockX() == loc2.getBlockX()
 				&& loc1.getBlockY() == loc2.getBlockY()
 				&& loc1.getBlockZ() == loc2.getBlockZ();
+	}
+	
+	public static boolean isEconomyEnabled() {
+		return econ != null;
+	}
+	
+	public static void withdraw(Player player, double amount) {
+		if(!isEconomyEnabled()) {
+			error(player, "Economy use has been disabled.");
+			return;
+		}
+		econ.withdraw(player.getName(), amount);
+	}
+	
+	public static void deposit(Player player, double amount) {
+		if(!isEconomyEnabled()) {
+			error(player, "Economy use has been disabled.");
+			return;
+		}
+		econ.deposit(player.getName(), amount);
+	}
+	
+	public static boolean hasEnough(Player player, double amount) {
+		if(!isEconomyEnabled()) {
+			error(player, "Economy use has been disabled.");
+			return false;
+		}
+		return econ.hasEnough(player.getName(), amount);
 	}
 
 	public static boolean isChest(Location loc) {
@@ -337,6 +362,9 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 
 		else {
+			if(!isEconomyEnabled()) {
+				error(player, "Economy use has been disabled.");
+			}
 			sponsors.put(player, playerToBeSponsored);
 			send(player, ChatColor.GREEN, getHeadLiner());
 			send(player, ChatColor.YELLOW,
@@ -491,12 +519,11 @@ public class Plugin extends JavaPlugin implements Listener {
 		ItemStack item = new ArrayList<ItemStack>(sponsorLoot.keySet())
 				.get(choice);
 		double price = sponsorLoot.get(item);
-		String name = beingSponsored.getName();
-		if (!econ.has(name, price)) {
+		if (!hasEnough(beingSponsored, price)) {
 			error(player, String.format("You do not have enough money."));
 			return;
 		}
-		econ.withdrawPlayer(name, price);
+		withdraw(player, price);
 		if (item.getEnchantments().isEmpty()) {
 			send(beingSponsored, "%s has sponsored you %d %s(s).",
 					player.getName(), item.getAmount(), item.getType().name());
