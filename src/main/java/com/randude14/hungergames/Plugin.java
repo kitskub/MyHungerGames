@@ -23,7 +23,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -39,7 +38,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,7 +55,6 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static GameManager manager;
 	private static Random rand;
 	private static Map<Player, Location> frozenPlayers;
-	private static Map<Player, Location> playerRespawns;
 	private static Map<Player, String> chestAdders;
 	private static Map<Player, String> chestRemovers;
 	private static Map<Player, String> spawnAdders;
@@ -75,7 +72,6 @@ public class Plugin extends JavaPlugin implements Listener {
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		frozenPlayers = new HashMap<Player, Location>();
-		playerRespawns = new HashMap<Player, Location>();
 		chestAdders = new HashMap<Player, String>();
 		chestRemovers = new HashMap<Player, String>();
 		spawnAdders = new HashMap<Player, String>();
@@ -314,10 +310,6 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	public static boolean isPlayerFrozen(Player player) {
 		return frozenPlayers.containsKey(player);
-	}
-	
-	public static void addPlayerRespawn(Player player, Location respawn) {
-		playerRespawns.put(player, respawn);
 	}
 
 	public static void addChestAdder(Player player, String name) {
@@ -635,24 +627,6 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		}
 
-	}
-
-	public static boolean hasInventoryBeenCleared(Player player) {
-		PlayerInventory inventory = player.getInventory();
-		for (ItemStack item : inventory.getContents()) {
-			if (item != null && item.getType() != Material.AIR) {
-				return false;
-			}
-
-		}
-
-		for (ItemStack item : inventory.getArmorContents()) {
-			if (item != null && item.getType() != Material.AIR) {
-				return false;
-			}
-
-		}
-		return true;
 	}
 
 	public static void fillChest(Chest chest, String[] setups) {
