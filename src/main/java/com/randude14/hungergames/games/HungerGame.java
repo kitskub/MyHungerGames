@@ -253,29 +253,10 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		spawnsTaken.remove(player);
-		if (spawnsTaken.size() >= spawnPoints.size()) {
-			Plugin.error(player, "%s is already full.", name);
-			return false;
-		}
-		Random rand = Plugin.getRandom();
-		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		while (spawnTaken(loc)) {
-			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		}
-		spawnsTaken.put(player, loc);
-		player.teleport(loc);
-		if (!isRunning) {
-			Plugin.freezePlayer(player);
-		}
-		return true;
+		return addPlayer(player);
 	}
 
 	public synchronized boolean join(Player player) {
-		if (!enabled) {
-			Plugin.error(player, "%s is currently not enabled.", 
-				name);
-			return false;
-		}
 		if (stats.containsKey(player)) {
 			Plugin.error(player, "You are already in this game.");
 			return false;
@@ -285,30 +266,41 @@ public class HungerGame implements Comparable<HungerGame> {
 							name);
 			return false;
 		}
-
-		if (!Plugin.hasInventoryBeenCleared(player)) {// TODO inventory saving
-			Plugin.error(player,
-					"You must clear your inventory first (Be sure to check you're not wearing armor either).");
-			return false;
-		}
-		if (spawnsTaken.size() >= spawnPoints.size()) {
-			Plugin.error(player, "%s is already full.", name);
-			return false;
-		}
-		Random rand = Plugin.getRandom();
-		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		while (spawnTaken(loc)) {
-			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		}
-		spawnsTaken.put(player, loc);
+		
+		if(!addPlayer(player)) return false;
+		
 		stats.put(player, new PlayerStat());
-		player.teleport(loc);
-		if (!isRunning) {
-			Plugin.freezePlayer(player);
-		}
 		return true;
 	}
 
+	public synchronized boolean addPlayer(Player player){
+	    if (!enabled) {
+		    Plugin.error(player, "%s is currently not enabled.", name);
+		    return false;
+	    }
+	    if (!Plugin.hasInventoryBeenCleared(player)) {// TODO inventory saving
+		Plugin.error(player, 
+			"You must clear your inventory first (Be sure to check you're not wearing armor either).");
+		return false;
+	    }
+	    
+	    if (spawnsTaken.size() >= spawnPoints.size()) {
+			Plugin.error(player, "%s is already full.", name);
+			return false;
+	    }
+	    
+	    Random rand = Plugin.getRandom();
+	    Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+	    while (spawnTaken(loc)) {
+		    loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+	    }
+	    spawnsTaken.put(player, loc);
+	    player.teleport(loc);
+	    if (!isRunning) {
+		    Plugin.freezePlayer(player);
+	    }
+	    return true;
+	}
 	private boolean spawnTaken(Location loc) {
 		if(spawnsTaken.containsValue(loc)) return true;
 

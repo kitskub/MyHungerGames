@@ -6,11 +6,17 @@ properties:
     vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
     default-game: 'Test'
     default-time: 10
+    # Number of players required to auto-start
     min-vote: 5
+    # If players can join a game while it is running
     allow-join-during-game: false
+    # In minutes, the number of time to wait between update checks
     update-delay: 30
+    # Number of players required to start at all
     min-players: 2
+    # If a player can rejoin a game. NOTE: player cannot have left or died.
     allow-rejoin: true
+    # If a winner gets to keep his items
     winner-keeps-items: true
 chest-loot:
 # Example loot. Note DURABIlITY is an enchantment
