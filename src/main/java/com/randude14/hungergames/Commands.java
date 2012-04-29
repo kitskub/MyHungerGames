@@ -311,18 +311,18 @@ public class Commands implements CommandExecutor {
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s add spawnpoint <game name> - add a spawnpoint.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add chest <game name> - add a chest.", args[0]);
+					"- /%s add chest <game name> - add a chest.", Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add game <game name> <setup> - add a game.", args[0]);
+					"- /%s add game <game name> <setup> - add a game.", Plugin.CMD_ADMIN);
 			return true;
 		}
 
 		HungerGame game = null;
 		if ("spawnpoint".equals(args[1])) {
 			if (args.length == 2) {
-				Plugin.send(player, "/%s add spawnpoint <game name>", args[0]);
+				Plugin.send(player, "/%s add spawnpoint <game name>", Plugin.CMD_ADMIN);
 				return true;
 			}
 
@@ -339,7 +339,7 @@ public class Commands implements CommandExecutor {
 
 		else if ("chest".equals(args[1])) {
 			if (args.length == 2) {
-				Plugin.help(player, "/%s add chest <game name>", args[0]);
+				Plugin.help(player, "/%s add chest <game name>", Plugin.CMD_ADMIN);
 				return true;
 			}
 
@@ -356,7 +356,7 @@ public class Commands implements CommandExecutor {
 
 		else if ("game".equals(args[1])) {
 			if (args.length == 2) {
-				Plugin.help(player, "/%s add game <game name>", args[0]);
+				Plugin.help(player, "/%s add game <game name>", Plugin.CMD_ADMIN);
 			}
 
 			if (GameManager.doesNameExist(args[2])) {
@@ -390,13 +390,13 @@ public class Commands implements CommandExecutor {
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s remove spawnpoint <game name> - remove a spawnpoint.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s remove chest <game name> - remove a chest.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s remove game <game name> - remove a game.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			return true;
 		}
 
@@ -404,7 +404,7 @@ public class Commands implements CommandExecutor {
 		if ("spawnpoint".equals(args[1])) {
 			if (args.length == 2) {
 				Plugin.help(player, "/%s remove spawnpoint <game name>",
-						args[0]);
+						Plugin.CMD_ADMIN);
 				return true;
 			}
 
@@ -422,7 +422,7 @@ public class Commands implements CommandExecutor {
 
 		else if ("chest".equals(args[1])) {
 			if (args.length == 2) {
-				Plugin.help(player, "/%s remove chest <game name>", args[0]);
+				Plugin.help(player, "/%s remove chest <game name>", Plugin.CMD_ADMIN);
 				return true;
 			}
 
@@ -439,7 +439,7 @@ public class Commands implements CommandExecutor {
 
 		else if ("game".equals(args[1])) {
 			if (args.length == 2) {
-				Plugin.help(player, "/%s remove game <game name>", args[0]);
+				Plugin.help(player, "/%s remove game <game name>", Plugin.CMD_ADMIN);
 				return true;
 			}
 
@@ -473,12 +473,12 @@ public class Commands implements CommandExecutor {
 					player,
 					ChatColor.GOLD,
 					"- /%s set spawn <game name> - set the spawnpoint for a game.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			Plugin.send(
 					player,
 					ChatColor.GOLD,
 					"- /%s set enabled <game name> <true/false> - enable or disable a game.",
-					args[0]);
+					Plugin.CMD_ADMIN);
 			return true;
 		}
 
@@ -486,7 +486,7 @@ public class Commands implements CommandExecutor {
 		if ("spawn".equals(args[1])) {
 			if (args.length < 3) {
 				Plugin.send(player, ChatColor.GOLD,
-						"/%s set spawn <game name>", args[0]);
+						"/%s set spawn <game name>", Plugin.CMD_ADMIN);
 				return true;
 			}
 			game = GameManager.getGame(args[2]);
@@ -501,7 +501,7 @@ public class Commands implements CommandExecutor {
 		else if ("enabled".equals(args[1])) {
 			if (args.length < 3) {
 				Plugin.send(player, ChatColor.GOLD,
-						"/%s set enabled <game name> <true/false>", args[0]);
+						"/%s set enabled <game name> <true/false>", Plugin.CMD_ADMIN);
 				return true;
 			}
 
