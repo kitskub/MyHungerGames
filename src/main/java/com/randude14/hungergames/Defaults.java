@@ -8,7 +8,7 @@ public class Defaults {
     
     public enum Perm {
 
-	AMDMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint"),
+	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint"),
 	ADMIN_ADD_CHEST("hungergame.add.chest"),
 	ADMIN_ADD_GAME("hungergame.add.game"),
 	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint"),

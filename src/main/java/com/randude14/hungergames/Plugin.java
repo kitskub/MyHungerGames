@@ -270,10 +270,11 @@ public class Plugin extends JavaPlugin implements Listener {
 		Plugin.error(player, "%s does not exist.", s);
 	}
 
-	public static boolean hasPermission(Player p, String permission) {
+	public static boolean hasPermission(Player p, Defaults.Perm perm) {
 		String world = p.getWorld().getName();
 		String player = p.getName();
-		return perm.has(world, player, permission);
+		String permission = perm.getPermission();
+		return Plugin.perm.has(world, player, permission);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
@@ -681,7 +682,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return instance;
 	}
 
-	public static boolean checkPermission(Player player, String perm) {
+	public static boolean checkPermission(Player player, Defaults.Perm perm) {
 		if (!Plugin.hasPermission(player, perm)) {
 			error(player, "You do not have permission.");
 			return false;
