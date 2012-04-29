@@ -31,8 +31,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -55,10 +56,10 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static GameManager manager;
 	private static Random rand;
 	private static Map<Player, Location> frozenPlayers;
-	private static Map<Player, String> chestAdders;
-	private static Map<Player, String> chestRemovers;
-	private static Map<Player, String> spawnAdders;
-	private static Map<Player, String> spawnRemovers;
+	private static Map<Player, Session> chestAdders;
+	private static Map<Player, Session> chestRemovers;
+	private static Map<Player, Session> spawnAdders;
+	private static Map<Player, Session> spawnRemovers;
 	private static Map<Player, String> sponsors;
 	private static Map<ItemStack, Float> chestLoot;
 	private static Map<ItemStack, Double> sponsorLoot;
@@ -72,10 +73,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		frozenPlayers = new HashMap<Player, Location>();
-		chestAdders = new HashMap<Player, String>();
-		chestRemovers = new HashMap<Player, String>();
-		spawnAdders = new HashMap<Player, String>();
-		spawnRemovers = new HashMap<Player, String>();
+		chestAdders = new HashMap<Player, Session>();
+		chestRemovers = new HashMap<Player, Session>();
+		spawnAdders = new HashMap<Player, Session>();
+		spawnRemovers = new HashMap<Player, Session>();
 		sponsors = new HashMap<Player, String>();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
@@ -98,8 +99,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		callTasks();
 		GameManager.loadGames();
-		info("games loaded.");
-		info("enabled.");
+		info("Games loaded.");
+		info("Enabled.");
 	}
 
 	private void callTasks() {
@@ -313,19 +314,20 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static void addChestAdder(Player player, String name) {
-		chestAdders.put(player, name);
+		Session session = new Session(name);
+		chestAdders.put(player, session);
 	}
 
 	public static void addChestRemover(Player player, String name) {
-		chestRemovers.put(player, name);
+		chestRemovers.put(player, new Session(name));
 	}
 
 	public static void addSpawnAdder(Player player, String name) {
-		spawnAdders.put(player, name);
+		spawnAdders.put(player, new Session(name));
 	}
 
 	public static void addSpawnRemover(Player player, String name) {
-		spawnRemovers.put(player, name);
+		spawnRemovers.put(player, new Session(name));
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
@@ -522,107 +524,142 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void playerHitBlock(BlockDamageEvent event) {
+	public void playerClickedBlock(PlayerInteractEvent event) {
 		if (event.isCancelled()) {
 			return;
 		}
 		Player player = event.getPlayer();
-
+		Action action = event.getAction();
+		if(!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
+			return;
+		}
 		if (chestAdders.containsKey(player)) {
-			String name = chestAdders.remove(player);
-			HungerGame game = GameManager.getGame(name);
+			Session session = chestAdders.get(player);
+			HungerGame game = session.getGame();
 			if (game == null) {
 				error(player,
 						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
-			Block block = event.getBlock();
-			if (!(block.getState() instanceof Chest)) {
-				error(player, "Block is not a chest.");
-				return;
-			}
-			if (game.addChest(block.getLocation())) {
-				send(player, "Chest has been added to %s.", game.getName());
-			}
+			Block block = event.getClickedBlock();
+			if(action == Action.LEFT_CLICK_BLOCK) {
+				if (!(block.getState() instanceof Chest)) {
+					error(player, "Block is not a chest.");
+					return;
+				}
+				if (game.addChest(block.getLocation())) {
+					send(player, "Chest has been added to %s.", game.getName());
+				}
 
+				else {
+					error(player, "Chest has already been added to game %s.",
+							game.getName());
+				}
+				session.clicked();
+			}
+			
 			else {
-				error(player, "Chest has already been added to game %s.",
-						game.getName());
+				send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
+				chestAdders.remove(player);
 			}
 
 		}
 
 		else if (chestRemovers.containsKey(player)) {
-			String name = chestRemovers.remove(player);
-			HungerGame game = GameManager.getGame(name);
+			Session session = chestRemovers.get(player);
+			HungerGame game = session.getGame();
 			if (game == null) {
 				error(player,
 						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
-			Block block = event.getBlock();
-			if (!(block.getState() instanceof Chest)) {
-				error(player, "Block is not a chest.");
-				return;
-			}
-			if (game.removeChest(block.getLocation())) {
-				send(player, "Chest has been removed from %s.", game.getName());
-			}
+			Block block = event.getClickedBlock();
+			if(action == Action.LEFT_CLICK_BLOCK) {
+				if (!(block.getState() instanceof Chest)) {
+					error(player, "Block is not a chest.");
+					return;
+				}
+				if (game.removeChest(block.getLocation())) {
+					send(player, "Chest has been removed from %s.", game.getName());
+				}
 
+				else {
+					error(player, "%s does not contain this chest.", game.getName());
+				}
+				session.clicked();
+			}
+			
 			else {
-				error(player, "%s does not contain this chest.", game.getName());
+				send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
+				chestRemovers.remove(player);
 			}
 
 		}
 
 		else if (spawnAdders.containsKey(player)) {
-			String name = spawnAdders.remove(player);
-			HungerGame game = GameManager.getGame(name);
+			Session session = spawnAdders.get(player);
+			HungerGame game = session.getGame();
 			if (game == null) {
 				error(player,
 						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
-			Location loc = event.getBlock().getLocation();
+			Location loc = event.getClickedBlock().getLocation();
 			World world = loc.getWorld();
 			double x = loc.getBlockX() + 0.5;
 			double y = loc.getBlockY() + 1;
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
-			if (game.addSpawnPoint(loc)) {
-				send(player, "Spawn point has been added to %s.",
-						game.getName());
-			}
+			if(action == Action.LEFT_CLICK_BLOCK) {
+				if (game.addSpawnPoint(loc)) {
+					send(player, "Spawn point has been added to %s.",
+							game.getName());
+				}
 
+				else {
+					error(player, "%s already has this spawn point.",
+							game.getName());
+				}
+				session.clicked();
+			}
+			
 			else {
-				error(player, "%s already has this spawn point.",
-						game.getName());
+				send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
+				spawnAdders.remove(player);
 			}
 
 		}
 
 		else if (spawnRemovers.containsKey(player)) {
-			String name = spawnRemovers.remove(player);
-			HungerGame game = GameManager.getGame(name);
+			Session session = spawnRemovers.get(player);
+			HungerGame game = session.getGame();
 			if (game == null) {
 				error(player,
 						"%s has been removed recently due to unknown reasons.");
 				return;
 			}
-			Location loc = event.getBlock().getLocation();
+			Location loc = event.getClickedBlock().getLocation();
 			World world = loc.getWorld();
 			double x = loc.getBlockX() + 0.5;
 			double y = loc.getBlockY() + 1;
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
-			if (game.removeSpawnPoint(loc)) {
-				send(player, "Spawn point has been removed from %s.",
-						game.getName());
-			}
+			if(action == Action.LEFT_CLICK_BLOCK) {
+				if (game.removeSpawnPoint(loc)) {
+					send(player, "Spawn point has been removed from %s.",
+							game.getName());
+				}
 
+				else {
+					error(player, "%s does not contain this spawn point.",
+							game.getName());
+				}
+				session.clicked();
+			}
+			
 			else {
-				error(player, "%s does not contain this spawn point.",
-						game.getName());
+				send(player, "You have removed %d spawn points from the game %s.", session.getBlocks(), game.getName());
+				spawnRemovers.remove(player);
 			}
 
 		}
@@ -662,6 +699,29 @@ public class Plugin extends JavaPlugin implements Listener {
 			return false;
 		}
 		return true;
+	}
+	
+	private static class Session {
+		private int blocks;
+		private String game;
+		
+		public Session(String game) {
+			this.game = game;
+			this.blocks = 0;
+		}
+		
+		public HungerGame getGame() {
+			return GameManager.getGame(game);
+		}
+		
+		public void clicked() {
+			blocks++;
+		}
+		
+		public int getBlocks() {
+			return blocks;
+		}
+
 	}
 
 }

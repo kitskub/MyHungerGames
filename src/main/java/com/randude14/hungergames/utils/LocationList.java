@@ -51,7 +51,6 @@ public class LocationList {
 	}
 	
 	public static boolean remove(Location loc) {
-		Plugin plugin = Plugin.getInstance();
 		for(int cntr = 0;cntr < locs.size();cntr++) {
 			if(Plugin.equals(locs.get(cntr), loc)) {
 				locs.remove(cntr);
@@ -63,7 +62,6 @@ public class LocationList {
 	}
 	
 	public static boolean contains(Location loc) {
-		Plugin plugin = Plugin.getInstance();
 		for(Location comp : locs) {
 			if(Plugin.equals(comp, loc)) {
 				return true;
