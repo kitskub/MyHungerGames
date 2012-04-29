@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.Defaults.Perm;
 import org.bukkit.Bukkit;
 
 public class Commands implements CommandExecutor {
@@ -31,14 +32,14 @@ public class Commands implements CommandExecutor {
 	private void handleUserCommand(Player player, Command cmd, String[] args) {
 		HungerGame game = null;
 		if (args.length == 0) {
-			if (!Plugin.checkPermission(player, Perm.user_help))
+			if (!Plugin.checkPermission(player, Perm.USER_HELP))
 				return;
 			getUserCommands(player, cmd);
 			return;
 		}
 
 		else if ("list".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_list))
+			if (!Plugin.checkPermission(player, Perm.USER_LIST))
 				return;
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 			Collection<HungerGame> games = GameManager.getGames();
@@ -53,7 +54,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("join".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_join))
+			if (!Plugin.checkPermission(player, Perm.USER_JOIN))
 				return;
 			String name = (args.length == 1) ? Config.getDefaultGame()
 					: args[1];
@@ -84,7 +85,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("leave".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_leave))
+			if (!Plugin.checkPermission(player, Perm.USER_LEAVE))
 				return;
 
 			game = GameManager.getSession(player);
@@ -103,7 +104,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("rejoin".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_rejoin))
+			if (!Plugin.checkPermission(player, Perm.USER_REJOIN))
 				return;
 			game = GameManager.getSession(player);
 			if (game != null) {
@@ -127,7 +128,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("sponsor".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_sponsor))
+			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR))
 				return;
 
 			if (args.length < 2) {
@@ -149,7 +150,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("vote".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_vote))
+			if (!Plugin.checkPermission(player, Perm.USER_VOTE))
 				return;
 
 			game = GameManager.getSession(player);
@@ -165,7 +166,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("stat".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.user_stat))
+			if (!Plugin.checkPermission(player, Perm.USER_STAT))
 				return;
 
 			if (args.length == 1) {
@@ -185,7 +186,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else {
-			if (!Plugin.checkPermission(player, Perm.user_help))
+			if (!Plugin.checkPermission(player, Perm.USER_HELP))
 				return;
 			getUserCommands(player, cmd);
 		}
@@ -197,7 +198,7 @@ public class Commands implements CommandExecutor {
 		GameManager GameManager = Plugin.getGameManager();
 
 		if (args.length == 0) {
-			if (!Plugin.hasPermission(player, Perm.admin_help))
+			if (!Plugin.hasPermission(player, Perm.ADMIN_HELP))
 				return;
 			getAdminCommands(player, cmd);
 			return;
@@ -216,7 +217,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("kick".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.admin_kick))
+			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK))
 				return;
 
 			if (args.length == 1) {
@@ -249,7 +250,7 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("start".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.admin_start))
+			if (!Plugin.checkPermission(player, Perm.ADMIN_START))
 				return;
 
 			if (args.length == 1) {
@@ -285,13 +286,13 @@ public class Commands implements CommandExecutor {
 		}
 
 		else if ("reload".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.admin_reload))
+			if (!Plugin.checkPermission(player, Perm.ADMIN_RELOAD))
 				return;
 			Plugin.reload();
 			Plugin.send(player, Plugin.getPrefix() + "Reloaded v%s", Plugin
 					.getInstance().getDescription().getVersion());
 		} else {
-			if (!Plugin.checkPermission(player, Perm.admin_help))
+			if (!Plugin.checkPermission(player, Perm.ADMIN_HELP))
 				return;
 			getAdminCommands(player, cmd);
 		}
@@ -299,9 +300,9 @@ public class Commands implements CommandExecutor {
 	}
 
 	private boolean addCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.admin_add_chest)
-				&& !Plugin.hasPermission(player, Perm.admin_add_spawnpoint)
-				&& !Plugin.hasPermission(player, Perm.admin_add_game)) {
+		if (!Plugin.hasPermission(player, Perm.ADMIN_ADD_CHEST)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)) {
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}
@@ -378,9 +379,9 @@ public class Commands implements CommandExecutor {
 	}
 
 	private boolean removeCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.admin_remove_chest)
-				&& !Plugin.hasPermission(player, Perm.admin_remove_spawnpoint)
-				&& !Plugin.hasPermission(player, Perm.admin_remove_game)) {
+		if (!Plugin.hasPermission(player, Perm.ADMIN_REMOVE_CHEST)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_GAME)) {
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}
@@ -460,8 +461,8 @@ public class Commands implements CommandExecutor {
 	}
 
 	private boolean setCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.admin_set_enabled)
-				&& !Plugin.hasPermission(player, Perm.admin_set_spawn)) {
+		if (!Plugin.hasPermission(player, Perm.ADMIN_SET_ENABLED)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_SET_SPAWN)) {
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}
