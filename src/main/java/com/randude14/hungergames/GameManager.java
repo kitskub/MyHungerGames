@@ -47,6 +47,7 @@ public class GameManager implements Listener {
 	    }
 	    return attempt;
 	}
+	
 	public static boolean removeGame(String name) {
 	    HungerGame game = getGame(name);
 	    if(game == null) return false;

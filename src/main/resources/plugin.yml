@@ -1,6 +1,6 @@
 name: HungerGames
 main: com.randude14.hungergames.Plugin
-version: 0.1.4
+version: 0.2.0
 authors: [Randude14, kitskub]
 
 commands:
@@ -18,9 +18,11 @@ permissions:
             hungergame.add.game: false
             hungergame.add.spawnpoint: false
             hungergame.add.chest: false
+            hungergame.add.itemset: false
             hungergame.remove.game: false
             hungergame.remove.spawnpoint: false
             hungergame.remove.chest: false
+            hungergame.remove.itemset: false
             hungergame.set.enabled: false
             hungergame.set.spawn: false
             hungergame.game.start: false
@@ -48,6 +50,9 @@ permissions:
     hungergame.add.chest:
         default: false
         description: add a chest
+    hungergame.add.itemset:
+        default: false
+        description: add an itemset
     hungergame.remove.game:
         default: false
         description: remove a game

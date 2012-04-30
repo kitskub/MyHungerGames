@@ -229,6 +229,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		readyToPlay.removeAll(readyToPlay);
 	}
 
+	// TODO stopGame()
+	
 	public void releasePlayers() {
 		for (Player p : stats.keySet()) {
 			Plugin.unfreezePlayer(p);
@@ -243,7 +245,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				continue;
 			}
 			Chest chest = (Chest) loc.getBlock().getState();
-			Plugin.fillChest(chest, null);
+			Plugin.fillChest(chest, itemsets);
 		}
 
 	}
