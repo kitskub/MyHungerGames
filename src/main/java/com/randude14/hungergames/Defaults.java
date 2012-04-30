@@ -93,4 +93,41 @@ public class Defaults {
 	}
     }
     
+    public enum CommandUsage{
+		
+	ADMIN_ADD_SPAWNPOINT("/%s add spawnpoint <game name> - add a spawnpoint."),
+	ADMIN_ADD_CHEST("/%s add chest <game name> - add a chest."),
+	ADMIN_ADD_GAME("/%s add game <game name> [setup] - add a game."),
+        ADMIN_ADD_ITEMSET("/%s add itemset <game name> <itemset name> - add an itemset."),
+	ADMIN_REMOVE_SPAWNPOINT("/%s remove spawnpoint <game name> - remove a spawnpoint."),
+	ADMIN_REMOVE_CHEST("/%s remove chest <game name> - remove a chest."),
+	ADMIN_REMOVE_GAME("/%s remove game <game name> - remove a game."),
+	ADMIN_REMOVE_ITEMSET("/%s remove itemset <game name> <itemset name> - remove a game."),
+	ADMIN_SET_ENABLED(""),
+	ADMIN_SET_SPAWN(""),
+	ADMIN_START(""),
+	ADMIN_RELOAD(""),
+	ADMIN_KICK(""),
+	ADMIN_HELP(""),
+	USER_JOIN(""),
+	USER_LEAVE(""),
+	USER_LIST(""),
+	USER_REJOIN(""),
+	USER_SPONSOR(""),
+	USER_VOTE(""),
+	USER_STAT(""),
+	USER_HELP("");
+	
+	private String usage;
+	
+	private CommandUsage(String usage) {
+	    this.usage = usage;
+	}
+	
+	public String getUsage(){
+	    return usage;
+	}
+	
+    }
+    
 }

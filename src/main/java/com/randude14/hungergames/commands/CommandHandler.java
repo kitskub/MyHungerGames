@@ -1,5 +1,6 @@
-package com.randude14.hungergames;
+package com.randude14.hungergames.commands;
 
+import com.randude14.hungergames.Config;
 import java.util.Collection;
 
 import org.bukkit.ChatColor;
@@ -11,9 +12,12 @@ import org.bukkit.entity.Player;
 
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.Defaults.Perm;
+import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Plugin;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 
-public class Commands implements CommandExecutor {
+public class CommandHandler implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
@@ -205,11 +209,11 @@ public class Commands implements CommandExecutor {
 		}
 
 		if ("add".equals(args[0])) {
-			addCommand(player, args);
+			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
 		else if ("remove".equals(args[0])) {
-			removeCommand(player, args);
+			new RemoveCommand().execute(player, cmd, args);
 		}
 
 		else if ("set".equals(args[0])) {
@@ -297,198 +301,6 @@ public class Commands implements CommandExecutor {
 			getAdminCommands(player, cmd);
 		}
 		GameManager.saveGames();// TODO save less
-	}
-
-	private boolean addCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.ADMIN_ADD_CHEST)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_ITEMSET)) {// TODO specific perms for each subcommand
-			Plugin.error(player, "You do not have permission.");
-			return true;
-		}
-
-		if (args.length == 1 || "?".equals(args[1])) {
-			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add spawnpoint <game name> - add a spawnpoint.",
-					Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add chest <game name> - add a chest.", Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add game <game name> <setup> - add a game.", Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s add item <game name> <itemset name> - add an itemset.", Plugin.CMD_ADMIN);
-			return true;
-		}
-
-		HungerGame game = null;
-		if ("spawnpoint".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.send(player, "/%s add spawnpoint <game name>", Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				game = GameManager.getGame(args[2]);
-				Plugin.addSpawnAdder(player, game.getName());
-				Plugin.send(player, ChatColor.GREEN,
-						"Hit a block to add it as a spawn point for %s.",
-						game.getName());
-			} else {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-		}
-
-		else if ("chest".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.help(player, "/%s add chest <game name>", Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				Plugin.addChestAdder(player, args[2]);
-				Plugin.send(player, ChatColor.GREEN,
-						"Hit a chest to add it to %s.",
-						GameManager.getGame(args[2]).getName());
-			} else {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-
-		}
-
-		else if ("game".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.help(player, "/%s add game <game name>", Plugin.CMD_ADMIN);
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				Plugin.error(player, "%s already exists.", args[2]);
-				return true;
-			}
-			if(args.length == 3){
-			    GameManager.createGame(args[2]);
-			}
-			else{
-			    GameManager.createGame(args[2], args[3]);
-			}
-			Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[2]);
-		}
-		
-		else if("itemset".equals(args[1])){
-			if(args.length == 3){
-				Plugin.help(player, "/%s add itemset <game name> <itemset name>", Plugin.CMD_ADMIN);
-			}
-			
-			if (!GameManager.doesNameExist(args[2])) {
-				Plugin.error(player, "%s does not exist.", args[2]);
-				return true;
-			}
-			GameManager.getGame(args[2]).addItemSet(args[3]);
-		}
-		
-		else {
-			Plugin.error(player, "'%s' is not recognized.", args[1]);
-		}
-		return true;
-	}
-
-	private boolean removeCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.ADMIN_REMOVE_CHEST)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_GAME)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) {
-			Plugin.error(player, "You do not have permission.");
-			return true;
-		}
-
-		if (args.length == 1 || "?".equals(args[1])) {
-			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s remove spawnpoint <game name> - remove a spawnpoint.",
-					Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s remove chest <game name> - remove a chest.",
-					Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s remove game <game name> - remove a game.",
-					Plugin.CMD_ADMIN);
-			Plugin.send(player, ChatColor.GOLD,
-					"- /%s remove itemset <game name> <itemset name> - remove a game.",
-					Plugin.CMD_ADMIN);
-			return true;
-		}
-
-		HungerGame game = null;
-		if ("spawnpoint".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.help(player, "/%s remove spawnpoint <game name>",
-						Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				game = GameManager.getGame(args[2]);
-				Plugin.addSpawnRemover(player, game.getName());
-				Plugin.send(player, ChatColor.GREEN,
-						"Hit a spawn point to remove it from %s.",
-						game.getName());
-			} else {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-
-		}
-
-		else if ("chest".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.help(player, "/%s remove chest <game name>", Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				Plugin.addChestRemover(player, args[2]);
-				Plugin.send(player, ChatColor.GREEN,
-						"Hit a chest to remove it from %s.", GameManager
-								.getGame(args[2]).getName());
-			} else {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-
-		}
-
-		else if ("game".equals(args[1])) {
-			if (args.length == 2) {
-				Plugin.help(player, "/%s remove game <game name>", Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			if (GameManager.doesNameExist(args[2])) {
-				GameManager.removeGame(args[2]);
-				Plugin.send(player, ChatColor.GREEN, "%s has been removed.",
-						args[2]);
-			} else {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-
-		}
-		
-		else if("itemset".equals(args[1])){
-			if(args.length == 3){
-				Plugin.help(player, "/%s remove itemset <game name> <itemset name>", Plugin.CMD_ADMIN);
-			}
-			
-			if (!GameManager.doesNameExist(args[2])) {
-				Plugin.error(player, "%s does not exist.", args[2]);
-				return true;
-			}
-			GameManager.getGame(args[2]).removeItemSet(args[3]);
-		}
-		
-		else {
-			Plugin.error(player, "'%s' is not recognized.", args[1]);
-		}
-
-		return true;
 	}
 
 	private boolean setCommand(Player player, String[] args) {

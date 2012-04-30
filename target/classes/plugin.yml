@@ -9,7 +9,7 @@ commands:
         usage:
     hg:
         description: user hungergames command
-        usage:    
+        usage:
         
 permissions:
     hungergame.admin.*:

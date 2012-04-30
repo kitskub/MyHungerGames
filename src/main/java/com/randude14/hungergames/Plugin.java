@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.commands.CommandHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
-		Commands commands = new Commands();
+		CommandHandler commands = new CommandHandler();
 		getCommand(CMD_USER).setExecutor(commands);
 		getCommand(CMD_ADMIN).setExecutor(commands);
 		rand = new Random(getName().hashCode());
@@ -266,7 +267,11 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static void help(Player player, String mess) {
 		player.sendMessage(ChatColor.GOLD + mess);
 	}
-
+	
+	public static void helpCommand(Player player, String format, Object... args) {
+		player.sendMessage(ChatColor.GOLD + String.format("- " + format, args));
+	}
+	
 	public static void error(Player player, String format, Object... args) {
 		player.sendMessage(ChatColor.RED + String.format(format, args));
 	}
