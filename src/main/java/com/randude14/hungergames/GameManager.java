@@ -31,14 +31,22 @@ public class GameManager implements Listener {
 	private static Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
 
 	public static boolean createGame(String name) {
-		HungerGame game = new HungerGame(name);
-		boolean attempt = games.add(game);
-		if(attempt){
-		    saveGames();
-		}
-		return attempt;
+	    HungerGame game = new HungerGame(name);
+	    boolean attempt = games.add(game);
+	    if(attempt){
+		saveGames();
+	    }
+	    return attempt;
 	}
 
+	public static boolean createGame(String name, String setup){
+	    HungerGame game = new HungerGame(name, setup);
+	    boolean attempt = games.add(game);
+	    if(attempt){
+		saveGames();
+	    }
+	    return attempt;
+	}
 	public static boolean removeGame(String name) {
 	    HungerGame game = getGame(name);
 	    if(game == null) return false;
@@ -94,7 +102,7 @@ public class GameManager implements Listener {
 			HungerGame gameOfKiller = getSession(killer);
 
 			if (gameOfKilled.equals(gameOfKiller)) {
-				String mess = Config.getGlobalKillMessage()
+				String mess = Config.getKillMessage(gameOfKilled.getSetup())
 						.replace("<killer>", killer.getName())
 						.replace("<killed>", killed.getName())
 						.replace("<game>", gameOfKiller.getName());
@@ -128,11 +136,9 @@ public class GameManager implements Listener {
 
 	private static void playerLeft(Player player) {
 		HungerGame game = getSession(player);
-		if (game == null) {
-			return;
-		}
+		if (game == null) return;
 		game.leave(player);
-		String mess = Config.getGlobalLeaveMessage()
+		String mess = Config.getLeaveMessage(game.getSetup())
 			.replace("<player>", player.getName())
 			.replace("<game>", game.getName());
 		Plugin.broadcast(mess);

@@ -1,6 +1,6 @@
 global:
   default-game: 'Test'
-	# In minutes, the number of time to wait between update checks
+  # In minutes, the number of time to wait between update checks
   update-delay: 30
   # The following are default only, and will be overwritten by the setup, if applicable
   join-message: '<player> has joined the game <game>.'
@@ -21,11 +21,11 @@ global:
   # If a winner gets to keep his items
   winner-keeps-items: true
   chest-loot:
-	# Example loot. Note DURABIlITY is an enchantment
-	#    DIAMOND_PICKAXE:
-	#        stack-size: 1
-	#        chance: 0.01
-	#        DURABILITY: 3
+  # Example loot. Note DURABIlITY is an enchantment
+  #    DIAMOND_PICKAXE:
+  #        stack-size: 1
+  #        chance: 0.01
+  #        DURABILITY: 3
   sponsor-loot:
     
 itemsets:

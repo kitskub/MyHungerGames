@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="lib" path="libs/Vault.jar"/>
+	<classpathentry kind="lib" path="target/MyHungerGames-0.1.3.jar"/>
+	<classpathentry kind="lib" path="target/MyHungerGames-0.1.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Randall/Desktop/Jars/craftbukkit-1.2.5-R0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Randall/Desktop/Jars/Vault.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
