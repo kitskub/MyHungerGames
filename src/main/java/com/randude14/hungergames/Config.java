@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,8 +145,17 @@ public class Config {
 		return plugin.getConfig().getBoolean("setups." + setup + ".spawnpoint-on-death", shouldRespawnAtSpawnPointGlobal());
 	}
 	
+	public static List<String> getSetups(){
+		return (List<String>) plugin.getConfig().getConfigurationSection("itemsets").getKeys(false);
+	}
+	
 	// Itemsets
-	public static Map<ItemStack, Float> getAllChestLootWithGlobal(String[] itemsets){
+	
+	public static List<String> getItemSets(){
+		return (List<String>) plugin.getConfig().getConfigurationSection("setups").getKeys(false);
+	}
+	
+	public static Map<ItemStack, Float> getAllChestLootWithGlobal(List<String> itemsets){
 	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
 	    for(String s : itemsets){
 		toRet.putAll(getChestLoot(s));
@@ -154,7 +164,7 @@ public class Config {
 	    return toRet;
 	}
 	
-	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(String[] itemsets){
+	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(List<String> itemsets){
 	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
 	    for(String s : itemsets){
 		toRet.putAll(getSponsorLoot(s));

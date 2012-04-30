@@ -193,7 +193,6 @@ public class Commands implements CommandExecutor {
 		GameManager.saveGames();// TODO save less
 	}
 
-	@SuppressWarnings("static-access")
 	private void handleAdminCommand(Player player, Command cmd, String[] args) {
 		HungerGame game = null;
 		GameManager GameManager = Plugin.getGameManager();
@@ -303,7 +302,8 @@ public class Commands implements CommandExecutor {
 	private boolean addCommand(Player player, String[] args) {
 		if (!Plugin.hasPermission(player, Perm.ADMIN_ADD_CHEST)
 				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)) {// TODO specific perms for each subcommand
+				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_GAME)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_ADD_ITEMSET)) {// TODO specific perms for each subcommand
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}
@@ -317,6 +317,8 @@ public class Commands implements CommandExecutor {
 					"- /%s add chest <game name> - add a chest.", Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s add game <game name> <setup> - add a game.", Plugin.CMD_ADMIN);
+			Plugin.send(player, ChatColor.GOLD,
+					"- /%s add item <game name> <itemset name> - add an itemset.", Plugin.CMD_ADMIN);
 			return true;
 		}
 
@@ -372,7 +374,19 @@ public class Commands implements CommandExecutor {
 			}
 			Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[2]);
 		}
-
+		
+		else if("itemset".equals(args[1])){
+			if(args.length == 3){
+				Plugin.help(player, "/%s add itemset <game name> <itemset name>", Plugin.CMD_ADMIN);
+			}
+			
+			if (!GameManager.doesNameExist(args[2])) {
+				Plugin.error(player, "%s does not exist.", args[2]);
+				return true;
+			}
+			GameManager.getGame(args[2]).addItemSet(args[3]);
+		}
+		
 		else {
 			Plugin.error(player, "'%s' is not recognized.", args[1]);
 		}
@@ -382,7 +396,8 @@ public class Commands implements CommandExecutor {
 	private boolean removeCommand(Player player, String[] args) {
 		if (!Plugin.hasPermission(player, Perm.ADMIN_REMOVE_CHEST)
 				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_GAME)) {
+				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_GAME)
+				&& !Plugin.hasPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) {
 			Plugin.error(player, "You do not have permission.");
 			return true;
 		}
@@ -397,6 +412,9 @@ public class Commands implements CommandExecutor {
 					Plugin.CMD_ADMIN);
 			Plugin.send(player, ChatColor.GOLD,
 					"- /%s remove game <game name> - remove a game.",
+					Plugin.CMD_ADMIN);
+			Plugin.send(player, ChatColor.GOLD,
+					"- /%s remove itemset <game name> <itemset name> - remove a game.",
 					Plugin.CMD_ADMIN);
 			return true;
 		}
@@ -453,7 +471,19 @@ public class Commands implements CommandExecutor {
 			}
 
 		}
-
+		
+		else if("itemset".equals(args[1])){
+			if(args.length == 3){
+				Plugin.help(player, "/%s remove itemset <game name> <itemset name>", Plugin.CMD_ADMIN);
+			}
+			
+			if (!GameManager.doesNameExist(args[2])) {
+				Plugin.error(player, "%s does not exist.", args[2]);
+				return true;
+			}
+			GameManager.getGame(args[2]).removeItemSet(args[3]);
+		}
+		
 		else {
 			Plugin.error(player, "'%s' is not recognized.", args[1]);
 		}

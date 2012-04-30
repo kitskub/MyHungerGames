@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,8 +48,6 @@ import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
 
-import org.bukkit.Bukkit;
-
 public class Plugin extends JavaPlugin implements Listener {
 	private static final Logger logger = Logger.getLogger("Minecraft");
 	public static final String CMD_ADMIN = "hga";
@@ -64,8 +63,10 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static Map<Player, Session> spawnAdders;
 	private static Map<Player, Session> spawnRemovers;
 	private static Map<Player, String> sponsors;
-	private static Map<ItemStack, Float> chestLoot;
-	private static Map<ItemStack, Double> sponsorLoot;
+	private static Map<ItemStack, Float> globalChestLoot;
+	private static Map<ItemStack, Double> globalSponsorLoot;
+	private static Map<String, Map<ItemStack, Float>> chestLoots;
+	private static Map<String, Map<ItemStack, Double>> sponsorLoots;
 
 	@Override
 	public void onEnable() {
@@ -84,8 +85,14 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
-		chestLoot = Config.getGlobalChestLoot();
-		sponsorLoot = Config.getGlobalSponsorLoot();
+		globalChestLoot = Config.getGlobalChestLoot();
+		globalSponsorLoot = Config.getGlobalSponsorLoot();
+		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
+		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
+		for(String itemset : Config.getItemSets()){
+		    chestLoots.put(itemset, Config.getChestLoot(itemset));
+		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+		}
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 			info("config not found. saving defaults.");
 			saveDefaultConfig();
@@ -141,8 +148,14 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	public static void reload() {
 		instance.reloadConfig();
-		chestLoot = Config.getGlobalChestLoot();
-		sponsorLoot = Config.getGlobalSponsorLoot();
+		globalChestLoot = Config.getGlobalChestLoot();
+		globalSponsorLoot = Config.getGlobalSponsorLoot();
+		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
+		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
+		for(String itemset : Config.getItemSets()){
+		    chestLoots.put(itemset, Config.getChestLoot(itemset));
+		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+		}
 		GameManager.loadGames();
 		loadRegistry();
 		for (Player player : sponsors.keySet()) {
@@ -358,43 +371,49 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
-		if (sponsorLoot.isEmpty()) {
+		Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
+		HungerGame game = GameManager.getSession(sponsoredPlayer);
+		if(game == null){
+		    error(player, "That player is not in a game.");
+		    return false;
+		}
+		List<String> itemsets = game.getItemSets();
+		if (globalSponsorLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			error(player, "No items are available to sponsor.");
 			return false;
 		}
 
-		else {
-			if(!isEconomyEnabled()) {
-				error(player, "Economy use has been disabled.");
+		if(!isEconomyEnabled()) {
+			error(player, "Economy use has been disabled.");
+		}
+		sponsors.put(player, playerToBeSponsored);
+		send(player, ChatColor.GREEN, getHeadLiner());
+		send(player, ChatColor.YELLOW,
+				"Type the number next to the item you would like sponsor to %s.",
+				playerToBeSponsored);
+		send(player, "");
+		int num = 1;
+		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
+		for (ItemStack item : itemMap.keySet()) {
+			String mess = String.format(">> %d - %s: %d", num, item
+					.getType().name(), item.getAmount());
+			Set<Enchantment> enchants = item.getEnchantments().keySet();
+			int cntr = 0;
+			if (!enchants.isEmpty()) {
+				mess += ", ";
 			}
-			sponsors.put(player, playerToBeSponsored);
-			send(player, ChatColor.GREEN, getHeadLiner());
-			send(player, ChatColor.YELLOW,
-					"Type the number next to the item you would like sponsor to %s.",
-					playerToBeSponsored);
-			send(player, "");
-			int num = 1;
-			for (ItemStack item : sponsorLoot.keySet()) {
-				String mess = String.format(">> %d - %s: %d", num, item
-						.getType().name(), item.getAmount());
-				Set<Enchantment> enchants = item.getEnchantments().keySet();
-				int cntr = 0;
-				if (!enchants.isEmpty()) {
+			for (Enchantment enchant : enchants) {
+				mess += String.format("%s: %d", enchant.getName(),
+						item.getEnchantmentLevel(enchant));
+				if (cntr < enchants.size() - 1) {
 					mess += ", ";
 				}
-				for (Enchantment enchant : enchants) {
-					mess += String.format("%s: %d", enchant.getName(),
-							item.getEnchantmentLevel(enchant));
-					if (cntr < enchants.size() - 1) {
-						mess += ", ";
-					}
-					cntr++;
-				}
-				send(player, ChatColor.GOLD, mess);
-				num++;
+				cntr++;
 			}
-			return true;
+			send(player, ChatColor.GOLD, mess);
+			num++;
 		}
+		return true;
 
 	}
 
@@ -502,12 +521,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, "'%s' is not an integer.", mess);
 			return;
 		}
-
-		int size = sponsorLoot.size();
-		if (choice < 0 || choice >= size) {
-			error(player, "Choice '%d' does not exist.");
-			return;
-		}
+		
 		Player beingSponsored = getServer().getPlayer(sponsor);
 		if (beingSponsored == null) {
 			error(player, "'%s' is not online anymore.", sponsor);
@@ -518,9 +532,17 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, "'%s' is no longer in a game.", sponsor);
 			return;
 		}
-		ItemStack item = new ArrayList<ItemStack>(sponsorLoot.keySet())
+		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
+		
+		int size = itemMap.size();
+		if (choice < 0 || choice >= size) {
+			error(player, "Choice '%d' does not exist.");
+			return;
+		}
+
+		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet())
 				.get(choice);
-		double price = sponsorLoot.get(item);
+		double price = itemMap.get(item);
 		if (!hasEnough(beingSponsored, price)) {
 			error(player, String.format("You do not have enough money."));
 			return;
@@ -713,14 +735,15 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest, String[] setups) {
-		if (chestLoot.isEmpty()) {
+	public static void fillChest(Chest chest, List<String> itemsets) {
+		if (globalChestLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 		Inventory inv = chest.getInventory();
 		inv.clear();
 		int num = 3 + rand.nextInt(8);
-		List<ItemStack> items = new ArrayList<ItemStack>(chestLoot.keySet());
+		Map<ItemStack, Float> itemMap = Config.getAllChestLootWithGlobal(itemsets);
+		List<ItemStack> items = (List<ItemStack>) itemMap.keySet();
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
 			if (inv.getItem(index) != null) {
@@ -728,7 +751,7 @@ public class Plugin extends JavaPlugin implements Listener {
 				continue;
 			}
 			ItemStack item = items.get(rand.nextInt(items.size()));
-			if (chestLoot.get(item) >= rand.nextFloat()) {
+			if (itemMap.get(item) >= rand.nextFloat()) {
 				inv.setItem(index, item);
 			}
 
