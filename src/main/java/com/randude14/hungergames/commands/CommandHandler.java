@@ -1,10 +1,10 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.CommandUsage;
 import java.util.Collection;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,15 +36,15 @@ public class CommandHandler implements CommandExecutor {
 	private void handleUserCommand(Player player, Command cmd, String[] args) {
 		HungerGame game = null;
 		if (args.length == 0) {
-			if (!Plugin.checkPermission(player, Perm.USER_HELP))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_HELP)) return;
+			
 			getUserCommands(player, cmd);
 			return;
 		}
 
 		else if ("list".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_LIST))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_LIST)) return;
+
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 			Collection<HungerGame> games = GameManager.getGames();
 			if (games.isEmpty()) {
@@ -58,12 +58,12 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("join".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_JOIN))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_JOIN)) return;
+
 			String name = (args.length == 1) ? Config.getDefaultGame()
 					: args[1];
 			if (name == null) {
-				Plugin.send(player, ChatColor.GOLD, "/%s join <game name>",
+				Plugin.helpCommand(player, CommandUsage.USER_JOIN.getUsage(),
 						cmd.getLabel());
 				return;
 			}
@@ -73,6 +73,7 @@ public class CommandHandler implements CommandExecutor {
 				Plugin.sendDoesNotExist(player, name);
 				return;
 			}
+			
 			HungerGame currentSession = GameManager.getSession(player);
 			if (currentSession != null) {
 				Plugin.error(player,
@@ -89,8 +90,7 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("leave".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_LEAVE))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_LEAVE)) return;
 
 			game = GameManager.getSession(player);
 			if (game == null) {
@@ -108,8 +108,8 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("rejoin".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_REJOIN))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_REJOIN)) return;
+
 			game = GameManager.getSession(player);
 			if (game != null) {
 				if (game.rejoin(player)) {
@@ -132,11 +132,10 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("sponsor".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR)) return;
 
 			if (args.length < 2) {
-				Plugin.send(player, ChatColor.GOLD, "/%s sponsor <player>",
+				Plugin.send(player, CommandUsage.USER_SPONSOR.getUsage(),
 						cmd.getLabel());
 				return;
 			}
@@ -154,14 +153,13 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("vote".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_VOTE))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_VOTE)) return;
 
 			game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(
-						player,
-						"You must be in a game to vote. You can a game join by '/%s join <game name>'",
+				Plugin.error(player,
+					"You must be in a game to vote. "
+					+ "You can a game join by '" + CommandUsage.USER_JOIN.getUsage() + "'",
 						Plugin.CMD_USER);
 				return;
 			}
@@ -170,11 +168,10 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("stat".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.USER_STAT))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_STAT)) return;
 
 			if (args.length == 1) {
-				Plugin.send(player, ChatColor.GOLD, "/%s stat <game name>",
+				Plugin.send(player, CommandUsage.USER_STAT.getUsage(),
 						cmd.getLabel());
 				return;
 			}
@@ -190,8 +187,8 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else {
-			if (!Plugin.checkPermission(player, Perm.USER_HELP))
-				return;
+			if (!Plugin.checkPermission(player, Perm.USER_HELP)) return;
+
 			getUserCommands(player, cmd);
 		}
 		GameManager.saveGames();// TODO save less
@@ -202,8 +199,8 @@ public class CommandHandler implements CommandExecutor {
 		GameManager GameManager = Plugin.getGameManager();
 
 		if (args.length == 0) {
-			if (!Plugin.hasPermission(player, Perm.ADMIN_HELP))
-				return;
+			if (!Plugin.hasPermission(player, Perm.ADMIN_HELP)) return;
+			
 			getAdminCommands(player, cmd);
 			return;
 		}
@@ -213,19 +210,18 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("remove".equals(args[0])) {
-			new RemoveCommand().execute(player, cmd, args);
+			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
 		else if ("set".equals(args[0])) {
-			setCommand(player, args);
+			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
 		else if ("kick".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK))
-				return;
+			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK)) return;
 
 			if (args.length == 1) {
-				Plugin.send(player, ChatColor.GOLD, "/%s kick <player>",
+				Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsage(),
 						cmd.getLabel());
 				return;
 			}
@@ -248,17 +244,15 @@ public class CommandHandler implements CommandExecutor {
 			}
 
 			else {
-
 				Plugin.error(player, "%s is not online.", args[1]);
 			}
 		}
 
 		else if ("start".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.ADMIN_START))
-				return;
+			if (!Plugin.checkPermission(player, Perm.ADMIN_START)) return;
 
 			if (args.length == 1) {
-				Plugin.help(player, "/%s start <game name> <seconds>",
+				Plugin.helpCommand(player, CommandUsage.ADMIN_START.getUsage(),
 						cmd.getLabel());
 				return;
 			}
@@ -278,11 +272,10 @@ public class CommandHandler implements CommandExecutor {
 					Plugin.error(player, "'%s' is not an integer.", args[2]);
 					return;
 				}
-
 			}
 
 			else {
-				seconds = 10;
+				seconds = Config.getDefaultTime(game.getSetup());
 			}
 			if (!game.start(player, seconds)) {
 				Plugin.error(player, "Failed to start %s.", game.getName());
@@ -290,127 +283,38 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		else if ("reload".equals(args[0])) {
-			if (!Plugin.checkPermission(player, Perm.ADMIN_RELOAD))
-				return;
+			if (!Plugin.checkPermission(player, Perm.ADMIN_RELOAD)) return;
+			
 			Plugin.reload();
 			Plugin.send(player, Plugin.getPrefix() + "Reloaded v%s", Plugin
 					.getInstance().getDescription().getVersion());
 		} else {
-			if (!Plugin.checkPermission(player, Perm.ADMIN_HELP))
-				return;
+			if (!Plugin.checkPermission(player, Perm.ADMIN_HELP)) return;
+			
 			getAdminCommands(player, cmd);
 		}
 		GameManager.saveGames();// TODO save less
 	}
 
-	private boolean setCommand(Player player, String[] args) {
-		if (!Plugin.hasPermission(player, Perm.ADMIN_SET_ENABLED)
-				&& !Plugin.hasPermission(player, Perm.ADMIN_SET_SPAWN)) {
-			Plugin.error(player, "You do not have permission.");
-			return true;
-		}
-
-		if (args.length == 1 || "?".equals(args[1])) {
-			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-			Plugin.send(
-					player,
-					ChatColor.GOLD,
-					"- /%s set spawn <game name> - set the spawnpoint for a game.",
-					Plugin.CMD_ADMIN);
-			Plugin.send(
-					player,
-					ChatColor.GOLD,
-					"- /%s set enabled <game name> <true/false> - enable or disable a game.",
-					Plugin.CMD_ADMIN);
-			return true;
-		}
-
-		HungerGame game = null;
-		if ("spawn".equals(args[1])) {
-			if (args.length < 3) {
-				Plugin.send(player, ChatColor.GOLD,
-						"/%s set spawn <game name>", Plugin.CMD_ADMIN);
-				return true;
-			}
-			game = GameManager.getGame(args[2]);
-			if (game == null) {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-			Location loc = player.getLocation();
-			game.setSpawn(loc);
-			Plugin.send(player, "Spawn has been set for %s.", game.getName());
-		}
-
-		else if ("enabled".equals(args[1])) {
-			if (args.length < 3) {
-				Plugin.send(player, ChatColor.GOLD,
-						"/%s set enabled <game name> <true/false>", Plugin.CMD_ADMIN);
-				return true;
-			}
-
-			game = GameManager.getGame(args[2]);
-			if (game == null) {
-				Plugin.sendDoesNotExist(player, args[2]);
-			}
-			boolean flag;
-			if (args.length == 4) {
-				flag = Boolean.valueOf(args[3]);
-			} else {
-				flag = true;
-			}
-			game.setEnabled(flag);
-			if (flag) {
-				Plugin.send(player, "%s has been enabled.", game.getName());
-			} else {
-				Plugin.send(player,
-						String.format("%s has been disabled.", game.getName()));
-			}
-		}
-
-		else {
-			Plugin.error(player, "'%s' is not recognized.", args[1]);
-			return true;
-		}
-		return true;
-	}
-
 	private void getUserCommands(Player player, Command cmd) {
 		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-		Plugin.send(player, ChatColor.GOLD, "- /%s list - list games",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s join <game name> - join a game", cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD, "- /%s leave - leave current game",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s rejoin - rejoin your current game", cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s sponsor <player> - sponsor a player an item",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s vote - cast your vote that you are ready to play",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s stat <game name> - list stats for a game",
-				cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_LIST.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_JOIN.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_LEAVE.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_REJOIN.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_VOTE.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_STAT.getUsageAndInfo(), cmd.getLabel());
 	}
 
 	private void getAdminCommands(Player player, Command cmd) {
 		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-		Plugin.send(player, ChatColor.GOLD, "- /%s add ? - type for more help",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s remove ? - type for more help", cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD, "- /%s set ? - type for more help",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s kick <player> - kick a player from a game",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD, "- /%s reload - reload Plugin",
-				cmd.getLabel());
-		Plugin.send(player, ChatColor.GOLD,
-				"- /%s start <game name> <seconds> - manually start a game",
-				cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_HELP.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_HELP.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_SET_HELP.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_RELOAD.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_START.getUsageAndInfo(), cmd.getLabel());
 	}
 
 }

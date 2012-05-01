@@ -94,40 +94,50 @@ public class Defaults {
     }
     
     public enum CommandUsage{
-		
-	ADMIN_ADD_SPAWNPOINT("/%s add spawnpoint <game name> - add a spawnpoint."),
-	ADMIN_ADD_CHEST("/%s add chest <game name> - add a chest."),
-	ADMIN_ADD_GAME("/%s add game <game name> [setup] - add a game."),
-        ADMIN_ADD_ITEMSET("/%s add itemset <game name> <itemset name> - add an itemset."),
-	ADMIN_REMOVE_SPAWNPOINT("/%s remove spawnpoint <game name> - remove a spawnpoint."),
-	ADMIN_REMOVE_CHEST("/%s remove chest <game name> - remove a chest."),
-	ADMIN_REMOVE_GAME("/%s remove game <game name> - remove a game."),
-	ADMIN_REMOVE_ITEMSET("/%s remove itemset <game name> <itemset name> - remove a game."),
-	ADMIN_SET_ENABLED(""),
-	ADMIN_SET_SPAWN(""),
-	ADMIN_START(""),
-	ADMIN_RELOAD(""),
-	ADMIN_KICK(""),
-	ADMIN_HELP(""),
-	USER_JOIN(""),
-	USER_LEAVE(""),
-	USER_LIST(""),
-	USER_REJOIN(""),
-	USER_SPONSOR(""),
-	USER_VOTE(""),
-	USER_STAT(""),
-	USER_HELP("");
+	
+	ADMIN_ADD_HELP("/%s add ?", "type for more help"),
+	ADMIN_ADD_SPAWNPOINT("/%s add spawnpoint <game name>", "add a spawnpoint"),
+	ADMIN_ADD_CHEST("/%s add chest <game name>", "add a chest"),
+	ADMIN_ADD_GAME("/%s add game <game name> [setup]", "add a game"),
+	ADMIN_ADD_ITEMSET("/%s add itemset <game name> <itemset name>", "add an itemset"),
+	ADMIN_REMOVE_HELP("/%s remove ?", "type for more help"),
+	ADMIN_REMOVE_SPAWNPOINT("/%s remove spawnpoint <game name>", "remove a spawnpoint"),
+	ADMIN_REMOVE_CHEST("/%s remove chest <game name>", "remove a chest"),
+	ADMIN_REMOVE_GAME("/%s remove game <game name>", "remove a game"),
+	ADMIN_REMOVE_ITEMSET("/%s remove itemset <game name> <itemset name>", "remove a game"),
+	ADMIN_SET_HELP("/%s set ?", "type for more help"),
+	ADMIN_SET_ENABLED("/%s set enabled <game name> <true/false>", "enable or disable a game"),
+	ADMIN_SET_SPAWN("/%s set spawn <game name>", "set the spawnpoint for a game"),
+	ADMIN_START("/%s start <game name> [seconds]", "manually start a game"),
+	ADMIN_RELOAD("/%s rejoin", "reload MyHungerGames"),
+	ADMIN_KICK("/%s kick <player>", "kick a player from a game"),
+	USER_JOIN("/%s join <game name>", "join a game"),
+	USER_LEAVE("/%s leave", "leave current game"),
+	USER_LIST("/%s list", "list games"),
+	USER_REJOIN("/%s rejoin", "rejoin your current game"),
+	USER_SPONSOR("/%s sponsor <player>", "sponsor a player an item"),
+	USER_VOTE("/%s vote", "cast your vote that you are ready to play"),
+	USER_STAT("/%s stat <game name>", "list stats for a game");
 	
 	private String usage;
+	private String info;
 	
-	private CommandUsage(String usage) {
+	private CommandUsage(String usage, String info) {
 	    this.usage = usage;
+	    this.info = info;
 	}
 	
 	public String getUsage(){
 	    return usage;
 	}
 	
+	public String getInfo(){
+	    return info;
+	}
+	
+	public String getUsageAndInfo(){
+	    return usage + " - " + info;
+	}
     }
     
 }

@@ -22,13 +22,13 @@ public class AddCommand extends SubCommand{
 	
 	if (args.length == 1 || "?".equals(args[1])) {
 	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsage(),
+	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsage(),
+	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsage(),
+	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsage(),
+	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
 	    return true;
 	}
