@@ -1,6 +1,6 @@
 name: HungerGames
 main: com.randude14.hungergames.Plugin
-version: 0.2.0
+version: 0.2.1
 authors: [Randude14, kitskub]
 
 commands:
