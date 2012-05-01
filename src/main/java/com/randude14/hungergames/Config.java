@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,18 +146,28 @@ public class Config {
 		return plugin.getConfig().getBoolean("setups." + setup + ".spawnpoint-on-death", shouldRespawnAtSpawnPointGlobal());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<String> getSetups(){
-		return (List<String>) plugin.getConfig().getConfigurationSection("itemsets").getKeys(false);
+	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("setups");
+	    if(section == null) return Collections.emptyList();
+	    List<String> list = (List<String>) section.getKeys(false);
+	    return (List<String>) ((list == null) ? Collections.emptyList() : list);
 	}
 	
 	// Itemsets
 	
+	@SuppressWarnings("unchecked")
 	public static List<String> getItemSets(){
-		return (List<String>) plugin.getConfig().getConfigurationSection("setups").getKeys(false);
+	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("itemsets");
+	    if(section == null) return Collections.emptyList();
+	    List<String> list = (List<String>) section.getKeys(false);
+	    return (List<String>) ((list == null) ? Collections.emptyList() : list);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Map<ItemStack, Float> getAllChestLootWithGlobal(List<String> itemsets){
 	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    if(itemsets == null) itemsets = Collections.EMPTY_LIST;
 	    for(String s : itemsets){
 		toRet.putAll(getChestLoot(s));
 	    }
@@ -164,8 +175,10 @@ public class Config {
 	    return toRet;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(List<String> itemsets){
 	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
+	    if(itemsets == null) itemsets = Collections.EMPTY_LIST;
 	    for(String s : itemsets){
 		toRet.putAll(getSponsorLoot(s));
 	    }

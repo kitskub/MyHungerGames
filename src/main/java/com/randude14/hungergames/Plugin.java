@@ -86,6 +86,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
+		if (!new File(getDataFolder(), "config.yml").exists()) {
+			info("config not found. saving defaults.");
+			saveDefaultConfig();
+		}
 		globalChestLoot = Config.getGlobalChestLoot();
 		globalSponsorLoot = Config.getGlobalSponsorLoot();
 		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
@@ -93,10 +97,6 @@ public class Plugin extends JavaPlugin implements Listener {
 		for(String itemset : Config.getItemSets()){
 		    chestLoots.put(itemset, Config.getChestLoot(itemset));
 		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
-		}
-		if (!new File(getDataFolder(), "config.yml").exists()) {
-			info("config not found. saving defaults.");
-			saveDefaultConfig();
 		}
 		loadRegistry();
 		callTasks();

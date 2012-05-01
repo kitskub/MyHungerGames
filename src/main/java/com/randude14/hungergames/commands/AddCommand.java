@@ -20,7 +20,7 @@ public class AddCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 	
-	if (args.length == 1 || "?".equals(args[1])) {
+	if (args.length == 0 || "?".equals(args[1])) {
 	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
@@ -49,7 +49,7 @@ public class AddCommand extends SubCommand{
 	    
 	    Plugin.addSpawnAdder(player, game.getName());
 	    Plugin.send(player, ChatColor.GREEN,
-		    "Hit a block to add it as a spawn point for %s.", game.getName());
+		    "Left clicks block to add them as spawn points for %s. Right-click to finish.", game.getName());
 	}
 
 	else if ("chest".equals(args[0])) {
