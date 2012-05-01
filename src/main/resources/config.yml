@@ -1,6 +1,6 @@
 global:
   default-game: 'Test'
-	# In minutes, the number of time to wait between update checks
+  # In minutes, the number of time to wait between update checks
   update-delay: 30
   # The following are default only, and will be overwritten by the setup, if applicable
   join-message: '<player> has joined the game <game>.'
