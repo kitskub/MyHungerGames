@@ -21,7 +21,7 @@ public class SetCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 	
-	if (args.length == 1 || "?".equals(args[0])) {
+	if (args.length == 0 || "?".equals(args[0])) {
 		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 		Plugin.helpCommand(player, CommandUsage.ADMIN_SET_SPAWN.getUsageAndInfo(),
 				Plugin.CMD_ADMIN);

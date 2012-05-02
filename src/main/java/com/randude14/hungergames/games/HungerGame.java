@@ -258,7 +258,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawn = newSpawn;
 	}
 
-	public synchronized boolean rejoin(Player player) {// TODO config option to allow rejoin
+	public synchronized boolean rejoin(Player player) {
 		if (!Config.getAllowRejoin(setup)) {
 			Plugin.error(player, "You are not allowed to rejoin a game.");
 			return false;
