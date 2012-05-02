@@ -1,12 +1,18 @@
 package com.randude14.hungergames.games;
 
+import com.randude14.hungergames.Config;
+import com.randude14.hungergames.GameManager;
+import org.bukkit.entity.Player;
+
 public class PlayerStat {
+	private Player player;
 	private int deaths;
 	private int kills;
 	
-	public PlayerStat() {
+	public PlayerStat(Player player) {
 		deaths = 0;
 		kills = 0;
+		this.player = player;
 	}
 	
 	public void kill() {
@@ -18,7 +24,8 @@ public class PlayerStat {
 	}
 	
 	public void die() {
-	    deaths = 1; // TODO change to deaths >= getBleh(setupName)
+	    HungerGame game = GameManager.getGame(player.getName());
+	    deaths = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
 	}
 	
 	public int getKills() {
@@ -30,7 +37,17 @@ public class PlayerStat {
 	}
 	
 	public boolean hasRunOutOfLives() {
-		return deaths >= 1; // TODO change to deaths >= getbleh(setupName)
+		HungerGame game = GameManager.getGame(player.getName());
+		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
+		if(lives == 0) return true;
+		return deaths >= lives;
+	}
+	
+	public int getLivesLeft() {
+		HungerGame game = GameManager.getGame(player.getName());
+		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
+		if(lives == 0) return -1;
+		return lives - deaths;
 	}
 
 }

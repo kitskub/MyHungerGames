@@ -76,6 +76,10 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.spawnpoint-on-death", RESPAWN_ON_DEATH.getBoolean());
 	}
 	
+	public static int getLivesGlobal() {
+		return plugin.getConfig().getInt("global.lives", LIVES.getInt());
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -144,6 +148,10 @@ public class Config {
 	
 	public static boolean shouldRespawnAtSpawnPoint(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".spawnpoint-on-death", shouldRespawnAtSpawnPointGlobal());
+	}
+	
+	public static int getLives(String setup) {
+		return plugin.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -284,7 +284,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		
 		if(!addPlayer(player)) return false;
 		
-		stats.put(player, new PlayerStat());
+		stats.put(player, new PlayerStat(player));
 		return true;
 	}
 
@@ -327,7 +327,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		playerLeaving(player);
 		dropInventory(player);
 		loadSavedInventory(player);
-		if(isRunning) {
+		if(isRunning && !Config.getAllowRejoin(setup)) {
 		    stats.get(player).death();
 		}
 		teleportPlayerToSpawn(player);
@@ -456,7 +456,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				Location respawn = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 				GameManager.addPlayerRespawn(killed, respawn);
 			}
-			// TODO send player amount of lives left -> Plugin.send(killed, "You have x lives left.", livesLeft);
+			Plugin.info("You have " + killedStat.getLivesLeft() + " lives left.");
 		}
 	}
 

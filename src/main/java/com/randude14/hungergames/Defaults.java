@@ -71,7 +71,8 @@ public class Defaults {
 	ALLOW_JOIN_WHILE_RUNNING(false),
 	WINNER_KEEPS_ITEMS(true),
 	RESPAWN_ON_DEATH(false),
-	DEFAULT_GAME("Test");
+	DEFAULT_GAME("Test"),
+	LIVES(1);
 	
 	private Object value;
 	

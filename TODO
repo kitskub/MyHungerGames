@@ -16,3 +16,4 @@
 - Send player lives left
 - Could not load games.yml should not be severe
 - better /hg stat
+- Fix Leave command
