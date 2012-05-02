@@ -2,6 +2,7 @@ name: HungerGames
 main: com.randude14.hungergames.Plugin
 version: 0.2.2
 authors: [Randude14, kitskub]
+softdepend: [Vault]
 
 commands:
     hga:
