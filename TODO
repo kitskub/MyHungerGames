@@ -1,7 +1,6 @@
 - Saving
 - Map gen
 - Map reset
-- Lives in config
 - Stop game
 - Search for chests in a world
 - Use equalsignorecase rather than equals
@@ -12,8 +11,6 @@
 - Sponsor loot by command
 - Use as minimal saving as possible
 - Config option for automatic readyness
-- EndGameEvent for api hooks
-- Send player lives left
 - Could not load games.yml should not be severe
 - better /hg stat
 - Fix Leave command
