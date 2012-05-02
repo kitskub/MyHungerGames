@@ -1,0 +1,9 @@
+lotteries:
+#   MAIN:
+#       pot: 10000.00 - starting pot
+#       time: 3 - time between drawings (x hours)
+#       ticket-cost: 100.00 - cost of a ticket   
+#       repeat: true - whether lottery should repeat
+#       max-tickets: 10 - max tickets a player can buy
+#       min-players: 2 - min players for lottery to draw
+#       max-players: 10 - max players that can be in the lottery

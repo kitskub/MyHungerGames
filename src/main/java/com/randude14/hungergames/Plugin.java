@@ -284,11 +284,9 @@ public class Plugin extends JavaPlugin implements Listener {
 		Plugin.error(player, "%s does not exist.", s);
 	}
 
-	public static boolean hasPermission(Player p, Defaults.Perm perm) {
-		String world = p.getWorld().getName();
-		String player = p.getName();
+	public static boolean hasPermission(Player player, Defaults.Perm perm) {
 		String permission = perm.getPermission();
-		return Plugin.perm.hasPermission(player, world, permission);
+		return Plugin.perm.hasPermission(player, permission);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {

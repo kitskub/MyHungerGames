@@ -23,8 +23,8 @@ public class VaultPermission extends Permission {
 	}
 
 	@Override
-	public boolean hasPermission(String player, String world, String permission) {
-		return perm.has(player, world, permission);
+	public boolean hasPermission(String world, String player, String permission) {
+		return perm.has(world, player, permission);
 	}
 
 }
