@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.games.HungerGame;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -80,14 +81,18 @@ public class AddCommand extends SubCommand{
 	    }
 
 	    if (game != null) {
-		Plugin.error(player, "%s already exists.", args[1]);
-		return true;
+		    Plugin.error(player, "%s already exists.", args[1]);
+		    return true;
 	    }
 	    if(args.length == 2){
-		GameManager.createGame(args[1]);
+		    GameManager.createGame(args[1]);
 	    }
 	    else{
-		GameManager.createGame(args[1], args[2]);
+		    GameManager.createGame(args[1], args[2]);
+	    }
+	    GameCreateEvent event = new GameCreateEvent(GameManager.getGame(args[1]));
+	    if(event.isCancelled()) {
+	    	GameManager.removeGame(args[1]);
 	    }
 	    Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[1]);
 	}

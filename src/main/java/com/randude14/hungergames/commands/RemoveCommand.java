@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.games.HungerGame;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -89,6 +90,7 @@ public class RemoveCommand extends SubCommand{
 	    }
 	    
 	    GameManager.removeGame(args[1]);
+	    Plugin.callEvent(new GameRemoveEvent(game));
 	    Plugin.send(player, ChatColor.GREEN, "%s has been removed.", args[1]);
 	}
 

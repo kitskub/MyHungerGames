@@ -103,11 +103,6 @@ public class GameManager implements Listener {
 			HungerGame gameOfKiller = getSession(killer);
 
 			if (gameOfKilled.equals(gameOfKiller)) {
-				String mess = Config.getKillMessage(gameOfKilled.getSetup())
-						.replace("<killer>", killer.getName())
-						.replace("<killed>", killed.getName())
-						.replace("<game>", gameOfKiller.getName());
-				event.setDeathMessage(ChatColor.GREEN + mess);
 				gameOfKiller.killed(killer, killed);
 			}
 		}

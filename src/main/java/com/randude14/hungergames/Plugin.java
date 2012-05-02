@@ -28,6 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -443,6 +444,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 
 		return currentVersion;
+	}
+	
+	public static void callEvent(Event event) {
+		instance.getServer().getPluginManager().callEvent(event);
 	}
 
 	public static String parseToString(Location loc) {
