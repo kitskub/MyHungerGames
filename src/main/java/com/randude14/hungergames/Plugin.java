@@ -28,6 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -94,9 +95,9 @@ public class Plugin extends JavaPlugin implements Listener {
 		globalSponsorLoot = Config.getGlobalSponsorLoot();
 		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
 		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
-		for(String itemset : Config.getItemSets()){
-		    chestLoots.put(itemset, Config.getChestLoot(itemset));
-		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+		for (String itemset : Config.getItemSets()) {
+			chestLoots.put(itemset, Config.getChestLoot(itemset));
+			sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
 		}
 		loadRegistry();
 		callTasks();
@@ -126,25 +127,23 @@ public class Plugin extends JavaPlugin implements Listener {
 		info("Games saved.");
 		info("Disabled.");
 	}
-	
+
 	private static void loadRegistry() {
 		if (!VaultPermission.isVaultInstalled()) {
 			info("Vault is not installed, defaulting to Bukkit perms.");
 			perm = new BukkitPermission();
 			return;
-		}
-		else {
+		} else {
 			perm = new VaultPermission();
 		}
-		
-		if(!Economy.isVaultInstalled()) {
+
+		if (!Economy.isVaultInstalled()) {
 			warning("Vault is not installed, economy use disabled.");
 			econ = null;
-		}
-		else {
+		} else {
 			econ = new Economy();
 		}
-		
+
 	}
 
 	public static void reload() {
@@ -153,9 +152,9 @@ public class Plugin extends JavaPlugin implements Listener {
 		globalSponsorLoot = Config.getGlobalSponsorLoot();
 		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
 		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
-		for(String itemset : Config.getItemSets()){
-		    chestLoots.put(itemset, Config.getChestLoot(itemset));
-		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+		for (String itemset : Config.getItemSets()) {
+			chestLoots.put(itemset, Config.getChestLoot(itemset));
+			sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
 		}
 		GameManager.loadGames();
 		loadRegistry();
@@ -166,7 +165,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 
 	}
-	
+
 	public static void info(String format, Object... args) {
 		logger.log(Level.INFO, getLogPrefix() + String.format(format, args));
 	}
@@ -267,11 +266,11 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static void help(Player player, String mess) {
 		player.sendMessage(ChatColor.GOLD + mess);
 	}
-	
+
 	public static void helpCommand(Player player, String format, Object... args) {
 		player.sendMessage(ChatColor.GOLD + String.format("- " + format, args));
 	}
-	
+
 	public static void error(Player player, String format, Object... args) {
 		player.sendMessage(ChatColor.RED + String.format(format, args));
 	}
@@ -294,29 +293,29 @@ public class Plugin extends JavaPlugin implements Listener {
 				&& loc1.getBlockY() == loc2.getBlockY()
 				&& loc1.getBlockZ() == loc2.getBlockZ();
 	}
-	
+
 	public static boolean isEconomyEnabled() {
 		return econ != null;
 	}
-	
+
 	public static void withdraw(Player player, double amount) {
-		if(!isEconomyEnabled()) {
+		if (!isEconomyEnabled()) {
 			error(player, "Economy use has been disabled.");
 			return;
 		}
 		econ.withdraw(player.getName(), amount);
 	}
-	
+
 	public static void deposit(Player player, double amount) {
-		if(!isEconomyEnabled()) {
+		if (!isEconomyEnabled()) {
 			error(player, "Economy use has been disabled.");
 			return;
 		}
 		econ.deposit(player.getName(), amount);
 	}
-	
+
 	public static boolean hasEnough(Player player, double amount) {
-		if(!isEconomyEnabled()) {
+		if (!isEconomyEnabled()) {
 			error(player, "Economy use has been disabled.");
 			return false;
 		}
@@ -376,30 +375,33 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
 		Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
 		HungerGame game = GameManager.getSession(sponsoredPlayer);
-		if(game == null){
-		    error(player, "That player is not in a game.");
-		    return false;
+		if (game == null) {
+			error(player, "That player is not in a game.");
+			return false;
 		}
 		List<String> itemsets = game.getItemSets();
-		if (globalSponsorLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+		if (globalSponsorLoot.isEmpty()
+				&& (itemsets == null || itemsets.isEmpty())) {
 			error(player, "No items are available to sponsor.");
 			return false;
 		}
 
-		if(!isEconomyEnabled()) {
+		if (!isEconomyEnabled()) {
 			error(player, "Economy use has been disabled.");
 		}
 		sponsors.put(player, playerToBeSponsored);
 		send(player, ChatColor.GREEN, getHeadLiner());
-		send(player, ChatColor.YELLOW,
+		send(player,
+				ChatColor.YELLOW,
 				"Type the number next to the item you would like sponsor to %s.",
 				playerToBeSponsored);
 		send(player, "");
 		int num = 1;
-		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
+		Map<ItemStack, Double> itemMap = Config
+				.getAllSponsorLootWithGlobal(itemsets);
 		for (ItemStack item : itemMap.keySet()) {
-			String mess = String.format(">> %d - %s: %d", num, item
-					.getType().name(), item.getAmount());
+			String mess = String.format(">> %d - %s: %d", num, item.getType()
+					.name(), item.getAmount());
 			Set<Enchantment> enchants = item.getEnchantments().keySet();
 			int cntr = 0;
 			if (!enchants.isEmpty()) {
@@ -443,6 +445,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 
 		return currentVersion;
+	}
+
+	public static void callEvent(Event event) {
+		instance.getServer().getPluginManager().callEvent(event);
 	}
 
 	public static String parseToString(Location loc) {
@@ -524,7 +530,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, "'%s' is not an integer.", mess);
 			return;
 		}
-		
+
 		Player beingSponsored = getServer().getPlayer(sponsor);
 		if (beingSponsored == null) {
 			error(player, "'%s' is not online anymore.", sponsor);
@@ -535,16 +541,16 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, "'%s' is no longer in a game.", sponsor);
 			return;
 		}
-		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
-		
+		Map<ItemStack, Double> itemMap = Config
+				.getAllSponsorLootWithGlobal(game.getItemSets());
+
 		int size = itemMap.size();
 		if (choice < 0 || choice >= size) {
 			error(player, "Choice '%d' does not exist.");
 			return;
 		}
 
-		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet())
-				.get(choice);
+		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet()).get(choice);
 		double price = itemMap.get(item);
 		if (!hasEnough(beingSponsored, price)) {
 			error(player, String.format("You do not have enough money."));
@@ -584,7 +590,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		Player player = event.getPlayer();
 		Action action = event.getAction();
-		if(!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
+		if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
 			return;
 		}
 		if (chestAdders.containsKey(player)) {
@@ -596,7 +602,7 @@ public class Plugin extends JavaPlugin implements Listener {
 				return;
 			}
 			Block block = event.getClickedBlock();
-			if(action == Action.LEFT_CLICK_BLOCK) {
+			if (action == Action.LEFT_CLICK_BLOCK) {
 				if (!(block.getState() instanceof Chest)) {
 					error(player, "Block is not a chest.");
 					return;
@@ -611,9 +617,10 @@ public class Plugin extends JavaPlugin implements Listener {
 				}
 				session.clicked();
 			}
-			
+
 			else {
-				send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
+				send(player, "You have added %d chests to the game %s.",
+						session.getBlocks(), game.getName());
 				chestAdders.remove(player);
 			}
 
@@ -628,23 +635,26 @@ public class Plugin extends JavaPlugin implements Listener {
 				return;
 			}
 			Block block = event.getClickedBlock();
-			if(action == Action.LEFT_CLICK_BLOCK) {
+			if (action == Action.LEFT_CLICK_BLOCK) {
 				if (!(block.getState() instanceof Chest)) {
 					error(player, "Block is not a chest.");
 					return;
 				}
 				if (game.removeChest(block.getLocation())) {
-					send(player, "Chest has been removed from %s.", game.getName());
+					send(player, "Chest has been removed from %s.",
+							game.getName());
 				}
 
 				else {
-					error(player, "%s does not contain this chest.", game.getName());
+					error(player, "%s does not contain this chest.",
+							game.getName());
 				}
 				session.clicked();
 			}
-			
+
 			else {
-				send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
+				send(player, "You have removed %d chests from the game %s.",
+						session.getBlocks(), game.getName());
 				chestRemovers.remove(player);
 			}
 
@@ -664,7 +674,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			double y = loc.getBlockY() + 1;
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
-			if(action == Action.LEFT_CLICK_BLOCK) {
+			if (action == Action.LEFT_CLICK_BLOCK) {
 				if (game.addSpawnPoint(loc)) {
 					send(player, "Spawn point has been added to %s.",
 							game.getName());
@@ -676,9 +686,10 @@ public class Plugin extends JavaPlugin implements Listener {
 				}
 				session.clicked();
 			}
-			
+
 			else {
-				send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
+				send(player, "You have added %d spawn points to the game %s.",
+						session.getBlocks(), game.getName());
 				spawnAdders.remove(player);
 			}
 
@@ -698,7 +709,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			double y = loc.getBlockY() + 1;
 			double z = loc.getBlockZ() + 0.5;
 			loc = new Location(world, x, y, z);
-			if(action == Action.LEFT_CLICK_BLOCK) {
+			if (action == Action.LEFT_CLICK_BLOCK) {
 				if (game.removeSpawnPoint(loc)) {
 					send(player, "Spawn point has been removed from %s.",
 							game.getName());
@@ -710,9 +721,11 @@ public class Plugin extends JavaPlugin implements Listener {
 				}
 				session.clicked();
 			}
-			
+
 			else {
-				send(player, "You have removed %d spawn points from the game %s.", session.getBlocks(), game.getName());
+				send(player,
+						"You have removed %d spawn points from the game %s.",
+						session.getBlocks(), game.getName());
 				spawnRemovers.remove(player);
 			}
 
@@ -720,7 +733,14 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	public static boolean hasInventoryBeenCleared(Player player) {//Just in case we want a config option to force clear inv.
+	public static boolean hasInventoryBeenCleared(Player player) {// Just in
+																	// case we
+																	// want a
+																	// config
+																	// option to
+																	// force
+																	// clear
+																	// inv.
 		PlayerInventory inventory = player.getInventory();
 		for (ItemStack item : inventory.getContents()) {
 			if (item != null && item.getType() != Material.AIR) {
@@ -739,13 +759,15 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static void fillChest(Chest chest, List<String> itemsets) {
-		if (globalChestLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+		if (globalChestLoot.isEmpty()
+				&& (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 		Inventory inv = chest.getInventory();
 		inv.clear();
 		int num = 3 + rand.nextInt(8);
-		Map<ItemStack, Float> itemMap = Config.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Float> itemMap = Config
+				.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = (List<ItemStack>) itemMap.keySet();
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
@@ -773,24 +795,24 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
-	
+
 	private static class Session {
 		private int blocks;
 		private String game;
-		
+
 		public Session(String game) {
 			this.game = game;
 			this.blocks = 0;
 		}
-		
+
 		public HungerGame getGame() {
 			return GameManager.getGame(game);
 		}
-		
+
 		public void clicked() {
 			blocks++;
 		}
-		
+
 		public int getBlocks() {
 			return blocks;
 		}

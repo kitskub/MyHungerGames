@@ -6,18 +6,20 @@ import org.bukkit.event.HandlerList;
 import com.randude14.hungergames.games.HungerGame;
 
 // called when a player kills another player
-public class PlayerKillGameEvent extends GameEvent {
+public class PlayerKillEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
 	private final Player killer, killed;
+	private String deathMessage;
 	
-	public PlayerKillGameEvent(final HungerGame game, final Player killer, final Player killed) {
+	public PlayerKillEvent(final HungerGame game, final Player killer, final Player killed, String message) {
 		super(game);
 		this.killer = killer;
 		this.killed = killed;
+		deathMessage = message;
 	}
 	
-	public PlayerKillGameEvent(final HungerGame game, final Player killed) {
-		this(game, null, killed);
+	public PlayerKillEvent(final HungerGame game, final Player killed) {
+		this(game, null, killed, null);
 	}
 	
 	public Player getKiller() {
@@ -27,7 +29,15 @@ public class PlayerKillGameEvent extends GameEvent {
 	public Player getKilled() {
 		return killed;
 	}
-
+	
+	public void setDeathMessage(String message) {
+		deathMessage = message;
+	}
+	
+	public String getDeathMessage() {
+		return deathMessage;
+	}
+	
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;

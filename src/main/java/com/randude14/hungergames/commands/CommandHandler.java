@@ -9,7 +9,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerKickEvent;
 
+import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
@@ -238,6 +240,7 @@ public class CommandHandler implements CommandExecutor {
 					Plugin.broadcast(String.format(
 							"%s has been kicked from the game %s.",
 							player.getName(), game.getName()));
+					Plugin.callEvent(new PlayerKickGameEvent(game, kick));
 					game.leave(kick);
 				}
 
