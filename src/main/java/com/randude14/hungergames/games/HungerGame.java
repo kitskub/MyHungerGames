@@ -545,8 +545,8 @@ public class HungerGame implements Comparable<HungerGame> {
 			for (int i = cntr; i < cntr + 5 && i < stats.size(); i++) {
 				Player p = players.get(i);
 				PlayerStat stat = stats.get(p);
-				mess += String.format("%s[%d/%d]", p, stat.getDeaths(),
-						stat.getKills()); // TODO stat.getDeaths() - maxLives
+				mess += String.format("%s [%d/%d]", p.getName(), stat.getLivesLeft(),
+						stat.getKills());
 				if (i < cntr + 4 && cntr < stats.size() - 1) {
 					mess += ", ";
 				}

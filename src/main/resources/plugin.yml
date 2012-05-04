@@ -16,37 +16,37 @@ permissions:
     hungergame.*:
        description: enables all permissions
        children:
-           hungergame.admin.*: false
-           hungergame.user.*: false
+           hungergame.admin.*: true
+           hungergame.user.*: true
     hungergame.admin.*:
         description: enables all admin perms
         children:
-            hungergame.add.game: false
-            hungergame.add.spawnpoint: false
-            hungergame.add.chest: false
-            hungergame.add.itemset: false
-            hungergame.remove.game: false
-            hungergame.remove.spawnpoint: false
-            hungergame.remove.chest: false
-            hungergame.remove.itemset: false
-            hungergame.set.enabled: false
-            hungergame.set.spawn: false
-            hungergame.game.start: false
-            hungergame.admin.reload: false
-            hungergame.admin.kick: false            
-            hungergame.admin.help: false
+            hungergame.add.game: true
+            hungergame.add.spawnpoint: true
+            hungergame.add.chest: true
+            hungergame.add.itemset: true
+            hungergame.remove.game: true
+            hungergame.remove.spawnpoint: true
+            hungergame.remove.chest: true
+            hungergame.remove.itemset: true
+            hungergame.set.enabled: true
+            hungergame.set.spawn: true
+            hungergame.game.start: true
+            hungergame.admin.reload: true
+            hungergame.admin.kick: true            
+            hungergame.admin.help: true
     hungergame.user.*:
         description: enables all basic user perms
         children:
-            hungergame.user.join: false
-            hungergame.user.leave: false
-            hungergame.user.rejoin: false    
-            hungergame.user.list: false
-            hungergame.user.stat: false
-            hungergame.user.vote: false
-            hungergame.user.sponsor: false            
-            hungergame.user.help: false
-            
+            hungergame.user.join: true
+            hungergame.user.leave: true
+            hungergame.user.rejoin: true    
+            hungergame.user.list: true
+            hungergame.user.stat: true
+            hungergame.user.vote: true
+            hungergame.user.sponsor: true            
+            hungergame.user.help: true
+
     hungergame.add.game:
         default: false
         description: create a game
