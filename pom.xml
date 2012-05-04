@@ -4,7 +4,7 @@
 
   <groupId>com.randude14</groupId>
   <artifactId>MyHungerGames</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
   <packaging>jar</packaging>
 
   <name>MyHungerGames</name>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.2.5-R1.2</version>
+            <version>1.2.5-R1.3</version>
             <type>jar</type>
         </dependency>
         <dependency>
