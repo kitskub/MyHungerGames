@@ -8,37 +8,43 @@ public class Defaults {
     
     public enum Perm {
 
-	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint"),
-	ADMIN_ADD_CHEST("hungergame.add.chest"),
-	ADMIN_ADD_GAME("hungergame.add.game"),
-        ADMIN_ADD_ITEMSET("hungergame.add.itemset"),
-	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint"),
-	ADMIN_REMOVE_CHEST("hungergame.remove.chest"),
-	ADMIN_REMOVE_GAME("hungergame.remove.game"),
-	ADMIN_REMOVE_ITEMSET("hungergame.remove.itemset"),
-	ADMIN_SET_ENABLED("hungergame.set.enabled"),
-	ADMIN_SET_SPAWN("hungergame.set.spawn"),
-	ADMIN_START("hungergame.game.start"),
-	ADMIN_RELOAD("hungergame.admin.reload"),
-	ADMIN_KICK("hungergame.admin.kick"),
-	ADMIN_HELP("hungergame.admin.help"),
-	USER_JOIN("hungergame.user.join"),
-	USER_LEAVE("hungergame.user.leave"),
-	USER_LIST("hungergame.user.list"),
-	USER_REJOIN("hungergame.user.rejoin"),
-	USER_SPONSOR("hungergame.user.sponsor"),
-	USER_VOTE("hungergame.user.vote"),
-	USER_STAT("hungergame.user.stat"),
-	USER_HELP("hungergame.user.help");
+	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint", "hungergame.admin.*"),
+	ADMIN_ADD_CHEST("hungergame.add.chest", "hungergame.admin.*"),
+	ADMIN_ADD_GAME("hungergame.add.game", "hungergame.admin.*"),
+        ADMIN_ADD_ITEMSET("hungergame.add.itemset", "hungergame.admin.*"),
+	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint", "hungergame.admin.*"),
+	ADMIN_REMOVE_CHEST("hungergame.remove.chest", "hungergame.admin.*"),
+	ADMIN_REMOVE_GAME("hungergame.remove.game", "hungergame.admin.*"),
+	ADMIN_REMOVE_ITEMSET("hungergame.remove.itemset", "hungergame.admin.*"),
+	ADMIN_SET_ENABLED("hungergame.set.enabled", "hungergame.admin.*"),
+	ADMIN_SET_SPAWN("hungergame.set.spawn", "hungergame.admin.*"),
+	ADMIN_START("hungergame.game.start", "hungergame.admin.*"),
+	ADMIN_RELOAD("hungergame.admin.reload", "hungergame.admin.*"),
+	ADMIN_KICK("hungergame.admin.kick", "hungergame.admin.*"),
+	ADMIN_HELP("hungergame.admin.help", "hungergame.admin.*"),
+	USER_JOIN("hungergame.user.join", "hungergame.user.*"),
+	USER_LEAVE("hungergame.user.leave", "hungergame.user.*"),
+	USER_LIST("hungergame.user.list", "hungergame.user.*"),
+	USER_REJOIN("hungergame.user.rejoin", "hungergame.user.*"),
+	USER_SPONSOR("hungergame.user.sponsor", "hungergame.user.*"),
+	USER_VOTE("hungergame.user.vote", "hungergame.user.*"),
+	USER_STAT("hungergame.user.stat", "hungergame.user.*"),
+	USER_HELP("hungergame.user.help", "hungergame.user.*");
 
+	private String parentValue;
 	private String value;
 	
-	private Perm(String permission) {
+	private Perm(String permission, String parentPermission) {
 	    this.value = permission;
+	    this.parentValue = parentPermission;
 	}
 	
 	public String getPermission(){
 	    return value;
+	}
+	
+	public String getParentPermission() {
+		return parentValue;
 	}
     }
     
