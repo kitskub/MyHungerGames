@@ -326,7 +326,6 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		playerLeaving(player);
 		dropInventory(player);
-		loadSavedInventory(player);
 		if(isRunning && !Config.getAllowRejoin(setup)) {
 		    stats.get(player).death();
 		}

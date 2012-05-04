@@ -13,6 +13,11 @@ commands:
         usage:
         
 permissions:
+    hungergame.*:
+       description: enables all permissions
+       children:
+           hungergame.admin.*: false
+           hungergame.user.*: false
     hungergame.admin.*:
         description: enables all admin perms
         children:

@@ -1,4 +1,3 @@
-- Saving
 - Map gen
 - Map reset
 - Stop game
@@ -14,3 +13,4 @@
 - Could not load games.yml should not be severe
 - better /hg stat
 - Fix Leave command
+- Fixed item chests

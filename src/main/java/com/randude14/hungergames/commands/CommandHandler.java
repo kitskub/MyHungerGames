@@ -191,7 +191,12 @@ public class CommandHandler implements CommandExecutor {
 
 			getUserCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO save less
+		if(game != null) {
+		    GameManager.saveGame(game);
+		}
+		else{
+		    GameManager.saveGames();
+		}
 	}
 
 	private void handleAdminCommand(Player player, Command cmd, String[] args) {
@@ -293,7 +298,12 @@ public class CommandHandler implements CommandExecutor {
 			
 			getAdminCommands(player, cmd);
 		}
-		GameManager.saveGames();// TODO save less
+		if(game != null) {
+		    GameManager.saveGame(game);
+		}
+		else{
+		    GameManager.saveGames();
+		}
 	}
 
 	private void getUserCommands(Player player, Command cmd) {

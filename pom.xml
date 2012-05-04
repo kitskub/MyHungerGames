@@ -20,7 +20,10 @@
             <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
     </repositories>
-    
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.chrisgward.com</url>
+    </ciManagement>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
