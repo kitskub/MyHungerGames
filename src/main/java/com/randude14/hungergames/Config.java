@@ -80,6 +80,10 @@ public class Config {
 		return plugin.getConfig().getInt("global.lives", LIVES.getInt());
 	}
 	
+	public static boolean getShouldClearInvGlobal() {
+		return plugin.getConfig().getBoolean("global.should-clear-inv", SHOULD_CLEAR_INV.getBoolean());
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -152,6 +156,10 @@ public class Config {
 	
 	public static int getLives(String setup) {
 		return plugin.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
+	}
+	
+	public static boolean getShouldClearInv(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".should-clear-inv", getShouldClearInvGlobal());
 	}
 	
 	@SuppressWarnings("unchecked")

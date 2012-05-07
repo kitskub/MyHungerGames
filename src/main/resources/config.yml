@@ -22,6 +22,8 @@ global:
   winner-keeps-items: true
   # number of lives a player has. 0 is unlimited
   lives: 1
+  # whether players should clear inv
+  should-clear-inv: false
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:

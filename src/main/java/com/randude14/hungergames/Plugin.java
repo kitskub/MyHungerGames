@@ -733,14 +733,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	}
 
-	public static boolean hasInventoryBeenCleared(Player player) {// Just in
-																	// case we
-																	// want a
-																	// config
-																	// option to
-																	// force
-																	// clear
-																	// inv.
+	public static boolean hasInventoryBeenCleared(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		for (ItemStack item : inventory.getContents()) {
 			if (item != null && item.getType() != Material.AIR) {

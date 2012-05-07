@@ -72,7 +72,8 @@ public class Defaults {
 	WINNER_KEEPS_ITEMS(true),
 	RESPAWN_ON_DEATH(false),
 	DEFAULT_GAME("Test"),
-	LIVES(1);
+	LIVES(1),
+	SHOULD_CLEAR_INV(false);
 	
 	private Object value;
 	

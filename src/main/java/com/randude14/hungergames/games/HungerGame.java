@@ -318,6 +318,19 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "%s is already full.", name);
 			return false;
 		}
+		
+		if (Config.getShouldClearInv(setup)) {
+			
+			if(!Plugin.hasInventoryBeenCleared(player)) {
+				Plugin.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
+				return false;
+			}
+			
+		}
+		
+		else {
+			savedInventories.put(player, new InventorySave(player));
+		}
 
 		Random rand = Plugin.getRandom();
 		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
@@ -325,7 +338,6 @@ public class HungerGame implements Comparable<HungerGame> {
 			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 		}
 		spawnsTaken.put(player, loc);
-		savedInventories.put(player, new InventorySave(player));
 		player.getInventory().clear();
 		player.teleport(loc);
 		if (!isRunning) {
