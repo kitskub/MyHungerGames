@@ -361,7 +361,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		playerLeaving(player);
 		dropInventory(player);
 		if(isRunning && !Config.getAllowRejoin(setup)) {
-		    stats.get(player).death();
+		    stats.get(player).die();
 		}
 		teleportPlayerToSpawn(player);
 		if (isRunning) {
@@ -506,14 +506,18 @@ public class HungerGame implements Comparable<HungerGame> {
 
 		else {
 			if (Config.shouldRespawnAtSpawnPoint(setup)) {
-				Random rand = Plugin.getRandom();
-				Location respawn = spawnPoints.get(rand.nextInt(spawnPoints
-						.size()));
+				Location respawn = spawnsTaken.get(killed);
 				GameManager.addPlayerRespawn(killed, respawn);
+			}
+			else {
+				Location respawn = spawnsTaken.get(killed);
+				GameManager.addPlayerRespawn(killed, respawn);
+				// TODO needs a random
 			}
 			Plugin.info("You have " + killedStat.getLivesLeft()
 					+ " lives left.");
 		}
+		checkForGameOver(false);
 		if (callEvent) {
 			Plugin.callEvent(new PlayerKillEvent(this, killed));
 		}

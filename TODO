@@ -13,4 +13,8 @@
 - Could not load games.yml should not be severe
 - better /hg stat
 - Fix Leave command
+- Fix rejoin command
 - Fixed item chests
+- Ability for sponsors to invisibly teleport to a player to sponsor and stuff
+- Respawn at random spot if not spawnpoint
+- /hga restock
