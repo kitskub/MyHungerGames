@@ -75,7 +75,8 @@ public class Defaults {
 	RESPAWN_ON_DEATH(false),
 	DEFAULT_GAME("Test"),
 	LIVES(1),
-	SHOULD_CLEAR_INV(false);
+	SHOULD_CLEAR_INV(false),
+	MAJORITY_VOTE(false);
 	
 	private Object value;
 	

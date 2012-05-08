@@ -165,8 +165,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		readyToPlay.add(player);
 		int minVote = Config.getMinVote(setup);
-		if (readyToPlay.size() >= minVote/* && stats.size() == readyToPlay.size() */) {
-			// TODO add config option to require all who have join to be ready
+		if ((readyToPlay.size() >= minVote) || (readyToPlay.size() >= stats.size() && Config.getMajorityVote(setup))) {
 			Plugin.broadcast(String
 					.format(
 					// "Everyone is ready to play %s. Starting game...",
