@@ -21,7 +21,7 @@ public class AddCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 	
-	if (args.length == 0 || "?".equals(args[1])) {
+	if (args.length == 0 || "?".equalsIgnoreCase(args[1])) {
 	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
@@ -35,7 +35,7 @@ public class AddCommand extends SubCommand{
 	}
 
 	HungerGame game = GameManager.getGame(args[1]);
-	if ("spawnpoint".equals(args[0])) {
+	if ("spawnpoint".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
@@ -53,7 +53,7 @@ public class AddCommand extends SubCommand{
 		    "Left clicks block to add them as spawn points for %s. Right-click to finish.", game.getName());
 	}
 
-	else if ("chest".equals(args[0])) {
+	else if ("chest".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_CHEST)) return true;
 	    
 	    if (args.length == 1) {
@@ -72,7 +72,7 @@ public class AddCommand extends SubCommand{
 		    "Hit a chest to add it to %s.", game.getName());
 	}
 
-	else if ("game".equals(args[0])) {
+	else if ("game".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_GAME)) return true;
 
 	    if (args.length == 1) {
@@ -97,7 +97,7 @@ public class AddCommand extends SubCommand{
 	    Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[1]);
 	}
 
-	else if("itemset".equals(args[0])){
+	else if("itemset".equalsIgnoreCase(args[0])){
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_ITEMSET)) return true;
 	    
 	    if(args.length == 2){

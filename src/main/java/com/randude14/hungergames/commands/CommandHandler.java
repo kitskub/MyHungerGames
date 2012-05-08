@@ -2,22 +2,23 @@ package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.CommandUsage;
-import java.util.Collection;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerKickEvent;
-
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
-import org.apache.commons.lang.ArrayUtils;
+
+import java.util.Collection;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import org.apache.commons.lang.ArrayUtils;
+
 
 public class CommandHandler implements CommandExecutor {
 
@@ -27,9 +28,9 @@ public class CommandHandler implements CommandExecutor {
 			sender.sendMessage("In-game use only.");
 			return true;
 		}
-		if (cmd.getLabel().equals(Plugin.CMD_USER)) {
+		if (cmd.getLabel().equalsIgnoreCase(Plugin.CMD_USER)) {
 			handleUserCommand((Player) sender, cmd, args);
-		} else if (cmd.getLabel().equals(Plugin.CMD_ADMIN)) {
+		} else if (cmd.getLabel().equalsIgnoreCase(Plugin.CMD_ADMIN)) {
 			handleAdminCommand((Player) sender, cmd, args);
 		}
 		return false;
@@ -44,7 +45,7 @@ public class CommandHandler implements CommandExecutor {
 			return;
 		}
 
-		else if ("list".equals(args[0])) {
+		else if ("list".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_LIST)) return;
 
 			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
@@ -59,7 +60,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 		}
 
-		else if ("join".equals(args[0])) {
+		else if ("join".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_JOIN)) return;
 
 			String name = (args.length == 1) ? Config.getDefaultGame()
@@ -91,7 +92,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 		}
 
-		else if ("leave".equals(args[0])) {
+		else if ("leave".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_LEAVE)) return;
 
 			game = GameManager.getSession(player);
@@ -109,7 +110,7 @@ public class CommandHandler implements CommandExecutor {
 
 		}
 		
-		else if ("quit".equals(args[0])) {
+		else if ("quit".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_QUIT)) return;
 
 			
@@ -123,7 +124,7 @@ public class CommandHandler implements CommandExecutor {
 
 		}
 		
-		else if ("rejoin".equals(args[0])) {
+		else if ("rejoin".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_REJOIN)) return;
 
 			game = GameManager.getSession(player);
@@ -145,7 +146,7 @@ public class CommandHandler implements CommandExecutor {
 
 		}
 
-		else if ("sponsor".equals(args[0])) {
+		else if ("sponsor".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR)) return;
 
 			if (args.length < 2) {
@@ -166,7 +167,7 @@ public class CommandHandler implements CommandExecutor {
 			Plugin.addSponsor(player, p.getName());
 		}
 
-		else if ("vote".equals(args[0])) {
+		else if ("vote".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_VOTE)) return;
 
 			game = GameManager.getSession(player);
@@ -181,7 +182,7 @@ public class CommandHandler implements CommandExecutor {
 			Plugin.send(player, "You have voted that you are ready.");
 		}
 
-		else if ("stat".equals(args[0])) {
+		else if ("stat".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_STAT)) return;
 
 			if (args.length == 1) {
@@ -224,19 +225,19 @@ public class CommandHandler implements CommandExecutor {
 			return;
 		}
 
-		if ("add".equals(args[0])) {
+		if ("add".equalsIgnoreCase(args[0])) {
 			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
-		else if ("remove".equals(args[0])) {
+		else if ("remove".equalsIgnoreCase(args[0])) {
 			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
-		else if ("set".equals(args[0])) {
+		else if ("set".equalsIgnoreCase(args[0])) {
 			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
-		else if ("kick".equals(args[0])) {
+		else if ("kick".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK)) return;
 
 			if (args.length == 1) {
@@ -259,7 +260,7 @@ public class CommandHandler implements CommandExecutor {
 			game.leave(kick);
 		}
 
-		else if ("start".equals(args[0])) {
+		else if ("start".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_START)) return;
 
 			if (args.length == 1) {
@@ -293,7 +294,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 		}
 
-		else if ("reload".equals(args[0])) {
+		else if ("reload".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_RELOAD)) return;
 			
 			Plugin.reload();

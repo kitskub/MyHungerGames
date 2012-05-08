@@ -21,7 +21,7 @@ public class RemoveCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 
-	if (args.length == 1 || "?".equals(args[1])) {
+	if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
 	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
@@ -36,7 +36,7 @@ public class RemoveCommand extends SubCommand{
 
 	HungerGame game = GameManager.getGame(args[1]);
 	
-	if ("spawnpoint".equals(args[0])) {
+	if ("spawnpoint".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
@@ -56,7 +56,7 @@ public class RemoveCommand extends SubCommand{
 			    game.getName());
 	}
 
-	else if ("chest".equals(args[0])) {
+	else if ("chest".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_CHEST)) return true;
 	    
 	    if (args.length == 1) {
@@ -75,7 +75,7 @@ public class RemoveCommand extends SubCommand{
 			    "Hit a chest to remove it from %s.", game.getName());
 	}
 
-	else if ("game".equals(args[0])) {
+	else if ("game".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_GAME)) return true;
 	    
 	    if (args.length == 1) {
@@ -94,7 +94,7 @@ public class RemoveCommand extends SubCommand{
 	    Plugin.send(player, ChatColor.GREEN, "%s has been removed.", args[1]);
 	}
 
-	else if("itemset".equals(args[0])){
+	else if("itemset".equalsIgnoreCase(args[0])){
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) return true;
 	    
 	    if(args.length == 2){

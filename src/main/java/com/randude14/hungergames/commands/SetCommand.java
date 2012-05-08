@@ -21,7 +21,7 @@ public class SetCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 	
-	if (args.length == 0 || "?".equals(args[0])) {
+	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 		Plugin.helpCommand(player, CommandUsage.ADMIN_SET_SPAWN.getUsageAndInfo(),
 				Plugin.CMD_ADMIN);
@@ -31,7 +31,7 @@ public class SetCommand extends SubCommand{
 	}
 
 	HungerGame game = GameManager.getGame(args[1]);
-	if ("spawn".equals(args[0])) {
+	if ("spawn".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_SET_SPAWN)) return true;
 	    
 	    if (args.length < 2) {
@@ -50,7 +50,7 @@ public class SetCommand extends SubCommand{
 	    Plugin.send(player, "Spawn has been set for %s.", game.getName());
 	}
 
-	else if ("enabled".equals(args[0])) {
+	else if ("enabled".equalsIgnoreCase(args[0])) {
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_SET_ENABLED)) return true;
 	    
 	    if (args.length < 2) {

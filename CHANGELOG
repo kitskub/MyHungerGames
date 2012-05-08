@@ -5,3 +5,5 @@ v0.3
 - Cleanup
 - Lives cleanup
 - Rejoin/Join/Leave cleaned up
+- Added Metrics
+- Use equalsIgnoreCase, not equals for commands
