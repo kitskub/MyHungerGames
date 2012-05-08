@@ -446,14 +446,18 @@ public class HungerGame implements Comparable<HungerGame> {
 				spawnPoints.size(), enabled);
 	}
 
+	/**
+	 * 
+	 * @param players players to check
+	 * @return true if players are in the game.
+	 */
 	public boolean contains(Player... players) {
-		for (Player player : players) {
-			if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
-				return false;
-			}
-
+	    for (Player player : players) {
+		if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
+		    return false;
 		}
-		return true;
+	    }
+	    return true;
 	}
 
 	public void killed(Player killer, Player killed) {

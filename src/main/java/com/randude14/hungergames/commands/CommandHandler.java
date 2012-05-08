@@ -112,11 +112,7 @@ public class CommandHandler implements CommandExecutor {
 		else if ("quit".equals(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_QUIT)) return;
 
-			game = GameManager.getSession(player);
-			if (game == null) {
-				Plugin.error(player, "You are currently not in a game.");
-				return;
-			}
+			
 
 			if (game.quit(player)) {
 				String mess = Config.getQuitMessage(game.getSetup());
@@ -131,22 +127,20 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.USER_REJOIN)) return;
 
 			game = GameManager.getSession(player);
-			if (game != null) {
-				if (game.rejoin(player)) {
-					String mess = Config.getRejoinMessage(game.getSetup());
-					mess = mess.replace("<player>", player.getName()).replace(
-							"<game>", game.getName());
-					Plugin.broadcast(mess);
-				}
-
-				else {
-					Plugin.error(player, "Failed to rejoin %s.", game.getName());
-				}
-
+			if (game == null) {
+				Plugin.error(player, "You are currently not in a game.");
+				return;
+			}
+			
+			if (game.rejoin(player)) {
+				String mess = Config.getRejoinMessage(game.getSetup());
+				mess = mess.replace("<player>", player.getName()).replace(
+						"<game>", game.getName());
+				Plugin.broadcast(mess);
 			}
 
 			else {
-				Plugin.error(player, "You are currently not in a game.");
+				Plugin.error(player, "Failed to rejoin %s.", game.getName());
 			}
 
 		}
@@ -165,8 +159,8 @@ public class CommandHandler implements CommandExecutor {
 				Plugin.error(player, "%s is not online.", args[1]);
 				return;
 			}
-			if (GameManager.getSession(p) == null) {
-				Plugin.error(player, "%s is not in a game.", p.getName());
+			if (GameManager.getSession(p) == null || !GameManager.getSession(p).getPlayerStat(p).isPlaying()) {
+				Plugin.error(player, "%s is not playing in a game.", p.getName());
 				return;
 			}
 			Plugin.addSponsor(player, p.getName());
@@ -246,32 +240,23 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK)) return;
 
 			if (args.length == 1) {
-				Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsage(),
-						cmd.getLabel());
+				Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsage(), cmd.getLabel());
 				return;
 			}
 
 			Player kick = Bukkit.getServer().getPlayer(args[1]);
-			if (kick != null) {
-				game = GameManager.getSession(kick);
-				if (game != null) {
-					Plugin.broadcast(String.format(
-							"%s has been kicked from the game %s.",
-							player.getName(), game.getName()));
-					Plugin.callEvent(new PlayerKickGameEvent(game, kick));
-					game.leave(kick);
-				}
-
-				else {
-					Plugin.error(player, "%s is currently not in a game.",
-							kick.getName());
-				}
-
+			if (kick == null) {
+			    Plugin.error(player, "%s is not online.", args[1]);
+			    return;
 			}
-
-			else {
-				Plugin.error(player, "%s is not online.", args[1]);
+			game = GameManager.getSession(kick);
+			if (game == null) {
+			    Plugin.error(player, "%s is currently not in a game.", kick.getName());
+			    return;
 			}
+			Plugin.broadcast("%s has been kicked from the game %s.", player.getName(), game.getName());
+			Plugin.callEvent(new PlayerKickGameEvent(game, kick));
+			game.leave(kick);
 		}
 
 		else if ("start".equals(args[0])) {
@@ -332,6 +317,7 @@ public class CommandHandler implements CommandExecutor {
 		Plugin.helpCommand(player, CommandUsage.USER_LIST.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_JOIN.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_LEAVE.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_QUIT.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_REJOIN.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_VOTE.getUsageAndInfo(), cmd.getLabel());

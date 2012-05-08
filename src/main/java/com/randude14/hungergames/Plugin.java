@@ -375,8 +375,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
 		Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
 		HungerGame game = GameManager.getSession(sponsoredPlayer);
-		if (game == null) {
-			error(player, "That player is not in a game.");
+		if (game == null || !game.getPlayerStat(player).isPlaying()) {
+			error(player, "That player is playing in a game.");
 			return false;
 		}
 		List<String> itemsets = game.getItemSets();
@@ -479,6 +479,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		Player player = event.getPlayer();
 		if (!frozenPlayers.containsKey(player)
 				|| GameManager.getSession(player) == null
+				|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
 				|| GameManager.getSession(player).isRunning()) {
 			return;
 		}

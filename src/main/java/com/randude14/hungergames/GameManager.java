@@ -72,6 +72,13 @@ public class GameManager implements Listener {
 		return null;
 	}
 
+	/**
+	 * This does not care about whether the player is actually playing the game or not.
+	 * If the player has the potential to rejoin, and therefore has lives, that is the game.
+	 * 
+	 * @param player
+	 * @return the game a player is in
+	 */
 	public static HungerGame getSession(Player player) {
 		for (HungerGame game : games) {
 			if (game.contains(player)) {
@@ -95,9 +102,7 @@ public class GameManager implements Listener {
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
 		HungerGame gameOfKilled = getSession(killed);
-		if (gameOfKilled == null) {
-			return;
-		}
+		if (gameOfKilled == null) return;
 		
 		Player killer = killed.getKiller();
 		if (killer != null) {
@@ -123,19 +128,19 @@ public class GameManager implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerQuit(PlayerQuitEvent event) {
-		playerLeft(event.getPlayer());
+		playerLeftServer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerKick(PlayerKickEvent event) {
-		playerLeft(event.getPlayer());
+		playerLeftServer(event.getPlayer());
 	}
 
-	private static void playerLeft(Player player) {
+	private static void playerLeftServer(Player player) {
 		HungerGame game = getSession(player);
 		if (game == null) return;
-		game.leave(player);
-		String mess = Config.getLeaveMessage(game.getSetup())
+		game.quit(player);
+		String mess = Config.getQuitMessage(game.getSetup())
 			.replace("<player>", player.getName())
 			.replace("<game>", game.getName());
 		Plugin.broadcast(mess);
