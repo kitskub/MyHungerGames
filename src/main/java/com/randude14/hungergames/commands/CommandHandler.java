@@ -108,7 +108,25 @@ public class CommandHandler implements CommandExecutor {
 			}
 
 		}
+		
+		else if ("quit".equals(args[0])) {
+			if (!Plugin.checkPermission(player, Perm.USER_QUIT)) return;
 
+			game = GameManager.getSession(player);
+			if (game == null) {
+				Plugin.error(player, "You are currently not in a game.");
+				return;
+			}
+
+			if (game.quit(player)) {
+				String mess = Config.getQuitMessage(game.getSetup());
+				mess = mess.replace("<player>", player.getName()).replace(
+						"<game>", game.getName());
+				Plugin.broadcast(mess);
+			}
+
+		}
+		
 		else if ("rejoin".equals(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_REJOIN)) return;
 

@@ -40,6 +40,10 @@ public class Config {
 		return plugin.getConfig().getString("global.leave-message", LEAVE.getMessage());
 	}
 	
+	public static String getGlobalQuitMessage() {
+		return plugin.getConfig().getString("global.quit-message", QUIT.getMessage());
+	}
+	
 	public static String getGlobalKillMessage() {
 		return plugin.getConfig().getString("global.kill-message", KILL.getMessage());
 	}
@@ -116,6 +120,10 @@ public class Config {
 	
 	public static String getLeaveMessage(String setup) {
 		return plugin.getConfig().getString("setups." + setup + ".leave-message", getGlobalLeaveMessage());
+	}
+	
+	public static String getQuitMessage(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".quit-message", getGlobalQuitMessage());
 	}
 	
 	public static String getKillMessage(String setup) {

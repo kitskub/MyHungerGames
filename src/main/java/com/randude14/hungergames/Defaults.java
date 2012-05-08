@@ -29,7 +29,8 @@ public class Defaults {
 	USER_SPONSOR("hungergame.user.sponsor"),
 	USER_VOTE("hungergame.user.vote"),
 	USER_STAT("hungergame.user.stat"),
-	USER_HELP("hungergame.user.help");
+	USER_HELP("hungergame.user.help"),
+	USER_QUIT("hungergame.user.quit");
 
 	private String value;
 	
@@ -47,6 +48,7 @@ public class Defaults {
 	JOIN("<player> has joined the game <game>."),
 	REJOIN("<player> has rejoined the game <gam"),
 	LEAVE("<player> has left the game <game>."),
+	QUIT("<player> has quit the game <game>."),
 	VOTE("<killer> killed <killed> in game <game>."),
 	KILL("<player> is ready to play <game>. Type /hg vote when you are ready to play.");
 	
@@ -114,12 +116,13 @@ public class Defaults {
 	ADMIN_RELOAD("/%s rejoin", "reload MyHungerGames"),
 	ADMIN_KICK("/%s kick <player>", "kick a player from a game"),
 	USER_JOIN("/%s join <game name>", "join a game"),
-	USER_LEAVE("/%s leave", "leave current game"),
+	USER_LEAVE("/%s leave", "leave current game temporarily (if enabled)"),
 	USER_LIST("/%s list", "list games"),
 	USER_REJOIN("/%s rejoin", "rejoin your current game"),
 	USER_SPONSOR("/%s sponsor <player>", "sponsor a player an item"),
 	USER_VOTE("/%s vote", "cast your vote that you are ready to play"),
-	USER_STAT("/%s stat <game name>", "list stats for a game");
+	USER_STAT("/%s stat <game name>", "list stats for a game"),
+	USER_QUIT("/%s quit", "quits the current game indefinitely");
 	
 	private String usage;
 	private String info;

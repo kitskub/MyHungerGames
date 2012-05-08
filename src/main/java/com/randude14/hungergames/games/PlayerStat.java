@@ -8,11 +8,13 @@ public class PlayerStat {
 	private Player player;
 	private int deaths;
 	private int kills;
+	private boolean playing;
 	
 	public PlayerStat(Player player) {
 		deaths = 0;
 		kills = 0;
 		this.player = player;
+		this.playing = true;
 	}
 	
 	public void kill() {
@@ -26,6 +28,7 @@ public class PlayerStat {
 	public void die() {
 	    HungerGame game = GameManager.getGame(player.getName());
 	    deaths = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
+	    playing = false;
 	}
 	
 	public int getKills() {
@@ -50,4 +53,18 @@ public class PlayerStat {
 		return lives - deaths;
 	}
 
+    /**
+     * @return true if player is playing
+     */
+    public boolean isPlaying() {
+	return playing;
+    }
+
+    /**
+     * @param playing If player is currently playing
+     */
+    public void setPlaying(boolean playing) {
+	this.playing = playing;
+    }
+	
 }

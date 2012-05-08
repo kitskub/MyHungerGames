@@ -72,7 +72,7 @@ public class GameManager implements Listener {
 		return null;
 	}
 
-	    public static HungerGame getSession(Player player) {
+	public static HungerGame getSession(Player player) {
 		for (HungerGame game : games) {
 			if (game.contains(player)) {
 				return game;
@@ -87,6 +87,7 @@ public class GameManager implements Listener {
 	}
 	
 	public static void addPlayerRespawn(Player player, Location respawn) {
+		if(respawn == null) return;
 		respawnLocation.put(player, respawn);
 	}
 
