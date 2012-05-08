@@ -1,0 +1,7 @@
+v0.3
+- Clearing inventories is now optional
+- Fixed winner not being recognized
+- Add quit command.
+- Cleanup
+- Lives cleanup
+- Rejoin/Join/Leave cleaned up
