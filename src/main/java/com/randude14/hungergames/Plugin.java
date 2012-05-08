@@ -49,6 +49,7 @@ import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
+import java.io.IOException;
 
 public class Plugin extends JavaPlugin implements Listener {
 	private static final Logger logger = Logger.getLogger("Minecraft");
@@ -103,6 +104,12 @@ public class Plugin extends JavaPlugin implements Listener {
 		callTasks();
 		GameManager.loadGames();
 		info("Games loaded.");
+		try {
+		    Metrics metrics = new Metrics();
+		    metrics.beginMeasuringPlugin(this);
+		} catch (IOException e) {
+		// Fail silently
+		}
 		info("Enabled.");
 	}
 
