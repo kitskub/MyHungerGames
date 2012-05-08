@@ -265,79 +265,80 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean rejoin(Player player) {
-		if (!Config.getAllowRejoin(setup)) {
-			Plugin.error(player, "You are not allowed to rejoin a game.");
-			return false;
-		}
-		if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
-			Plugin.error(player, "You are not in the game %s.", name);
-			return false;
-		}
-		if (stats.get(player).isPlaying()){
-			Plugin.error(player, "You can't rejoin a game while you are in it.");
-			return false;
-		}
-		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
-		Plugin.callEvent(event);
-		if (event.isCancelled()) {
-			return false;
-		}
-		return addPlayer(player);
+	    playerEnteringPreProcess(player);
+	    if (!Config.getAllowRejoin(setup)) {
+		    Plugin.error(player, "You are not allowed to rejoin a game.");
+		    return false;
+	    }
+	    if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
+		    Plugin.error(player, "You are not in the game %s.", name);
+		    return false;
+	    }
+	    if (stats.get(player).isPlaying()){
+		    Plugin.error(player, "You can't rejoin a game while you are in it.");
+		    return false;
+	    }
+	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
+	    Plugin.callEvent(event);
+	    if (event.isCancelled()) return false;
+	    
+	    return playerEntering(player);
 	}
 
 	public synchronized boolean join(Player player) {
-		if (stats.containsKey(player)) {
-			Plugin.error(player, "You are already in this game.");
-			return false;
-		}
-		if (isRunning && !Config.getAllowJoinWhileRunning(setup)) {
-			Plugin.error(player, "%s is already running and you cannot join while that is so.", name);
-			return false;
-		}
-		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
-		Plugin.callEvent(event);
-		if (event.isCancelled()) {
-			return false;
-		}
-		if (!addPlayer(player))
-			return false;
-
-		stats.put(player, new PlayerStat(player));
-		return true;
+	    playerEnteringPreProcess(player);
+	    if (stats.containsKey(player)) {
+		    Plugin.error(player, "You are already in this game.");
+		    return false;
+	    }
+	    if (isRunning && !Config.getAllowJoinWhileRunning(setup)) {
+		    Plugin.error(player, "%s is already running and you cannot join while that is so.", name);
+		    return false;
+	    }
+	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
+	    Plugin.callEvent(event);
+	    if (event.isCancelled()) {
+		    return false;
+	    }
+	    stats.put(player, new PlayerStat(player));
+	    return playerEntering(player);
 	}
+	
+	private synchronized boolean playerEnteringPreProcess(Player player) {
+	    if (!enabled) {
+		    Plugin.error(player, "%s is currently not enabled.", name);
+		    return false;
+	    }
 
-	public synchronized boolean addPlayer(Player player) {
-		if (!enabled) {
-			Plugin.error(player, "%s is currently not enabled.", name);
-			return false;
-		}
+	    if (spawnsTaken.size() >= spawnPoints.size()) {
+		    Plugin.error(player, "%s is already full.", name);
+		    return false;
+	    }
 
-		if (spawnsTaken.size() >= spawnPoints.size()) {
-			Plugin.error(player, "%s is already full.", name);
-			return false;
-		}
-		
-		if (Config.getShouldClearInv(setup)) {
-			if(!Plugin.hasInventoryBeenCleared(player)) {
-				Plugin.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
-				return false;
-			}
-		}
-		else {
-		    InventorySave.saveAndClearInventory(player);
-		}
+	    if (Config.getShouldClearInv(setup)) {
+		    if(!Plugin.hasInventoryBeenCleared(player)) {
+			    Plugin.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
+			    return false;
+		    }
+	    }
+	    else {
+		InventorySave.saveAndClearInventory(player);
+	    }
 
-		Random rand = Plugin.getRandom();
-		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		while (spawnTaken(loc)) {
-			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-		}
-		spawnsTaken.put(player, loc);
-		player.teleport(loc);
-		if (!isRunning) {
-			Plugin.freezePlayer(player);
-		}
-		return true;
+	    Random rand = Plugin.getRandom();
+	    Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+	    while (spawnTaken(loc)) {
+		    loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+	    }
+	    spawnsTaken.put(player, loc);
+	    player.teleport(loc);
+	    return true;
+	}
+	
+	public synchronized boolean playerEntering(Player player) {
+	    if (!isRunning) Plugin.freezePlayer(player);
+	    
+	    return true;
 	}
 
 	private boolean spawnTaken(Location loc) {
