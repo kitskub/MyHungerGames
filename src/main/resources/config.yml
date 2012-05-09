@@ -39,14 +39,17 @@ global:
   should-clear-inv: false
   
   # require everyone that has joined the game to start
-  majority-vote: false
+  all-vote: false
+  
+  # when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
+  auto-vote: false
   
   # whether players can place blocks
   can-place-block: false
   
   # whether players can break blocks
   can-break-block: false
-  
+
   # whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
   

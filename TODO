@@ -7,7 +7,6 @@
     - Force damage
 - Chest loot by command
 - Sponsor loot by command
-- Config option for automatic readyness
 - Could not load games.yml should not be severe
 - better /hg stat
 - Fixed item chests
@@ -16,3 +15,4 @@
 - /hga restock
 - Add logging
 - Possible timed game events
+- check saving

@@ -165,12 +165,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		readyToPlay.add(player);
 		int minVote = Config.getMinVote(setup);
-		if ((readyToPlay.size() >= minVote) || (readyToPlay.size() >= stats.size() && Config.getMajorityVote(setup))) {
-			Plugin.broadcast(String
-					.format(
-					// "Everyone is ready to play %s. Starting game...",
-					"Enough players have voted that they are ready. Starting game...",
-							this.name));
+		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
+		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
+			Plugin.broadcast("Enough players have voted that they are ready. Starting game...", this.name);
 			start(player);
 		} else {
 			String mess = Config.getVoteMessage(setup)
@@ -280,8 +277,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
 	    Plugin.callEvent(event);
 	    if (event.isCancelled()) return false;
-	    
-	    return playerEntering(player);
+	    if (!playerEntering(player)) return false;
+	    return true;
 	}
 
 	public synchronized boolean join(Player player) {
@@ -296,11 +293,11 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
 	    Plugin.callEvent(event);
-	    if (event.isCancelled()) {
-		    return false;
-	    }
+	    if (event.isCancelled()) return false;
+	    if(!playerEntering(player)) return false;
 	    stats.put(player, new PlayerStat(player));
-	    return playerEntering(player);
+	    if (Config.getAutoVote(setup)) readyToPlay.add(player);
+	    return true;
 	}
 	
 	private synchronized boolean playerEnteringPreProcess(Player player) {
@@ -323,7 +320,10 @@ public class HungerGame implements Comparable<HungerGame> {
 	    else {
 		InventorySave.saveAndClearInventory(player);
 	    }
-
+	    return true;
+	}
+	
+	public synchronized boolean playerEntering(Player player) {
 	    Random rand = Plugin.getRandom();
 	    Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 	    while (spawnTaken(loc)) {
@@ -331,12 +331,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 	    spawnsTaken.put(player, loc);
 	    player.teleport(loc);
-	    return true;
-	}
-	
-	public synchronized boolean playerEntering(Player player) {
 	    if (!isRunning) Plugin.freezePlayer(player);
-	    
 	    return true;
 	}
 
@@ -346,36 +341,41 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean leave(Player player) {
-		if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives() || !stats.get(player).isPlaying()) {
-		    Plugin.error(player, "You are not in the game %s.", name);
-		    return false;
-		}
-		playerLeaving(player);
-		dropInventory(player);
-		if (!Config.getAllowRejoin(setup)) {
-		    stats.get(player).die();
-		}
-		else {
-		    stats.get(player).setPlaying(false);
-		}
-		teleportPlayerToSpawn(player);
-		checkForGameOver(false);
-		Plugin.callEvent(new PlayerLeaveGameEvent(this, player));
-		return true;
+	    if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives() || !stats.get(player).isPlaying()) {
+		Plugin.error(player, "You are not in the game %s.", name);
+		return false;
+	    }
+	    playerLeaving(player);
+	    dropInventory(player);
+	    if (!Config.getAllowRejoin(setup)) {
+		stats.get(player).die();
+	    }
+	    else {
+		stats.get(player).setPlaying(false);
+	    }
+	    teleportPlayerToSpawn(player);
+	    checkForGameOver(false);
+	    Plugin.callEvent(new PlayerLeaveGameEvent(this, player));
+	    return true;
 	}
 	
 	public synchronized boolean quit(Player player) {
-		if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
-		    Plugin.error(player, "You are not in the game %s.", name);
-		    return false;
-		}
-		playerLeaving(player);
-		dropInventory(player);
+	    if (!stats.containsKey(player) || stats.get(player).hasRunOutOfLives()) {
+		Plugin.error(player, "You are not in the game %s.", name);
+		return false;
+	    }
+	    playerLeaving(player);
+	    dropInventory(player);
+	    teleportPlayerToSpawn(player);
+	    checkForGameOver(false);
+	    if(isRunning) {
 		stats.get(player).die();
-		teleportPlayerToSpawn(player);
-		checkForGameOver(false);
-		Plugin.callEvent(new PlayerQuitGameEvent(this, player));
-		return true;
+	    }
+	    else {
+		stats.remove(player);
+	    }
+	    Plugin.callEvent(new PlayerQuitGameEvent(this, player));
+	    return true;
 	}
 	
 	private synchronized void playerLeaving(Player player) {
@@ -407,6 +407,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void checkForGameOver(boolean notifyOfRemaining) {// TODO config option
+	    if(!isRunning) return;
 	    List<Player> remaining = getRemainingPlayers();
 	    if (remaining.size() < 2) {
 		    Player winner = remaining.get(0);

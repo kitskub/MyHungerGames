@@ -1,7 +1,9 @@
 global:
   default-game: 'Test'
+  
   # In minutes, the number of time to wait between update checks
   update-delay: 30
+  
   # The following are default only, and will be overwritten by the setup, if applicable
   join-message: '<player> has joined the game <game>.'
   rejoin-message: '<player> has rejoined the game <game>'
@@ -9,24 +11,48 @@ global:
   quit-message: '<player> has quit the game <game>.'
   kill-message: '<killer> killed <killed> in game <game>.'
   vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
+  
   # Time, in seconds, after game starts before players can move
   default-time: 10
+  
   # Number of players required to auto-start
   min-vote: 5
+  
   # If players can join a game while it is running
   allow-join-during-game: false
+  
   # Number of players required to start at all
   min-players: 2
+  
   # If a player can rejoin a game. 
   # If false, players will lose all lives on leave. 
   # If true, lives are carried over to any rejoins
   allow-rejoin: true
+  
   # If a winner gets to keep his items
   winner-keeps-items: true
+  
   # number of lives a player has. 0 is unlimited
   lives: 1
-  # whether players should clear inv
+  
+  # whether players should clear their inventory before joining
   should-clear-inv: false
+  
+  # require everyone that has joined the game to start
+  all-vote: false
+  
+  # when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
+  auto-vote: false
+  
+  # whether players can place blocks
+  can-place-block: false
+  
+  # whether players can break blocks
+  can-break-block: false
+
+  # whether players can interact with blocks (Chests, Enchant tables, ect...)
+  can-interact-block: false
+  
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:

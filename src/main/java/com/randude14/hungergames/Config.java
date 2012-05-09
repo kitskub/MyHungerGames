@@ -88,8 +88,12 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.should-clear-inv", SHOULD_CLEAR_INV.getBoolean());
 	}
 	
-	public static boolean getMajorityVoteGlobal() {
-		return plugin.getConfig().getBoolean("global.majority-vote", MAJORITY_VOTE.getBoolean());
+	public static boolean getAllVoteGlobal() {
+		return plugin.getConfig().getBoolean("global.all-vote", ALL_VOTE.getBoolean());
+	}
+	
+	public static boolean getAutoVoteGlobal() {
+		return plugin.getConfig().getBoolean("global.auto-vote", AUTO_VOTE.getBoolean());
 	}
 	
 	public static boolean getCanPlaceBlockGlobal() {
@@ -186,8 +190,12 @@ public class Config {
 		return plugin.getConfig().getBoolean("setups." + setup + ".should-clear-inv", getShouldClearInvGlobal());
 	}
 	
-	public static boolean getMajorityVote(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".majority-vote", getMajorityVoteGlobal());
+	public static boolean getAllVote(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".all-vote", getAllVoteGlobal());
+	}
+
+	public static boolean getAutoVote(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".auto-vote", getAllVoteGlobal());
 	}
 	
 	public static boolean getCanPlaceBlock(String setup) {

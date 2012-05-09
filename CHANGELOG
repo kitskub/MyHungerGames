@@ -7,3 +7,8 @@ v0.3
 - Rejoin/Join/Leave cleaned up
 - Added Metrics
 - Use equalsIgnoreCase, not equals for commands
+- all-vote is in
+- block interact/place/break options
+- Added an unimplemented Logging class
+- Auto-vote
+- Made quitting before a game starts remove you from the games stats

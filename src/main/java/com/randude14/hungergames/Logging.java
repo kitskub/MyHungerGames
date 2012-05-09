@@ -18,8 +18,7 @@ public class Logging {
 			Plugin instance = Plugin.getInstance();
 			instance.getDataFolder().mkdirs();
 			File file = new File(instance.getDataFolder(), "myhungergames.log");
-			if (!file.exists())
-				file.createNewFile();
+			if (!file.exists()) file.createNewFile();
 			FileHandler handler = new FileHandler("plugins/MyHungerGames/myhungergames.log", true);
 			logger.addHandler(handler);
 		} catch (IOException ex) {
