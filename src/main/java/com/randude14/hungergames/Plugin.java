@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 import java.net.URL;
 
 import org.w3c.dom.Document;
@@ -46,6 +46,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.listeners.BlockListener;
 import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
@@ -87,6 +88,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
+		pm.registerEvents(new BlockListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
