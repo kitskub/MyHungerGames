@@ -19,7 +19,7 @@ public class Logging {
 			instance.getDataFolder().mkdirs();
 			File file = new File(instance.getDataFolder(), "myhungergames.log");
 			if (!file.exists()) file.createNewFile();
-			FileHandler handler = new FileHandler("plugins/MyHungerGames/myhungergames.log", true);
+			FileHandler handler = new FileHandler("plugins/HungerGames/myhungergames.log", true);
 			logger.addHandler(handler);
 			Logger parent = Logger.getLogger("Mincraft");
 			logger.setParent(parent);
