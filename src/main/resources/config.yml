@@ -41,6 +41,15 @@ global:
   # require everyone that has joined the game to start
   majority-vote: false
   
+  # whether players can place blocks
+  can-place-block: false
+  
+  # whether players can break blocks
+  can-break-block: false
+  
+  # whether players can interact with blocks (Chests, Enchant tables, ect...)
+  can-interact-block: false
+  
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:

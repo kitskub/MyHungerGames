@@ -92,6 +92,18 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.majority-vote", MAJORITY_VOTE.getBoolean());
 	}
 	
+	public static boolean getCanPlaceBlockGlobal() {
+		return plugin.getConfig().getBoolean("global.can-place-block", CAN_PLACE_BLOCK.getBoolean());
+	}
+	
+	public static boolean getCanBreakBlockGlobal() {
+		return plugin.getConfig().getBoolean("global.can-break-block", CAN_BREAK_BLOCK.getBoolean());
+	}
+	
+	public static boolean getCanInteractBlockGlobal() {
+		return plugin.getConfig().getBoolean("global.can-interact-block", CAN_INTERACT_BLOCK.getBoolean());
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -176,6 +188,18 @@ public class Config {
 	
 	public static boolean getMajorityVote(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".majority-vote", getMajorityVoteGlobal());
+	}
+	
+	public static boolean getCanPlaceBlock(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanPlaceBlockGlobal());
+	}
+	
+	public static boolean getCanBreakBlock(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanBreakBlockGlobal());
+	}
+	
+	public static boolean getCanInteractBlock(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanInteractBlockGlobal());
 	}
 	
 	@SuppressWarnings("unchecked")

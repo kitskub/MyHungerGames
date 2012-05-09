@@ -76,7 +76,10 @@ public class Defaults {
 	DEFAULT_GAME("Test"),
 	LIVES(1),
 	SHOULD_CLEAR_INV(false),
-	MAJORITY_VOTE(false);
+	MAJORITY_VOTE(false),
+	CAN_PLACE_BLOCK(false),
+	CAN_BREAK_BLOCK(false),
+	CAN_INTERACT_BLOCK(false);
 	
 	private Object value;
 	
