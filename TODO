@@ -7,7 +7,6 @@
     - Force damage
 - Chest loot by command
 - Sponsor loot by command
-- Could not load games.yml should not be severe
 - better /hg stat
 - Fixed item chests
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
@@ -16,3 +15,4 @@
 - Add logging
 - Possible timed game events
 - check saving
+- economy config stuff

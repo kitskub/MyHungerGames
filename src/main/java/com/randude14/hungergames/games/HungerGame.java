@@ -60,8 +60,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void loadFrom(ConfigurationSection section) {
 		if (section.contains("spawn-points")) {
-			ConfigurationSection spawnPointsSection = section
-					.getConfigurationSection("spawn-points");
+			ConfigurationSection spawnPointsSection = section.getConfigurationSection("spawn-points");
 			for (String key : spawnPointsSection.getKeys(false)) {
 				String str = spawnPointsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
@@ -75,8 +74,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 
 		if (section.contains("chests")) {
-			ConfigurationSection chestsSection = section
-					.getConfigurationSection("chests");
+			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
 			for (String key : chestsSection.getKeys(false)) {
 				String str = chestsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
@@ -99,30 +97,25 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void saveTo(ConfigurationSection section) {
 		if (!spawnPoints.isEmpty()) {
-			ConfigurationSection spawnPointsSection = section
-					.createSection("spawn-points");
+			ConfigurationSection spawnPointsSection = section.createSection("spawn-points");
 			for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
 				Location loc = spawnPoints.get(cntr);
-				spawnPointsSection.set("spawnpoint" + (cntr + 1),
-						Plugin.parseToString(loc));
+				spawnPointsSection.set("spawnpoint" + (cntr + 1), Plugin.parseToString(loc));
 			}
 
 		}
 
 		if (!chests.isEmpty()) {
-			ConfigurationSection chestsSection = section
-					.createSection("chests");
+			ConfigurationSection chestsSection = section.createSection("chests");
 			for (int cntr = 0; cntr < chests.size(); cntr++) {
 				Location loc = chests.get(cntr);
-				chestsSection.set("chest" + (cntr + 1),
-						Plugin.parseToString(loc));
+				chestsSection.set("chest" + (cntr + 1), Plugin.parseToString(loc));
 			}
 
 		}
 		section.set("enabled", enabled);
-		if (getSpawn() != null) {
-			section.set("spawn", Plugin.parseToString(getSpawn()));
-		}
+		if (getSpawn() != null) section.set("spawn", Plugin.parseToString(getSpawn()));
+		
 		Plugin.callEvent(new GameSaveEvent(this));
 	}
 
@@ -151,8 +144,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean addReadyPlayer(Player player) {
 		if (readyToPlay.contains(player)) {
-			Plugin.error(player,
-					"You have already cast your vote that you are ready to play.");
+			Plugin.error(player, "You have already cast your vote that you are ready to play.");
 			return false;
 		}
 		if (isCounting) {
@@ -179,9 +171,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean start(Player player, int ticks) {// TODO stop
-		if (isRunning) {
-			return false;
-		}
+		if (isRunning) return false;
 
 		if (stats.size() < Config.getMinPlayers(setup)) {
 			Plugin.error(player, "There are not enough players in %s", name);
@@ -218,9 +208,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		releasePlayers();
 		fillChests();
 		for (Player p : stats.keySet()) {
-			if (p == null) {
-				continue;
-			}
+			if (p == null) continue;
+			
 			World world = p.getWorld();
 			world.setFullTime(0L);
 			p.setHealth(20);
@@ -336,8 +325,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	private boolean spawnTaken(Location loc) {
-		if (spawnsTaken.containsValue(loc)) return true;
-		return false;
+	    if (spawnsTaken.containsValue(loc)) return true;
+	    return false;
 	}
 
 	public synchronized boolean leave(Player player) {
@@ -442,8 +431,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public String getInfo() {
-		return String.format("%s[%d/%d] Enabled: %b", name, stats.size(),
-				spawnPoints.size(), enabled);
+		return String.format("%s[%d/%d] Enabled: %b", name, stats.size(), spawnPoints.size(), enabled);
 	}
 
 	/**
@@ -461,8 +449,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void killed(Player killer, Player killed) {
-		if (!isRunning || stats.get(killed).hasRunOutOfLives())
-			return;
+		if (!isRunning || stats.get(killed).hasRunOutOfLives()) return;
 
 		PlayerStat killerStat = getPlayerStat(killer);
 		killerStat.kill();
@@ -471,8 +458,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				.replace("<killed>", killed.getName())
 				.replace("<game>", name);
 		killed(killed, false);
-		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed,
-				message);
+		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed, message);
 		Plugin.callEvent(event);
 		Plugin.broadcast(message);
 	}
@@ -482,8 +468,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	private void killed(Player killed, boolean callEvent) {
-		if (!isRunning)
-			return;
+		if (!isRunning) return;
 
 		PlayerStat killedStat = getPlayerStat(killed);
 		killedStat.death();
@@ -528,8 +513,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void listStats(Player player) {
-		Plugin.send(player, "<name>[lives/kills]", ChatColor.GREEN.toString(),
-				ChatColor.RED.toString());
+		Plugin.send(player, "<name>[lives/kills]", ChatColor.GREEN.toString(), ChatColor.RED.toString());
 		Plugin.send(player, "");
 		List<Player> players = new ArrayList<Player>(stats.keySet());
 		for (int cntr = 0; cntr < stats.size(); cntr += 5) {
@@ -559,10 +543,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean addChest(Location loc) {
 		for (Location l : chests) {
-			if (Plugin.equals(l, loc)) {
-				return false;
-			}
-
+		    if (Plugin.equals(l, loc)) return false;
 		}
 		chests.add(loc);
 		return true;
@@ -570,10 +551,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean addSpawnPoint(Location loc) {
 		for (Location l : spawnPoints) {
-			if (Plugin.equals(l, loc)) {
-				return false;
-			}
-
+			if (Plugin.equals(l, loc)) return false;
 		}
 		spawnPoints.add(loc);
 		return true;
@@ -592,37 +570,31 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean removeSpawnPoint(Location loc) {
-		Iterator<Location> iterator = spawnPoints.iterator();
-		Location l = null;
-		while (iterator.hasNext()) {
-			if (Plugin.equals(loc, l = iterator.next())) {
-				iterator.remove();
-				for (Player p : spawnsTaken.keySet()) {
-					Location comp = spawnsTaken.get(p);
-					if (Plugin.equals(l, comp)) {
-						spawnsTaken.remove(p);
-						if (p != null) {
-							Plugin.error(
-									p,
-									"Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'",
-									name);
-							leave(p);
-						}
-
-					}
-
-				}
-				return true;
+	    Iterator<Location> iterator = spawnPoints.iterator();
+	    Location l = null;
+	    while (iterator.hasNext()) {
+		if (Plugin.equals(loc, l = iterator.next())) {
+		    iterator.remove();
+		    for (Player p : spawnsTaken.keySet()) {
+			Location comp = spawnsTaken.get(p);
+			if (Plugin.equals(l, comp)) {
+			    spawnsTaken.remove(p);
+			    if (p == null) continue;
+			    Plugin.error(p,
+				    "Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'", 
+				    name);
+			    leave(p);
 			}
-
+		    }
+		    return true;
 		}
-		return false;
+	    }
+	    return false;
 	}
 
 	private static void dropInventory(Player player) {
 		for (ItemStack i : player.getInventory().getContents()) {
-			if (i == null || i.getType().equals(Material.AIR))
-				continue;
+			if (i == null || i.getType().equals(Material.AIR)) continue;
 			player.getWorld().dropItemNaturally(player.getLocation(), i);
 		}
 		player.getInventory().clear();

@@ -24,18 +24,18 @@ public class CustomYaml {
 
 	private void load() {
 		try {
-			config.load(file);
+		    config.load(file);
 		} catch (Exception ex) {
-			Plugin.severe(String.format("Could not load '%s'", file.getName()));
+		    Plugin.info(String.format("Could not load '%s'. If it has not been created, disregard this.", file.getName()));
 		}
 		
 	}
 	
 	public void save() {
 		try {
-			config.save(file);
+		    config.save(file);
 		} catch (Exception ex) {
-			Plugin.severe(String.format("Could not save '%s'", file.getName()));
+		    Plugin.warning(String.format("Could not save '%s'.", file.getName()));
 		}
 		
 	}

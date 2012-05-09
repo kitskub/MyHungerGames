@@ -8,9 +8,12 @@ import java.util.logging.Logger;
 
 public class Logging {
 	private static final Logger logger = Logger.getLogger("MyHungerGames");
+	private static final Logger minecraft = Logger.getLogger("Minecraft");
 
 	public static void log(Level level, String record) {
 		logger.log(level, record);
+		minecraft.log(level, record);
+		
 	}
 
 	static {

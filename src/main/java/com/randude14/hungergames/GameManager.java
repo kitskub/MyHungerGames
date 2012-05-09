@@ -148,11 +148,8 @@ public class GameManager implements Listener {
 
 	public static void loadGames() {
 		FileConfiguration config = yaml.getConfig();
-		ConfigurationSection gamesSection = config
-				.getConfigurationSection("games");
-		if (gamesSection == null) {
-			return;
-		}
+		ConfigurationSection gamesSection = config.getConfigurationSection("games");
+		if (gamesSection == null) return;
 		games.clear();
 		for (String name : gamesSection.getKeys(false)) {
 			ConfigurationSection gameSection = gamesSection
@@ -168,8 +165,7 @@ public class GameManager implements Listener {
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection section = config.createSection("games");
 		for (HungerGame game : games) {
-			ConfigurationSection saveSection = section.createSection(game
-					.getName());
+			ConfigurationSection saveSection = section.createSection(game.getName());
 			game.saveTo(saveSection);
 		}
 		yaml.save();

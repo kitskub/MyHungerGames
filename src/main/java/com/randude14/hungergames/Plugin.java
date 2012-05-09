@@ -2,6 +2,7 @@ package com.randude14.hungergames;
 
 import com.randude14.hungergames.commands.CommandHandler;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +50,8 @@ import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
-import java.io.IOException;
 
 public class Plugin extends JavaPlugin implements Listener {
-	private static final Logger logger = Logger.getLogger("Minecraft");
 	public static final String CMD_ADMIN = "hga";
 	public static final String CMD_USER = "hg";
 	private static Plugin instance;
@@ -89,16 +88,16 @@ public class Plugin extends JavaPlugin implements Listener {
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
-			info("config not found. saving defaults.");
-			saveDefaultConfig();
+		    info("config.yml not found. Saving defaults.");
+		    saveDefaultConfig();
 		}
 		globalChestLoot = Config.getGlobalChestLoot();
 		globalSponsorLoot = Config.getGlobalSponsorLoot();
 		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
 		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
 		for (String itemset : Config.getItemSets()) {
-			chestLoots.put(itemset, Config.getChestLoot(itemset));
-			sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+		    chestLoots.put(itemset, Config.getChestLoot(itemset));
+		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
 		}
 		loadRegistry();
 		callTasks();
@@ -114,92 +113,85 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	private void callTasks() {
-		Plugin.scheduleTask(new Runnable() {
-			public void run() {
-				String installedVersion = getDescription().getVersion();
-				String checkVersion = updateCheck(installedVersion);
-				if (!checkVersion.endsWith(installedVersion))
-					Plugin.warning(
-							"There is a new version: %s (You are running %s)",
-							checkVersion, installedVersion);
-			}
-
-		}, 0L, Config.getUpdateDelay() * 20L * 60L);
-
+	    Plugin.scheduleTask(new Runnable() {
+		public void run() {
+		    String installedVersion = getDescription().getVersion();
+		    String checkVersion = updateCheck(installedVersion);
+		    if (!checkVersion.endsWith(installedVersion))
+			    Plugin.warning("There is a new version: %s (You are running %s)",
+				    checkVersion, installedVersion);
+		}
+	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
 
 	@Override
 	public void onDisable() {
-		GameManager.saveGames();
-		info("Games saved.");
-		info("Disabled.");
+	    GameManager.saveGames();
+	    info("Games saved.");
+	    info("Disabled.");
 	}
 
 	private static void loadRegistry() {
-		if (!VaultPermission.isVaultInstalled()) {
-			info("Vault is not installed, defaulting to Bukkit perms.");
-			perm = new BukkitPermission();
-			return;
-		} else {
-			perm = new VaultPermission();
-		}
+	    if (!VaultPermission.isVaultInstalled()) {
+		info("Vault is not installed, defaulting to Bukkit perms.");
+		perm = new BukkitPermission();
+		return;
+	    } else {
+		perm = new VaultPermission();
+	    }
 
-		if (!Economy.isVaultInstalled()) {
-			warning("Vault is not installed, economy use disabled.");
-			econ = null;
-		} else {
-			econ = new Economy();
-		}
-
+	    if (!Economy.isVaultInstalled()) {
+		warning("Vault is not installed, economy use disabled.");
+		econ = null;
+	    } else {
+		econ = new Economy();
+	    }
 	}
 
 	public static void reload() {
-		instance.reloadConfig();
-		globalChestLoot = Config.getGlobalChestLoot();
-		globalSponsorLoot = Config.getGlobalSponsorLoot();
-		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
-		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
-		for (String itemset : Config.getItemSets()) {
-			chestLoots.put(itemset, Config.getChestLoot(itemset));
-			sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
-		}
-		GameManager.loadGames();
-		loadRegistry();
-		for (Player player : sponsors.keySet()) {
-			error(player,
-					"The items available for sponsoring have recently changed. Here are the new items...");
-			addSponsor(player, sponsors.remove(player));
-		}
-
+	    instance.reloadConfig();
+	    globalChestLoot = Config.getGlobalChestLoot();
+	    globalSponsorLoot = Config.getGlobalSponsorLoot();
+	    chestLoots = new HashMap<String, Map<ItemStack, Float>>();
+	    sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
+	    for (String itemset : Config.getItemSets()) {
+		chestLoots.put(itemset, Config.getChestLoot(itemset));
+		sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
+	    }
+	    GameManager.loadGames();
+	    loadRegistry();
+	    for (Player player : sponsors.keySet()) {
+		error(player, "The items available for sponsoring have recently changed. Here are the new items...");
+		addSponsor(player, sponsors.remove(player));
+	    }
 	}
 
 	public static void info(String format, Object... args) {
-		logger.log(Level.INFO, getLogPrefix() + String.format(format, args));
+		Logging.log(Level.INFO, getLogPrefix() + String.format(format, args));
 	}
 
 	public static void info(String mess) {
-		logger.log(Level.INFO, getLogPrefix() + mess);
+		Logging.log(Level.INFO, getLogPrefix() + mess);
 	}
 
 	public static void warning(String format, Object... args) {
-		logger.log(Level.WARNING, getLogPrefix() + String.format(format, args));
+		Logging.log(Level.WARNING, getLogPrefix() + String.format(format, args));
 	}
 
 	public static void warning(String mess) {
-		logger.log(Level.WARNING, getLogPrefix() + mess);
+		Logging.log(Level.WARNING, getLogPrefix() + mess);
 	}
 
 	public static void severe(String format, Object... args) {
-		logger.log(Level.SEVERE, getLogPrefix() + String.format(format, args));
+		Logging.log(Level.SEVERE, getLogPrefix() + String.format(format, args));
 	}
 
 	public static void severe(String mess) {
-		logger.log(Level.SEVERE, getLogPrefix() + mess);
+		Logging.log(Level.SEVERE, getLogPrefix() + mess);
 	}
 
 	public static String getLogPrefix() {
-		return String.format("[%s] v%s - ", instance.getName(), instance
-				.getDescription().getVersion());
+		return String.format("[%s] v%s - ", instance.getName(), instance.getDescription().getVersion());
 	}
 
 	public static String getPrefix() {
@@ -207,8 +199,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static String getHeadLiner() {
-		return String.format("--------------------[%s]--------------------",
-				instance.getName());
+		return String.format("--------------------[%s]--------------------", instance.getName());
 	}
 
 	public static void broadcast(String message) {
@@ -246,11 +237,10 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 
 		message = ChatColor.stripColor(message);
-		logger.info(message);
+		Logging.log(Level.INFO, message);
 	}
 
-	public static void send(Player player, ChatColor color, String format,
-			Object... args) {
+	public static void send(Player player, ChatColor color, String format, Object... args) {
 		player.sendMessage(color + String.format(format, args));
 	}
 
@@ -342,8 +332,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static int scheduleTask(Runnable runnable, long initial, long delay) {
-		return Bukkit.getScheduler().scheduleSyncRepeatingTask(instance,
-				runnable, initial, delay);
+		return Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, runnable, initial, delay);
 	}
 
 	public static void cancelTask(int taskID) {
@@ -380,61 +369,54 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
-		Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
-		HungerGame game = GameManager.getSession(sponsoredPlayer);
-		if (game == null || !game.getPlayerStat(player).isPlaying()) {
-			error(player, "That player is playing in a game.");
-			return false;
-		}
-		List<String> itemsets = game.getItemSets();
-		if (globalSponsorLoot.isEmpty()
-				&& (itemsets == null || itemsets.isEmpty())) {
-			error(player, "No items are available to sponsor.");
-			return false;
-		}
+	    Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
+	    HungerGame game = GameManager.getSession(sponsoredPlayer);
+	    if (game == null || !game.getPlayerStat(player).isPlaying()) {
+		    error(player, "That player is playing in a game.");
+		    return false;
+	    }
+	    List<String> itemsets = game.getItemSets();
+	    if (globalSponsorLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+		    error(player, "No items are available to sponsor.");
+		    return false;
+	    }
 
-		if (!isEconomyEnabled()) {
-			error(player, "Economy use has been disabled.");
-		}
-		sponsors.put(player, playerToBeSponsored);
-		send(player, ChatColor.GREEN, getHeadLiner());
-		send(player,
-				ChatColor.YELLOW,
-				"Type the number next to the item you would like sponsor to %s.",
-				playerToBeSponsored);
-		send(player, "");
-		int num = 1;
-		Map<ItemStack, Double> itemMap = Config
-				.getAllSponsorLootWithGlobal(itemsets);
-		for (ItemStack item : itemMap.keySet()) {
-			String mess = String.format(">> %d - %s: %d", num, item.getType()
-					.name(), item.getAmount());
-			Set<Enchantment> enchants = item.getEnchantments().keySet();
-			int cntr = 0;
-			if (!enchants.isEmpty()) {
-				mess += ", ";
-			}
-			for (Enchantment enchant : enchants) {
-				mess += String.format("%s: %d", enchant.getName(),
-						item.getEnchantmentLevel(enchant));
-				if (cntr < enchants.size() - 1) {
-					mess += ", ";
-				}
-				cntr++;
-			}
-			send(player, ChatColor.GOLD, mess);
-			num++;
-		}
-		return true;
-
+	    if (!isEconomyEnabled()) {
+		    error(player, "Economy use has been disabled.");
+		    return false;
+	    }
+	    sponsors.put(player, playerToBeSponsored);
+	    send(player, ChatColor.GREEN, getHeadLiner());
+	    send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
+		    playerToBeSponsored);
+	    send(player, "");
+	    int num = 1;
+	    Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
+	    for (ItemStack item : itemMap.keySet()) {
+		    String mess = String.format(">> %d - %s: %d", num, item.getType()
+				    .name(), item.getAmount());
+		    Set<Enchantment> enchants = item.getEnchantments().keySet();
+		    int cntr = 0;
+		    if (!enchants.isEmpty()) {
+			    mess += ", ";
+		    }
+		    for (Enchantment enchant : enchants) {
+			    mess += String.format("%s: %d", enchant.getName(), item.getEnchantmentLevel(enchant));
+			    if (cntr < enchants.size() - 1) {
+				    mess += ", ";
+			    }
+			    cntr++;
+		    }
+		    send(player, ChatColor.GOLD, mess);
+		    num++;
+	    }
+	    return true;
 	}
 
 	public String updateCheck(String currentVersion) {
 		try {
-			URL url = new URL(
-					"http://dev.bukkit.org/server-mods/myhungergames/files.rss");
-			Document doc = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder()
+			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 					.parse(url.openConnection().getInputStream());
 			doc.getDocumentElement().normalize();
 			NodeList nodes = doc.getElementsByTagName("item");
@@ -450,7 +432,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			}
 		} catch (Exception ex) {
 		}
-
+		
 		return currentVersion;
 	}
 
@@ -459,9 +441,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static String parseToString(Location loc) {
-		return String.format("%.2f %.2f %.2f %.2f %.2f %s", loc.getX(), loc
-				.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc
-				.getWorld().getName());
+		return String.format("%.2f %.2f %.2f %.2f %.2f %s", loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), 
+			loc.getPitch(), loc.getWorld().getName());
 	}
 
 	public static Location parseToLoc(String str) {
@@ -480,9 +461,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void playerMove(PlayerMoveEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		if (!frozenPlayers.containsKey(player)
 				|| GameManager.getSession(player) == null
@@ -520,13 +499,9 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void playerChat(PlayerChatEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (!sponsors.containsKey(player)) {
-			return;
-		}
+		if (!sponsors.containsKey(player)) return;
 
 		int choice = 0;
 		event.setCancelled(true);
@@ -549,8 +524,7 @@ public class Plugin extends JavaPlugin implements Listener {
 			error(player, "'%s' is no longer in a game.", sponsor);
 			return;
 		}
-		Map<ItemStack, Double> itemMap = Config
-				.getAllSponsorLootWithGlobal(game.getItemSets());
+		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
 
 		int size = itemMap.size();
 		if (choice < 0 || choice >= size) {
@@ -593,152 +567,125 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void playerClickedBlock(PlayerInteractEvent event) {
-		if (event.isCancelled()) {
+	    if (event.isCancelled()) return;
+	    Player player = event.getPlayer();
+	    Action action = event.getAction();
+	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
+	    if (chestAdders.containsKey(player)) {
+		Session session = chestAdders.get(player);
+		HungerGame game = session.getGame();
+		if (game == null) {
+			error(player,"%s has been removed recently due to unknown reasons.");
 			return;
 		}
-		Player player = event.getPlayer();
-		Action action = event.getAction();
-		if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
+		Block block = event.getClickedBlock();
+		if (action == Action.LEFT_CLICK_BLOCK) {
+		    if (!(block.getState() instanceof Chest)) {
+			    error(player, "Block is not a chest.");
+			    return;
+		    }
+		    if (game.addChest(block.getLocation())) {
+			send(player, "Chest has been added to %s.", game.getName());
+		    }
+		    else {
+			error(player, "Chest has already been added to game %s.",game.getName());
+		    }
+		    session.clicked();
+		}
+
+		else {
+		    send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
+		    chestAdders.remove(player);
+		}
+	    }
+
+	    else if (chestRemovers.containsKey(player)) {
+		Session session = chestRemovers.get(player);
+		HungerGame game = session.getGame();
+		if (game == null) {
+			error(player, "%s has been removed recently due to unknown reasons.");
 			return;
 		}
-		if (chestAdders.containsKey(player)) {
-			Session session = chestAdders.get(player);
-			HungerGame game = session.getGame();
-			if (game == null) {
-				error(player,
-						"%s has been removed recently due to unknown reasons.");
-				return;
-			}
-			Block block = event.getClickedBlock();
-			if (action == Action.LEFT_CLICK_BLOCK) {
-				if (!(block.getState() instanceof Chest)) {
-					error(player, "Block is not a chest.");
-					return;
-				}
-				if (game.addChest(block.getLocation())) {
-					send(player, "Chest has been added to %s.", game.getName());
-				}
-
-				else {
-					error(player, "Chest has already been added to game %s.",
-							game.getName());
-				}
-				session.clicked();
-			}
-
-			else {
-				send(player, "You have added %d chests to the game %s.",
-						session.getBlocks(), game.getName());
-				chestAdders.remove(player);
-			}
-
+		Block block = event.getClickedBlock();
+		if (action == Action.LEFT_CLICK_BLOCK) {
+		    if (!(block.getState() instanceof Chest)) {
+			    error(player, "Block is not a chest.");
+			    return;
+		    }
+		    if (game.removeChest(block.getLocation())) {
+			send(player, "Chest has been removed from %s.", game.getName());
+		    }
+		    else {
+			error(player, "%s does not contain this chest.", game.getName());
+		    }
+		    session.clicked();
 		}
 
-		else if (chestRemovers.containsKey(player)) {
-			Session session = chestRemovers.get(player);
-			HungerGame game = session.getGame();
-			if (game == null) {
-				error(player,
-						"%s has been removed recently due to unknown reasons.");
-				return;
-			}
-			Block block = event.getClickedBlock();
-			if (action == Action.LEFT_CLICK_BLOCK) {
-				if (!(block.getState() instanceof Chest)) {
-					error(player, "Block is not a chest.");
-					return;
-				}
-				if (game.removeChest(block.getLocation())) {
-					send(player, "Chest has been removed from %s.",
-							game.getName());
-				}
+		else {
+		    send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
+		    chestRemovers.remove(player);
+		}
+	    }
 
-				else {
-					error(player, "%s does not contain this chest.",
-							game.getName());
-				}
-				session.clicked();
+	    else if (spawnAdders.containsKey(player)) {
+		Session session = spawnAdders.get(player);
+		HungerGame game = session.getGame();
+		if (game == null) {
+			error(player, "%s has been removed recently due to unknown reasons.");
+			return;
+		}
+		Location loc = event.getClickedBlock().getLocation();
+		World world = loc.getWorld();
+		double x = loc.getBlockX() + 0.5;
+		double y = loc.getBlockY() + 1;
+		double z = loc.getBlockZ() + 0.5;
+		loc = new Location(world, x, y, z);
+		if (action == Action.LEFT_CLICK_BLOCK) {
+			if (game.addSpawnPoint(loc)) {
+				send(player, "Spawn point has been added to %s.", game.getName());
 			}
-
 			else {
-				send(player, "You have removed %d chests from the game %s.",
-						session.getBlocks(), game.getName());
-				chestRemovers.remove(player);
+				error(player, "%s already has this spawn point.", game.getName());
 			}
-
+			session.clicked();
 		}
 
-		else if (spawnAdders.containsKey(player)) {
-			Session session = spawnAdders.get(player);
-			HungerGame game = session.getGame();
-			if (game == null) {
-				error(player,
-						"%s has been removed recently due to unknown reasons.");
-				return;
-			}
-			Location loc = event.getClickedBlock().getLocation();
-			World world = loc.getWorld();
-			double x = loc.getBlockX() + 0.5;
-			double y = loc.getBlockY() + 1;
-			double z = loc.getBlockZ() + 0.5;
-			loc = new Location(world, x, y, z);
-			if (action == Action.LEFT_CLICK_BLOCK) {
-				if (game.addSpawnPoint(loc)) {
-					send(player, "Spawn point has been added to %s.",
-							game.getName());
-				}
+		else {
+		    send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
+		    spawnAdders.remove(player);
+		}
+	    }
 
-				else {
-					error(player, "%s already has this spawn point.",
-							game.getName());
-				}
-				session.clicked();
+	    else if (spawnRemovers.containsKey(player)) {
+		Session session = spawnRemovers.get(player);
+		HungerGame game = session.getGame();
+		if (game == null) {
+			error(player, "%s has been removed recently due to unknown reasons.");
+			return;
+		}
+		Location loc = event.getClickedBlock().getLocation();
+		World world = loc.getWorld();
+		double x = loc.getBlockX() + 0.5;
+		double y = loc.getBlockY() + 1;
+		double z = loc.getBlockZ() + 0.5;
+		loc = new Location(world, x, y, z);
+		if (action == Action.LEFT_CLICK_BLOCK) {
+			if (game.removeSpawnPoint(loc)) {
+				send(player, "Spawn point has been removed from %s.", game.getName());
 			}
-
 			else {
-				send(player, "You have added %d spawn points to the game %s.",
-						session.getBlocks(), game.getName());
-				spawnAdders.remove(player);
+				error(player, "%s does not contain this spawn point.", game.getName());
 			}
-
+			session.clicked();
 		}
 
-		else if (spawnRemovers.containsKey(player)) {
-			Session session = spawnRemovers.get(player);
-			HungerGame game = session.getGame();
-			if (game == null) {
-				error(player,
-						"%s has been removed recently due to unknown reasons.");
-				return;
-			}
-			Location loc = event.getClickedBlock().getLocation();
-			World world = loc.getWorld();
-			double x = loc.getBlockX() + 0.5;
-			double y = loc.getBlockY() + 1;
-			double z = loc.getBlockZ() + 0.5;
-			loc = new Location(world, x, y, z);
-			if (action == Action.LEFT_CLICK_BLOCK) {
-				if (game.removeSpawnPoint(loc)) {
-					send(player, "Spawn point has been removed from %s.",
-							game.getName());
-				}
-
-				else {
-					error(player, "%s does not contain this spawn point.",
-							game.getName());
-				}
-				session.clicked();
-			}
-
-			else {
-				send(player,
-						"You have removed %d spawn points from the game %s.",
-						session.getBlocks(), game.getName());
-				spawnRemovers.remove(player);
-			}
-
+		else {
+		    send(player, "You have removed %d spawn points from the game %s.", 
+			    session.getBlocks(), game.getName());
+		    spawnRemovers.remove(player);
 		}
 
+	    }
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
