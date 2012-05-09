@@ -53,6 +53,12 @@ global:
   # whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
   
+  # whether players can use commands
+  use-command: false
+  
+  # whether players can teleport
+  can-teleport: false
+  
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:

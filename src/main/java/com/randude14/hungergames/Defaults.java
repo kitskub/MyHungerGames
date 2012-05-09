@@ -80,7 +80,9 @@ public class Defaults {
 	AUTO_VOTE(false),
 	CAN_PLACE_BLOCK(false),
 	CAN_BREAK_BLOCK(false),
-	CAN_INTERACT_BLOCK(false);
+	CAN_INTERACT_BLOCK(false),
+	CAN_TELEPORT(false),
+	USE_COMMAND(false);
 	
 	private Object value;
 	

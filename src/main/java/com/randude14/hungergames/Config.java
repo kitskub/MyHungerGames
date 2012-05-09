@@ -108,6 +108,14 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.can-interact-block", CAN_INTERACT_BLOCK.getBoolean());
 	}
 	
+	public static boolean getCanTeleportGlobal() {
+		return plugin.getConfig().getBoolean("global.can-teleport", CAN_TELEPORT.getBoolean());
+	}
+	
+	public static boolean getUseCommandGlobal() {
+		return plugin.getConfig().getBoolean("global.use-command", USE_COMMAND.getBoolean());
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -208,6 +216,14 @@ public class Config {
 	
 	public static boolean getCanInteractBlock(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanInteractBlockGlobal());
+	}
+	
+	public static boolean getCanTeleport(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-teleport", getCanTeleportGlobal());
+	}
+	
+	public static boolean getUseCommand(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
 	}
 	
 	@SuppressWarnings("unchecked")
