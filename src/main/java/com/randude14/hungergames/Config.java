@@ -116,6 +116,14 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.use-command", USE_COMMAND.getBoolean());
 	}
 	
+	public static boolean getReloadWorldGlobal() {
+		return plugin.getConfig().getBoolean("global.reload-world", RELOAD_WORLD.getBoolean());
+	}
+	
+	public static String getReloadWorldNameGlobal() {
+		return plugin.getConfig().getString("global.reload-world-name", RELOAD_WORLD_NAME.getString());
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -224,6 +232,14 @@ public class Config {
 	
 	public static boolean getUseCommand(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
+	}
+	
+	public static boolean getReloadWorld(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".reload-world", getReloadWorldGlobal());
+	}
+	
+	public static String getReloadWorldName(String setup) {
+		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
 	}
 	
 	@SuppressWarnings("unchecked")

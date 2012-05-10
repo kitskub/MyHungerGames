@@ -82,7 +82,9 @@ public class Defaults {
 	CAN_BREAK_BLOCK(false),
 	CAN_INTERACT_BLOCK(false),
 	CAN_TELEPORT(false),
-	USE_COMMAND(false);
+	USE_COMMAND(false),
+	RELOAD_WORLD(false),
+	RELOAD_WORLD_NAME("Default_world");
 	
 	private Object value;
 	

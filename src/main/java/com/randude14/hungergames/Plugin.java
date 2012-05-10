@@ -51,6 +51,7 @@ import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
+import com.randude14.hungergames.utils.FileUtils;
 
 public class Plugin extends JavaPlugin implements Listener {
 	public static final String CMD_ADMIN = "hga";
@@ -746,6 +747,34 @@ public class Plugin extends JavaPlugin implements Listener {
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean reloadWorld(String world) {
+	    // Unload
+	    instance.getServer().unloadWorld(world, true); // FIXME no safety for players
+	    File serverWorlds = instance.getServer().getWorldContainer();
+	    File templateLoc = instance.getDataFolder();
+            File worldFolder = new File(serverWorlds, world);
+	    File template = new File(templateLoc, world + "_template");
+	    if(!template.exists()) {
+		Logging.log(Level.WARNING, "There is no template world, so cancelling delete and reload.");
+		return false;
+	    }
+            FileUtils.deleteFolder(worldFolder);
+	    // Delete
+            if (worldFolder.exists()) {
+                // Couldn't delete it???
+                Logging.log(Level.SEVERE, "Couldn't delete a world!");
+                return false; // failed...
+            }
+
+            // Copy 
+            if (!FileUtils.copyFolder(template, worldFolder)) {
+                // Dang
+                Logging.log(Level.SEVERE, "Couldn't copy a world!");
+                return false; // failed...
+            }
+	    return true;
 	}
 
 	private static class Session {
