@@ -80,7 +80,9 @@ public class Defaults {
 	AUTO_VOTE(false),
 	CAN_PLACE_BLOCK(false),
 	CAN_BREAK_BLOCK(false),
-	CAN_INTERACT_BLOCK(false);
+	CAN_INTERACT_BLOCK(false),
+	RELOAD_WORLD(false),
+	RELOAD_WORLD_NAME("Default_world");
 	
 	private Object value;
 	

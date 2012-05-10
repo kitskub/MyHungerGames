@@ -416,6 +416,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		    }
 		    clear();
 		    Plugin.callEvent(event);
+		    Plugin.reloadWorld(Config.getReloadWorldName(setup));
 	    }
 
 	    if (!notifyOfRemaining) return;

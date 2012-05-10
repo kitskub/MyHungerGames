@@ -53,6 +53,12 @@ global:
   # whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
   
+  # world to reload on game end if world-reload is true. NOTE: must have a "template" stored in MyHungerGames/<worldname>_template
+  reload-world-name: Default_world
+    
+  # Reload world on game end. Recommended that this be false and have setups override this
+  reload-world: false
+  
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:
