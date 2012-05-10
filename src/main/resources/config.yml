@@ -53,7 +53,7 @@ global:
   # whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
   
-  # whether players can use commands
+  # whether players can use commands. Does not disallow HungerGames commands.
   use-command: false
   
   # whether players can teleport
