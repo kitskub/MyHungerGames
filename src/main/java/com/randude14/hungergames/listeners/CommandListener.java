@@ -15,8 +15,8 @@ public class CommandListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		// TODO this is sooo hackish
-		if(event.getMessage().contains(Plugin.CMD_ADMIN) || event.getMessage().contains(Plugin.CMD_USER)) return;
+		String message = event.getMessage();
+		if(message.startsWith("/" + Plugin.CMD_ADMIN) || message.startsWith("/" + Plugin.CMD_USER)) return;
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		if(!Config.getUseCommand(session.getSetup())) {
