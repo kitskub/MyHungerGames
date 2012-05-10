@@ -50,7 +50,7 @@ public class AddCommand extends SubCommand{
 	    
 	    Plugin.addSpawnAdder(player, game.getName());
 	    Plugin.send(player, ChatColor.GREEN,
-		    "Left clicks block to add them as spawn points for %s. Right-click to finish.", game.getName());
+		    "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
 	}
 
 	else if ("chest".equalsIgnoreCase(args[0])) {
@@ -93,8 +93,13 @@ public class AddCommand extends SubCommand{
 	    GameCreateEvent event = new GameCreateEvent(GameManager.getGame(args[1]));
 	    if(event.isCancelled()) {
 	    	GameManager.removeGame(args[1]);
+	    	Plugin.error(player, "Creation of game %s was cancelled.", args[1]);
 	    }
-	    Plugin.send(player, ChatColor.GREEN, "%s has been created.", args[1]);
+	    else {
+	    	Plugin.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[1]);
+	    	Plugin.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", Plugin.CMD_ADMIN);
+	    }
+	    
 	}
 
 	else if("itemset".equalsIgnoreCase(args[0])){
