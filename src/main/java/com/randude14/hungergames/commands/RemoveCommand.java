@@ -21,7 +21,7 @@ public class RemoveCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	Player player = (Player) cs;
 
-	if (args.length == 0 || "?".equalsIgnoreCase(args[1])) {
+	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
 	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
