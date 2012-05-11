@@ -8,11 +8,21 @@ import com.randude14.hungergames.games.HungerGame;
 // called when a Hunger Game starts
 public class GameStartEvent extends GameEvent implements Cancellable  {
 	private static final HandlerList handlers = new HandlerList();
+	private final boolean isResuming;
 	private boolean cancelled;
 	
-	public GameStartEvent(final HungerGame game) {
+	public GameStartEvent(final HungerGame game, final boolean isResuming) {
 		super(game);
 		cancelled = false;
+		this.isResuming = isResuming;
+	}
+	
+    public GameStartEvent(final HungerGame game) {
+    	this(game, false);
+    }
+	
+	public boolean isResuming() {
+		return isResuming;
 	}
 
 	@Override

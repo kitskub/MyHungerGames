@@ -28,16 +28,19 @@ import org.bukkit.inventory.ItemStack;
 public class HungerGame implements Comparable<HungerGame> {
 	private final Map<Player, PlayerStat> stats;
 	private final Map<Player, Location> spawnsTaken;
+	private final Map<Player, Location> spawnsSaved;
 	private final List<Location> spawnPoints;
 	private final List<Location> chests;
 	private final List<Player> readyToPlay;
 	private final String name;
+	private GameCountdown countdown;
 	private Location spawn;
+	private List<String> itemsets;
+	private String setup;
 	private boolean isRunning;
 	private boolean isCounting;
+	private boolean isPaused;
 	private boolean enabled;
-	private String setup;
-	private List<String> itemsets;
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -45,9 +48,11 @@ public class HungerGame implements Comparable<HungerGame> {
 		chests = new ArrayList<Location>();
 		readyToPlay = new ArrayList<Player>();
 		spawnsTaken = new HashMap<Player, Location>();
+		spawnsSaved = new HashMap<Player, Location>();
 		stats = new TreeMap<Player, PlayerStat>(new PlayerComparator());
+		countdown = null;
 		spawn = null;
-		isRunning = isCounting = false;
+		isRunning = isCounting = isPaused = false;
 		setup = null;
 		itemsets = new ArrayList<String>();
 		enabled = true;
@@ -155,6 +160,10 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "%s is already running a game.", name);
 			return false;
 		}
+		if(isPaused) {
+			Plugin.error(player, "%s has been paused.", name);
+			return false;
+		}
 		readyToPlay.add(player);
 		int minVote = Config.getMinVote(setup);
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
@@ -170,7 +179,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		return true;
 	}
 
-	public boolean start(Player player, int ticks) {// TODO stop
+	public boolean start(Player player, int ticks) {
 		if (isRunning) return false;
 
 		if (stats.size() < Config.getMinPlayers(setup)) {
@@ -194,7 +203,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.broadcast("Starting %s. Go!!", name);
 			startGame();
 		} else {
-			new GameCountdown(this, ticks);
+			countdown = new GameCountdown(this, ticks);
 			isCounting = true;
 		}
 		return true;
@@ -217,12 +226,78 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		isRunning = true;
 		isCounting = false;
-		readyToPlay.removeAll(readyToPlay);
+		isPaused = false;
+		readyToPlay.clear();
+		countdown = null;
 	}
 
-	// TODO stopGame(), call GameStopEvent()
+	public boolean pauseGame(Player player) {
+		if(isPaused) {
+			Plugin.error(player, "Cannot pause a game that has been paused.");
+			return false;
+		}
+		GameStartEvent event = new GameStartEvent(this, true);
+		Plugin.callEvent(event);
+		if (event.isCancelled()) {
+			return false;
+		}
+		pauseGame();
+		Plugin.callEvent(new GamePauseEvent(this));
+		return true;
+	}
+	
+	public boolean resume(Player player, int ticks) {
+		if(!isPaused) {
+			Plugin.error(player, "Cannot resume a game that has not been paused.");
+		}	
+		if (ticks <= 0) {
+			resumeGame();
+			Plugin.broadcast("Resuming %s. Go!!", name);
+		} else {
+			countdown = new GameCountdown(this, ticks, true);
+			isCounting = true;
+		}
+		return true;
+	}
+	
+	public boolean resume(Player player) {
+		return resume(player, Config.getDefaultTime(setup));
+	}
+	
+	public void pauseGame() {
+		isRunning = false;
+		isCounting = false;
+		isPaused = true;
+		if(countdown != null) {
+			countdown.cancel();
+			countdown = null;
+		}
+		for(Player p : stats.keySet()) {
+			InventorySave.loadInventory(p);
+			spawnsSaved.put(p, p.getLocation());
+			teleportPlayerToSpawn(p);
+			InventorySave.saveAndClearInventory(p);
+		}
+		
+	}
+	
+	public void resumeGame() {
+		isRunning = true;
+		isPaused = false;
+		isCounting = false;
+		countdown = null;
+		for(Player p : stats.keySet()) {
+			InventorySave.loadInventory(p);
+			p.teleport(spawnsSaved.remove(p));
+			World world = p.getWorld();
+			world.setFullTime(0L);
+			p.setHealth(20);
+			p.setFoodLevel(20);
+		}
+		
+	}
 
-	public void releasePlayers() {
+	private void releasePlayers() {
 		for (Player p : stats.keySet()) {
 			Plugin.unfreezePlayer(p);
 		}
@@ -280,6 +355,10 @@ public class HungerGame implements Comparable<HungerGame> {
 		    Plugin.error(player, "%s is already running and you cannot join while that is so.", name);
 		    return false;
 	    }
+		if(isPaused) {
+			Plugin.error(player, "%s has been paused.", name);
+			return false;
+		}
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
 	    Plugin.callEvent(event);
 	    if (event.isCancelled()) return false;
@@ -367,6 +446,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	
 	private synchronized void playerLeaving(Player player) {
 		spawnsTaken.remove(player);
+		spawnsSaved.remove(player);
 		Plugin.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
 	}
@@ -601,10 +681,6 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public Location getSpawn() {
 		return spawn;
-	}
-
-	public void setCounting(boolean counting) {
-		isCounting = counting;
 	}
 
 	public String getSetup() {

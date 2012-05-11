@@ -113,7 +113,11 @@ public class CommandHandler implements CommandExecutor {
 		else if ("quit".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_QUIT)) return;
 
-			
+			game = GameManager.getSession(player);
+			if (game == null) {
+				Plugin.error(player, "You are currently not in a game.");
+				return;
+			}
 
 			if (game.quit(player)) {
 				String mess = Config.getQuitMessage(game.getSetup());
@@ -226,15 +230,72 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		if ("add".equalsIgnoreCase(args[0])) {
-			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
+			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
 		}
 
 		else if ("remove".equalsIgnoreCase(args[0])) {
-			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
+			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
 		}
 
 		else if ("set".equalsIgnoreCase(args[0])) {
-			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
+			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
+		}
+		
+		else if("pause".equalsIgnoreCase(args[0])) {
+			if (!Plugin.checkPermission(player, Perm.ADMIN_PAUSE)) return;
+			
+			if (args.length == 1) {
+				Plugin.helpCommand(player, CommandUsage.ADMIN_PAUSE.getUsage(), cmd.getLabel());
+				return;
+			}
+			
+			game = GameManager.getGame(args[1]);
+			if (game == null) {
+			    Plugin.error(player, "%s does not exist.", args[1]);
+			    return;
+			}
+			
+			if(game.pauseGame(player)) {
+				Plugin.broadcast("%s has been paused.", game.getName());
+			}
+			
+		}
+		
+		else if("resume".equalsIgnoreCase(args[0])) {
+			if (!Plugin.checkPermission(player, Perm.ADMIN_RESUME)) return;
+			
+			if (args.length == 1) {
+				Plugin.helpCommand(player, CommandUsage.ADMIN_RESUME.getUsage(), cmd.getLabel());
+				return;
+			}
+			
+			game = GameManager.getGame(args[1]);
+			if (game == null) {
+			    Plugin.error(player, "%s does not exist.", args[1]);
+			    return;
+			}
+			
+			if(args.length == 2) {
+				if(!game.resume(player)) {
+					Plugin.error(player, "Failed to resume %s.", game.getName());
+				}
+				
+			}
+			
+			else {
+				int seconds;
+				try {
+					seconds = Integer.parseInt(args[2]);
+				} catch (Exception ex) {
+					Plugin.error(player, "'%s' is not an integer.", args[2]);
+					return;
+				}
+				if(!game.resume(player, seconds)) {
+					Plugin.error(player, "Failed to resume %s.", game.getName());
+				}
+				
+			}
+			
 		}
 
 		else if ("kick".equalsIgnoreCase(args[0])) {
@@ -311,6 +372,7 @@ public class CommandHandler implements CommandExecutor {
 		else{
 		    GameManager.saveGames();
 		}
+		
 	}
 
 	private void getUserCommands(Player player, Command cmd) {
