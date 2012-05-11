@@ -79,6 +79,9 @@ global:
   # blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
   # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-interact: []
+
+  # Reset block changes after a game ends
+  reset-changes: false
   
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment

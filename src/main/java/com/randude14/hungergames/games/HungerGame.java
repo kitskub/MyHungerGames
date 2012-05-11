@@ -1,6 +1,5 @@
 package com.randude14.hungergames.games;
 
-import com.randude14.hungergames.Config;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,9 +22,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameCountdown;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 
 public class HungerGame implements Comparable<HungerGame> {
@@ -37,6 +38,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private final List<Location> spawnPoints;
 	private final List<Location> chests;
 	private final List<Player> readyToPlay;
+	private final List<Player> allPlayers; // This might be used for rollback stuff, later
 	private final String name;
 	private GameCountdown countdown;
 	private Location spawn;
@@ -47,6 +49,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private boolean isPaused;
 	private boolean enabled;
         private List<InventoryHolder> randomInvs;
+
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -59,6 +62,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spectatorGameMode = new HashMap<String, GameMode>();
 		stats = new TreeMap<String, PlayerStat>();
 		countdown = null;
+		allPlayers = new ArrayList<Player>();
 		spawn = null;
 		isRunning = isCounting = isPaused = false;
 		setup = null;
@@ -451,6 +455,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    player.teleport(loc);
 	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning) Plugin.freezePlayer(player);
+	    allPlayers.add(player);
 	    return true;
 	}
 
@@ -509,6 +514,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawnsTaken.clear();
 		readyToPlay.clear();
 		randomInvs.clear();
+		allPlayers.clear();
 		isRunning = false;
 		isCounting = false;
 	}
@@ -548,7 +554,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		    }
 		    clear();
 		    Plugin.callEvent(event);
-		    Plugin.reloadWorld(Config.getReloadWorldName(setup));
+		    ResetHandler.resetChanges(this);
 	    }
 
 	    if (!notifyOfRemaining) return;

@@ -62,23 +62,11 @@ global:
   # world to reload on game end if world-reload is true. NOTE: must have a "template" stored in MyHungerGames/<worldname>_template
   reload-world-name: Default_world
     
-  # reload world on game end. Recommended that this be false and have setups override this
+  # Reload world on game end. Recommended that this be false and have setups override this
   reload-world: false
   
-  # add chest and fill the first time a chest is opened
-  auto-add: true
-  
-  # blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
-  # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
-  special-blocks-place: []
- 
-  # blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
-  # break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
-  special-blocks-break: []
- 
-  # blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
-  # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
-  special-blocks-interact: []
+  # Reset block changes after a game ends
+  reset-changes: false
   
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
