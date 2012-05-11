@@ -4,6 +4,8 @@ v0.3.1
 - Can-teleport
 - use-command
 - Early world reseting in the form of full world
+- /hga add game <game name>' now instructs user to add spawnpoints after creating it.
+- Fixed players still being able to join even under conditions where they shouldn't be able to
 
 v0.3
 - Clearing inventories is now optional

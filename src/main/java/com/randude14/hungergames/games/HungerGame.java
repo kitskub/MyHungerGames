@@ -250,7 +250,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean rejoin(Player player) {
-	    playerEnteringPreProcess(player);
+	    if(!playerEnteringPreProcess(player)) return false;
 	    if (!Config.getAllowRejoin(setup)) {
 		    Plugin.error(player, "You are not allowed to rejoin a game.");
 		    return false;
@@ -271,7 +271,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean join(Player player) {
-	    playerEnteringPreProcess(player);
+	    if(!playerEnteringPreProcess(player)) return false;
 	    if (stats.containsKey(player)) {
 		    Plugin.error(player, "You are already in this game.");
 		    return false;
@@ -306,9 +306,6 @@ public class HungerGame implements Comparable<HungerGame> {
 			    return false;
 		    }
 	    }
-	    else {
-		InventorySave.saveAndClearInventory(player);
-	    }
 	    return true;
 	}
 	
@@ -320,6 +317,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 	    spawnsTaken.put(player, loc);
 	    player.teleport(loc);
+	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning) Plugin.freezePlayer(player);
 	    return true;
 	}
