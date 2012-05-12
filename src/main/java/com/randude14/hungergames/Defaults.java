@@ -1,5 +1,8 @@
 package com.randude14.hungergames;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  *
@@ -88,6 +91,7 @@ public class Defaults {
 	RELOAD_WORLD(false),
 	RELOAD_WORLD_NAME("Default_world");
 	
+	
 	private Object value;
 	
 	private Config(Object message) {
@@ -103,8 +107,7 @@ public class Defaults {
 	}
 	
 	public String getString(){
-	    return (String) value;
-	    
+	    return (String) value;	    
 	}
     }
     

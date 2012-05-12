@@ -1,5 +1,8 @@
 package com.randude14.hungergames.listeners;
 
+import java.util.List;
+
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +28,15 @@ public class BlockListener implements Listener {
 			Plugin.error(player, "Cannot place blocks while in game %s", session.getName());
 			event.setCancelled(true);
 		}
+		
+		else {
+			List<Integer> list = Config.getBlocksCanPlace(setup);
+			if(!list.contains(event.getBlock().getTypeId())) {
+				Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
+				event.setCancelled(true);
+			}
+			
+		}
 
 	}
 	
@@ -38,6 +50,15 @@ public class BlockListener implements Listener {
 			Plugin.error(player, "Cannot break blocks while in game %s", session.getName());
 			event.setCancelled(true);
 		}
+		
+		else {
+			List<Integer> list = Config.getBlocksCanBreak(setup);
+			if(!list.contains(event.getBlock().getTypeId())) {
+				Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
+				event.setCancelled(true);
+			}
+			
+		}
 
 	}
 	
@@ -45,13 +66,23 @@ public class BlockListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
+		Block block = event.getClickedBlock();
 		if(session == null) return;
 		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		if(event.getClickedBlock().getState() == null) return;
+		if(block.getState() == null) return;
 		String setup = session.getSetup();
 		if(!Config.getCanInteractBlock(setup)) {
 			Plugin.error(player, "Cannot interact with blocks while in game %s", session.getName());
 			event.setCancelled(true);
+		}
+		
+		else {
+			List<Integer> list = Config.getBlocksCanInteract(setup);
+			if(!list.contains(block.getTypeId())) {
+				Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
+				event.setCancelled(true);
+			}
+			
 		}
 
 	}

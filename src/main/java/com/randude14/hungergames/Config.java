@@ -124,6 +124,27 @@ public class Config {
 		return plugin.getConfig().getString("global.reload-world-name", RELOAD_WORLD_NAME.getString());
 	}
 	
+	public static List<Integer> getBlocksCanPlaceGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-place");
+		if(list == null)
+			return Collections.emptyList();
+		return list;
+	}
+	
+	public static List<Integer> getBlocksCanBreakGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-break");
+		if(list == null)
+			return Collections.emptyList();
+		return list;
+	}
+	
+	public static List<Integer> getBlocksCanInteractGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-interact");
+		if(list == null)
+			return Collections.emptyList();
+		return list;
+	}
+	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		plugin.reloadConfig();
 		FileConfiguration config = plugin.getConfig();
@@ -240,6 +261,27 @@ public class Config {
 	
 	public static String getReloadWorldName(String setup) {
 		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
+	}
+	
+	public static List<Integer> getBlocksCanPlace(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-place");
+		if(list == null)
+			return getBlocksCanPlaceGlobal();
+	    return list;
+	}
+	
+	public static List<Integer> getBlocksCanBreak(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-break");
+		if(list == null)
+			return getBlocksCanBreakGlobal();
+	    return list;
+	}
+	
+	public static List<Integer> getBlocksCanInteract(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-interact");
+		if(list == null)
+			return getBlocksCanInteractGlobal();
+	    return list;
 	}
 	
 	@SuppressWarnings("unchecked")
