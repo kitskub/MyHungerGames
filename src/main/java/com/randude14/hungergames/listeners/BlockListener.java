@@ -2,7 +2,6 @@ package com.randude14.hungergames.listeners;
 
 import java.util.List;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,20 +23,21 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		String setup = session.getSetup();
-		if(!Config.getCanPlaceBlock(setup)) {
-			Plugin.error(player, "Cannot place blocks while in game %s", session.getName());
+		List<Integer> list = Config.getSpecialBlocksPlace(setup);
+		boolean contains = list.contains(event.getBlock().getTypeId());
+		boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
+		if(contains && canPlaceBlocks) {
+			Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
 			event.setCancelled(true);
+			return;
 		}
 		
-		else {
-			List<Integer> list = Config.getBlocksCanPlace(setup);
-			if(!list.contains(event.getBlock().getTypeId())) {
-				Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
-				event.setCancelled(true);
-			}
-			
+		if(!contains && !canPlaceBlocks) {
+			Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
+			event.setCancelled(true);
+			return;
 		}
-
+		
 	}
 	
 	@EventHandler(ignoreCancelled = true)
@@ -46,45 +46,45 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		String setup = session.getSetup();
-		if(!Config.getCanBreakBlock(setup)) {
-			Plugin.error(player, "Cannot break blocks while in game %s", session.getName());
+		List<Integer> list = Config.getSpecialBlocksPlace(setup);
+		boolean contains = list.contains(event.getBlock().getTypeId());
+		boolean canBreakBlocks = Config.getCanBreakBlock(setup);
+		if(contains && canBreakBlocks) {
+			Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
 			event.setCancelled(true);
+			return;
 		}
 		
-		else {
-			List<Integer> list = Config.getBlocksCanBreak(setup);
-			if(!list.contains(event.getBlock().getTypeId())) {
-				Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
-				event.setCancelled(true);
-			}
-			
+		if(!contains && !canBreakBlocks) {
+			Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
+			event.setCancelled(true);
+			return;
 		}
-
+		
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
-		Block block = event.getClickedBlock();
 		if(session == null) return;
 		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		if(block.getState() == null) return;
 		String setup = session.getSetup();
-		if(!Config.getCanInteractBlock(setup)) {
-			Plugin.error(player, "Cannot interact with blocks while in game %s", session.getName());
+		List<Integer> list = Config.getSpecialBlocksPlace(setup);
+		boolean contains = list.contains(event.getClickedBlock().getTypeId());
+		boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
+		if(contains && canInteractWithBlocks) {
+			Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
 			event.setCancelled(true);
+			return;
 		}
 		
-		else {
-			List<Integer> list = Config.getBlocksCanInteract(setup);
-			if(!list.contains(block.getTypeId())) {
-				Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
-				event.setCancelled(true);
-			}
-			
+		if(!contains && !canInteractWithBlocks) {
+			Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
+			event.setCancelled(true);
+			return;
 		}
-
+		
 	}
 
 }

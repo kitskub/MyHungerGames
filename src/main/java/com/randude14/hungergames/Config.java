@@ -124,22 +124,22 @@ public class Config {
 		return plugin.getConfig().getString("global.reload-world-name", RELOAD_WORLD_NAME.getString());
 	}
 	
-	public static List<Integer> getBlocksCanPlaceGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-place");
+	public static List<Integer> getSpecialBlocksPlaceGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-place");
 		if(list == null)
 			return Collections.emptyList();
 		return list;
 	}
 	
-	public static List<Integer> getBlocksCanBreakGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-break");
+	public static List<Integer> getSpecialBlocksBreakGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-break");
 		if(list == null)
 			return Collections.emptyList();
 		return list;
 	}
 	
-	public static List<Integer> getBlocksCanInteractGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.blocks-can-interact");
+	public static List<Integer> getSpecialBlocksInteractGlobal() {
+		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-interact");
 		if(list == null)
 			return Collections.emptyList();
 		return list;
@@ -263,24 +263,24 @@ public class Config {
 		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
 	}
 	
-	public static List<Integer> getBlocksCanPlace(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-place");
+	public static List<Integer> getSpecialBlocksPlace(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-place");
 		if(list == null)
-			return getBlocksCanPlaceGlobal();
+			return getSpecialBlocksPlaceGlobal();
 	    return list;
 	}
 	
-	public static List<Integer> getBlocksCanBreak(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-break");
+	public static List<Integer> getSpecialBlocksBreak(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-break");
 		if(list == null)
-			return getBlocksCanBreakGlobal();
+			return getSpecialBlocksBreakGlobal();
 	    return list;
 	}
 	
-	public static List<Integer> getBlocksCanInteract(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".blocks-can-interact");
+	public static List<Integer> getSpecialBlocksInteract(String setup) {
+		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-interact");
 		if(list == null)
-			return getBlocksCanInteractGlobal();
+			return getSpecialBlocksInteractGlobal();
 	    return list;
 	}
 	

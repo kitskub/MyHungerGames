@@ -65,14 +65,17 @@ global:
   # reload world on game end. Recommended that this be false and have setups override this
   reload-world: false
   
-  # blocks players can place (NOTE: this will not be checked if "can-place-block" is set to false) ex: "[1]", "[1, 10, 28]"
-  blocks-can-place: []
+  # blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
+  # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+  special-blocks-place: []
  
-  # blocks players can break (NOTE: this will not be checked if "can-break-block" is set to false) ex: "[1]", "[1, 10, 28]"
-  blocks-can-break: []
+  # blocks players can place (NOTE: if "can-break-blocks" is false, they cannot
+  # break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+  special-blocks-break: []
  
-  # blocks players can interact (NOTE: this will not be checked if "can-interact-block" is set to false) ex: "[1]", "[1, 10, 28]"
-  blocks-can-interact: []
+  # blocks players can place (NOTE: if "can-interact-blocks" is false, they cannot
+  # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+  special-blocks-interact: []
   
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
