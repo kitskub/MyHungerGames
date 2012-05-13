@@ -46,7 +46,7 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		String setup = session.getSetup();
-		List<Integer> list = Config.getSpecialBlocksPlace(setup);
+		List<Integer> list = Config.getSpecialBlocksBreak(setup);
 		boolean contains = list.contains(event.getBlock().getTypeId());
 		boolean canBreakBlocks = Config.getCanBreakBlock(setup);
 		if(contains && canBreakBlocks) {
@@ -70,7 +70,7 @@ public class BlockListener implements Listener {
 		if(session == null) return;
 		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		String setup = session.getSetup();
-		List<Integer> list = Config.getSpecialBlocksPlace(setup);
+		List<Integer> list = Config.getSpecialBlocksInteract(setup);
 		boolean contains = list.contains(event.getClickedBlock().getTypeId());
 		boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
 		if(contains && canInteractWithBlocks) {
