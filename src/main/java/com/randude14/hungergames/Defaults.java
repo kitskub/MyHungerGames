@@ -1,8 +1,5 @@
 package com.randude14.hungergames;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  *
@@ -14,7 +11,7 @@ public class Defaults {
 	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint"),
 	ADMIN_ADD_CHEST("hungergame.add.chest"),
 	ADMIN_ADD_GAME("hungergame.add.game"),
-    ADMIN_ADD_ITEMSET("hungergame.add.itemset"),
+	ADMIN_ADD_ITEMSET("hungergame.add.itemset"),
 	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint"),
 	ADMIN_REMOVE_CHEST("hungergame.remove.chest"),
 	ADMIN_REMOVE_GAME("hungergame.remove.game"),

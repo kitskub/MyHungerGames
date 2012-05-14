@@ -263,6 +263,7 @@ public class Config {
 		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
 	}
 	
+	// TODO make this use matchMaterial and check for data for more options
 	public static List<Integer> getSpecialBlocksPlace(String setup) {
 		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-place");
 		if(list == null)

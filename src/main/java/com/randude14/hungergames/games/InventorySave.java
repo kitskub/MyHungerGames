@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventorySave {
 	private static final Map<Player, InventorySave> savedInventories = new HashMap<Player, InventorySave>();
+	private static final Map<Player, InventorySave> savedGameInventories = new HashMap<Player, InventorySave>();
 	
 	private ItemStack[] contents;
 	private ItemStack[] armorContents;
@@ -28,5 +29,14 @@ public class InventorySave {
 	public static void loadInventory(Player player){
 	    if(!savedInventories.containsKey(player)) return;
 	    savedInventories.remove(player).loadInventoryTo(player);
+	}
+	
+	public static void saveAndClearGameInventory(Player player){
+	    savedGameInventories.put(player, new InventorySave(player));
+	}
+
+	public static void loadGameInventory(Player player){
+	    if(!savedGameInventories.containsKey(player)) return;
+	    savedGameInventories.remove(player).loadInventoryTo(player);
 	}
 }

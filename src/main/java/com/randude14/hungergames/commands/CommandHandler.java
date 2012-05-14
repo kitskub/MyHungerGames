@@ -230,15 +230,15 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		if ("add".equalsIgnoreCase(args[0])) {
-			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
+			new AddCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
 		else if ("remove".equalsIgnoreCase(args[0])) {
-			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
+			new RemoveCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 
 		else if ("set".equalsIgnoreCase(args[0])) {
-			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, 0));
+			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 		
 		else if("pause".equalsIgnoreCase(args[0])) {

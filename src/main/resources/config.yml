@@ -69,11 +69,11 @@ global:
   # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-place: []
  
-  # blocks players can place (NOTE: if "can-break-blocks" is false, they cannot
+  # blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
   # break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-break: []
  
-  # blocks players can place (NOTE: if "can-interact-blocks" is false, they cannot
+  # blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
   # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-interact: []
   
