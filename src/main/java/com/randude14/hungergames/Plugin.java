@@ -93,7 +93,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		pm.registerEvents(manager, this);
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
-		pm.registerEvents(new TeleportListener(), this);
+		//pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
@@ -480,7 +480,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		Location loc = frozenPlayers.get(player);
 		if (!equals(at, loc)) {
 			player.teleport(loc);
-		}
+		} 
 
 	}
 
@@ -737,7 +737,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		int num = 3 + rand.nextInt(8);
 		Map<ItemStack, Float> itemMap = Config
 				.getAllChestLootWithGlobal(itemsets);
-		List<ItemStack> items = (List<ItemStack>) itemMap.keySet();
+		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
 			if (inv.getItem(index) != null) {

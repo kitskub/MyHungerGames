@@ -23,6 +23,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.api.event.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -42,7 +43,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private boolean isCounting;
 	private boolean isPaused;
 	private boolean enabled;
-        private List<Inventory> randomChests;
+        private List<InventoryHolder> randomChests;
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -58,7 +59,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		setup = null;
 		itemsets = new ArrayList<String>();
 		enabled = true;
-                randomChests = new ArrayList<Inventory>();
+                randomChests = new ArrayList<InventoryHolder>();
 	}
 
 	public HungerGame(String name, String setup) {
@@ -98,6 +99,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			}
 
 		}
+                
+                if(section.isList("itemsets")) {
+                    itemsets = section.getStringList("itemsets");
+                }
+                
 		enabled = section.getBoolean("enabled", Boolean.TRUE);
 		spawn = Plugin.parseToLoc(section.getString("spawn"));
 		Plugin.callEvent(new GameLoadEvent(this));
@@ -121,6 +127,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			}
 
 		}
+                
+                if(!itemsets.isEmpty()) {
+                    section.set("itemsets", itemsets);
+                }
+                
 		section.set("enabled", enabled);
 		if (getSpawn() != null) section.set("spawn", Plugin.parseToString(getSpawn()));
 		
@@ -309,9 +320,9 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
         public void fillInventory(Inventory inv) {
-            if(!randomChests.contains(inv)) {
+            if(!randomChests.contains(inv.getHolder())) {
                 Plugin.fillChest(inv, itemsets);
-                randomChests.add(inv);
+                randomChests.add(inv.getHolder());
             }
         }
         
