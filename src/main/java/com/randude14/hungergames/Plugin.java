@@ -52,6 +52,8 @@ import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.utils.FileUtils;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 public class Plugin extends JavaPlugin implements Listener {
 	public static final String CMD_ADMIN = "hga";
@@ -692,6 +694,20 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	    }
 	}
+        
+  	@EventHandler(priority = EventPriority.MONITOR)
+	public void inventoryOpen(InventoryOpenEvent event) {
+		if(event.getInventory().getType() != InventoryType.CHEST) {
+                    return;
+                }
+                Player player = (Player)event.getPlayer();
+                HungerGame game = GameManager.getSession(player);
+                if(game == null) {
+                    return;
+                }
+                
+                game.fillInventory(event.getInventory());
+	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
 		PlayerInventory inventory = player.getInventory();
@@ -711,12 +727,12 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest, List<String> itemsets) {
+	public static void fillChest(Inventory inv, List<String> itemsets) {
 		if (globalChestLoot.isEmpty()
 				&& (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
-		Inventory inv = chest.getInventory();
+		
 		inv.clear();
 		int num = 3 + rand.nextInt(8);
 		Map<ItemStack, Float> itemMap = Config
