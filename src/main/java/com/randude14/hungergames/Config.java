@@ -14,6 +14,7 @@ import org.bukkit.material.MaterialData;
 
 import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
+import java.util.*;
 
 public class Config {
 	private static final Plugin plugin = Plugin.getInstance();
@@ -299,7 +300,7 @@ public class Config {
 	public static List<String> getItemSets(){
 	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("itemsets");
 	    if(section == null) return Collections.emptyList();
-	    List<String> list = (List<String>) section.getKeys(false);
+	    List<String> list = new ArrayList<String>(section.getKeys(false));
 	    return (List<String>) ((list == null) ? Collections.emptyList() : list);
 	}
 	
