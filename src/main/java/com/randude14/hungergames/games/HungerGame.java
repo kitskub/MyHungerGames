@@ -273,10 +273,10 @@ public class HungerGame implements Comparable<HungerGame> {
 			countdown = null;
 		}
 		for(Player p : stats.keySet()) {
+			InventorySave.saveAndClearGameInventory(p);
 			InventorySave.loadInventory(p);
 			spawnsSaved.put(p, p.getLocation());
 			teleportPlayerToSpawn(p);
-			InventorySave.saveAndClearInventory(p);
 		}
 		
 	}
@@ -287,7 +287,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		isCounting = false;
 		countdown = null;
 		for(Player p : stats.keySet()) {
-			InventorySave.loadInventory(p);
+			InventorySave.saveAndClearInventory(p);
+			InventorySave.loadGameInventory(p);
 			p.teleport(spawnsSaved.remove(p));
 			World world = p.getWorld();
 			world.setFullTime(0L);

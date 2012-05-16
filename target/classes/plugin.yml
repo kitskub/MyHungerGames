@@ -32,6 +32,8 @@ permissions:
             hungergame.set.enabled: true
             hungergame.set.spawn: true
             hungergame.game.start: true
+            hungergame.game.pause: true
+            hungergame.game.resume: true                        
             hungergame.admin.reload: true
             hungergame.admin.kick: true            
             hungergame.admin.help: true
@@ -77,6 +79,12 @@ permissions:
     hungergame.game.start:
         default: false
         description: start a game
+    hungergame.game.pause:
+        default: false
+        description: pause a game
+    hungergame.game.resume:
+        default: false
+        description: resume a game        
     hungergame.admin.kick:
         default: false
         description: kick a player       
