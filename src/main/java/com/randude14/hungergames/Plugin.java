@@ -228,8 +228,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		info(message);
 	}
 
-	public static void broadcastRaw(String format, Object... args) {
-		broadcastRaw(String.format(format, args));
+	public static void broadcastRaw(ChatColor color, String format, Object... args) {
+		broadcastRaw(String.format(format, args), color);
 	}
 
 	public static void broadcastRaw(String message) {

@@ -1,5 +1,7 @@
 package com.randude14.hungergames;
 
+import org.bukkit.ChatColor;
+
 import com.randude14.hungergames.games.HungerGame;
 
 public class GameCountdown implements Runnable {
@@ -46,7 +48,12 @@ public class GameCountdown implements Runnable {
 			return;
 		}
 		countdown--;
-		Plugin.broadcastRaw(countdown + "...");
+		ChatColor color = ChatColor.GREEN;
+		if(countdown <= 5)
+			color = ChatColor.GOLD;
+		if(countdown <= 3)
+			color = ChatColor.RED;
+		Plugin.broadcastRaw(color, "%d...", countdown);
 	}
 
 }
