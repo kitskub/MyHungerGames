@@ -695,18 +695,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	    }
 	}
         
-  	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void inventoryOpen(InventoryOpenEvent event) {
-		if(event.getInventory().getType() != InventoryType.CHEST) {
-                    return;
-                }
+		if(event.getInventory().getType() != InventoryType.CHEST) return;
                 Player player = (Player)event.getPlayer();
                 HungerGame game = GameManager.getSession(player);
-                if(game == null) {
-                    return;
-                }
-                
-                game.fillInventory(event.getInventory());
+                if(game == null) return;
+		if(!Config.getAutoAdd(game.getSetup())) return;
+                game.addAndFillInventory(event.getInventory());
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
@@ -727,7 +723,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Inventory inv, List<String> itemsets) {
+	public static void fillInventory(Inventory inv, List<String> itemsets) {
 		if (globalChestLoot.isEmpty()
 				&& (itemsets == null || itemsets.isEmpty())) {
 			return;

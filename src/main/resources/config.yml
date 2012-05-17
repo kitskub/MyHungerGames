@@ -65,6 +65,9 @@ global:
   # reload world on game end. Recommended that this be false and have setups override this
   reload-world: false
   
+  # add chest and fill the first time a chest is opened
+  auto-add: true
+  
   # blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
   # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-place: []

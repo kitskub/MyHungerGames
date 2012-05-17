@@ -85,6 +85,7 @@ public class Defaults {
 	CAN_INTERACT_BLOCK(false),
 	CAN_TELEPORT(false),
 	USE_COMMAND(false),
+	AUTO_ADD(true),
 	RELOAD_WORLD(false),
 	RELOAD_WORLD_NAME("Default_world");
 	

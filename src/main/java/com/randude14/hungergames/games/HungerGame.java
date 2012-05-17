@@ -43,7 +43,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private boolean isCounting;
 	private boolean isPaused;
 	private boolean enabled;
-        private List<InventoryHolder> randomChests;
+        private List<InventoryHolder> randomInvs;
 
 	public HungerGame(String name) {
 		this.name = name;
@@ -59,7 +59,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		setup = null;
 		itemsets = new ArrayList<String>();
 		enabled = true;
-                randomChests = new ArrayList<InventoryHolder>();
+                randomInvs = new ArrayList<InventoryHolder>();
 	}
 
 	public HungerGame(String name, String setup) {
@@ -229,7 +229,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void startGame() {
 		releasePlayers();
-		fillChests();
+		fillInventories();
 		for (Player p : stats.keySet()) {
 			if (p == null) continue;
 			
@@ -319,22 +319,20 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-        public void fillInventory(Inventory inv) {
-            if(!randomChests.contains(inv.getHolder())) {
-                Plugin.fillChest(inv, itemsets);
-                randomChests.add(inv.getHolder());
+        public void addAndFillInventory(Inventory inv) {
+            if(!randomInvs.contains(inv.getHolder())) {
+                Plugin.fillInventory(inv, itemsets);
+                randomInvs.add(inv.getHolder());
             }
         }
         
-	public void fillChests() {
-		for (int cntr = 0; cntr < chests.size(); cntr++) {
-			Location loc = chests.get(cntr);
-			if (!(loc.getBlock().getState() instanceof Chest)) {
-				continue;
-			}
-			Chest chest = (Chest) loc.getBlock().getState();
-			Plugin.fillChest(chest.getInventory(), itemsets);
-		}
+	public void fillInventories() {
+	    for (int cntr = 0; cntr < chests.size(); cntr++) {
+		Location loc = chests.get(cntr);
+		if (!(loc.getBlock().getState() instanceof Chest)) continue;
+		Chest chest = (Chest) loc.getBlock().getState();
+		Plugin.fillInventory(chest.getInventory(), itemsets);
+	    }
 
 	}
 
@@ -477,7 +475,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		stats.clear();
 		spawnsTaken.clear();
 		readyToPlay.clear();
-                randomChests.clear();
+		randomInvs.clear();
 		isRunning = false;
 		isCounting = false;
 	}

@@ -117,6 +117,10 @@ public class Config {
 		return plugin.getConfig().getBoolean("global.use-command", USE_COMMAND.getBoolean());
 	}
 	
+	public static boolean getAutoAddGlobal() {
+		return plugin.getConfig().getBoolean("global.auto-add", AUTO_ADD.getBoolean());
+	}
+	
 	public static boolean getReloadWorldGlobal() {
 		return plugin.getConfig().getBoolean("global.reload-world", RELOAD_WORLD.getBoolean());
 	}
@@ -254,6 +258,10 @@ public class Config {
 	
 	public static boolean getUseCommand(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
+	}
+	
+	public static boolean getAutoAdd(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".auto-add", getAutoAddGlobal());
 	}
 	
 	public static boolean getReloadWorld(String setup) {
