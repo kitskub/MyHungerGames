@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -152,8 +153,7 @@ public class GameManager implements Listener {
 		if (gamesSection == null) return;
 		games.clear();
 		for (String name : gamesSection.getKeys(false)) {
-			ConfigurationSection gameSection = gamesSection
-					.getConfigurationSection(name);
+			ConfigurationSection gameSection = gamesSection.getConfigurationSection(name);
 			HungerGame game = new HungerGame(name);
 			game.loadFrom(gameSection);
 			games.add(game);
@@ -165,8 +165,11 @@ public class GameManager implements Listener {
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection section = config.createSection("games");
 		for (HungerGame game : games) {
-			ConfigurationSection saveSection = section.createSection(game.getName());
-			game.saveTo(saveSection);
+		    ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
+		    if(saveSection == null) {
+			saveSection = section.createSection(game.getName());
+		    }
+		    game.saveTo(saveSection);
 		}
 		yaml.save();
 	}
@@ -182,12 +185,16 @@ public class GameManager implements Listener {
 	}
 
 	public static void saveGame(HungerGame game){
+	    Logging.log(Level.INFO, "Saving a game");
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection section = config.getConfigurationSection("games");
 		if(section == null){
 		    section = config.createSection("games");
 		}
-		ConfigurationSection saveSection = section.createSection(game.getName());
+		ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
+		if(saveSection == null) {
+		    saveSection = section.createSection(game.getName());
+		}
 		game.saveTo(saveSection);
 		yaml.save();
 	}

@@ -1,6 +1,6 @@
 name: HungerGames
 main: com.randude14.hungergames.Plugin
-version: 0.3.1
+version: 0.3.2-dev
 authors: [Randude14, kitskub]
 softdepend: [Vault]
 
