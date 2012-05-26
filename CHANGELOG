@@ -1,3 +1,6 @@
+v0.3.2
+- Might have fixed the games not saving
+
 v0.3.1
 - Logging stuff
 - register forgotten BlockListener
@@ -6,6 +9,7 @@ v0.3.1
 - Early world reseting in the form of full world
 - /hga add game <game name>' now instructs user to add spawnpoints after creating it.
 - Fixed players still being able to join even under conditions where they shouldn't be able to
+- Added option to allow chests to be automatically added and filled at first open
 
 v0.3
 - Clearing inventories is now optional

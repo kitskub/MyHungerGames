@@ -52,6 +52,8 @@ import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.utils.FileUtils;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 public class Plugin extends JavaPlugin implements Listener {
 	public static final String CMD_ADMIN = "hga";
@@ -91,7 +93,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		pm.registerEvents(manager, this);
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
-		pm.registerEvents(new TeleportListener(), this);
+		//pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
@@ -478,7 +480,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		Location loc = frozenPlayers.get(player);
 		if (!equals(at, loc)) {
 			player.teleport(loc);
-		}
+		} 
 
 	}
 
@@ -692,6 +694,16 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	    }
 	}
+        
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void inventoryOpen(InventoryOpenEvent event) {
+		if(event.getInventory().getType() != InventoryType.CHEST) return;
+                Player player = (Player)event.getPlayer();
+                HungerGame game = GameManager.getSession(player);
+                if(game == null) return;
+		if(!Config.getAutoAdd(game.getSetup())) return;
+                game.addAndFillInventory(event.getInventory());
+	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
 		PlayerInventory inventory = player.getInventory();
@@ -711,17 +723,17 @@ public class Plugin extends JavaPlugin implements Listener {
 		return true;
 	}
 
-	public static void fillChest(Chest chest, List<String> itemsets) {
+	public static void fillInventory(Inventory inv, List<String> itemsets) {
 		if (globalChestLoot.isEmpty()
 				&& (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
-		Inventory inv = chest.getInventory();
+		
 		inv.clear();
 		int num = 3 + rand.nextInt(8);
 		Map<ItemStack, Float> itemMap = Config
 				.getAllChestLootWithGlobal(itemsets);
-		List<ItemStack> items = (List<ItemStack>) itemMap.keySet();
+		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		for (int cntr = 0; cntr < num; cntr++) {
 			int index = rand.nextInt(inv.getSize());
 			if (inv.getItem(index) != null) {

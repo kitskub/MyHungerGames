@@ -14,6 +14,7 @@ import org.bukkit.material.MaterialData;
 
 import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
+import java.util.*;
 
 public class Config {
 	private static final Plugin plugin = Plugin.getInstance();
@@ -114,6 +115,10 @@ public class Config {
 	
 	public static boolean getUseCommandGlobal() {
 		return plugin.getConfig().getBoolean("global.use-command", USE_COMMAND.getBoolean());
+	}
+	
+	public static boolean getAutoAddGlobal() {
+		return plugin.getConfig().getBoolean("global.auto-add", AUTO_ADD.getBoolean());
 	}
 	
 	public static boolean getReloadWorldGlobal() {
@@ -255,6 +260,10 @@ public class Config {
 		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
 	}
 	
+	public static boolean getAutoAdd(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".auto-add", getAutoAddGlobal());
+	}
+	
 	public static boolean getReloadWorld(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".reload-world", getReloadWorldGlobal());
 	}
@@ -299,7 +308,7 @@ public class Config {
 	public static List<String> getItemSets(){
 	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("itemsets");
 	    if(section == null) return Collections.emptyList();
-	    List<String> list = (List<String>) section.getKeys(false);
+	    List<String> list = new ArrayList<String>(section.getKeys(false));
 	    return (List<String>) ((list == null) ? Collections.emptyList() : list);
 	}
 	
