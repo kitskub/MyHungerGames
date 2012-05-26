@@ -465,6 +465,18 @@ public class Plugin extends JavaPlugin implements Listener {
 		World world = Bukkit.getServer().getWorld(strs[5]);
 		return new Location(world, x, y, z, yaw, pitch);
 	}
+	
+	public static String formatTime(int time) {
+		String format = "";
+		if(time > 3600) {
+			format += String.format("%d hour(s), ", (time / 3600) % 24);
+		}
+		if(time > 60) {
+			format += String.format("%d minute(s), ", (time / 60) % 60);
+		}
+		format += String.format("%d second(s), ", time % 60);
+		return format;
+	}
 
 	@EventHandler
 	public void playerMove(PlayerMoveEvent event) {

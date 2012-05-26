@@ -14,12 +14,12 @@ public class GameCountdown implements Runnable {
 		countdown = num;
 		taskId = Plugin.scheduleTask(this, 20L, 20L);
 		if(isResuming) {
-			Plugin.broadcast("Resuming %s in %d second(s)...",
-					game.getName(), countdown);
+			Plugin.broadcast("Resuming %s in %s...",
+					game.getName(), Plugin.formatTime(countdown));
 		}
 		else {
-			Plugin.broadcast("Starting %s in %d second(s)...",
-					game.getName(), countdown);
+			Plugin.broadcast("Starting %s in %s...",
+					game.getName(), Plugin.formatTime(countdown));
 		}
 
 	}
@@ -53,7 +53,7 @@ public class GameCountdown implements Runnable {
 			color = ChatColor.GOLD;
 		if(countdown <= 3)
 			color = ChatColor.RED;
-		Plugin.broadcastRaw(color, "%d...", countdown);
+		Plugin.broadcastRaw(color, "%s...", Plugin.formatTime(countdown));
 	}
 
 }
