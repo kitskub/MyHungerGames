@@ -114,9 +114,9 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection spawnPointsSection = section.createSection("spawn-points");
 			for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
 				Location loc = spawnPoints.get(cntr);
+				if (loc == null) continue;
 				spawnPointsSection.set("spawnpoint" + (cntr + 1), Plugin.parseToString(loc));
 			}
-
 		}
 
 		if (!chests.isEmpty()) {

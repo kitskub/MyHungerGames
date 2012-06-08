@@ -19,5 +19,5 @@
 - Check command processing
 - Hide players from each other
 - Chat
-- MatchMaterial in special-bjackcomp
-locks
+- MatchMaterial in special-blocks
+- Spectating
