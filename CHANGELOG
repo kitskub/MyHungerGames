@@ -1,5 +1,9 @@
 v0.3.2
 - Might have fixed the games not saving
+- Fixed a nullpointerexception
+- Basic spectating
+- Changed most player keys to String keys
+- Might have fixed permissions. (again)
 
 v0.3.1
 - Logging stuff

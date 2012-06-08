@@ -63,12 +63,13 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static Economy econ;
 	private static GameManager manager;
 	private static Random rand;
-	private static Map<Player, Location> frozenPlayers;
-	private static Map<Player, Session> chestAdders;
-	private static Map<Player, Session> chestRemovers;
-	private static Map<Player, Session> spawnAdders;
-	private static Map<Player, Session> spawnRemovers;
-	private static Map<Player, String> sponsors;
+	private static Map<String, Location> frozenPlayers;
+	private static Map<String, Session> chestAdders;
+	private static Map<String, Session> chestRemovers;
+	private static Map<String, Session> spawnAdders;
+	private static Map<String, Session> spawnRemovers;
+	private static Map<String, String> sponsors; // <sponsor, sponsee>
+	private static Map<String, String> spectators; // <player, game>
 	private static Map<ItemStack, Float> globalChestLoot;
 	private static Map<ItemStack, Double> globalSponsorLoot;
 	private static Map<String, Map<ItemStack, Float>> chestLoots;
@@ -82,12 +83,12 @@ public class Plugin extends JavaPlugin implements Listener {
 		getCommand(CMD_ADMIN).setExecutor(commands);
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
-		frozenPlayers = new HashMap<Player, Location>();
-		chestAdders = new HashMap<Player, Session>();
-		chestRemovers = new HashMap<Player, Session>();
-		spawnAdders = new HashMap<Player, Session>();
-		spawnRemovers = new HashMap<Player, Session>();
-		sponsors = new HashMap<Player, String>();
+		frozenPlayers = new HashMap<String, Location>();
+		chestAdders = new HashMap<String, Session>();
+		chestRemovers = new HashMap<String, Session>();
+		spawnAdders = new HashMap<String, Session>();
+		spawnRemovers = new HashMap<String, Session>();
+		sponsors = new HashMap<String, String>();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
@@ -167,9 +168,11 @@ public class Plugin extends JavaPlugin implements Listener {
 	    }
 	    GameManager.loadGames();
 	    loadRegistry();
-	    for (Player player : sponsors.keySet()) {
+	    for (String playerName : sponsors.keySet()) {
+		Player player = Bukkit.getPlayer(playerName);
+		if (player == null) continue;
 		error(player, "The items available for sponsoring have recently changed. Here are the new items...");
-		addSponsor(player, sponsors.remove(player));
+		addSponsor(player, sponsors.remove(playerName));
 	    }
 	}
 
@@ -288,8 +291,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static boolean hasPermission(Player player, Defaults.Perm perm) {
-		String permission = perm.getPermission();
-		return Plugin.perm.hasPermission(player, permission);
+		return Plugin.perm.hasPermission(player, perm);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
@@ -347,32 +349,32 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static void freezePlayer(Player player) {
-		frozenPlayers.put(player, player.getLocation());
+		frozenPlayers.put(player.getName(), player.getLocation());
 	}
 
 	public static void unfreezePlayer(Player player) {
-		frozenPlayers.remove(player);
+		frozenPlayers.remove(player.getName());
 	}
 
 	public static boolean isPlayerFrozen(Player player) {
-		return frozenPlayers.containsKey(player);
+		return frozenPlayers.containsKey(player.getName());
 	}
 
 	public static void addChestAdder(Player player, String name) {
 		Session session = new Session(name);
-		chestAdders.put(player, session);
+		chestAdders.put(player.getName(), session);
 	}
 
 	public static void addChestRemover(Player player, String name) {
-		chestRemovers.put(player, new Session(name));
+		chestRemovers.put(player.getName(), new Session(name));
 	}
 
 	public static void addSpawnAdder(Player player, String name) {
-		spawnAdders.put(player, new Session(name));
+		spawnAdders.put(player.getName(), new Session(name));
 	}
 
 	public static void addSpawnRemover(Player player, String name) {
-		spawnRemovers.put(player, new Session(name));
+		spawnRemovers.put(player.getName(), new Session(name));
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
@@ -392,7 +394,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		    error(player, "Economy use has been disabled.");
 		    return false;
 	    }
-	    sponsors.put(player, playerToBeSponsored);
+	    sponsors.put(player.getName(), playerToBeSponsored);
 	    send(player, ChatColor.GREEN, getHeadLiner());
 	    send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
 		    playerToBeSponsored);
@@ -418,6 +420,19 @@ public class Plugin extends JavaPlugin implements Listener {
 		    num++;
 	    }
 	    return true;
+	}
+	
+	public static void addSpectator(Player player, String gameName) {
+		spectators.put(player.getName(), gameName);
+	}
+	
+	public static String getSpectating(Player player) {
+		if (!spectators.containsKey(player.getName())) return "";
+		return spectators.get(player.getName());
+	}
+	
+	public static void removeSpectator(Player player) {
+		spectators.remove(player.getName());
 	}
 
 	public String updateCheck(String currentVersion) {
@@ -482,14 +497,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	public void playerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (!frozenPlayers.containsKey(player)
+		if (!frozenPlayers.containsKey(player.getName())
 				|| GameManager.getSession(player) == null
 				|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
 				|| GameManager.getSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();
-		Location loc = frozenPlayers.get(player);
+		Location loc = frozenPlayers.get(player.getName());
 		if (!equals(at, loc)) {
 			player.teleport(loc);
 		} 
@@ -499,33 +514,33 @@ public class Plugin extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		spawnAdders.remove(player);
-		spawnRemovers.remove(player);
-		chestAdders.remove(player);
-		chestRemovers.remove(player);
-		sponsors.remove(player);
+		spawnAdders.remove(player.getName());
+		spawnRemovers.remove(player.getName());
+		chestAdders.remove(player.getName());
+		chestRemovers.remove(player.getName());
+		sponsors.remove(player.getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerKick(PlayerKickEvent event) {
 		Player player = event.getPlayer();
-		spawnAdders.remove(player);
-		spawnRemovers.remove(player);
-		chestAdders.remove(player);
-		chestRemovers.remove(player);
-		sponsors.remove(player);
+		spawnAdders.remove(player.getName());
+		spawnRemovers.remove(player.getName());
+		chestAdders.remove(player.getName());
+		chestRemovers.remove(player.getName());
+		sponsors.remove(player.getName());
 	}
 
 	@EventHandler
 	public void playerChat(PlayerChatEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (!sponsors.containsKey(player)) return;
+		if (!sponsors.containsKey(player.getName())) return;
 
 		int choice = 0;
 		event.setCancelled(true);
 		String mess = event.getMessage();
-		String sponsor = sponsors.remove(player);
+		String sponsor = sponsors.remove(player.getName());
 		try {
 			choice = Integer.parseInt(mess) - 1;
 		} catch (Exception ex) {
@@ -590,8 +605,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	    Player player = event.getPlayer();
 	    Action action = event.getAction();
 	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
-	    if (chestAdders.containsKey(player)) {
-		Session session = chestAdders.get(player);
+	    if (chestAdders.containsKey(player.getName())) {
+		Session session = chestAdders.get(player.getName());
 		HungerGame game = session.getGame();
 		if (game == null) {
 			error(player,"%s has been removed recently due to unknown reasons.");
@@ -614,12 +629,12 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else {
 		    send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
-		    chestAdders.remove(player);
+		    chestAdders.remove(player.getName());
 		}
 	    }
 
-	    else if (chestRemovers.containsKey(player)) {
-		Session session = chestRemovers.get(player);
+	    else if (chestRemovers.containsKey(player.getName())) {
+		Session session = chestRemovers.get(player.getName());
 		HungerGame game = session.getGame();
 		if (game == null) {
 			error(player, "%s has been removed recently due to unknown reasons.");
@@ -642,12 +657,12 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else {
 		    send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
-		    chestRemovers.remove(player);
+		    chestRemovers.remove(player.getName());
 		}
 	    }
 
-	    else if (spawnAdders.containsKey(player)) {
-		Session session = spawnAdders.get(player);
+	    else if (spawnAdders.containsKey(player.getName())) {
+		Session session = spawnAdders.get(player.getName());
 		HungerGame game = session.getGame();
 		if (game == null) {
 			error(player, "%s has been removed recently due to unknown reasons.");
@@ -671,12 +686,12 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		else {
 		    send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
-		    spawnAdders.remove(player);
+		    spawnAdders.remove(player.getName());
 		}
 	    }
 
-	    else if (spawnRemovers.containsKey(player)) {
-		Session session = spawnRemovers.get(player);
+	    else if (spawnRemovers.containsKey(player.getName())) {
+		Session session = spawnRemovers.get(player.getName());
 		HungerGame game = session.getGame();
 		if (game == null) {
 			error(player, "%s has been removed recently due to unknown reasons.");
@@ -701,7 +716,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		else {
 		    send(player, "You have removed %d spawn points from the game %s.", 
 			    session.getBlocks(), game.getName());
-		    spawnRemovers.remove(player);
+		    spawnRemovers.remove(player.getName());
 		}
 
 	    }

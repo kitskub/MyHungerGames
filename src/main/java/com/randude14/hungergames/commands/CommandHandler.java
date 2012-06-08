@@ -149,7 +149,9 @@ public class CommandHandler implements CommandExecutor {
 			}
 
 		}
-
+		else if("spectate".equalsIgnoreCase(args[0])) {
+			new SpectateCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
+		}
 		else if ("sponsor".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR)) return;
 
@@ -385,6 +387,7 @@ public class CommandHandler implements CommandExecutor {
 		Plugin.helpCommand(player, CommandUsage.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_VOTE.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.USER_STAT.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.USER_SPECTATE.getUsageAndInfo(), cmd.getLabel());
 	}
 
 	private void getAdminCommands(Player player, Command cmd) {

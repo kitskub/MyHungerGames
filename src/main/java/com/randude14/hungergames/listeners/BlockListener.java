@@ -21,70 +21,91 @@ public class BlockListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
-		if(session == null) return;
-		String setup = session.getSetup();
-		List<Integer> list = Config.getSpecialBlocksPlace(setup);
-		boolean contains = list.contains(event.getBlock().getTypeId());
-		boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
-		if(contains && canPlaceBlocks) {
-			Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
-			event.setCancelled(true);
-			return;
+		if(session != null) {
+			String setup = session.getSetup();
+			List<Integer> list = Config.getSpecialBlocksPlace(setup);
+			boolean contains = list.contains(event.getBlock().getTypeId());
+			boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
+			if(contains && canPlaceBlocks) {
+				Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
+				player.sendMessage("You cannot place this block while in game");
+				event.setCancelled(true);
+				return;
+			}
+
+			if(!contains && !canPlaceBlocks) {
+				Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
+				player.sendMessage("You cannot place this block while in game");
+				event.setCancelled(true);
+				return;
+			}
 		}
-		
-		if(!contains && !canPlaceBlocks) {
-			Plugin.error(player, "Cannot place this block while in game %s.", session.getName());
+		if (GameManager.getGame(Plugin.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			return;
+			Plugin.error(player, "Cannot place this block while spectating %s.", session.getName());
+			player.sendMessage("You cannot place this block while spectating");
 		}
-		
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
-		if(session == null) return;
-		String setup = session.getSetup();
-		List<Integer> list = Config.getSpecialBlocksBreak(setup);
-		boolean contains = list.contains(event.getBlock().getTypeId());
-		boolean canBreakBlocks = Config.getCanBreakBlock(setup);
-		if(contains && canBreakBlocks) {
-			Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
-			event.setCancelled(true);
-			return;
+		if(session != null) {
+			String setup = session.getSetup();
+			List<Integer> list = Config.getSpecialBlocksBreak(setup);
+			boolean contains = list.contains(event.getBlock().getTypeId());
+			boolean canBreakBlocks = Config.getCanBreakBlock(setup);
+			if(contains && canBreakBlocks) {
+				Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
+				player.sendMessage("You cannot break this block while in game");
+				event.setCancelled(true);
+				return;
+			}
+
+			if(!contains && !canBreakBlocks) {
+				Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
+				player.sendMessage("You cannot break this block while in game");
+				event.setCancelled(true);
+				return;
+			}
 		}
-		
-		if(!contains && !canBreakBlocks) {
-			Plugin.error(player, "Cannot break this block while in game %s.", session.getName());
+		if (GameManager.getGame(Plugin.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			return;
+			Plugin.error(player, "Cannot break this block while spectating %s.", session.getName());
+			player.sendMessage("You cannot break this block while spectating");
 		}
-		
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
-		if(session == null) return;
-		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		String setup = session.getSetup();
-		List<Integer> list = Config.getSpecialBlocksInteract(setup);
-		boolean contains = list.contains(event.getClickedBlock().getTypeId());
-		boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
-		if(contains && canInteractWithBlocks) {
-			Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
-			event.setCancelled(true);
-			return;
+		if(session != null) {;
+			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+			String setup = session.getSetup();
+			List<Integer> list = Config.getSpecialBlocksInteract(setup);
+			boolean contains = list.contains(event.getClickedBlock().getTypeId());
+			boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
+			if(contains && canInteractWithBlocks) {
+				Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
+				player.sendMessage("You cannot interact with this block while in game");
+				event.setCancelled(true);
+				return;
+			}
+
+			if(!contains && !canInteractWithBlocks) {
+				Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
+				player.sendMessage("You cannot interact with this block while in game");
+				event.setCancelled(true);
+				return;
+			}
 		}
-		
-		if(!contains && !canInteractWithBlocks) {
-			Plugin.error(player, "Cannot interact with this block while in game %s.", session.getName());
+		if (GameManager.getGame(Plugin.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			return;
+			Plugin.error(player, "Cannot interact with this block while spectating %s.", session.getName());
+			player.sendMessage("You cannot interact with this block while spectating");
 		}
-		
 	}
 
 }
