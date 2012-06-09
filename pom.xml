@@ -39,5 +39,21 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Vault.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>de.diddiz.LogBlock</groupId>
+            <artifactId>LogBlock</artifactId>
+            <version>1.52</version>
+	    <!-- Because we don't have a repo for this dep! -->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/LogBlock.jar</systemPath>
+        </dependency>
+	<dependency>
+            <groupId>uk.co.oliwali.HawkEye</groupId>
+            <artifactId>HawkEye</artifactId>
+            <version>1.0.7b</version>
+	    <!-- Because we don't have a repo for this dep! -->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/HawkEye.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

@@ -26,7 +26,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameCountdown;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
-import com.randude14.hungergames.ResetHandler;
+import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 
 public class HungerGame implements Comparable<HungerGame> {
@@ -381,6 +381,14 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawn = newSpawn;
 	}
 
+	public List<Player> getAllPlayers() {
+		List<Player> players = new ArrayList<Player>();
+		for (String s : allPlayers) {
+		    if (Bukkit.getPlayer(s) == null) continue;
+		    players.add(Bukkit.getPlayer(s));
+		}
+		return players;
+	}
 	public synchronized boolean rejoin(Player player) {
 	    if(!playerEnteringPreProcess(player)) return false;
 	    if (!Config.getAllowRejoin(setup)) {

@@ -51,7 +51,7 @@ import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
-import com.randude14.hungergames.utils.FileUtils;
+import com.randude14.hungergames.reset.ResetHandler;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -108,6 +108,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
 		}
 		loadRegistry();
+		loadResetter();
 		callTasks();
 		GameManager.loadGames();
 		info("Games loaded.");
@@ -153,6 +154,22 @@ public class Plugin extends JavaPlugin implements Listener {
 		econ = null;
 	    } else {
 		econ = new Economy();
+	    }
+	}
+	
+	private static void loadResetter() {
+	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
+		info("Hawkeye is installed, using for resetter.");
+		ResetHandler.setRessetter(ResetHandler.HAWKEYE);
+		return;
+	    } else if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
+		info("LogBlock is installed, using for resetter.");
+		ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
+		return;
+	    } else {
+		info("No logging plugins installed, using internal resetter.");
+		ResetHandler.setRessetter(ResetHandler.INTERNAL);
+		return;
 	    }
 	}
 

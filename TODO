@@ -1,25 +1,32 @@
-- Map gen
-- Map reset
+HIGH:
+- Improved map reset
+- economy config stuff
+- /hga restock
 - Stop game
-- Search for chests in a world
+- Restart game
+- Enhance Spectating
+- Ability for sponsors to invisibly teleport to a player to sponsor and stuff
+
+MEDIUM:
 - Random events
-- Factions
-    - Force damage
+- check saving
+- Fixed item chests
+- Hide players from each other
+- Sign listening
+- MatchMaterial in special-blocks
+- Add (better) logging
+
+LOW:
+- Force damage
+- Map gen
+- Respawn at random spot if not spawnpoint
 - Chest loot by command
 - Sponsor loot by command
 - better /hg stat
-- Fixed item chests
-- Ability for sponsors to invisibly teleport to a player to sponsor and stuff
-- Respawn at random spot if not spawnpoint
-- /hga restock
-- Add (better) logging
-- Possible timed game events
-- check saving
-- economy config stuff
 - Check command processing
-- Hide players from each other
+
+OPTIONAL:
 - Chat
-- MatchMaterial in special-blocks
-- Enhance Spectating
-- Restart game
-- Sign listening
+- Possible timed game events
+
+
