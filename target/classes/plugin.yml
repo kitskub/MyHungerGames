@@ -1,6 +1,6 @@
 name: HungerGames
 main: com.randude14.hungergames.Plugin
-version: 0.3.2-dev
+version: 0.4
 authors: [Randude14, kitskub]
 softdepend: [Vault]
 
@@ -46,7 +46,8 @@ permissions:
             hungergame.user.list: true
             hungergame.user.stat: true
             hungergame.user.vote: true
-            hungergame.user.sponsor: true            
+            hungergame.user.sponsor: true
+            hungergame.user.spectate: true
             hungergame.user.help: true
 
     hungergame.add.game:
@@ -91,6 +92,9 @@ permissions:
     hungergame.admin.reload:
         default: false
         description: reload plugin
+    hungergame.admin.restock:
+        default: false
+        description: restocks chests in a game
     hungergame.admin.help:
         default: false
         description: get admin commands
@@ -114,7 +118,10 @@ permissions:
         description: rejoin a game
     hungergame.user.sponsor:
         default: false
-        description: sponsor a player an item           
+        description: sponsor a player an item
+    hungergame.user.spectate:
+        default: false
+        description: puts player in creative to spectate a game or cancels a spectation
     hungergame.user.help:
         default: false
         description: get user commands
