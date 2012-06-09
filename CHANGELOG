@@ -5,6 +5,7 @@ v0.3.2
 - Changed most player keys to String keys
 - Might have fixed permissions. (again)
 - Added specific block change listener. Can be internal, LogBlock, or HawkEye (HawkEye is not currently implements) requests are open for more
+- Added a Restock command to restock all chests in a game
 
 v0.3.1
 - Logging stuff

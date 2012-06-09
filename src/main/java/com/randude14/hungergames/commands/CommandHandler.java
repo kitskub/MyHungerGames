@@ -243,6 +243,10 @@ public class CommandHandler implements CommandExecutor {
 			new SetCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 		
+		else if ("restock".equalsIgnoreCase(args[0])) {
+			new RestockCommand().execute(player, cmd, (String[]) ArrayUtils.removeElement(args, args[0]));
+		}
+		
 		else if("pause".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_PAUSE)) return;
 			
@@ -397,6 +401,7 @@ public class CommandHandler implements CommandExecutor {
 		Plugin.helpCommand(player, CommandUsage.ADMIN_SET_HELP.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.ADMIN_RELOAD.getUsageAndInfo(), cmd.getLabel());
+		Plugin.helpCommand(player, CommandUsage.ADMIN_RESTOCK.getUsageAndInfo(), cmd.getLabel());
 		Plugin.helpCommand(player, CommandUsage.ADMIN_START.getUsageAndInfo(), cmd.getLabel());
 	}
 
