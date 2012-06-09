@@ -37,8 +37,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, GameMode> spectatorGameMode;
 	private final List<Location> spawnPoints;
 	private final List<Location> chests;
-	private final List<Player> readyToPlay;
-	private final List<Player> allPlayers; // This might be used for rollback stuff, later
+	private final List<String> readyToPlay;
+	private final List<String> allPlayers; // This might be used for rollback stuff, later
 	private final String name;
 	private GameCountdown countdown;
 	private Location spawn;
@@ -55,14 +55,14 @@ public class HungerGame implements Comparable<HungerGame> {
 		this.name = name;
 		spawnPoints = new ArrayList<Location>();
 		chests = new ArrayList<Location>();
-		readyToPlay = new ArrayList<Player>();
+		readyToPlay = new ArrayList<String>();
 		spawnsTaken = new HashMap<String, Location>();
 		spawnsSaved = new HashMap<String, Location>();
 		spectators = new HashMap<String, Location>();
 		spectatorGameMode = new HashMap<String, GameMode>();
 		stats = new TreeMap<String, PlayerStat>();
 		countdown = null;
-		allPlayers = new ArrayList<Player>();
+		allPlayers = new ArrayList<String>();
 		spawn = null;
 		isRunning = isCounting = isPaused = false;
 		setup = null;
@@ -187,7 +187,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			Plugin.error(player, "%s has been paused.", name);
 			return false;
 		}
-		readyToPlay.add(player);
+		readyToPlay.add(player.getName());
 		int minVote = Config.getMinVote(setup);
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
 		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
@@ -421,7 +421,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player)) return false;
 	    stats.put(player.getName(), new PlayerStat(player));
-	    if (Config.getAutoVote(setup)) readyToPlay.add(player);
+	    if (Config.getAutoVote(setup)) readyToPlay.add(player.getName());
 	    return true;
 	}
 	
@@ -455,7 +455,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    player.teleport(loc);
 	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning) Plugin.freezePlayer(player);
-	    allPlayers.add(player);
+	    allPlayers.add(player.getName());
 	    return true;
 	}
 
