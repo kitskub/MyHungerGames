@@ -1,5 +1,5 @@
 v0.4.1
-
+- Fixed nullpointerexception in getspectating()
 v0.4
 - Might have fixed the games not saving
 - Fixed a nullpointerexception
