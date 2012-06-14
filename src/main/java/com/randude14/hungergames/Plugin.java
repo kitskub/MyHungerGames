@@ -445,7 +445,6 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 	
 	public static String getSpectating(Player player) {
-		if(player == null) return "";
 		if (!spectators.containsKey(player.getName())) return "";
 		return spectators.get(player.getName());
 	}
