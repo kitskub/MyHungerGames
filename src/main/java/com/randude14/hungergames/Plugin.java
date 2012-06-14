@@ -89,6 +89,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		spawnAdders = new HashMap<String, Session>();
 		spawnRemovers = new HashMap<String, Session>();
 		sponsors = new HashMap<String, String>();
+		spectators = new HashMap<String, String>();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		pm.registerEvents(manager, this);
