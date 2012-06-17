@@ -95,7 +95,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		pm.registerEvents(manager, this);
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
-		//pm.registerEvents(new TeleportListener(), this);
+		//pm.registerEvents(new TeleportListener(), this);// TODO broken?
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
@@ -158,12 +158,12 @@ public class Plugin extends JavaPlugin implements Listener {
 	    }
 	}
 	
-	private static void loadResetter() {
-	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
+	private static void loadResetter() { // TODO finish implementation
+	    /*if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
 		info("Hawkeye is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.HAWKEYE);
 		return;
-	    } else if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
+	    } else */if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
 		info("LogBlock is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
 		return;
@@ -445,8 +445,9 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 	
 	public static String getSpectating(Player player) {
-		if (!spectators.containsKey(player.getName())) return "";
-		return spectators.get(player.getName());
+	    if (player == null) return "";    
+	    if (!spectators.containsKey(player.getName())) return "";
+	    return spectators.get(player.getName());
 	}
 	
 	public static void removeSpectator(Player player) {
