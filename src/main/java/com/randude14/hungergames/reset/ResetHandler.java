@@ -2,7 +2,7 @@ package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.FileUtils;
 import java.io.File;
@@ -33,15 +33,15 @@ public class ResetHandler{
     
     private static boolean reloadWorld(String worldName) {
 	// Unload
-	World world = Plugin.getInstance().getServer().getWorld(worldName); // At this point, all players SHOULD be out, so this is just a safety for anyone else
+	World world = HungerGames.getInstance().getServer().getWorld(worldName); // At this point, all players SHOULD be out, so this is just a safety for anyone else
 	for (Player p : world.getPlayers()) {
 		World spawn = Bukkit.getWorlds().get(0);
 		if (spawn == world) spawn = Bukkit.getWorlds().get(1); // NullpointerException? It's possible
 		p.teleport(spawn.getSpawnLocation()); // Really shouldn't get to this point, so nothing fancy
 	}
-	Plugin.getInstance().getServer().unloadWorld(worldName, true);
-	File serverWorlds = Plugin.getInstance().getServer().getWorldContainer();
-	File templateLoc = Plugin.getInstance().getDataFolder();
+	HungerGames.getInstance().getServer().unloadWorld(worldName, true);
+	File serverWorlds = HungerGames.getInstance().getServer().getWorldContainer();
+	File templateLoc = HungerGames.getInstance().getDataFolder();
 	File worldFolder = new File(serverWorlds, worldName);
 	File template = new File(templateLoc, worldName + "_template");
 	if(!template.exists()) {

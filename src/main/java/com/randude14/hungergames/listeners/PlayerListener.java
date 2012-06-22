@@ -1,7 +1,7 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 
 
@@ -46,20 +46,20 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerQuit(PlayerQuitEvent event) {
 		GameManager.playerLeftServer(event.getPlayer());
-		Plugin.playerLeftServer(event.getPlayer());
+		HungerGames.playerLeftServer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerKick(PlayerKickEvent event) {
 		GameManager.playerLeftServer(event.getPlayer());
-		Plugin.playerLeftServer(event.getPlayer());
+		HungerGames.playerLeftServer(event.getPlayer());
 	}
 	
 	@EventHandler
 	public void playerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		Location frozenLoc = Plugin.getFrozenLocation(player);
+		Location frozenLoc = HungerGames.getFrozenLocation(player);
 		if (frozenLoc == null
 			|| GameManager.getSession(player) == null
 			|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
@@ -67,7 +67,7 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		Location at = player.getLocation();
-		if (!Plugin.equals(at, frozenLoc)) {
+		if (!HungerGames.equals(at, frozenLoc)) {
 			player.teleport(frozenLoc);
 		} 
 

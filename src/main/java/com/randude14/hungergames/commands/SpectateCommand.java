@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands;
 import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 
 import com.randude14.hungergames.utils.ChatUtils;
@@ -19,10 +19,10 @@ public class SpectateCommand extends SubCommand{
     @Override
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	    Player player = (Player) cs;
-	    if (!Plugin.checkPermission(player, Perm.USER_SPECTATE)) return true;
-	    if (GameManager.getGame(Plugin.getSpectating(player)) != null) {
-		    GameManager.getGame(Plugin.getSpectating(player)).removeSpectator(player);
-		    Plugin.removeSpectator(player);
+	    if (!HungerGames.checkPermission(player, Perm.USER_SPECTATE)) return true;
+	    if (GameManager.getGame(HungerGames.getSpectating(player)) != null) {
+		    GameManager.getGame(HungerGames.getSpectating(player)).removeSpectator(player);
+		    HungerGames.removeSpectator(player);
 		    return true;
 	    }
 	    if (args.length < 1) {
@@ -35,7 +35,7 @@ public class SpectateCommand extends SubCommand{
 		    return true;
 	    }
 	    game.addSpectator(player);
-	    Plugin.addSpectator(player, game.getName());
+	    HungerGames.addSpectator(player, game.getName());
 	    return true;
     }
     

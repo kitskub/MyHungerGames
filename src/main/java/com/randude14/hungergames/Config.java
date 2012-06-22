@@ -18,7 +18,7 @@ import static com.randude14.hungergames.Defaults.Config.*;
 
 
 public class Config {
-	private static final Plugin plugin = Plugin.getInstance();
+	private static final HungerGames plugin = HungerGames.getInstance();
 	
 	// Global only
 	public static String getDefaultGame() {

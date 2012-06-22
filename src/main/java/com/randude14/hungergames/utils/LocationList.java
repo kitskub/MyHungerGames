@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 
 public class LocationList {
 	private static List<Location> locs;
@@ -52,7 +52,7 @@ public class LocationList {
 	
 	public static boolean remove(Location loc) {
 		for(int cntr = 0;cntr < locs.size();cntr++) {
-			if(Plugin.equals(locs.get(cntr), loc)) {
+			if(HungerGames.equals(locs.get(cntr), loc)) {
 				locs.remove(cntr);
 				return true;
 			}
@@ -63,7 +63,7 @@ public class LocationList {
 	
 	public static boolean contains(Location loc) {
 		for(Location comp : locs) {
-			if(Plugin.equals(comp, loc)) {
+			if(HungerGames.equals(comp, loc)) {
 				return true;
 			}
 			
@@ -75,7 +75,7 @@ public class LocationList {
 		if(locs.isEmpty()) {
 			return null;
 		}
-		Random rand = Plugin.getRandom();
+		Random rand = HungerGames.getRandom();
 		return locs.get( rand.nextInt(locs.size()) );
 	}
 

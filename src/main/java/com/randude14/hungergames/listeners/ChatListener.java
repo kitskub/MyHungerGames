@@ -2,7 +2,7 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 
 import com.randude14.hungergames.utils.ChatUtils;
@@ -23,12 +23,12 @@ public class ChatListener implements Listener {
 	public void playerChat(PlayerChatEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (!Plugin.getSponsors().containsKey(player.getName())) return;
+		if (!HungerGames.getSponsors().containsKey(player.getName())) return;
 
 		int choice = 0;
 		event.setCancelled(true);
 		String mess = event.getMessage();
-		String sponsor = Plugin.removeSponsor(player);
+		String sponsor = HungerGames.removeSponsor(player);
 		try {
 			choice = Integer.parseInt(mess) - 1;
 		} catch (Exception ex) {
@@ -56,11 +56,11 @@ public class ChatListener implements Listener {
 
 		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet()).get(choice);
 		double price = itemMap.get(item);
-		if (!Plugin.hasEnough(beingSponsored, price)) {
+		if (!HungerGames.hasEnough(beingSponsored, price)) {
 			ChatUtils.error(player, String.format("You do not have enough money."));
 			return;
 		}
-		Plugin.withdraw(player, price);
+		HungerGames.withdraw(player, price);
 		if (item.getEnchantments().isEmpty()) {
 			ChatUtils.send(beingSponsored, "%s has sponsored you %d %s(s).",
 					player.getName(), item.getAmount(), item.getType().name());

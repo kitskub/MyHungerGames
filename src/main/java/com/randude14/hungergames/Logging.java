@@ -15,7 +15,7 @@ public class Logging {
 
 	static {
 		try {
-			Plugin instance = Plugin.getInstance();
+			HungerGames instance = HungerGames.getInstance();
 			instance.getDataFolder().mkdirs();
 			File file = new File(instance.getDataFolder(), "myhungergames.log");
 			if (!file.exists()) file.createNewFile();

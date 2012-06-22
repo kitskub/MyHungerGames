@@ -2,7 +2,7 @@ package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class InternalResetter extends Resetter implements Listener{
     
     @Override
     public void init() {
-	    Bukkit.getPluginManager().registerEvents(this, Plugin.getInstance());
+	    Bukkit.getPluginManager().registerEvents(this, HungerGames.getInstance());
     }
     
     @Override

@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 
 public class GameManager{
-	private static final Plugin plugin = Plugin.getInstance();
+	private static final HungerGames plugin = HungerGames.getInstance();
 	private static Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
 	private static Map<Player, Location> respawnLocation = new HashMap<Player, Location>();

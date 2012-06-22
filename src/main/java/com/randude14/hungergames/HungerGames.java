@@ -43,10 +43,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Plugin extends JavaPlugin{
+public class HungerGames extends JavaPlugin{
 	public static final String CMD_ADMIN = "hga";
 	public static final String CMD_USER = "hg";
-	private static Plugin instance;
+	private static HungerGames instance;
 	private static Permission perm;
 	private static Economy econ;
 	private static GameManager manager;
@@ -105,7 +105,7 @@ public class Plugin extends JavaPlugin{
 	}
 
 	private void callTasks() {
-	    Plugin.scheduleTask(new Runnable() {
+	    HungerGames.scheduleTask(new Runnable() {
 		public void run() {
 		    String installedVersion = getDescription().getVersion();
 		    String checkVersion = updateCheck(installedVersion);
@@ -177,7 +177,7 @@ public class Plugin extends JavaPlugin{
 	}
 
 	public static boolean hasPermission(Player player, Defaults.Perm perm) {
-		return Plugin.perm.hasPermission(player, perm);
+		return HungerGames.perm.hasPermission(player, perm);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
@@ -441,12 +441,12 @@ public class Plugin extends JavaPlugin{
 
 	}
 
-	public static Plugin getInstance() {
+	public static HungerGames getInstance() {
 		return instance;
 	}
 
 	public static boolean checkPermission(Player player, Defaults.Perm perm) {
-		if (!Plugin.hasPermission(player, perm)) {
+		if (!HungerGames.hasPermission(player, perm)) {
 			ChatUtils.error(player, "You do not have permission.");
 			return false;
 		}

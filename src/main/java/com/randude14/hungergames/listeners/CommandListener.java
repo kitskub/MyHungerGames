@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -17,7 +17,7 @@ public class CommandListener implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		String message = event.getMessage();
-		if(message.startsWith("/" + Plugin.CMD_ADMIN) || message.startsWith("/" + Plugin.CMD_USER)) return;
+		if(message.startsWith("/" + HungerGames.CMD_ADMIN) || message.startsWith("/" + HungerGames.CMD_USER)) return;
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		if(!Config.getUseCommand(session.getSetup())) {

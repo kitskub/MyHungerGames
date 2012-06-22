@@ -1,8 +1,8 @@
 name: HungerGames
-main: com.randude14.hungergames.Plugin
+main: com.randude14.hungergames.HungerGames
 version: 0.5-dev
 authors: [Randude14, kitskub]
-softdepend: [Vault]
+softdepend: [Vault, HawkEye, LogBlock]
 
 commands:
     hga:

@@ -13,14 +13,14 @@ public class GameCountdown implements Runnable {
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
-		taskId = Plugin.scheduleTask(this, 20L, 20L);
+		taskId = HungerGames.scheduleTask(this, 20L, 20L);
 		if(isResuming) {
 			ChatUtils.broadcast("Resuming %s in %s...",
-					game.getName(), Plugin.formatTime(countdown));
+					game.getName(), HungerGames.formatTime(countdown));
 		}
 		else {
 			ChatUtils.broadcast("Starting %s in %s...",
-					game.getName(), Plugin.formatTime(countdown));
+					game.getName(), HungerGames.formatTime(countdown));
 		}
 
 	}
@@ -38,12 +38,12 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public void cancel() {
-		Plugin.cancelTask(taskId);
+		HungerGames.cancelTask(taskId);
 	}
 
 	public void run() {
 		if (countdown <= 1) {
-			Plugin.cancelTask(taskId);
+			HungerGames.cancelTask(taskId);
 			game.startGame();
 			ChatUtils.broadcastRaw("Start!!");
 			return;
@@ -54,7 +54,7 @@ public class GameCountdown implements Runnable {
 			color = ChatColor.GOLD;
 		if(countdown <= 3)
 			color = ChatColor.RED;
-		ChatUtils.broadcastRaw(color, "%s...", Plugin.formatTime(countdown));
+		ChatUtils.broadcastRaw(color, "%s...", HungerGames.formatTime(countdown));
 	}
 
 }

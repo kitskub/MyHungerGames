@@ -1,7 +1,7 @@
 package com.randude14.hungergames.utils;
 
 import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,15 +34,15 @@ public class ChatUtils {
 	}
 
 	public static String getLogPrefix() {
-		return String.format("[%s] v%s - ", Plugin.getInstance().getName(), Plugin.getInstance().getDescription().getVersion());
+		return String.format("[%s] v%s - ", HungerGames.getInstance().getName(), HungerGames.getInstance().getDescription().getVersion());
 	}
 
 	public static String getPrefix() {
-		return String.format("[%s] - ", Plugin.getInstance().getName());
+		return String.format("[%s] - ", HungerGames.getInstance().getName());
 	}
 
 	public static String getHeadLiner() {
-		return String.format("--------------------[%s]--------------------", Plugin.getInstance().getName());
+		return String.format("--------------------[%s]--------------------", HungerGames.getInstance().getName());
 	}
 
 	public static void broadcast(String message) {

@@ -25,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameCountdown;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -82,7 +82,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection spawnPointsSection = section.getConfigurationSection("spawn-points");
 			for (String key : spawnPointsSection.getKeys(false)) {
 				String str = spawnPointsSection.getString(key);
-				Location loc = Plugin.parseToLoc(str);
+				Location loc = HungerGames.parseToLoc(str);
 				if (loc == null) {
 					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
@@ -96,7 +96,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
 			for (String key : chestsSection.getKeys(false)) {
 				String str = chestsSection.getString(key);
-				Location loc = Plugin.parseToLoc(str);
+				Location loc = HungerGames.parseToLoc(str);
 				if (loc == null) {
 					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
@@ -115,8 +115,8 @@ public class HungerGame implements Comparable<HungerGame> {
                 }
                 
 		enabled = section.getBoolean("enabled", Boolean.TRUE);
-		spawn = Plugin.parseToLoc(section.getString("spawn"));
-		Plugin.callEvent(new GameLoadEvent(this));
+		spawn = HungerGames.parseToLoc(section.getString("spawn"));
+		HungerGames.callEvent(new GameLoadEvent(this));
 	}
 
 	public void saveTo(ConfigurationSection section) {
@@ -125,7 +125,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
 				Location loc = spawnPoints.get(cntr);
 				if (loc == null) continue;
-				spawnPointsSection.set("spawnpoint" + (cntr + 1), Plugin.parseToString(loc));
+				spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
 			}
 		}
 
@@ -133,7 +133,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection chestsSection = section.createSection("chests");
 			for (int cntr = 0; cntr < chests.size(); cntr++) {
 				Location loc = chests.get(cntr);
-				chestsSection.set("chest" + (cntr + 1), Plugin.parseToString(loc));
+				chestsSection.set("chest" + (cntr + 1), HungerGames.parseToString(loc));
 			}
 
 		}
@@ -143,9 +143,9 @@ public class HungerGame implements Comparable<HungerGame> {
                 }
                 
 		section.set("enabled", enabled);
-		if (getSpawn() != null) section.set("spawn", Plugin.parseToString(getSpawn()));
+		if (getSpawn() != null) section.set("spawn", HungerGames.parseToString(getSpawn()));
 		
-		Plugin.callEvent(new GameSaveEvent(this));
+		HungerGames.callEvent(new GameSaveEvent(this));
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void addSpectator(Player player) {
 		spectators.put(player.getName(), player.getLocation());
-		Random rand = Plugin.getRandom();
+		Random rand = HungerGames.getRandom();
 		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 		player.teleport(loc);
 		spectatorGameMode.put(player.getName(), player.getGameMode());
@@ -241,7 +241,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		GameStartEvent event = new GameStartEvent(this);
-		Plugin.callEvent(event);
+		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
 			return false;
 		}
@@ -283,12 +283,12 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		GameStartEvent event = new GameStartEvent(this, true);
-		Plugin.callEvent(event);
+		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
 			return false;
 		}
 		pauseGame();
-		Plugin.callEvent(new GamePauseEvent(this));
+		HungerGames.callEvent(new GamePauseEvent(this));
 		return true;
 	}
 	
@@ -352,14 +352,14 @@ public class HungerGame implements Comparable<HungerGame> {
 		for (String playerName : stats.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
-			Plugin.unfreezePlayer(p);
+			HungerGames.unfreezePlayer(p);
 		}
 
 	}
 
         public void addAndFillInventory(Inventory inv) {
             if(!randomInvs.contains(inv.getHolder())) {
-                Plugin.fillInventory(inv, itemsets);
+                HungerGames.fillInventory(inv, itemsets);
                 randomInvs.add(inv.getHolder());
             }
         }
@@ -369,7 +369,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		Location loc = chests.get(cntr);
 		if (!(loc.getBlock().getState() instanceof Chest)) continue;
 		Chest chest = (Chest) loc.getBlock().getState();
-		Plugin.fillInventory(chest.getInventory(), itemsets);
+		HungerGames.fillInventory(chest.getInventory(), itemsets);
 	    }
 
 	}
@@ -405,7 +405,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		    return false;
 	    }
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
-	    Plugin.callEvent(event);
+	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if (!playerEntering(player)) return false;
 	    return true;
@@ -426,7 +426,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
-	    Plugin.callEvent(event);
+	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player)) return false;
 	    stats.put(player.getName(), new PlayerStat(player));
@@ -446,7 +446,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 
 	    if (Config.getShouldClearInv(setup)) {
-		    if(!Plugin.hasInventoryBeenCleared(player)) {
+		    if(!HungerGames.hasInventoryBeenCleared(player)) {
 			    ChatUtils.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
 			    return false;
 		    }
@@ -455,7 +455,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 	
 	public synchronized boolean playerEntering(Player player) {
-	    Random rand = Plugin.getRandom();
+	    Random rand = HungerGames.getRandom();
 	    Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 	    while (spawnTaken(loc)) {
 		    loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
@@ -463,7 +463,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    spawnsTaken.put(player.getName(), loc);
 	    player.teleport(loc);
 	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
-	    if (!isRunning) Plugin.freezePlayer(player);
+	    if (!isRunning) HungerGames.freezePlayer(player);
 	    allPlayers.add(player.getName());
 	    return true;
 	}
@@ -488,7 +488,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 	    teleportPlayerToSpawn(player);
 	    checkForGameOver(false);
-	    Plugin.callEvent(new PlayerLeaveGameEvent(this, player));
+	    HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 	    return true;
 	}
 	
@@ -507,14 +507,14 @@ public class HungerGame implements Comparable<HungerGame> {
 	    else {
 		stats.remove(player.getName());
 	    }
-	    Plugin.callEvent(new PlayerQuitGameEvent(this, player));
+	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    return true;
 	}
 	
 	private synchronized void playerLeaving(Player player) {
 		spawnsTaken.remove(player.getName());
 		spawnsSaved.remove(player.getName());
-		Plugin.unfreezePlayer(player);
+		HungerGames.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
 	}
 
@@ -562,7 +562,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			    event = new GameEndEvent(this, winner);
 		    }
 		    clear();
-		    Plugin.callEvent(event);
+		    HungerGames.callEvent(event);
 		    ResetHandler.resetChanges(this);
 	    }
 
@@ -607,7 +607,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				.replace("<game>", name);
 		killed(killed, false);
 		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed, message);
-		Plugin.callEvent(event);
+		HungerGames.callEvent(event);
 		ChatUtils.broadcast(message);
 	}
 
@@ -640,7 +640,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		checkForGameOver(false);
 		if (callEvent) {
-			Plugin.callEvent(new PlayerKillEvent(this, killed));
+			HungerGames.callEvent(new PlayerKillEvent(this, killed));
 		}
 
 	}
@@ -694,7 +694,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean addChest(Location loc) {
 		for (Location l : chests) {
-		    if (Plugin.equals(l, loc)) return false;
+		    if (HungerGames.equals(l, loc)) return false;
 		}
 		chests.add(loc);
 		return true;
@@ -702,7 +702,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean addSpawnPoint(Location loc) {
 		for (Location l : spawnPoints) {
-			if (Plugin.equals(l, loc)) return false;
+			if (HungerGames.equals(l, loc)) return false;
 		}
 		spawnPoints.add(loc);
 		return true;
@@ -711,7 +711,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	public boolean removeChest(Location loc) {
 		Iterator<Location> iterator = chests.iterator();
 		while (iterator.hasNext()) {
-			if (Plugin.equals(loc, iterator.next())) {
+			if (HungerGames.equals(loc, iterator.next())) {
 				iterator.remove();
 				return true;
 			}
@@ -724,11 +724,11 @@ public class HungerGame implements Comparable<HungerGame> {
 	    Iterator<Location> iterator = spawnPoints.iterator();
 	    Location l = null;
 	    while (iterator.hasNext()) {
-		if (Plugin.equals(loc, l = iterator.next())) {
+		if (HungerGames.equals(loc, l = iterator.next())) {
 		    iterator.remove();
 		    for (String playerName : spawnsTaken.keySet()) {
 			Location comp = spawnsTaken.get(playerName);
-			if (Plugin.equals(l, comp)) {
+			if (HungerGames.equals(l, comp)) {
 			    spawnsTaken.remove(playerName);
 			    if (Bukkit.getPlayer(playerName) == null) continue;
 			    ChatUtils.error(Bukkit.getPlayer(playerName),

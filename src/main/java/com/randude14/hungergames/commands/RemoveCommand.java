@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands;
 import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -26,24 +26,24 @@ public class RemoveCommand extends SubCommand{
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
-		    Plugin.CMD_ADMIN);
+		    HungerGames.CMD_ADMIN);
 	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsageAndInfo(),
-		    Plugin.CMD_ADMIN);
+		    HungerGames.CMD_ADMIN);
 	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsageAndInfo(),
-		    Plugin.CMD_ADMIN);
+		    HungerGames.CMD_ADMIN);
 	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(),
-		    Plugin.CMD_ADMIN);
+		    HungerGames.CMD_ADMIN);
 	    return true;
 	}
 
 	HungerGame game = GameManager.getGame(args[1]);
 	
 	if ("spawnpoint".equalsIgnoreCase(args[0])) {
-	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)) return true;
+	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
 		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsage(),
-			    Plugin.CMD_ADMIN);
+			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
 	    
@@ -52,18 +52,18 @@ public class RemoveCommand extends SubCommand{
 		return true;
 	    }
 	    
-	    Plugin.addSpawnRemover(player, game.getName());
+	    HungerGames.addSpawnRemover(player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a spawn point to remove it from %s.",
 			    game.getName());
 	}
 
 	else if ("chest".equalsIgnoreCase(args[0])) {
-	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_CHEST)) return true;
+	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_CHEST)) return true;
 	    
 	    if (args.length == 1) {
 		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsage(),
-			    Plugin.CMD_ADMIN);
+			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
 	    
@@ -72,17 +72,17 @@ public class RemoveCommand extends SubCommand{
 		return true;
 	    }
 
-	    Plugin.addChestRemover(player, args[1]);
+	    HungerGames.addChestRemover(player, args[1]);
 	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a chest to remove it from %s.", game.getName());
 	}
 
 	else if ("game".equalsIgnoreCase(args[0])) {
-	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_GAME)) return true;
+	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_GAME)) return true;
 	    
 	    if (args.length == 1) {
 		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsage(),
-			    Plugin.CMD_ADMIN);
+			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
 	    
@@ -92,16 +92,16 @@ public class RemoveCommand extends SubCommand{
 	    }
 	    
 	    GameManager.removeGame(args[1]);
-	    Plugin.callEvent(new GameRemoveEvent(game));
+	    HungerGames.callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[1]);
 	}
 
 	else if("itemset".equalsIgnoreCase(args[0])){
-	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) return true;
+	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) return true;
 	    
 	    if(args.length == 2){
 		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsage(),
-			    Plugin.CMD_ADMIN);
+			    HungerGames.CMD_ADMIN);
 	    }
 	    
 	    if(game == null){
