@@ -9,23 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.logging.Level;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 
 
-
-
-public class GameManager implements Listener {
+public class GameManager{
 	private static final Plugin plugin = Plugin.getInstance();
 	private static Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
@@ -98,46 +88,15 @@ public class GameManager implements Listener {
 		if(respawn == null) return;
 		respawnLocation.put(player, respawn);
 	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void playerKilled(PlayerDeathEvent event) {
-		Player killed = event.getEntity();
-		HungerGame gameOfKilled = getSession(killed);
-		if (gameOfKilled == null) return;
-		
-		Player killer = killed.getKiller();
-		if (killer != null) {
-			HungerGame gameOfKiller = getSession(killer);
-
-			if (gameOfKilled.equals(gameOfKiller)) {
-				gameOfKiller.killed(killer, killed);
-			}
-		}
-		else {
-			gameOfKilled.killed(killed);
-		}
-	}
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void playerRespawn(PlayerRespawnEvent event) {
-	    if(respawnLocation.containsKey(event.getPlayer())){
-		event.setRespawnLocation(respawnLocation.get(event.getPlayer()));
-		respawnLocation.remove(event.getPlayer());
+	public static Location getRespawnLocation(Player player) {
+	    if(respawnLocation.containsKey(player)){
+		return respawnLocation.remove(player);
 	    }
-	    
+	    return null;
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public static void playerQuit(PlayerQuitEvent event) {
-		playerLeftServer(event.getPlayer());
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public static void playerKick(PlayerKickEvent event) {
-		playerLeftServer(event.getPlayer());
-	}
-
-	private static void playerLeftServer(Player player) {
+	public static void playerLeftServer(Player player) {
 		HungerGame game = getSession(player);
 		if (game == null) return;
 		game.quit(player);

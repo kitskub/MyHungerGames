@@ -24,6 +24,7 @@ LOW:
 - Sponsor loot by command
 - better /hg stat
 - Check command processing
+= Use conversation API for sponsors
 
 OPTIONAL:
 - Chat

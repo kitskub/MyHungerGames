@@ -1,16 +1,24 @@
 package com.randude14.hungergames;
 
 import com.randude14.hungergames.commands.CommandHandler;
+import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.listeners.*;
+import com.randude14.hungergames.register.BukkitPermission;
+import com.randude14.hungergames.register.Economy;
+import com.randude14.hungergames.register.Permission;
+import com.randude14.hungergames.register.VaultPermission;
+import com.randude14.hungergames.reset.ResetHandler;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
-//import java.util.logging.Logger;
 import java.net.URL;
 
 import org.w3c.dom.Document;
@@ -25,37 +33,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.listeners.*;
-import com.randude14.hungergames.register.BukkitPermission;
-import com.randude14.hungergames.register.Economy;
-import com.randude14.hungergames.register.Permission;
-import com.randude14.hungergames.register.VaultPermission;
-import com.randude14.hungergames.reset.ResetHandler;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-
-public class Plugin extends JavaPlugin implements Listener {
+public class Plugin extends JavaPlugin{
 	public static final String CMD_ADMIN = "hga";
 	public static final String CMD_USER = "hg";
 	private static Plugin instance;
@@ -64,10 +52,6 @@ public class Plugin extends JavaPlugin implements Listener {
 	private static GameManager manager;
 	private static Random rand;
 	private static Map<String, Location> frozenPlayers;
-	private static Map<String, Session> chestAdders;
-	private static Map<String, Session> chestRemovers;
-	private static Map<String, Session> spawnAdders;
-	private static Map<String, Session> spawnRemovers;
 	private static Map<String, String> sponsors; // <sponsor, sponsee>
 	private static Map<String, String> spectators; // <player, game>
 	private static Map<ItemStack, Float> globalChestLoot;
@@ -84,18 +68,16 @@ public class Plugin extends JavaPlugin implements Listener {
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		frozenPlayers = new HashMap<String, Location>();
-		chestAdders = new HashMap<String, Session>();
-		chestRemovers = new HashMap<String, Session>();
-		spawnAdders = new HashMap<String, Session>();
-		spawnRemovers = new HashMap<String, Session>();
 		sponsors = new HashMap<String, String>();
 		spectators = new HashMap<String, String>();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(this, this);
-		pm.registerEvents(manager, this);
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
-		//pm.registerEvents(new TeleportListener(), this);// TODO broken?
+		pm.registerEvents(new PlayerListener(), this);
+		pm.registerEvents(new InventoryListener(), this);
+		pm.registerEvents(new ChestAddListener(), this);
+		pm.registerEvents(new ChatListener(), this);
+		pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
@@ -379,20 +361,19 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public static void addChestAdder(Player player, String name) {
-		Session session = new Session(name);
-		chestAdders.put(player.getName(), session);
+		ChestAddListener.addChestAdder(player, name);
 	}
 
 	public static void addChestRemover(Player player, String name) {
-		chestRemovers.put(player.getName(), new Session(name));
+		ChestAddListener.addChestRemover(player, name);
 	}
 
 	public static void addSpawnAdder(Player player, String name) {
-		spawnAdders.put(player.getName(), new Session(name));
+		ChestAddListener.addSpawnAdder(player, name);
 	}
 
 	public static void addSpawnRemover(Player player, String name) {
-		spawnRemovers.put(player.getName(), new Session(name));
+		ChestAddListener.addSpawnRemover(player, name);
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
@@ -439,6 +420,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	    }
 	    return true;
 	}
+
+	public static Map<String, String> getSponsors() {
+		return Collections.unmodifiableMap(sponsors);
+	}
+	
+	public static String removeSponsor(Player player) {
+		return sponsors.remove(player.getName());
+	}
 	
 	public static void addSpectator(Player player, String gameName) {
 		spectators.put(player.getName(), gameName);
@@ -450,8 +439,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	    return spectators.get(player.getName());
 	}
 	
-	public static void removeSpectator(Player player) {
-		spectators.remove(player.getName());
+	public static String removeSpectator(Player player) {
+		return spectators.remove(player.getName());
 	}
 
 	public String updateCheck(String currentVersion) {
@@ -512,243 +501,14 @@ public class Plugin extends JavaPlugin implements Listener {
 		return format;
 	}
 
-	@EventHandler
-	public void playerMove(PlayerMoveEvent event) {
-		if (event.isCancelled()) return;
-		Player player = event.getPlayer();
-		if (!frozenPlayers.containsKey(player.getName())
-				|| GameManager.getSession(player) == null
-				|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
-				|| GameManager.getSession(player).isRunning()) {
-			return;
-		}
-		Location at = player.getLocation();
-		Location loc = frozenPlayers.get(player.getName());
-		if (!equals(at, loc)) {
-			player.teleport(loc);
-		} 
-
+	public static Location getFrozenLocation(Player player) {
+		if (!frozenPlayers.containsKey(player.getName())) return null;
+		return frozenPlayers.get(player.getName());
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void playerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		spawnAdders.remove(player.getName());
-		spawnRemovers.remove(player.getName());
-		chestAdders.remove(player.getName());
-		chestRemovers.remove(player.getName());
+	public static void playerLeftServer(Player player) {
+		ChestAddListener.removePlayer(player);
 		sponsors.remove(player.getName());
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void playerKick(PlayerKickEvent event) {
-		Player player = event.getPlayer();
-		spawnAdders.remove(player.getName());
-		spawnRemovers.remove(player.getName());
-		chestAdders.remove(player.getName());
-		chestRemovers.remove(player.getName());
-		sponsors.remove(player.getName());
-	}
-
-	@EventHandler
-	public void playerChat(PlayerChatEvent event) {
-		if (event.isCancelled()) return;
-		Player player = event.getPlayer();
-		if (!sponsors.containsKey(player.getName())) return;
-
-		int choice = 0;
-		event.setCancelled(true);
-		String mess = event.getMessage();
-		String sponsor = sponsors.remove(player.getName());
-		try {
-			choice = Integer.parseInt(mess) - 1;
-		} catch (Exception ex) {
-			error(player, "'%s' is not an integer.", mess);
-			return;
-		}
-
-		Player beingSponsored = getServer().getPlayer(sponsor);
-		if (beingSponsored == null) {
-			error(player, "'%s' is not online anymore.", sponsor);
-			return;
-		}
-		HungerGame game = GameManager.getSession(player);
-		if (game == null) {
-			error(player, "'%s' is no longer in a game.", sponsor);
-			return;
-		}
-		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
-
-		int size = itemMap.size();
-		if (choice < 0 || choice >= size) {
-			error(player, "Choice '%d' does not exist.");
-			return;
-		}
-
-		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet()).get(choice);
-		double price = itemMap.get(item);
-		if (!hasEnough(beingSponsored, price)) {
-			error(player, String.format("You do not have enough money."));
-			return;
-		}
-		withdraw(player, price);
-		if (item.getEnchantments().isEmpty()) {
-			send(beingSponsored, "%s has sponsored you %d %s(s).",
-					player.getName(), item.getAmount(), item.getType().name());
-		} else {
-			send(beingSponsored, "%s has sponsored you %d enchanted %s(s).",
-					player.getName(), item.getAmount(), item.getType().name());
-		}
-
-		for (ItemStack drop : beingSponsored.getInventory().addItem(item)
-				.values()) {
-			beingSponsored.getWorld().dropItem(beingSponsored.getLocation(),
-					drop);
-		}
-		if (item.getEnchantments().isEmpty()) {
-			send(beingSponsored, "You have sponsored %s %d %s(s) for $%.2f.",
-					player.getName(), item.getAmount(), item.getType().name(),
-					price);
-		} else {
-			send(beingSponsored,
-					"You have sponsored %s %d enchanted %s(s) for $%.2f.",
-					player.getName(), item.getAmount(), item.getType().name(),
-					price);
-		}
-
-	}
-
-	@EventHandler
-	public void playerClickedBlock(PlayerInteractEvent event) {
-	    if (event.isCancelled()) return;
-	    Player player = event.getPlayer();
-	    Action action = event.getAction();
-	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
-	    if (chestAdders.containsKey(player.getName())) {
-		Session session = chestAdders.get(player.getName());
-		HungerGame game = session.getGame();
-		if (game == null) {
-			error(player,"%s has been removed recently due to unknown reasons.");
-			return;
-		}
-		Block block = event.getClickedBlock();
-		if (action == Action.LEFT_CLICK_BLOCK) {
-		    if (!(block.getState() instanceof Chest)) {
-			    error(player, "Block is not a chest.");
-			    return;
-		    }
-		    if (game.addChest(block.getLocation())) {
-			send(player, "Chest has been added to %s.", game.getName());
-		    }
-		    else {
-			error(player, "Chest has already been added to game %s.",game.getName());
-		    }
-		    session.clicked();
-		}
-
-		else {
-		    send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
-		    chestAdders.remove(player.getName());
-		}
-	    }
-
-	    else if (chestRemovers.containsKey(player.getName())) {
-		Session session = chestRemovers.get(player.getName());
-		HungerGame game = session.getGame();
-		if (game == null) {
-			error(player, "%s has been removed recently due to unknown reasons.");
-			return;
-		}
-		Block block = event.getClickedBlock();
-		if (action == Action.LEFT_CLICK_BLOCK) {
-		    if (!(block.getState() instanceof Chest)) {
-			    error(player, "Block is not a chest.");
-			    return;
-		    }
-		    if (game.removeChest(block.getLocation())) {
-			send(player, "Chest has been removed from %s.", game.getName());
-		    }
-		    else {
-			error(player, "%s does not contain this chest.", game.getName());
-		    }
-		    session.clicked();
-		}
-
-		else {
-		    send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
-		    chestRemovers.remove(player.getName());
-		}
-	    }
-
-	    else if (spawnAdders.containsKey(player.getName())) {
-		Session session = spawnAdders.get(player.getName());
-		HungerGame game = session.getGame();
-		if (game == null) {
-			error(player, "%s has been removed recently due to unknown reasons.");
-			return;
-		}
-		Location loc = event.getClickedBlock().getLocation();
-		World world = loc.getWorld();
-		double x = loc.getBlockX() + 0.5;
-		double y = loc.getBlockY() + 1;
-		double z = loc.getBlockZ() + 0.5;
-		loc = new Location(world, x, y, z);
-		if (action == Action.LEFT_CLICK_BLOCK) {
-			if (game.addSpawnPoint(loc)) {
-				send(player, "Spawn point has been added to %s.", game.getName());
-			}
-			else {
-				error(player, "%s already has this spawn point.", game.getName());
-			}
-			session.clicked();
-		}
-
-		else {
-		    send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
-		    spawnAdders.remove(player.getName());
-		}
-	    }
-
-	    else if (spawnRemovers.containsKey(player.getName())) {
-		Session session = spawnRemovers.get(player.getName());
-		HungerGame game = session.getGame();
-		if (game == null) {
-			error(player, "%s has been removed recently due to unknown reasons.");
-			return;
-		}
-		Location loc = event.getClickedBlock().getLocation();
-		World world = loc.getWorld();
-		double x = loc.getBlockX() + 0.5;
-		double y = loc.getBlockY() + 1;
-		double z = loc.getBlockZ() + 0.5;
-		loc = new Location(world, x, y, z);
-		if (action == Action.LEFT_CLICK_BLOCK) {
-			if (game.removeSpawnPoint(loc)) {
-				send(player, "Spawn point has been removed from %s.", game.getName());
-			}
-			else {
-				error(player, "%s does not contain this spawn point.", game.getName());
-			}
-			session.clicked();
-		}
-
-		else {
-		    send(player, "You have removed %d spawn points from the game %s.", 
-			    session.getBlocks(), game.getName());
-		    spawnRemovers.remove(player.getName());
-		}
-
-	    }
-	}
-        
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void inventoryOpen(InventoryOpenEvent event) {
-		if(event.getInventory().getType() != InventoryType.CHEST) return;
-                Player player = (Player)event.getPlayer();
-                HungerGame game = GameManager.getSession(player);
-                if(game == null) return;
-		if(!Config.getAutoAdd(game.getSetup())) return;
-                game.addAndFillInventory(event.getInventory());
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
@@ -806,28 +566,4 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
-
-	private static class Session {
-		private int blocks;
-		private String game;
-
-		public Session(String game) {
-			this.game = game;
-			this.blocks = 0;
-		}
-
-		public HungerGame getGame() {
-			return GameManager.getGame(game);
-		}
-
-		public void clicked() {
-			blocks++;
-		}
-
-		public int getBlocks() {
-			return blocks;
-		}
-
-	}
-
 }

@@ -1,0 +1,75 @@
+package com.randude14.hungergames.listeners;
+
+import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Plugin;
+import com.randude14.hungergames.games.HungerGame;
+
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+
+
+public class PlayerListener implements Listener {
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public static void playerKilled(PlayerDeathEvent event) {
+		Player killed = event.getEntity();
+		HungerGame gameOfKilled = GameManager.getSession(killed);
+		if (gameOfKilled == null) return;
+		Player killer = killed.getKiller();
+		if (killer != null) {
+			HungerGame gameOfKiller = GameManager.getSession(killer);
+			if (gameOfKilled.equals(gameOfKiller)) {
+				gameOfKiller.killed(killer, killed);
+			}
+		}
+		else {
+			gameOfKilled.killed(killed);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public static void playerRespawn(PlayerRespawnEvent event) {
+	    Location respawn = GameManager.getRespawnLocation(event.getPlayer());
+	    if (respawn == null) return;
+	    event.setRespawnLocation(respawn);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public static void playerQuit(PlayerQuitEvent event) {
+		GameManager.playerLeftServer(event.getPlayer());
+		Plugin.playerLeftServer(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public static void playerKick(PlayerKickEvent event) {
+		GameManager.playerLeftServer(event.getPlayer());
+		Plugin.playerLeftServer(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void playerMove(PlayerMoveEvent event) {
+		if (event.isCancelled()) return;
+		Player player = event.getPlayer();
+		Location frozenLoc = Plugin.getFrozenLocation(player);
+		if (frozenLoc == null
+			|| GameManager.getSession(player) == null
+			|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
+			|| GameManager.getSession(player).isRunning()) {
+			return;
+		}
+		Location at = player.getLocation();
+		if (!Plugin.equals(at, frozenLoc)) {
+			player.teleport(frozenLoc);
+		} 
+
+	}
+}
