@@ -1,9 +1,5 @@
 package com.randude14.hungergames;
 
-/**
- *
- *
- */
 public class Defaults {
     
     public enum Perm {

@@ -8,6 +8,7 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 
+import com.randude14.hungergames.utils.ChatUtils;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -48,15 +49,15 @@ public class CommandHandler implements CommandExecutor {
 		else if ("list".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_LIST)) return;
 
-			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
+			ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 			Collection<HungerGame> games = GameManager.getGames();
 			if (games.isEmpty()) {
-				Plugin.error(player, "No games have been created yet.");
+				ChatUtils.error(player, "No games have been created yet.");
 				return;
 			}
 
 			for (HungerGame g : games) {
-				Plugin.send(player, ChatColor.GOLD, "- " + g.getInfo());
+				ChatUtils.send(player, ChatColor.GOLD, "- " + g.getInfo());
 			}
 		}
 
@@ -66,20 +67,20 @@ public class CommandHandler implements CommandExecutor {
 			String name = (args.length == 1) ? Config.getDefaultGame()
 					: args[1];
 			if (name == null) {
-				Plugin.helpCommand(player, CommandUsage.USER_JOIN.getUsage(),
+				ChatUtils.helpCommand(player, CommandUsage.USER_JOIN.getUsage(),
 						cmd.getLabel());
 				return;
 			}
 
 			game = GameManager.getGame(name);
 			if (game == null) {
-				Plugin.sendDoesNotExist(player, name);
+				ChatUtils.sendDoesNotExist(player, name);
 				return;
 			}
 			
 			HungerGame currentSession = GameManager.getSession(player);
 			if (currentSession != null) {
-				Plugin.error(player,
+				ChatUtils.error(player,
 						"You are already in the game '%s'. Leave that game before joining another.",
 						currentSession.getName());
 				return;
@@ -88,7 +89,7 @@ public class CommandHandler implements CommandExecutor {
 				String mess = Config.getJoinMessage(game.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
-				Plugin.broadcast(mess);
+				ChatUtils.broadcast(mess);
 			}
 		}
 
@@ -97,7 +98,7 @@ public class CommandHandler implements CommandExecutor {
 
 			game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(player, "You are currently not in a game.");
+				ChatUtils.error(player, "You are currently not in a game.");
 				return;
 			}
 
@@ -105,7 +106,7 @@ public class CommandHandler implements CommandExecutor {
 				String mess = Config.getLeaveMessage(game.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
-				Plugin.broadcast(mess);
+				ChatUtils.broadcast(mess);
 			}
 
 		}
@@ -115,7 +116,7 @@ public class CommandHandler implements CommandExecutor {
 
 			game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(player, "You are currently not in a game.");
+				ChatUtils.error(player, "You are currently not in a game.");
 				return;
 			}
 
@@ -123,7 +124,7 @@ public class CommandHandler implements CommandExecutor {
 				String mess = Config.getQuitMessage(game.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
-				Plugin.broadcast(mess);
+				ChatUtils.broadcast(mess);
 			}
 
 		}
@@ -133,7 +134,7 @@ public class CommandHandler implements CommandExecutor {
 
 			game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(player, "You are currently not in a game.");
+				ChatUtils.error(player, "You are currently not in a game.");
 				return;
 			}
 			
@@ -141,11 +142,11 @@ public class CommandHandler implements CommandExecutor {
 				String mess = Config.getRejoinMessage(game.getSetup());
 				mess = mess.replace("<player>", player.getName()).replace(
 						"<game>", game.getName());
-				Plugin.broadcast(mess);
+				ChatUtils.broadcast(mess);
 			}
 
 			else {
-				Plugin.error(player, "Failed to rejoin %s.", game.getName());
+				ChatUtils.error(player, "Failed to rejoin %s.", game.getName());
 			}
 
 		}
@@ -156,18 +157,18 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.USER_SPONSOR)) return;
 
 			if (args.length < 2) {
-				Plugin.send(player, CommandUsage.USER_SPONSOR.getUsage(),
+				ChatUtils.send(player, CommandUsage.USER_SPONSOR.getUsage(),
 						cmd.getLabel());
 				return;
 			}
 
 			Player p = Bukkit.getServer().getPlayer(args[1]);
 			if (p == null) {
-				Plugin.error(player, "%s is not online.", args[1]);
+				ChatUtils.error(player, "%s is not online.", args[1]);
 				return;
 			}
 			if (GameManager.getSession(p) == null || !GameManager.getSession(p).getPlayerStat(p).isPlaying()) {
-				Plugin.error(player, "%s is not playing in a game.", p.getName());
+				ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 				return;
 			}
 			Plugin.addSponsor(player, p.getName());
@@ -178,31 +179,31 @@ public class CommandHandler implements CommandExecutor {
 
 			game = GameManager.getSession(player);
 			if (game == null) {
-				Plugin.error(player,
+				ChatUtils.error(player,
 					"You must be in a game to vote. "
 					+ "You can a game join by '" + CommandUsage.USER_JOIN.getUsage() + "'",
 						Plugin.CMD_USER);
 				return;
 			}
 			game.addReadyPlayer(player);
-			Plugin.send(player, "You have voted that you are ready.");
+			ChatUtils.send(player, "You have voted that you are ready.");
 		}
 
 		else if ("stat".equalsIgnoreCase(args[0])) {
 			if (!Plugin.checkPermission(player, Perm.USER_STAT)) return;
 
 			if (args.length == 1) {
-				Plugin.send(player, CommandUsage.USER_STAT.getUsage(),
+				ChatUtils.send(player, CommandUsage.USER_STAT.getUsage(),
 						cmd.getLabel());
 				return;
 			}
 
 			game = GameManager.getGame(args[1]);
 			if (game == null) {
-				Plugin.sendDoesNotExist(player, args[1]);
+				ChatUtils.sendDoesNotExist(player, args[1]);
 				return;
 			}
-			Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
+			ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 			game.listStats(player);
 
 		}
@@ -251,18 +252,18 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_PAUSE)) return;
 			
 			if (args.length == 1) {
-				Plugin.helpCommand(player, CommandUsage.ADMIN_PAUSE.getUsage(), cmd.getLabel());
+				ChatUtils.helpCommand(player, CommandUsage.ADMIN_PAUSE.getUsage(), cmd.getLabel());
 				return;
 			}
 			
 			game = GameManager.getGame(args[1]);
 			if (game == null) {
-			    Plugin.error(player, "%s does not exist.", args[1]);
+			    ChatUtils.error(player, "%s does not exist.", args[1]);
 			    return;
 			}
 			
 			if(game.pauseGame(player)) {
-				Plugin.broadcast("%s has been paused.", game.getName());
+				ChatUtils.broadcast("%s has been paused.", game.getName());
 			}
 			
 		}
@@ -271,19 +272,19 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_RESUME)) return;
 			
 			if (args.length == 1) {
-				Plugin.helpCommand(player, CommandUsage.ADMIN_RESUME.getUsage(), cmd.getLabel());
+				ChatUtils.helpCommand(player, CommandUsage.ADMIN_RESUME.getUsage(), cmd.getLabel());
 				return;
 			}
 			
 			game = GameManager.getGame(args[1]);
 			if (game == null) {
-			    Plugin.error(player, "%s does not exist.", args[1]);
+			    ChatUtils.error(player, "%s does not exist.", args[1]);
 			    return;
 			}
 			
 			if(args.length == 2) {
 				if(!game.resume(player)) {
-					Plugin.error(player, "Failed to resume %s.", game.getName());
+					ChatUtils.error(player, "Failed to resume %s.", game.getName());
 				}
 				
 			}
@@ -293,11 +294,11 @@ public class CommandHandler implements CommandExecutor {
 				try {
 					seconds = Integer.parseInt(args[2]);
 				} catch (Exception ex) {
-					Plugin.error(player, "'%s' is not an integer.", args[2]);
+					ChatUtils.error(player, "'%s' is not an integer.", args[2]);
 					return;
 				}
 				if(!game.resume(player, seconds)) {
-					Plugin.error(player, "Failed to resume %s.", game.getName());
+					ChatUtils.error(player, "Failed to resume %s.", game.getName());
 				}
 				
 			}
@@ -308,21 +309,21 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_KICK)) return;
 
 			if (args.length == 1) {
-				Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsage(), cmd.getLabel());
+				ChatUtils.helpCommand(player, CommandUsage.ADMIN_KICK.getUsage(), cmd.getLabel());
 				return;
 			}
 
 			Player kick = Bukkit.getServer().getPlayer(args[1]);
 			if (kick == null) {
-			    Plugin.error(player, "%s is not online.", args[1]);
+			    ChatUtils.error(player, "%s is not online.", args[1]);
 			    return;
 			}
 			game = GameManager.getSession(kick);
 			if (game == null) {
-			    Plugin.error(player, "%s is currently not in a game.", kick.getName());
+			    ChatUtils.error(player, "%s is currently not in a game.", kick.getName());
 			    return;
 			}
-			Plugin.broadcast("%s has been kicked from the game %s.", player.getName(), game.getName());
+			ChatUtils.broadcast("%s has been kicked from the game %s.", player.getName(), game.getName());
 			Plugin.callEvent(new PlayerKickGameEvent(game, kick));
 			game.leave(kick);
 		}
@@ -331,14 +332,14 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_START)) return;
 
 			if (args.length == 1) {
-				Plugin.helpCommand(player, CommandUsage.ADMIN_START.getUsage(),
+				ChatUtils.helpCommand(player, CommandUsage.ADMIN_START.getUsage(),
 						cmd.getLabel());
 				return;
 			}
 
 			game = GameManager.getGame(args[1]);
 			if (game == null) {
-				Plugin.sendDoesNotExist(player, args[1]);
+				ChatUtils.sendDoesNotExist(player, args[1]);
 				return;
 			}
 
@@ -348,7 +349,7 @@ public class CommandHandler implements CommandExecutor {
 				try {
 					seconds = Integer.parseInt(args[2]);
 				} catch (Exception ex) {
-					Plugin.error(player, "'%s' is not an integer.", args[2]);
+					ChatUtils.error(player, "'%s' is not an integer.", args[2]);
 					return;
 				}
 			}
@@ -357,7 +358,7 @@ public class CommandHandler implements CommandExecutor {
 				seconds = Config.getDefaultTime(game.getSetup());
 			}
 			if (!game.start(player, seconds)) {
-				Plugin.error(player, "Failed to start %s.", game.getName());
+				ChatUtils.error(player, "Failed to start %s.", game.getName());
 			}
 		}
 
@@ -365,7 +366,7 @@ public class CommandHandler implements CommandExecutor {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_RELOAD)) return;
 			
 			Plugin.reload();
-			Plugin.send(player, Plugin.getPrefix() + "Reloaded v%s", Plugin
+			ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded v%s", Plugin
 					.getInstance().getDescription().getVersion());
 		} else {
 			if (!Plugin.checkPermission(player, Perm.ADMIN_HELP)) return;
@@ -382,27 +383,27 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	private void getUserCommands(Player player, Command cmd) {
-		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-		Plugin.helpCommand(player, CommandUsage.USER_LIST.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_JOIN.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_LEAVE.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_QUIT.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_REJOIN.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_VOTE.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_STAT.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.USER_SPECTATE.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+		ChatUtils.helpCommand(player, CommandUsage.USER_LIST.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_JOIN.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_LEAVE.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_QUIT.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_REJOIN.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_VOTE.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_STAT.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.USER_SPECTATE.getUsageAndInfo(), cmd.getLabel());
 	}
 
 	private void getAdminCommands(Player player, Command cmd) {
-		Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_HELP.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_HELP.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_SET_HELP.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_KICK.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_RELOAD.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_RESTOCK.getUsageAndInfo(), cmd.getLabel());
-		Plugin.helpCommand(player, CommandUsage.ADMIN_START.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_HELP.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_HELP.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_SET_HELP.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_KICK.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_RELOAD.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_RESTOCK.getUsageAndInfo(), cmd.getLabel());
+		ChatUtils.helpCommand(player, CommandUsage.ADMIN_START.getUsageAndInfo(), cmd.getLabel());
 	}
 
 }

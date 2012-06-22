@@ -9,6 +9,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
 
 public class CommandListener implements Listener {
 	
@@ -20,7 +21,7 @@ public class CommandListener implements Listener {
 		HungerGame session = GameManager.getSession(player);
 		if(session == null) return;
 		if(!Config.getUseCommand(session.getSetup())) {
-			Plugin.error(player, "Cannot use commands while in game %s.");
+			ChatUtils.error(player, "Cannot use commands while in game %s.");
 			event.setCancelled(true);
 		}
 		

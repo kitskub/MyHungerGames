@@ -1,14 +1,15 @@
 package com.randude14.hungergames;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.logging.Level;
+
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -103,7 +104,7 @@ public class GameManager{
 		String mess = Config.getQuitMessage(game.getSetup())
 			.replace("<player>", player.getName())
 			.replace("<game>", game.getName());
-		Plugin.broadcast(mess);
+		ChatUtils.broadcast(mess);
 	}
 
 	public static void loadGames() {

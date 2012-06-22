@@ -1,5 +1,7 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.utils.ChatUtils;
+
 import java.io.File;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,7 +28,7 @@ public class CustomYaml {
 		try {
 		    config.load(file);
 		} catch (Exception ex) {
-		    Plugin.info(String.format("Could not load '%s'. If it has not been created, disregard this.", file.getName()));
+		    ChatUtils.info(String.format("Could not load '%s'. If it has not been created, disregard this.", file.getName()));
 		}
 		
 	}
@@ -35,7 +37,7 @@ public class CustomYaml {
 		try {
 		    config.save(file);
 		} catch (Exception ex) {
-		    Plugin.warning(String.format("Could not save '%s'.", file.getName()));
+		    ChatUtils.warning(String.format("Could not save '%s'.", file.getName()));
 		}
 		
 	}

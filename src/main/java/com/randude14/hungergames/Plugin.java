@@ -9,6 +9,7 @@ import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.reset.ResetHandler;
 
+import com.randude14.hungergames.utils.ChatUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
 import java.net.URL;
 
 import org.w3c.dom.Document;
@@ -79,7 +79,7 @@ public class Plugin extends JavaPlugin{
 		pm.registerEvents(new ChatListener(), this);
 		pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
-		    info("config.yml not found. Saving defaults.");
+		    ChatUtils.info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
 		}
 		globalChestLoot = Config.getGlobalChestLoot();
@@ -94,14 +94,14 @@ public class Plugin extends JavaPlugin{
 		loadResetter();
 		callTasks();
 		GameManager.loadGames();
-		info("Games loaded.");
+		ChatUtils.info("Games loaded.");
 		try {
 		    Metrics metrics = new Metrics();
 		    metrics.beginMeasuringPlugin(this);
 		} catch (IOException e) {
 		// Fail silently
 		}
-		info("Enabled.");
+		ChatUtils.info("Enabled.");
 	}
 
 	private void callTasks() {
@@ -110,7 +110,7 @@ public class Plugin extends JavaPlugin{
 		    String installedVersion = getDescription().getVersion();
 		    String checkVersion = updateCheck(installedVersion);
 		    if (!checkVersion.endsWith(installedVersion))
-			    Plugin.warning("There is a new version: %s (You are running %s)",
+			    ChatUtils.warning("There is a new version: %s (You are running %s)",
 				    checkVersion, installedVersion);
 		}
 	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
@@ -119,13 +119,13 @@ public class Plugin extends JavaPlugin{
 	@Override
 	public void onDisable() {
 	    GameManager.saveGames();
-	    info("Games saved.");
-	    info("Disabled.");
+	    ChatUtils.info("Games saved.");
+	    ChatUtils.info("Disabled.");
 	}
 
 	private static void loadRegistry() {
 	    if (!VaultPermission.isVaultInstalled()) {
-		info("Vault is not installed, defaulting to Bukkit perms.");
+		ChatUtils.info("Vault is not installed, defaulting to Bukkit perms.");
 		perm = new BukkitPermission();
 		return;
 	    } else {
@@ -133,7 +133,7 @@ public class Plugin extends JavaPlugin{
 	    }
 
 	    if (!Economy.isVaultInstalled()) {
-		warning("Vault is not installed, economy use disabled.");
+		ChatUtils.warning("Vault is not installed, economy use disabled.");
 		econ = null;
 	    } else {
 		econ = new Economy();
@@ -142,15 +142,15 @@ public class Plugin extends JavaPlugin{
 	
 	private static void loadResetter() { // TODO finish implementation
 	    /*if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
-		info("Hawkeye is installed, using for resetter.");
+		ChatUtils.info("Hawkeye is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.HAWKEYE);
 		return;
 	    } else */if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
-		info("LogBlock is installed, using for resetter.");
+		ChatUtils.info("LogBlock is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
 		return;
 	    } else {
-		info("No logging plugins installed, using internal resetter.");
+		ChatUtils.info("No logging plugins installed, using internal resetter.");
 		ResetHandler.setRessetter(ResetHandler.INTERNAL);
 		return;
 	    }
@@ -171,123 +171,9 @@ public class Plugin extends JavaPlugin{
 	    for (String playerName : sponsors.keySet()) {
 		Player player = Bukkit.getPlayer(playerName);
 		if (player == null) continue;
-		error(player, "The items available for sponsoring have recently changed. Here are the new items...");
+		ChatUtils.error(player, "The items available for sponsoring have recently changed. Here are the new items...");
 		addSponsor(player, sponsors.remove(playerName));
 	    }
-	}
-
-	public static void info(String format, Object... args) {
-		Logging.log(Level.INFO, getLogPrefix() + String.format(format, args));
-	}
-
-	public static void info(String mess) {
-		Logging.log(Level.INFO, getLogPrefix() + mess);
-	}
-
-	public static void warning(String format, Object... args) {
-		Logging.log(Level.WARNING, getLogPrefix() + String.format(format, args));
-	}
-
-	public static void warning(String mess) {
-		Logging.log(Level.WARNING, getLogPrefix() + mess);
-	}
-
-	public static void severe(String format, Object... args) {
-		Logging.log(Level.SEVERE, getLogPrefix() + String.format(format, args));
-	}
-
-	public static void severe(String mess) {
-		Logging.log(Level.SEVERE, getLogPrefix() + mess);
-	}
-
-	public static String getLogPrefix() {
-		return String.format("[%s] v%s - ", instance.getName(), instance.getDescription().getVersion());
-	}
-
-	public static String getPrefix() {
-		return String.format("[%s] - ", instance.getName());
-	}
-
-	public static String getHeadLiner() {
-		return String.format("--------------------[%s]--------------------", instance.getName());
-	}
-
-	public static void broadcast(String message) {
-		broadcast(message, ChatColor.GREEN);
-	}
-
-	public static void broadcast(String format, Object... args) {
-		broadcast(String.format(format, args));
-	}
-
-	public static void broadcast(ChatColor color, String format, Object... args) {
-		broadcast(color, String.format(format, args));
-	}
-
-	public static void broadcast(String message, ChatColor color) {
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			player.sendMessage(color + getPrefix() + message);
-		}
-
-		message = ChatColor.stripColor(message);
-		info(message);
-	}
-
-	public static void broadcastRaw(ChatColor color, String format, Object... args) {
-		broadcastRaw(String.format(format, args), color);
-	}
-
-	public static void broadcastRaw(String message) {
-		broadcastRaw(message, ChatColor.GREEN);
-	}
-
-	public static void broadcastRaw(String message, ChatColor color) {
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			player.sendMessage(color + message);
-		}
-
-		message = ChatColor.stripColor(message);
-		Logging.log(Level.INFO, message);
-	}
-
-	public static void send(Player player, ChatColor color, String format, Object... args) {
-		player.sendMessage(color + String.format(format, args));
-	}
-
-	public static void send(Player player, ChatColor color, String mess) {
-		player.sendMessage(color + mess);
-	}
-
-	public static void send(Player player, String format, Object... args) {
-		player.sendMessage(ChatColor.GRAY + String.format(format, args));
-	}
-
-	public static void send(Player player, String mess) {
-		player.sendMessage(ChatColor.GRAY + mess);
-	}
-
-	public static void help(Player player, String format, Object... args) {
-		player.sendMessage(ChatColor.GOLD + String.format(format, args));
-	}
-
-	public static void help(Player player, String mess) {
-		player.sendMessage(ChatColor.GOLD + mess);
-	}
-
-	public static void helpCommand(Player player, String format, Object... args) {
-		player.sendMessage(ChatColor.GOLD + String.format("- " + format, args));
-	}
-
-	public static void error(Player player, String format, Object... args) {
-		player.sendMessage(ChatColor.RED + String.format(format, args));
-	}
-
-	public static void error(Player player, String mess) {
-		player.sendMessage(ChatColor.RED + mess);
-	}
-
-	public static void sendDoesNotExist(Player player, String s) {
-		Plugin.error(player, "%s does not exist.", s);
 	}
 
 	public static boolean hasPermission(Player player, Defaults.Perm perm) {
@@ -306,7 +192,7 @@ public class Plugin extends JavaPlugin{
 
 	public static void withdraw(Player player, double amount) {
 		if (!isEconomyEnabled()) {
-			error(player, "Economy use has been disabled.");
+			ChatUtils.error(player, "Economy use has been disabled.");
 			return;
 		}
 		econ.withdraw(player.getName(), amount);
@@ -314,7 +200,7 @@ public class Plugin extends JavaPlugin{
 
 	public static void deposit(Player player, double amount) {
 		if (!isEconomyEnabled()) {
-			error(player, "Economy use has been disabled.");
+			ChatUtils.error(player, "Economy use has been disabled.");
 			return;
 		}
 		econ.deposit(player.getName(), amount);
@@ -322,7 +208,7 @@ public class Plugin extends JavaPlugin{
 
 	public static boolean hasEnough(Player player, double amount) {
 		if (!isEconomyEnabled()) {
-			error(player, "Economy use has been disabled.");
+			ChatUtils.error(player, "Economy use has been disabled.");
 			return false;
 		}
 		return econ.hasEnough(player.getName(), amount);
@@ -380,24 +266,24 @@ public class Plugin extends JavaPlugin{
 	    Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
 	    HungerGame game = GameManager.getSession(sponsoredPlayer);
 	    if (game == null || !game.getPlayerStat(player).isPlaying()) {
-		    error(player, "That player is playing in a game.");
+		    ChatUtils.error(player, "That player is playing in a game.");
 		    return false;
 	    }
 	    List<String> itemsets = game.getItemSets();
 	    if (globalSponsorLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
-		    error(player, "No items are available to sponsor.");
+		    ChatUtils.error(player, "No items are available to sponsor.");
 		    return false;
 	    }
 
 	    if (!isEconomyEnabled()) {
-		    error(player, "Economy use has been disabled.");
+		    ChatUtils.error(player, "Economy use has been disabled.");
 		    return false;
 	    }
 	    sponsors.put(player.getName(), playerToBeSponsored);
-	    send(player, ChatColor.GREEN, getHeadLiner());
-	    send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
+	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+	    ChatUtils.send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
 		    playerToBeSponsored);
-	    send(player, "");
+	    ChatUtils.send(player, "");
 	    int num = 1;
 	    Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
 	    for (ItemStack item : itemMap.keySet()) {
@@ -415,7 +301,7 @@ public class Plugin extends JavaPlugin{
 			    }
 			    cntr++;
 		    }
-		    send(player, ChatColor.GOLD, mess);
+		    ChatUtils.send(player, ChatColor.GOLD, mess);
 		    num++;
 	    }
 	    return true;
@@ -561,7 +447,7 @@ public class Plugin extends JavaPlugin{
 
 	public static boolean checkPermission(Player player, Defaults.Perm perm) {
 		if (!Plugin.hasPermission(player, perm)) {
-			error(player, "You do not have permission.");
+			ChatUtils.error(player, "You do not have permission.");
 			return false;
 		}
 		return true;

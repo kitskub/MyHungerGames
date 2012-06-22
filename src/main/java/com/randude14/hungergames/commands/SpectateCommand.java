@@ -6,6 +6,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.games.HungerGame;
 
+import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,12 +26,12 @@ public class SpectateCommand extends SubCommand{
 		    return true;
 	    }
 	    if (args.length < 1) {
-		    Plugin.send(player, CommandUsage.USER_SPONSOR.getUsage(), cmd.getLabel());
+		    ChatUtils.send(player, CommandUsage.USER_SPONSOR.getUsage(), cmd.getLabel());
 		    return true;
 	    }
 	    HungerGame game = GameManager.getGame(args[0]);
 	    if (game == null || !game.isRunning()) {
-		    Plugin.error(player, "%s is not a running game.", game.getName());
+		    ChatUtils.error(player, "%s is not a running game.", game.getName());
 		    return true;
 	    }
 	    game.addSpectator(player);

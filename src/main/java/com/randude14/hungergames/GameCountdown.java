@@ -3,6 +3,7 @@ package com.randude14.hungergames;
 import org.bukkit.ChatColor;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
 
 public class GameCountdown implements Runnable {
 	private final HungerGame game;
@@ -14,11 +15,11 @@ public class GameCountdown implements Runnable {
 		countdown = num;
 		taskId = Plugin.scheduleTask(this, 20L, 20L);
 		if(isResuming) {
-			Plugin.broadcast("Resuming %s in %s...",
+			ChatUtils.broadcast("Resuming %s in %s...",
 					game.getName(), Plugin.formatTime(countdown));
 		}
 		else {
-			Plugin.broadcast("Starting %s in %s...",
+			ChatUtils.broadcast("Starting %s in %s...",
 					game.getName(), Plugin.formatTime(countdown));
 		}
 
@@ -44,7 +45,7 @@ public class GameCountdown implements Runnable {
 		if (countdown <= 1) {
 			Plugin.cancelTask(taskId);
 			game.startGame();
-			Plugin.broadcastRaw("Start!!");
+			ChatUtils.broadcastRaw("Start!!");
 			return;
 		}
 		countdown--;
@@ -53,7 +54,7 @@ public class GameCountdown implements Runnable {
 			color = ChatColor.GOLD;
 		if(countdown <= 3)
 			color = ChatColor.RED;
-		Plugin.broadcastRaw(color, "%s...", Plugin.formatTime(countdown));
+		ChatUtils.broadcastRaw(color, "%s...", Plugin.formatTime(countdown));
 	}
 
 }

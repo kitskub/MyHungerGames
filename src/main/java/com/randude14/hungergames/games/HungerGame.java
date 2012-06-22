@@ -28,6 +28,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
+import com.randude14.hungergames.utils.ChatUtils;
 
 public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, PlayerStat> stats;
@@ -83,7 +84,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				String str = spawnPointsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
 				if (loc == null) {
-					Plugin.warning("failed to load location '%s'", str);
+					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
 				}
 				spawnPoints.add(loc);
@@ -97,11 +98,11 @@ public class HungerGame implements Comparable<HungerGame> {
 				String str = chestsSection.getString(key);
 				Location loc = Plugin.parseToLoc(str);
 				if (loc == null) {
-					Plugin.warning("failed to load location '%s'", str);
+					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
-					Plugin.warning("'%s' is no longer a chest.", str);
+					ChatUtils.warning("'%s' is no longer a chest.", str);
 					continue;
 				}
 				chests.add(loc);
@@ -171,33 +172,33 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean addReadyPlayer(Player player) {
-		if (readyToPlay.contains(player)) {
-			Plugin.error(player, "You have already cast your vote that you are ready to play.");
+		if (readyToPlay.contains(player.getName())) {
+			ChatUtils.error(player, "You have already cast your vote that you are ready to play.");
 			return false;
 		}
 		if (isCounting) {
-			Plugin.error(player, "%s is already counting down.", name);
+			ChatUtils.error(player, "%s is already counting down.", name);
 			return false;
 		}
 		if (isRunning) {
-			Plugin.error(player, "%s is already running a game.", name);
+			ChatUtils.error(player, "%s is already running a game.", name);
 			return false;
 		}
 		if(isPaused) {
-			Plugin.error(player, "%s has been paused.", name);
+			ChatUtils.error(player, "%s has been paused.", name);
 			return false;
 		}
 		readyToPlay.add(player.getName());
 		int minVote = Config.getMinVote(setup);
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
 		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
-			Plugin.broadcast("Enough players have voted that they are ready. Starting game...", this.name);
+			ChatUtils.broadcast("Enough players have voted that they are ready. Starting game...", this.name);
 			start(player);
 		} else {
 			String mess = Config.getVoteMessage(setup)
 					.replace("<player>", player.getName())
 					.replace("<game>", this.name);
-			Plugin.broadcast(mess);
+			ChatUtils.broadcast(mess);
 		}
 		return true;
 	}
@@ -228,15 +229,15 @@ public class HungerGame implements Comparable<HungerGame> {
 		if (isRunning) return false;
 
 		if (stats.size() < Config.getMinPlayers(setup)) {
-			Plugin.error(player, "There are not enough players in %s", name);
+			ChatUtils.error(player, "There are not enough players in %s", name);
 			return false;
 		}
 		if (isCounting) {
-			Plugin.error(player, "%s is already counting down.", name);
+			ChatUtils.error(player, "%s is already counting down.", name);
 			return false;
 		}
 		if (!enabled) {
-			Plugin.error(player, "%s is currently not enabled.", name);
+			ChatUtils.error(player, "%s is currently not enabled.", name);
 			return false;
 		}
 		GameStartEvent event = new GameStartEvent(this);
@@ -245,7 +246,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		if (ticks <= 0) {
-			Plugin.broadcast("Starting %s. Go!!", name);
+			ChatUtils.broadcast("Starting %s. Go!!", name);
 			startGame();
 		} else {
 			countdown = new GameCountdown(this, ticks);
@@ -278,7 +279,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public boolean pauseGame(Player player) {
 		if(isPaused) {
-			Plugin.error(player, "Cannot pause a game that has been paused.");
+			ChatUtils.error(player, "Cannot pause a game that has been paused.");
 			return false;
 		}
 		GameStartEvent event = new GameStartEvent(this, true);
@@ -293,11 +294,11 @@ public class HungerGame implements Comparable<HungerGame> {
 	
 	public boolean resume(Player player, int ticks) {
 		if(!isPaused) {
-			Plugin.error(player, "Cannot resume a game that has not been paused.");
+			ChatUtils.error(player, "Cannot resume a game that has not been paused.");
 		}	
 		if (ticks <= 0) {
 			resumeGame();
-			Plugin.broadcast("Resuming %s. Go!!", name);
+			ChatUtils.broadcast("Resuming %s. Go!!", name);
 		} else {
 			countdown = new GameCountdown(this, ticks, true);
 			isCounting = true;
@@ -392,15 +393,15 @@ public class HungerGame implements Comparable<HungerGame> {
 	public synchronized boolean rejoin(Player player) {
 	    if(!playerEnteringPreProcess(player)) return false;
 	    if (!Config.getAllowRejoin(setup)) {
-		    Plugin.error(player, "You are not allowed to rejoin a game.");
+		    ChatUtils.error(player, "You are not allowed to rejoin a game.");
 		    return false;
 	    }
 	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
-		    Plugin.error(player, "You are not in the game %s.", name);
+		    ChatUtils.error(player, "You are not in the game %s.", name);
 		    return false;
 	    }
 	    if (stats.get(player.getName()).isPlaying()){
-		    Plugin.error(player, "You can't rejoin a game while you are in it.");
+		    ChatUtils.error(player, "You can't rejoin a game while you are in it.");
 		    return false;
 	    }
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
@@ -413,15 +414,15 @@ public class HungerGame implements Comparable<HungerGame> {
 	public synchronized boolean join(Player player) {
 	    if(!playerEnteringPreProcess(player)) return false;
 	    if (stats.containsKey(player.getName())) {
-		    Plugin.error(player, "You are already in this game.");
+		    ChatUtils.error(player, "You are already in this game.");
 		    return false;
 	    }
 	    if (isRunning && !Config.getAllowJoinWhileRunning(setup)) {
-		    Plugin.error(player, "%s is already running and you cannot join while that is so.", name);
+		    ChatUtils.error(player, "%s is already running and you cannot join while that is so.", name);
 		    return false;
 	    }
 		if(isPaused) {
-			Plugin.error(player, "%s has been paused.", name);
+			ChatUtils.error(player, "%s has been paused.", name);
 			return false;
 		}
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
@@ -435,18 +436,18 @@ public class HungerGame implements Comparable<HungerGame> {
 	
 	private synchronized boolean playerEnteringPreProcess(Player player) {
 	    if (!enabled) {
-		    Plugin.error(player, "%s is currently not enabled.", name);
+		    ChatUtils.error(player, "%s is currently not enabled.", name);
 		    return false;
 	    }
 
 	    if (spawnsTaken.size() >= spawnPoints.size()) {
-		    Plugin.error(player, "%s is already full.", name);
+		    ChatUtils.error(player, "%s is already full.", name);
 		    return false;
 	    }
 
 	    if (Config.getShouldClearInv(setup)) {
 		    if(!Plugin.hasInventoryBeenCleared(player)) {
-			    Plugin.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
+			    ChatUtils.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
 			    return false;
 		    }
 	    }
@@ -474,7 +475,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public synchronized boolean leave(Player player) {
 	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives() || !stats.get(player.getName()).isPlaying()) {
-		Plugin.error(player, "You are not in the game %s.", name);
+		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
 	    playerLeaving(player);
@@ -493,7 +494,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	
 	public synchronized boolean quit(Player player) {
 	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
-		Plugin.error(player, "You are not in the game %s.", name);
+		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
 	    playerLeaving(player);
@@ -533,9 +534,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		if (getSpawn() != null) {
 			player.teleport(getSpawn());
-			Plugin.send(player, "Teleporting you to %s's spawn.", name);
+			ChatUtils.send(player, "Teleporting you to %s's spawn.", name);
 		} else {
-			Plugin.error(player, "There was no spawn set for %s. Please contact an admin for help.", name);
+			ChatUtils.error(player, "There was no spawn set for %s. Please contact an admin for help.", name);
 			player.teleport(player.getWorld().getSpawnLocation());
 		}
 
@@ -548,10 +549,10 @@ public class HungerGame implements Comparable<HungerGame> {
 		    Player winner = remaining.get(0);
 		    GameEndEvent event;
 		    if (winner == null) {
-			    Plugin.broadcast("Strangely, there was no winner left.");
+			    ChatUtils.broadcast("Strangely, there was no winner left.");
 			    event = new GameEndEvent(this);
 		    } else {
-			    Plugin.broadcast("%s has won the game %s! Congratulations!", winner.getName(), name);
+			    ChatUtils.broadcast("%s has won the game %s! Congratulations!", winner.getName(), name);
 			    playerLeaving(winner);
 			    if (!Config.getWinnerKeepsItems(setup)) {
 				    dropInventory(winner);
@@ -574,7 +575,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		    }
 
 	    }
-	    Plugin.broadcastRaw(mess, ChatColor.WHITE);
+	    ChatUtils.broadcastRaw(mess, ChatColor.WHITE);
 	}
 
 	public String getInfo() {
@@ -607,7 +608,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		killed(killed, false);
 		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed, message);
 		Plugin.callEvent(event);
-		Plugin.broadcast(message);
+		ChatUtils.broadcast(message);
 	}
 
 	public void killed(Player killed) {
@@ -634,7 +635,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				GameManager.addPlayerRespawn(killed, respawn);
 				// TODO needs a random
 			}
-			Plugin.info("You have " + killedStat.getLivesLeft()
+			ChatUtils.info("You have " + killedStat.getLivesLeft()
 					+ " lives left.");
 		}
 		checkForGameOver(false);
@@ -662,8 +663,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public void listStats(Player player) {
-		Plugin.send(player, "<name>[lives/kills]", ChatColor.GREEN.toString(), ChatColor.RED.toString());
-		Plugin.send(player, "");
+		ChatUtils.send(player, "<name>[lives/kills]", ChatColor.GREEN.toString(), ChatColor.RED.toString());
+		ChatUtils.send(player, "");
 		List<String> players = new ArrayList<String>(stats.keySet());
 		for (int cntr = 0; cntr < stats.size(); cntr += 5) {
 			String mess = "";
@@ -678,7 +679,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				}
 
 			}
-			Plugin.send(player, mess);
+			ChatUtils.send(player, mess);
 		}
 
 	}
@@ -730,7 +731,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			if (Plugin.equals(l, comp)) {
 			    spawnsTaken.remove(playerName);
 			    if (Bukkit.getPlayer(playerName) == null) continue;
-			    Plugin.error(Bukkit.getPlayer(playerName),
+			    ChatUtils.error(Bukkit.getPlayer(playerName),
 				    "Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'", 
 				    playerName);
 			    leave(Bukkit.getPlayer(playerName));

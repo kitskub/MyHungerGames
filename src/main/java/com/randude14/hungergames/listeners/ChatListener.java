@@ -5,6 +5,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.games.HungerGame;
 
+import com.randude14.hungergames.utils.ChatUtils;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -31,40 +32,40 @@ public class ChatListener implements Listener {
 		try {
 			choice = Integer.parseInt(mess) - 1;
 		} catch (Exception ex) {
-			Plugin.error(player, "'%s' is not an integer.", mess);
+			ChatUtils.error(player, "'%s' is not an integer.", mess);
 			return;
 		}
 
 		Player beingSponsored = Bukkit.getPlayer(sponsor);
 		if (beingSponsored == null) {
-			Plugin.error(player, "'%s' is not online anymore.", sponsor);
+			ChatUtils.error(player, "'%s' is not online anymore.", sponsor);
 			return;
 		}
 		HungerGame game = GameManager.getSession(player);
 		if (game == null) {
-			Plugin.error(player, "'%s' is no longer in a game.", sponsor);
+			ChatUtils.error(player, "'%s' is no longer in a game.", sponsor);
 			return;
 		}
 		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
 
 		int size = itemMap.size();
 		if (choice < 0 || choice >= size) {
-			Plugin.error(player, "Choice '%d' does not exist.");
+			ChatUtils.error(player, "Choice '%d' does not exist.");
 			return;
 		}
 
 		ItemStack item = new ArrayList<ItemStack>(itemMap.keySet()).get(choice);
 		double price = itemMap.get(item);
 		if (!Plugin.hasEnough(beingSponsored, price)) {
-			Plugin.error(player, String.format("You do not have enough money."));
+			ChatUtils.error(player, String.format("You do not have enough money."));
 			return;
 		}
 		Plugin.withdraw(player, price);
 		if (item.getEnchantments().isEmpty()) {
-			Plugin.send(beingSponsored, "%s has sponsored you %d %s(s).",
+			ChatUtils.send(beingSponsored, "%s has sponsored you %d %s(s).",
 					player.getName(), item.getAmount(), item.getType().name());
 		} else {
-			Plugin.send(beingSponsored, "%s has sponsored you %d enchanted %s(s).",
+			ChatUtils.send(beingSponsored, "%s has sponsored you %d enchanted %s(s).",
 					player.getName(), item.getAmount(), item.getType().name());
 		}
 
@@ -74,11 +75,11 @@ public class ChatListener implements Listener {
 					drop);
 		}
 		if (item.getEnchantments().isEmpty()) {
-			Plugin.send(beingSponsored, "You have sponsored %s %d %s(s) for $%.2f.",
+			ChatUtils.send(beingSponsored, "You have sponsored %s %d %s(s) for $%.2f.",
 					player.getName(), item.getAmount(), item.getType().name(),
 					price);
 		} else {
-			Plugin.send(beingSponsored,
+			ChatUtils.send(beingSponsored,
 					"You have sponsored %s %d enchanted %s(s) for $%.2f.",
 					player.getName(), item.getAmount(), item.getType().name(),
 					price);

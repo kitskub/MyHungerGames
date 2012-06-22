@@ -6,6 +6,8 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,14 +24,14 @@ public class AddCommand extends SubCommand{
 	Player player = (Player) cs;
 	
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
-	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
+	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
 	    return true;
 	}
@@ -39,17 +41,17 @@ public class AddCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
-		    Plugin.send(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsage(), Plugin.CMD_ADMIN);
+		    ChatUtils.send(player, CommandUsage.ADMIN_ADD_SPAWNPOINT.getUsage(), Plugin.CMD_ADMIN);
 		    return true;
 	    }
 
 	    if (game == null) {
-		 Plugin.sendDoesNotExist(player, args[1]);
+		 ChatUtils.sendDoesNotExist(player, args[1]);
 		 return true;
 	    }
 	    
 	    Plugin.addSpawnAdder(player, game.getName());
-	    Plugin.send(player, ChatColor.GREEN,
+	    ChatUtils.send(player, ChatColor.GREEN,
 		    "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
 	}
 
@@ -57,18 +59,18 @@ public class AddCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_CHEST)) return true;
 	    
 	    if (args.length == 1) {
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_CHEST.getUsage(),
 			    Plugin.CMD_ADMIN);
 		    return true;
 	    }
 	    
 	    if (game == null) {
-		Plugin.sendDoesNotExist(player, args[1]);
+		ChatUtils.sendDoesNotExist(player, args[1]);
 		return true;
 	    }
 	    
 	    Plugin.addChestAdder(player, args[1]);
-	    Plugin.send(player, ChatColor.GREEN,
+	    ChatUtils.send(player, ChatColor.GREEN,
 		    "Hit a chest to add it to %s.", game.getName());
 	}
 
@@ -76,12 +78,12 @@ public class AddCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_GAME)) return true;
 
 	    if (args.length == 1) {
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_GAME.getUsage(),
 			    Plugin.CMD_ADMIN);
 	    }
 
 	    if (game != null) {
-		    Plugin.error(player, "%s already exists.", args[1]);
+		    ChatUtils.error(player, "%s already exists.", args[1]);
 		    return true;
 	    }
 	    if(args.length == 2){
@@ -93,11 +95,11 @@ public class AddCommand extends SubCommand{
 	    GameCreateEvent event = new GameCreateEvent(GameManager.getGame(args[1]));
 	    if(event.isCancelled()) {
 	    	GameManager.removeGame(args[1]);
-	    	Plugin.error(player, "Creation of game %s was cancelled.", args[1]);
+	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[1]);
 	    }
 	    else {
-	    	Plugin.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[1]);
-	    	Plugin.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", Plugin.CMD_ADMIN);
+	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[1]);
+	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", Plugin.CMD_ADMIN);
 	    }
 	    
 	}
@@ -106,19 +108,19 @@ public class AddCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_ADD_ITEMSET)) return true;
 	    
 	    if(args.length == 2){
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_ADD_ITEMSET.getUsage(),
 			    Plugin.CMD_ADMIN);
 	    }
 
 	    if (game == null) {
-		    Plugin.sendDoesNotExist(player, args[1]);
+		    ChatUtils.sendDoesNotExist(player, args[1]);
 		    return true;
 	    }
 	    game.addItemSet(args[2]);
 	}
 
 	else {
-		Plugin.error(player, "'%s' is not recognized.", args[0]);
+		ChatUtils.error(player, "'%s' is not recognized.", args[0]);
 	}
 	return true;
     }

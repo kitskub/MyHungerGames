@@ -3,8 +3,11 @@ package com.randude14.hungergames.listeners;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -38,25 +41,25 @@ public class ChestAddListener implements Listener {
 		    Session session = chestAdders.get(player.getName());
 		    HungerGame game = session.getGame();
 		    if (game == null) {
-			    Plugin.error(player,"%s has been removed recently due to unknown reasons.");
+			    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
 		    Block block = event.getClickedBlock();
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (!(block.getState() instanceof Chest)) {
-				    Plugin.error(player, "Block is not a chest.");
+				    ChatUtils.error(player, "Block is not a chest.");
 				    return;
 			    }
 		    if (game.addChest(block.getLocation())) {
-			    Plugin.send(player, "Chest has been added to %s.", game.getName());
+			    ChatUtils.send(player, "Chest has been added to %s.", game.getName());
 		    }
 		    else {
-			    Plugin.error(player, "Chest has already been added to game %s.",game.getName());
+			    ChatUtils.error(player, "Chest has already been added to game %s.",game.getName());
 		    }
 		    session.clicked();
 		}
 		else {
-			Plugin.send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
+			ChatUtils.send(player, "You have added %d chests to the game %s.", session.getBlocks(), game.getName());
 			chestAdders.remove(player.getName());
 		}
 	    }
@@ -65,25 +68,25 @@ public class ChestAddListener implements Listener {
 		Session session = chestRemovers.get(player.getName());
 		HungerGame game = session.getGame();
 		if (game == null) {
-			Plugin.error(player, "%s has been removed recently due to unknown reasons.");
+			ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			return;
 		}
 		Block block = event.getClickedBlock();
 		if (action == Action.LEFT_CLICK_BLOCK) {
 		    if (!(block.getState() instanceof Chest)) {
-			    Plugin.error(player, "Block is not a chest.");
+			    ChatUtils.error(player, "Block is not a chest.");
 			    return;
 		    }
 		    if (game.removeChest(block.getLocation())) {
-			Plugin.send(player, "Chest has been removed from %s.", game.getName());
+			ChatUtils.send(player, "Chest has been removed from %s.", game.getName());
 		    }
 		    else {
-			Plugin.error(player, "%s does not contain this chest.", game.getName());
+			ChatUtils.error(player, "%s does not contain this chest.", game.getName());
 		    }
 		    session.clicked();
 		}
 		else {
-		    Plugin.send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
+		    ChatUtils.send(player, "You have removed %d chests from the game %s.", session.getBlocks(), game.getName());
 		    chestRemovers.remove(player.getName());
 		}
 	    }
@@ -92,7 +95,7 @@ public class ChestAddListener implements Listener {
 		    Session session = spawnAdders.get(player.getName());
 		    HungerGame game = session.getGame();
 		    if (game == null) {
-			    Plugin.error(player, "%s has been removed recently due to unknown reasons.");
+			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
 		    Location loc = event.getClickedBlock().getLocation();
@@ -103,15 +106,15 @@ public class ChestAddListener implements Listener {
 		    loc = new Location(world, x, y, z);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.addSpawnPoint(loc)) {
-				    Plugin.send(player, "Spawn point has been added to %s.", game.getName());
+				    ChatUtils.send(player, "Spawn point has been added to %s.", game.getName());
 			    }
 			    else {
-				    Plugin.error(player, "%s already has this spawn point.", game.getName());
+				    ChatUtils.error(player, "%s already has this spawn point.", game.getName());
 			    }
 			    session.clicked();
 		    }
 		    else {
-			    Plugin.send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
+			    ChatUtils.send(player, "You have added %d spawn points to the game %s.", session.getBlocks(), game.getName());
 			    spawnAdders.remove(player.getName());
 		    }
 	    }
@@ -119,7 +122,7 @@ public class ChestAddListener implements Listener {
 		    Session session = spawnRemovers.get(player.getName());
 		    HungerGame game = session.getGame();
 		    if (game == null) {
-			    Plugin.error(player, "%s has been removed recently due to unknown reasons.");
+			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
 		    Location loc = event.getClickedBlock().getLocation();
@@ -130,15 +133,15 @@ public class ChestAddListener implements Listener {
 		    loc = new Location(world, x, y, z);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.removeSpawnPoint(loc)) {
-				    Plugin.send(player, "Spawn point has been removed from %s.", game.getName());
+				    ChatUtils.send(player, "Spawn point has been removed from %s.", game.getName());
 			    }
 			    else {
-				    Plugin.error(player, "%s does not contain this spawn point.", game.getName());
+				    ChatUtils.error(player, "%s does not contain this spawn point.", game.getName());
 			    }
 			    session.clicked();
 		    }
 		    else {
-			    Plugin.send(player, "You have removed %d spawn points from the game %s.", session.getBlocks(), game.getName());
+			    ChatUtils.send(player, "You have removed %d spawn points from the game %s.", session.getBlocks(), game.getName());
 			    spawnRemovers.remove(player.getName());
 		    }
 	    }

@@ -6,6 +6,8 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Plugin;
 import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,14 +24,14 @@ public class RemoveCommand extends SubCommand{
 	Player player = (Player) cs;
 
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
-	    Plugin.send(player, ChatColor.GREEN, Plugin.getHeadLiner());
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
+	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
-	    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(),
 		    Plugin.CMD_ADMIN);
 	    return true;
 	}
@@ -40,18 +42,18 @@ public class RemoveCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsage(),
 			    Plugin.CMD_ADMIN);
 		    return true;
 	    }
 	    
 	    if(game == null) {
-		Plugin.sendDoesNotExist(player, args[1]);
+		ChatUtils.sendDoesNotExist(player, args[1]);
 		return true;
 	    }
 	    
 	    Plugin.addSpawnRemover(player, game.getName());
-	    Plugin.send(player, ChatColor.GREEN,
+	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a spawn point to remove it from %s.",
 			    game.getName());
 	}
@@ -60,18 +62,18 @@ public class RemoveCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_CHEST)) return true;
 	    
 	    if (args.length == 1) {
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsage(),
 			    Plugin.CMD_ADMIN);
 		    return true;
 	    }
 	    
 	    if(game == null){
-		Plugin.sendDoesNotExist(player, args[1]);
+		ChatUtils.sendDoesNotExist(player, args[1]);
 		return true;
 	    }
 
 	    Plugin.addChestRemover(player, args[1]);
-	    Plugin.send(player, ChatColor.GREEN,
+	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a chest to remove it from %s.", game.getName());
 	}
 
@@ -79,31 +81,31 @@ public class RemoveCommand extends SubCommand{
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_GAME)) return true;
 	    
 	    if (args.length == 1) {
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsage(),
 			    Plugin.CMD_ADMIN);
 		    return true;
 	    }
 	    
 	    if(game == null){
-		Plugin.sendDoesNotExist(player, args[1]);
+		ChatUtils.sendDoesNotExist(player, args[1]);
 		return true;
 	    }
 	    
 	    GameManager.removeGame(args[1]);
 	    Plugin.callEvent(new GameRemoveEvent(game));
-	    Plugin.send(player, ChatColor.GREEN, "%s has been removed.", args[1]);
+	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[1]);
 	}
 
 	else if("itemset".equalsIgnoreCase(args[0])){
 	    if(!Plugin.checkPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) return true;
 	    
 	    if(args.length == 2){
-		    Plugin.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsage(),
+		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsage(),
 			    Plugin.CMD_ADMIN);
 	    }
 	    
 	    if(game == null){
-		Plugin.sendDoesNotExist(player, args[1]);
+		ChatUtils.sendDoesNotExist(player, args[1]);
 		return true;
 	    }
 
@@ -111,7 +113,7 @@ public class RemoveCommand extends SubCommand{
 	}
 
 	else {
-		Plugin.error(player, "'%s' is not recognized.", args[0]);
+		ChatUtils.error(player, "'%s' is not recognized.", args[0]);
 	}
 
 	return true;

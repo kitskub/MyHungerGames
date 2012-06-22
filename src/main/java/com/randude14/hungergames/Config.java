@@ -1,9 +1,10 @@
 package com.randude14.hungergames;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,7 +15,7 @@ import org.bukkit.material.MaterialData;
 
 import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
-import java.util.*;
+
 
 public class Config {
 	private static final Plugin plugin = Plugin.getInstance();
