@@ -1,4 +1,7 @@
 v0.5
+- Code Cleanup
+- Many small fixes
+- Removed the unused LocationList
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

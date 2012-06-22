@@ -282,20 +282,18 @@ public class HungerGame implements Comparable<HungerGame> {
 			ChatUtils.error(player, "Cannot pause a game that has been paused.");
 			return false;
 		}
+		return pauseGame();
+	}
+	
+ 	public boolean resume(Player player, int ticks) {
+		if(!isPaused) {
+			ChatUtils.error(player, "Cannot resume a game that has not been paused.");
+		}
 		GameStartEvent event = new GameStartEvent(this, true);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
 			return false;
 		}
-		pauseGame();
-		HungerGames.callEvent(new GamePauseEvent(this));
-		return true;
-	}
-	
-	public boolean resume(Player player, int ticks) {
-		if(!isPaused) {
-			ChatUtils.error(player, "Cannot resume a game that has not been paused.");
-		}	
 		if (ticks <= 0) {
 			resumeGame();
 			ChatUtils.broadcast("Resuming %s. Go!!", name);
@@ -310,7 +308,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		return resume(player, Config.getDefaultTime(setup));
 	}
 	
-	public void pauseGame() {
+	public boolean pauseGame() {
+		HungerGames.callEvent(new GamePauseEvent(this));
 		isRunning = false;
 		isCounting = false;
 		isPaused = true;
@@ -326,7 +325,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			spawnsSaved.put(playerName, p.getLocation());
 			teleportPlayerToSpawn(p);
 		}
-		
+		return true;
 	}
 	
 	public void resumeGame() {

@@ -82,7 +82,7 @@ public class BlockListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getSession(player);
-		if(session != null) {;
+		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
 			List<Integer> list = Config.getSpecialBlocksInteract(setup);
@@ -104,7 +104,7 @@ public class BlockListener implements Listener {
 		}
 		if (GameManager.getGame(HungerGames.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", session.getName());
+			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", GameManager.getGame(HungerGames.getSpectating(player)).getName());
 			player.sendMessage("You cannot interact with this block while spectating");
 		}
 	}

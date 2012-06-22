@@ -250,11 +250,11 @@ public class Config {
 	}
 	
 	public static boolean getCanBreakBlock(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanBreakBlockGlobal());
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-break-block", getCanBreakBlockGlobal());
 	}
 	
 	public static boolean getCanInteractBlock(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanInteractBlockGlobal());
+		return plugin.getConfig().getBoolean("setups." + setup + ".can-interact-block", getCanInteractBlockGlobal());
 	}
 	
 	public static boolean getCanTeleport(String setup) {

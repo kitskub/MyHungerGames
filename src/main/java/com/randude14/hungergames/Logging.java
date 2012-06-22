@@ -21,7 +21,7 @@ public class Logging {
 			if (!file.exists()) file.createNewFile();
 			FileHandler handler = new FileHandler("plugins/HungerGames/myhungergames.log", true);
 			logger.addHandler(handler);
-			Logger parent = Logger.getLogger("Mincraft");
+			Logger parent = Logger.getLogger("Minecraft");
 			logger.setParent(parent);
 		} catch (IOException ex) {
 		}

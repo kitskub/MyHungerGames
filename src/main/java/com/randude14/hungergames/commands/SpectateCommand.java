@@ -31,7 +31,7 @@ public class SpectateCommand extends SubCommand{
 	    }
 	    HungerGame game = GameManager.getGame(args[0]);
 	    if (game == null || !game.isRunning()) {
-		    ChatUtils.error(player, "%s is not a running game.", game.getName());
+		    ChatUtils.error(player, "%s is not a running game.", args[0]);
 		    return true;
 	    }
 	    game.addSpectator(player);

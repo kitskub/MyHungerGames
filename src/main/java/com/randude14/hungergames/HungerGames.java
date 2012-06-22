@@ -108,8 +108,8 @@ public class HungerGames extends JavaPlugin{
 	    HungerGames.scheduleTask(new Runnable() {
 		public void run() {
 		    String installedVersion = getDescription().getVersion();
-		    String checkVersion = updateCheck(installedVersion);
-		    if (!checkVersion.endsWith(installedVersion))
+		    String checkVersion = latestVersion();
+		    if (!checkVersion.equalsIgnoreCase(installedVersion))
 			    ChatUtils.warning("There is a new version: %s (You are running %s)",
 				    checkVersion, installedVersion);
 		}
@@ -329,27 +329,23 @@ public class HungerGames extends JavaPlugin{
 		return spectators.remove(player.getName());
 	}
 
-	public String updateCheck(String currentVersion) {
+	public String latestVersion() {
 		try {
 			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(url.openConnection().getInputStream());
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
 			doc.getDocumentElement().normalize();
 			NodeList nodes = doc.getElementsByTagName("item");
 			Node firstNode = nodes.item(0);
 			if (firstNode.getNodeType() == 1) {
 				Element firstElement = (Element) firstNode;
-				NodeList firstElementTagName = firstElement
-						.getElementsByTagName("title");
-				Element firstNameElement = (Element) firstElementTagName
-						.item(0);
+				NodeList firstElementTagName = firstElement.getElementsByTagName("title");
+				Element firstNameElement = (Element) firstElementTagName.item(0);
 				NodeList firstNodes = firstNameElement.getChildNodes();
 				return firstNodes.item(0).getNodeValue();
 			}
 		} catch (Exception ex) {
 		}
-		
-		return currentVersion;
+		return getDescription().getVersion();
 	}
 
 	public static void callEvent(Event event) {
@@ -405,13 +401,14 @@ public class HungerGames extends JavaPlugin{
 			}
 
 		}
-
+		/* TODO: this should be included above. Be on the lookout for bug reports
 		for (ItemStack item : inventory.getArmorContents()) {
 			if (item != null && item.getType() != Material.AIR) {
 				return false;
 			}
 
 		}
+		*/
 		return true;
 	}
 
