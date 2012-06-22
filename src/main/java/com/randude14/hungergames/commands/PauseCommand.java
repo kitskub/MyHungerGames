@@ -10,21 +10,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class VoteCommand extends SubCommand{
+public class PauseCommand extends SubCommand{
 
 	@Override
 	public boolean execute(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.USER_VOTE)) return true;
+		if (!HungerGames.checkPermission(player, Perm.ADMIN_PAUSE)) return true;
 
-		game = GameManager.getSession(player);
-		if (game == null) {
-			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" 
-				+ CommandUsage.USER_JOIN.getUsage() + "'", HungerGames.CMD_USER);
+		if (args.length < 1) {
+			ChatUtils.helpCommand(player, CommandUsage.ADMIN_PAUSE.getUsage(), cmd.getLabel());
 			return true;
 		}
-		game.addReadyPlayer(player);
-		ChatUtils.send(player, "You have voted that you are ready.");
+
+		game = GameManager.getGame(args[0]);
+		if (game == null) {
+		    ChatUtils.error(player, "%s does not exist.", args[0]);
+		    return true;
+		}
+
+		if(game.pauseGame(player)) {
+			ChatUtils.broadcast("%s has been paused.", game.getName());
+		}
 		return true;
 	}
     

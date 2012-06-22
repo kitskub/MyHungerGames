@@ -4,7 +4,6 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,7 +30,7 @@ public class SetCommand extends SubCommand{
 		return true;
 	}
 
-	HungerGame game = GameManager.getGame(args[1]);
+	game = GameManager.getGame(args[1]);
 	if ("spawn".equalsIgnoreCase(args[0])) {
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_SET_SPAWN)) return true;
 	    if (args.length < 2) {

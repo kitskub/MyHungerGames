@@ -5,7 +5,6 @@ import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameCreateEvent;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
@@ -35,8 +34,8 @@ public class AddCommand extends SubCommand{
 		    HungerGames.CMD_ADMIN);
 	    return true;
 	}
-
-	HungerGame game = GameManager.getGame(args[1]);
+	
+	game = GameManager.getGame(args[1]);
 	if ("spawnpoint".equalsIgnoreCase(args[0])) {
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_ADD_SPAWNPOINT)) return true;
 	    

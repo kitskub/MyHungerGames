@@ -29,7 +29,7 @@ public class SpectateCommand extends SubCommand{
 		    ChatUtils.send(player, CommandUsage.USER_SPONSOR.getUsage(), cmd.getLabel());
 		    return true;
 	    }
-	    HungerGame game = GameManager.getGame(args[0]);
+	    game = GameManager.getGame(args[0]);
 	    if (game == null || !game.isRunning()) {
 		    ChatUtils.error(player, "%s is not a running game.", args[0]);
 		    return true;

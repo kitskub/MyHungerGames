@@ -10,12 +10,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RejoinCommand extends SubCommand{
+public class QuitCommand extends SubCommand{
 
 	@Override
 	public boolean execute(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.USER_REJOIN)) return true;
+		if (!HungerGames.checkPermission(player, Perm.USER_QUIT)) return true;
 
 		game = GameManager.getSession(player);
 		if (game == null) {
@@ -23,14 +23,10 @@ public class RejoinCommand extends SubCommand{
 			return true;
 		}
 
-		if (game.rejoin(player)) {
-			String mess = Config.getRejoinMessage(game.getSetup());
+		if (game.quit(player)) {
+			String mess = Config.getQuitMessage(game.getSetup());
 			mess = mess.replace("<player>", player.getName()).replace("<game>", game.getName());
 			ChatUtils.broadcast(mess);
-		}
-
-		else {
-			ChatUtils.error(player, "Failed to rejoin %s.", game.getName());
 		}
 		return true;
 	}

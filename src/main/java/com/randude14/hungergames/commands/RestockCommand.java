@@ -4,7 +4,6 @@ import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;
@@ -21,7 +20,7 @@ public class RestockCommand extends SubCommand{
 		    ChatUtils.send(player, CommandUsage.ADMIN_RESTOCK.getUsage(), cmd.getLabel());
 		    return true;
 	    }
-	    HungerGame game = GameManager.getGame(args[0]);
+	    game = GameManager.getGame(args[0]);
 	    if (game == null || !game.isRunning()) {
 		    ChatUtils.error(player, "%s is not a running game.", game.getName());
 		    return true;
