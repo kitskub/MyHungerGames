@@ -66,5 +66,8 @@ public class PlayerStat {
     public void setPlaying(boolean playing) {
 	this.playing = playing;
     }
-	
+
+    public Player getPlayer() {
+	    return player;
+    }
 }

@@ -584,7 +584,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	/**
 	 * 
 	 * @param players players to check
-	 * @return true if players are in the game.
+	 * @return true if players are in the game and have lifes, regardless if they are playing or not
 	 */
 	public boolean contains(Player... players) {
 	    for (Player player : players) {
@@ -644,6 +644,10 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 	
+	/**
+	 * 
+	 * @return the remaining players that have lives and are playing
+	 */
 	public List<Player> getRemainingPlayers(){
 	    List<Player> remaining = new ArrayList<Player>();
 	    for (String playerName : stats.keySet()) {
@@ -660,7 +664,8 @@ public class HungerGame implements Comparable<HungerGame> {
 	public PlayerStat getPlayerStat(Player player) {
 		return stats.get(player.getName());
 	}
-
+	
+	/* Will leave this here in case the new method sucks
 	public void listStats(Player player) {
 		ChatUtils.send(player, "<name>[lives/kills]", ChatColor.GREEN.toString(), ChatColor.RED.toString());
 		ChatUtils.send(player, "");
@@ -671,8 +676,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				Player p = Bukkit.getPlayer(players.get(i));
 				if (p == null) continue;
 				PlayerStat stat = stats.get(players.get(i));
-				mess += String.format("%s [%d/%d]", p.getName(), stat.getLivesLeft(),
-						stat.getKills());
+				mess += String.format("%s [%d/%d]", p.getName(), stat.getLivesLeft(), stat.getKills());
 				if (i < cntr + 4 && cntr < stats.size() - 1) {
 					mess += ", ";
 				}
@@ -681,6 +685,35 @@ public class HungerGame implements Comparable<HungerGame> {
 			ChatUtils.send(player, mess);
 		}
 
+	}
+	*/
+	
+	public void listStats(Player player) {
+		int living = 0, dead = 0;
+		List<String> players = new ArrayList<String>(stats.keySet());
+		String mess = "";
+		for (int cntr = 0; cntr < players.size(); cntr++) {
+			PlayerStat stat = stats.get(players.get(cntr));
+			Player p = stat.getPlayer();
+			if (p == null) continue;
+			String statName = "";
+			if (stat.hasRunOutOfLives() || !stat.isPlaying()) {
+				statName = ChatColor.RED.toString() + p.getName() + ChatColor.GRAY.toString();
+				dead++;
+			}
+			else {
+				statName = ChatColor.GREEN.toString() + p.getName() + ChatColor.GRAY.toString();
+				living++;
+			}
+			mess += String.format("%s [%d/%d]", statName, stat.getLivesLeft(), stat.getKills());
+			if (players.size() >= cntr + 1) {
+				mess += ", ";
+			}
+		}
+		ChatUtils.send(player, "<name>[lives/kills]");
+		ChatUtils.send(player, "Total Players: %s Total Living: %s Total Dead: %s", stats.size(), living, dead);
+		ChatUtils.send(player, "");
+		ChatUtils.send(player, mess);
 	}
 
 	public String getName() {
