@@ -2,6 +2,7 @@ v0.5
 - Code Cleanup
 - Many small fixes
 - Removed the unused LocationList
+- Changed the order that the inventory and other stuff is loaded on join and leave
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

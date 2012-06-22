@@ -477,15 +477,15 @@ public class HungerGame implements Comparable<HungerGame> {
 		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
-	    playerLeaving(player);
-	    dropInventory(player);
 	    if (!Config.getAllowRejoin(setup)) {
 		stats.get(player.getName()).die();
 	    }
 	    else {
 		stats.get(player.getName()).setPlaying(false);
 	    }
+	    dropInventory(player);
 	    teleportPlayerToSpawn(player);
+	    playerLeaving(player);
 	    checkForGameOver(false);
 	    HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 	    return true;
@@ -496,16 +496,16 @@ public class HungerGame implements Comparable<HungerGame> {
 		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
-	    playerLeaving(player);
-	    dropInventory(player);
-	    teleportPlayerToSpawn(player);
-	    checkForGameOver(false);
 	    if(isRunning) {
 		stats.get(player.getName()).die();
 	    }
 	    else {
 		stats.remove(player.getName());
 	    }
+	    dropInventory(player);
+	    teleportPlayerToSpawn(player);
+	    playerLeaving(player);
+	    checkForGameOver(false);
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    return true;
 	}
