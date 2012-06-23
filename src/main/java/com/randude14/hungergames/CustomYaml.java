@@ -28,7 +28,7 @@ public class CustomYaml {
 		try {
 		    config.load(file);
 		} catch (Exception ex) {
-		    ChatUtils.info(String.format("Could not load '%s'. If it has not been created, disregard this.", file.getName()));
+		    Logging.info(String.format("Could not load '%s'. If it has not been created, disregard this.", file.getName()));
 		}
 		
 	}
@@ -37,7 +37,7 @@ public class CustomYaml {
 		try {
 		    config.save(file);
 		} catch (Exception ex) {
-		    ChatUtils.warning(String.format("Could not save '%s'.", file.getName()));
+		    Logging.warning(String.format("Could not save '%s'.", file.getName()));
 		}
 		
 	}

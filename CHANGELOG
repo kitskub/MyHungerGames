@@ -15,6 +15,7 @@ v0.5
 - Added /hg stop <game name>
 - Reorganization of stop, stopGame, start, startGame
 - added getType() to Commands
+- Improved Logging
 
 
 v0.4.3

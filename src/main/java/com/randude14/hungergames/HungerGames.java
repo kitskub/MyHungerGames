@@ -12,7 +12,6 @@ import com.randude14.hungergames.utils.ChatUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -64,21 +63,21 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new ChatListener(), this);
 		pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
-		    ChatUtils.info("config.yml not found. Saving defaults.");
+		    Logging.info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
 		}
 		loadRegistry();
 		loadResetter();
 		callTasks();
 		GameManager.loadGames();
-		ChatUtils.info("Games loaded.");
+		Logging.info("Games loaded.");
 		try {
 		    Metrics metrics = new Metrics();
 		    metrics.beginMeasuringPlugin(this);
 		} catch (IOException e) {
 		// Fail silently
 		}
-		ChatUtils.info("Enabled.");
+		Logging.info("Enabled.");
 	}
 
 	private void callTasks() {
@@ -87,8 +86,7 @@ public class HungerGames extends JavaPlugin{
 		    String installedVersion = getDescription().getVersion();
 		    String checkVersion = latestVersion();
 		    if (!checkVersion.equalsIgnoreCase(installedVersion))
-			    ChatUtils.warning("There is a new version: %s (You are running %s)",
-				    checkVersion, installedVersion);
+			    Logging.warning("There is a new version: %s (You are running %s)", checkVersion, installedVersion);
 		}
 	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
@@ -96,13 +94,13 @@ public class HungerGames extends JavaPlugin{
 	@Override
 	public void onDisable() {
 	    GameManager.saveGames();
-	    ChatUtils.info("Games saved.");
-	    ChatUtils.info("Disabled.");
+	    Logging.info("Games saved.");
+	    Logging.info("Disabled.");
 	}
 
 	private static void loadRegistry() {
 	    if (!VaultPermission.isVaultInstalled()) {
-		ChatUtils.info("Vault is not installed, defaulting to Bukkit perms.");
+		Logging.info("Vault is not installed, defaulting to Bukkit perms.");
 		perm = new BukkitPermission();
 		return;
 	    } else {
@@ -110,7 +108,7 @@ public class HungerGames extends JavaPlugin{
 	    }
 
 	    if (!Economy.isVaultInstalled()) {
-		ChatUtils.warning("Vault is not installed, economy use disabled.");
+		Logging.warning("Vault is not installed, economy use disabled.");
 		econ = null;
 	    } else {
 		econ = new Economy();
@@ -118,16 +116,16 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	private static void loadResetter() { // TODO finish implementation
-	    /*if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
-		ChatUtils.info("Hawkeye is installed, using for resetter.");
+	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
+		Logging.info("Hawkeye is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.HAWKEYE);
 		return;
-	    } else */if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
-		ChatUtils.info("LogBlock is installed, using for resetter.");
+	    } else if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
+		Logging.info("LogBlock is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
 		return;
 	    } else {
-		ChatUtils.info("No logging plugins installed, using internal resetter.");
+		Logging.info("No logging plugins installed, using internal resetter.");
 		ResetHandler.setRessetter(ResetHandler.INTERNAL);
 		return;
 	    }

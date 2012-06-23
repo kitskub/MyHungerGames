@@ -2,8 +2,6 @@ HIGH:
 - Improved map reset
 - economy config stuff
 - /hga restock
-- Stop game
-- Restart game
 - Enhance Spectating
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
 - Fix quit to separate playing players from non-playing
@@ -19,6 +17,7 @@ MEDIUM:
 - Improve resetting (including world tracking)
 - Minimize external resetting of changes from players who have left but not quitted
 - Make non-playing players that have lives orange (or yellow) in /hg stat
+- Add more block events
 
 LOW:
 - Force damage

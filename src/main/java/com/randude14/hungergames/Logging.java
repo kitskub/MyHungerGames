@@ -23,6 +23,10 @@ public class Logging {
 		logger.log(level, record);		
 	}
 
+	public static void log(Level level, String record, String... strings) {
+		logger.log(level, record, strings);		
+	}
+
 	static {
 		try {
 			HungerGames instance = HungerGames.getInstance();
@@ -31,6 +35,7 @@ public class Logging {
 			if (!file.exists()) file.createNewFile();
 			FileHandler handler = new FileHandler("plugins/HungerGames/myhungergames.log", true);
 			logger.addHandler(handler);
+			logger.setLevel(Level.FINEST);
 			Logger parent = Logger.getLogger("Minecraft");
 			logger.setParent(parent);
 		} catch (IOException ex) {
@@ -38,6 +43,42 @@ public class Logging {
 
 	}
 
+	public static String getLogPrefix() {
+		return String.format("[%s] %s - ", HungerGames.getInstance().getName(), HungerGames.getInstance().getDescription().getVersion());
+	}
+
+	public static void info(String format, Object... args) {
+		log(Level.INFO, getLogPrefix() + String.format(format, args));
+	}
+
+	public static void info(String mess) {
+		log(Level.INFO, getLogPrefix() + mess);
+	}
+
+	public static void warning(String format, Object... args) {
+		log(Level.WARNING, getLogPrefix() + String.format(format, args));
+	}
+
+	public static void warning(String mess) {
+		log(Level.WARNING, getLogPrefix() + mess);
+	}
+
+	public static void severe(String format, Object... args) {
+		log(Level.SEVERE, getLogPrefix() + String.format(format, args));
+	}
+
+	public static void severe(String mess) {
+		log(Level.SEVERE, getLogPrefix() + mess);
+	}
+
+	public static void debug(String mess, Object... args) {
+		log(Level.FINEST, getLogPrefix() + String.format(mess, args));
+	}
+
+	public static void debug(String mess) {
+		log(Level.FINEST, getLogPrefix() + mess);
+	}
+	
 	public static class LogCommandSender implements CommandSender, Permissible {
 		String who = "";
 		

@@ -25,14 +25,10 @@ public class AddCommand extends SubCommand{
 	
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(),
-		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST.getUsageAndInfo(),
-		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME.getUsageAndInfo(),
-		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(),
-		    HungerGames.CMD_ADMIN);
+	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+	    ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 	    return true;
 	}
 	

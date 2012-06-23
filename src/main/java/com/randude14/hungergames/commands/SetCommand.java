@@ -23,10 +23,8 @@ public class SetCommand extends SubCommand{
 	
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsageAndInfo(),
-				HungerGames.CMD_ADMIN);
-		ChatUtils.helpCommand(player, Commands.ADMIN_SET_ENABLED.getUsageAndInfo(),
-				HungerGames.CMD_ADMIN);
+		ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+		ChatUtils.helpCommand(player, Commands.ADMIN_SET_ENABLED.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 		return true;
 	}
 
@@ -34,8 +32,7 @@ public class SetCommand extends SubCommand{
 	if ("spawn".equalsIgnoreCase(args[0])) {
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_SET_SPAWN)) return true;
 	    if (args.length < 2) {
-		    ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsage(),
-			    HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsage(), HungerGames.CMD_ADMIN);
 		    return true;
 	    }
 

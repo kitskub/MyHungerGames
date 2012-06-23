@@ -26,9 +26,11 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameCountdown;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
+import java.util.logging.Level;
 
 public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, PlayerStat> stats;
@@ -88,7 +90,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				}
 				catch (NumberFormatException e) {}
 				if (loc == null) {
-					ChatUtils.warning("failed to load location '%s'", str);
+					Logging.warning("failed to load location '%s'", str);
 					continue;
 				}
 				spawnPoints.add(loc);
@@ -106,11 +108,11 @@ public class HungerGame implements Comparable<HungerGame> {
 				}
 				catch (NumberFormatException e) {}
 				if (loc == null) {
-					ChatUtils.warning("failed to load location '%s'", str);
+					Logging.warning("failed to load location '%s'", str);
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
-					ChatUtils.warning("'%s' is no longer a chest.", str);
+					Logging.warning("'%s' is no longer a chest.", str);
 					continue;
 				}
 				chests.add(loc);
@@ -446,12 +448,12 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-        public void addAndFillInventory(Inventory inv) {
-            if(!randomInvs.contains(inv.getHolder())) {
-                HungerGames.fillInventory(inv, itemsets);
-                randomInvs.add(inv.getHolder());
-            }
-        }
+	public void addAndFillInventory(Inventory inv) {
+		if(!randomInvs.contains(inv.getHolder())) {
+			HungerGames.fillInventory(inv, itemsets);
+			randomInvs.add(inv.getHolder());
+		}
+	}
         
 	public void fillInventories() {
 	    for (int cntr = 0; cntr < chests.size(); cntr++) {
@@ -746,8 +748,7 @@ public class HungerGame implements Comparable<HungerGame> {
 				GameManager.addPlayerRespawn(killed, respawn);
 				// TODO needs a random
 			}
-			ChatUtils.info("You have " + killedStat.getLivesLeft()
-					+ " lives left.");
+			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
 		checkForGameOver(false);
 		if (callEvent) {
@@ -813,6 +814,10 @@ public class HungerGame implements Comparable<HungerGame> {
 				statName = ChatColor.RED.toString() + p.getName() + ChatColor.GRAY.toString();
 				dead++;
 			}
+			else if (!stat.isPlaying()) {
+				statName = ChatColor.YELLOW.toString() + p.getName() + ChatColor.GRAY.toString();
+				dead++;
+			}
 			else {
 				statName = ChatColor.GREEN.toString() + p.getName() + ChatColor.GRAY.toString();
 				living++;
@@ -823,7 +828,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			}
 		}
 		ChatUtils.send(player, "<name>[lives/kills]");
-		ChatUtils.send(player, "Total Players: %s Total Living: %s Total Dead: %s", stats.size(), living, dead);
+		ChatUtils.send(player, "Total Players: %s Total Living: %s Total Dead or Not Playing: %s", stats.size(), living, dead);
 		ChatUtils.send(player, "");
 		ChatUtils.send(player, mess);
 	}
