@@ -30,8 +30,7 @@ import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
-import java.util.logging.Level;
-
+	
 public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
@@ -450,6 +449,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void addAndFillInventory(Inventory inv) {
 		if(!randomInvs.contains(inv.getHolder())) {
+			Logging.debug("Inventory Holder was not in randomInvs.");
 			HungerGames.fillInventory(inv, itemsets);
 			randomInvs.add(inv.getHolder());
 		}
@@ -572,7 +572,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public synchronized boolean leave(Player player) {
-	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives() || !stats.get(player.getName()).isPlaying()) {
+	    if (!isPlaying(player)) {
 		ChatUtils.error(player, "You are not playing the game %s.", name);
 		return false;
 	    }
@@ -591,7 +591,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 	
 	public synchronized boolean quit(Player player) {
-	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
+	    if (!contains(player)) {
 		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
@@ -601,8 +601,10 @@ public class HungerGame implements Comparable<HungerGame> {
 	    else {
 		stats.remove(player.getName());
 	    }
-	    dropInventory(player);
-	    teleportPlayerToSpawn(player);
+	    if (isPlaying(player)) {
+		    dropInventory(player);
+		    teleportPlayerToSpawn(player);
+	    }
 	    playerLeaving(player);
 	    checkForGameOver(false);
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
@@ -684,7 +686,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	/**
 	 * 
 	 * @param players players to check
-	 * @return true if players are in the game and have lifes, regardless if they are playing or not
+	 * @return true if players are in the game and have lives, regardless if they are playing or not
 	 */
 	public boolean contains(Player... players) {
 	    for (Player player : players) {

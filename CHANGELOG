@@ -16,6 +16,7 @@ v0.5
 - Reorganization of stop, stopGame, start, startGame
 - added getType() to Commands
 - Improved Logging
+- Made players that quit who are not playing not drop their inventory
 
 
 v0.4.3
