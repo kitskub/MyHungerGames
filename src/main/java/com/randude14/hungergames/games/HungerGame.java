@@ -250,7 +250,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		if (!isRunning && !isPaused && !isCounting) return "Game is not started";
 
 		if (!enabled) {
-			return "%s is currently not enabled.";
+			return String.format("%s is currently not enabled.", name);
 		}
 		if (!isFinished) {
 			GameStopEvent event = new GameStopEvent(this);
@@ -314,12 +314,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			isCounting = true;
 			return null;
 		}
-				
+		
 		if (isRunning) return "Game is already running";
-
-		if (stats.size() < Config.getMinPlayers(setup)) return "There are not enough players in %s";
-		if (isCounting) return "%s is already counting down.";
-		if (!enabled) return "%s is currently not enabled.";
+		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
+		if (isCounting) return String.format("%s is already counting down.", name);
+		if (!enabled) return String.format("%s is currently not enabled.", name);
 		
 		GameStartEvent event = new GameStartEvent(this);
 		HungerGames.callEvent(event);
@@ -338,10 +337,8 @@ public class HungerGame implements Comparable<HungerGame> {
 			p.setFoodLevel(20);
 		}
 		isRunning = true;
-		isCounting = false;
 		isPaused = false;
 		readyToPlay.clear();
-		countdown = null;
 		ChatUtils.broadcast("Starting %s. Go!!", name);
 		return null;
 	}
@@ -922,6 +919,10 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void removeItemSet(String name) {
 		itemsets.remove(name);
+	}
+	
+	public void setCounting(boolean counting) {
+		isCounting = counting;
 	}
 
 	// sorts players by name ignoring case
