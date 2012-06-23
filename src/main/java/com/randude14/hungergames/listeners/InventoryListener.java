@@ -15,8 +15,8 @@ public class InventoryListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void inventoryOpen(InventoryOpenEvent event) {
 		if(event.getInventory().getType() != InventoryType.CHEST) return;
-                Player player = (Player)event.getPlayer();
-                HungerGame game = GameManager.getSession(player);
+                Player player = (Player) event.getPlayer();
+                HungerGame game = GameManager.getPlayingSession(player);
                 if(game == null) return;
 		if(!Config.getAutoAdd(game.getSetup())) return;
                 game.addAndFillInventory(event.getInventory());

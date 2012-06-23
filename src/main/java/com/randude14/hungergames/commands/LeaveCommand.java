@@ -17,9 +17,9 @@ public class LeaveCommand extends SubCommand{
 		Player player = (Player) cs;
 		if (!HungerGames.checkPermission(player, Perm.USER_LEAVE)) return true;
 
-		game = GameManager.getSession(player);
+		game = GameManager.getPlayingSession(player);
 		if (game == null) {
-			ChatUtils.error(player, "You are currently not in a game.");
+			ChatUtils.error(player, "You are currently not playing a game.");
 			return true;
 		}
 

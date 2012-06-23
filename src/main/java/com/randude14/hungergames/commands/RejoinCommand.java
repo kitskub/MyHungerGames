@@ -28,7 +28,6 @@ public class RejoinCommand extends SubCommand{
 			mess = mess.replace("<player>", player.getName()).replace("<game>", game.getName());
 			ChatUtils.broadcast(mess);
 		}
-
 		else {
 			ChatUtils.error(player, "Failed to rejoin %s.", game.getName());
 		}

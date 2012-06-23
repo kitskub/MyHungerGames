@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
 		Player player = event.getPlayer();
 		String message = event.getMessage();
 		if(message.startsWith("/" + HungerGames.CMD_ADMIN) || message.startsWith("/" + HungerGames.CMD_USER)) return;
-		HungerGame session = GameManager.getSession(player);
+		HungerGame session = GameManager.getPlayingSession(player);
 		if(session == null) return;
 		if(!Config.getUseCommand(session.getSetup())) {
 			ChatUtils.error(player, "Cannot use commands while in game %s.");

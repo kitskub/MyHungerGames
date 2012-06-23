@@ -22,11 +22,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameOfKilled = GameManager.getSession(killed);
+		HungerGame gameOfKilled = GameManager.getPlayingSession(killed);
 		if (gameOfKilled == null) return;
 		Player killer = killed.getKiller();
 		if (killer != null) {
-			HungerGame gameOfKiller = GameManager.getSession(killer);
+			HungerGame gameOfKiller = GameManager.getPlayingSession(killer);
 			if (gameOfKilled.equals(gameOfKiller)) {
 				gameOfKiller.killed(killer, killed);
 			}
@@ -61,9 +61,8 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 		Location frozenLoc = GameManager.getFrozenLocation(player);
 		if (frozenLoc == null
-			|| GameManager.getSession(player) == null
-			|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()
-			|| GameManager.getSession(player).isRunning()) {
+			|| GameManager.getPlayingSession(player) == null
+			|| GameManager.getPlayingSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();

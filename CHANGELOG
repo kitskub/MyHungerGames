@@ -7,6 +7,10 @@ v0.5
 - Added null checks for spawnpoints
 - separation of some methods out of HungerGames
 - Added a getPerm() field to CommandUsage and changed name to Commands
+- Implemented resetter for HawkEye
+- Fixed changes by non-playing players that had left the game, but not quitted being added internally
+- Added a getPlayingSession()
+- Removed some double sending messages
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

@@ -75,7 +75,7 @@ public class GameManager{
 
 	/**
 	 * This does not care about whether the player is actually playing the game or not.
-	 * If the player has the potential to rejoin, and therefore has lives, that is the game.
+	 * If the player has the potential to rejoin, and therefore has lives, that is the game returned.
 	 * 
 	 * @param player
 	 * @return the game a player is in
@@ -83,6 +83,22 @@ public class GameManager{
 	public static HungerGame getSession(Player player) {
 		for (HungerGame game : games) {
 			if (game.contains(player)) {
+				return game;
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * This returns the game a player is playing. If the player is in a game, but not playing, returns null
+	 * 
+	 * @param player
+	 * @return the game a player is in
+	 */
+	public static HungerGame getPlayingSession(Player player) {
+		for (HungerGame game : games) {
+			if (game.contains(player) && game.isPlaying(player)) {
 				return game;
 			}
 
@@ -172,9 +188,9 @@ public class GameManager{
 	
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
 	    Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
-	    HungerGame game = GameManager.getSession(sponsoredPlayer);
-	    if (game == null || !game.getPlayerStat(player).isPlaying()) {
-		    ChatUtils.error(player, "That player is playing in a game.");
+	    HungerGame game = GameManager.getPlayingSession(sponsoredPlayer);
+	    if (game == null) {
+		    ChatUtils.error(player, player.getName() + " is not playing in a game.");
 		    return false;
 	    }
 	    List<String> itemsets = game.getItemSets();

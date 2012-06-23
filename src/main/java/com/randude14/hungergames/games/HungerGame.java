@@ -492,7 +492,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public synchronized boolean leave(Player player) {
 	    if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives() || !stats.get(player.getName()).isPlaying()) {
-		ChatUtils.error(player, "You are not in the game %s.", name);
+		ChatUtils.error(player, "You are not playing the game %s.", name);
 		return false;
 	    }
 	    if (!Config.getAllowRejoin(setup)) {
@@ -607,6 +607,20 @@ public class HungerGame implements Comparable<HungerGame> {
 	public boolean contains(Player... players) {
 	    for (Player player : players) {
 		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
+		    return false;
+		}
+	    }
+	    return true;
+	}
+	
+	/**
+	 * 
+	 * @param players players to check
+	 * @return true if players are in the game and have lifes, regardless if they are playing or not
+	 */
+	public boolean isPlaying(Player... players) {
+	    for (Player player : players) {
+		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives() || !stats.get(player.getName()).isPlaying()) {
 		    return false;
 		}
 	    }

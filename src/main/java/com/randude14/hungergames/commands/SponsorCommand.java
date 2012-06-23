@@ -28,7 +28,7 @@ public class SponsorCommand extends SubCommand{
 			ChatUtils.error(player, "%s is not online.", args[0]);
 			return true;
 		}
-		if (GameManager.getSession(p) == null || !GameManager.getSession(p).getPlayerStat(p).isPlaying()) {
+		if (GameManager.getPlayingSession(p) == null) {
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 			return true;
 		}

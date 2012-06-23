@@ -54,7 +54,7 @@ public class InternalResetter extends Resetter implements Listener{
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
 	Player player = event.getPlayer();
-	HungerGame session = GameManager.getSession(player);
+	HungerGame session = GameManager.getPlayingSession(player);
 	if(session == null) return;
 	BlockState blockReplacedState = event.getBlockReplacedState();
 	addBlockState(session, event.getBlock(), blockReplacedState);
@@ -63,7 +63,7 @@ public class InternalResetter extends Resetter implements Listener{
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
 	Player player = event.getPlayer();
-	HungerGame session = GameManager.getSession(player);
+	HungerGame session = GameManager.getPlayingSession(player);
 	if(session == null) return;
 	BlockState blockReplacedState = event.getBlock().getState();
 	addBlockState(session, event.getBlock(), blockReplacedState);

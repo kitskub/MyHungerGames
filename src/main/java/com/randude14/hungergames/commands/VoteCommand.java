@@ -17,7 +17,7 @@ public class VoteCommand extends SubCommand{
 		Player player = (Player) cs;
 		if (!HungerGames.checkPermission(player, Perm.USER_VOTE)) return true;
 
-		game = GameManager.getSession(player);
+		game = GameManager.getPlayingSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" 
 				+ Commands.USER_JOIN.getUsage() + "'", HungerGames.CMD_USER);

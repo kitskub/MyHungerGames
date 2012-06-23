@@ -20,7 +20,7 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.getSession(player);
+		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
 			List<Integer> list = Config.getSpecialBlocksPlace(setup);
@@ -28,29 +28,26 @@ public class BlockListener implements Listener {
 			boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
 			if(contains && canPlaceBlocks) {
 				ChatUtils.error(player, "Cannot place this block while in game %s.", session.getName());
-				player.sendMessage("You cannot place this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 
 			if(!contains && !canPlaceBlocks) {
 				ChatUtils.error(player, "Cannot place this block while in game %s.", session.getName());
-				player.sendMessage("You cannot place this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "Cannot place this block while spectating %s.", session.getName());
-			player.sendMessage("You cannot place this block while spectating");
+			ChatUtils.error(player, "Cannot place this block while spectating %s.", GameManager.getSpectating(player));
 		}
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.getSession(player);
+		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
 			List<Integer> list = Config.getSpecialBlocksBreak(setup);
@@ -58,29 +55,26 @@ public class BlockListener implements Listener {
 			boolean canBreakBlocks = Config.getCanBreakBlock(setup);
 			if(contains && canBreakBlocks) {
 				ChatUtils.error(player, "Cannot break this block while in game %s.", session.getName());
-				player.sendMessage("You cannot break this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 
 			if(!contains && !canBreakBlocks) {
 				ChatUtils.error(player, "Cannot break this block while in game %s.", session.getName());
-				player.sendMessage("You cannot break this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "Cannot break this block while spectating %s.", session.getName());
-			player.sendMessage("You cannot break this block while spectating");
+			ChatUtils.error(player, "Cannot break this block while spectating %s.", GameManager.getSpectating(player));
 		}
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.getSession(player);
+		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
@@ -89,22 +83,19 @@ public class BlockListener implements Listener {
 			boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
 			if(contains && canInteractWithBlocks) {
 				ChatUtils.error(player, "Cannot interact with this block while in game %s.", session.getName());
-				player.sendMessage("You cannot interact with this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 
 			if(!contains && !canInteractWithBlocks) {
 				ChatUtils.error(player, "Cannot interact with this block while in game %s.", session.getName());
-				player.sendMessage("You cannot interact with this block while in game");
 				event.setCancelled(true);
 				return;
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", GameManager.getGame(GameManager.getSpectating(player)).getName());
-			player.sendMessage("You cannot interact with this block while spectating");
+			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", GameManager.getSpectating(player));
 		}
 	}
 

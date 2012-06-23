@@ -15,6 +15,9 @@ MEDIUM:
 - Sign listening
 - MatchMaterial in special-blocks
 - Add (better) logging
+- Improve resetting (including world tracking)
+- Minimize external resetting of changes from players who have left but not quitted
+- Make non-playing players that have lives orange (or yellow) in /hg stat
 
 LOW:
 - Force damage
@@ -24,6 +27,7 @@ LOW:
 - Sponsor loot by command
 - Check command processing
 - Use conversation API for sponsors
+- Add a "players-can-sponsor" option to allow playing players to be able sponsor
 
 OPTIONAL:
 - Chat

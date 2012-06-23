@@ -41,9 +41,9 @@ public class ChatListener implements Listener {
 			ChatUtils.error(player, "'%s' is not online anymore.", sponsor);
 			return;
 		}
-		HungerGame game = GameManager.getSession(player);
+		HungerGame game = GameManager.getPlayingSession(player);
 		if (game == null) {
-			ChatUtils.error(player, "'%s' is no longer in a game.", sponsor);
+			ChatUtils.error(player, "'%s' is no longer playing a game.", sponsor);
 			return;
 		}
 		Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(game.getItemSets());
