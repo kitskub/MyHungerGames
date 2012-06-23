@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ChestAddListener implements Listener {
+public class SessionListener implements Listener {
 	private static final Map<String, Session> chestAdders;
 	private static final Map<String, Session> chestRemovers;
 	private static final Map<String, Session> spawnAdders;
@@ -99,11 +99,7 @@ public class ChestAddListener implements Listener {
 			    return;
 		    }
 		    Location loc = event.getClickedBlock().getLocation();
-		    World world = loc.getWorld();
-		    double x = loc.getBlockX() + 0.5;
-		    double y = loc.getBlockY() + 1;
-		    double z = loc.getBlockZ() + 0.5;
-		    loc = new Location(world, x, y, z);
+		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.addSpawnPoint(loc)) {
 				    ChatUtils.send(player, "Spawn point has been added to %s.", game.getName());
@@ -126,11 +122,7 @@ public class ChestAddListener implements Listener {
 			    return;
 		    }
 		    Location loc = event.getClickedBlock().getLocation();
-		    World world = loc.getWorld();
-		    double x = loc.getBlockX() + 0.5;
-		    double y = loc.getBlockY() + 1;
-		    double z = loc.getBlockZ() + 0.5;
-		    loc = new Location(world, x, y, z);
+		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.removeSpawnPoint(loc)) {
 				    ChatUtils.send(player, "Spawn point has been removed from %s.", game.getName());

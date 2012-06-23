@@ -75,7 +75,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new CommandListener(), this);
 		pm.registerEvents(new PlayerListener(), this);
 		pm.registerEvents(new InventoryListener(), this);
-		pm.registerEvents(new ChestAddListener(), this);
+		pm.registerEvents(new SessionListener(), this);
 		pm.registerEvents(new ChatListener(), this);
 		pm.registerEvents(new TeleportListener(), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
@@ -247,19 +247,19 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	public static void addChestAdder(Player player, String name) {
-		ChestAddListener.addChestAdder(player, name);
+		SessionListener.addChestAdder(player, name);
 	}
 
 	public static void addChestRemover(Player player, String name) {
-		ChestAddListener.addChestRemover(player, name);
+		SessionListener.addChestRemover(player, name);
 	}
 
 	public static void addSpawnAdder(Player player, String name) {
-		ChestAddListener.addSpawnAdder(player, name);
+		SessionListener.addSpawnAdder(player, name);
 	}
 
 	public static void addSpawnRemover(Player player, String name) {
-		ChestAddListener.addSpawnRemover(player, name);
+		SessionListener.addSpawnRemover(player, name);
 	}
 
 	public static boolean addSponsor(Player player, String playerToBeSponsored) {
@@ -389,7 +389,7 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	public static void playerLeftServer(Player player) {
-		ChestAddListener.removePlayer(player);
+		SessionListener.removePlayer(player);
 		sponsors.remove(player.getName());
 	}
 

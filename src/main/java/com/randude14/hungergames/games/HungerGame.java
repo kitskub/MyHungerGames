@@ -454,11 +454,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 	
 	public synchronized boolean playerEntering(Player player) {
-	    Random rand = HungerGames.getRandom();
-	    Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-	    while (spawnTaken(loc)) {
-		    loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
-	    }
+	    Location loc = getNextOpenSpawnPoint();
 	    spawnsTaken.put(player.getName(), loc);
 	    player.teleport(loc);
 	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
@@ -466,9 +462,20 @@ public class HungerGame implements Comparable<HungerGame> {
 	    allPlayers.add(player.getName());
 	    return true;
 	}
-
+	
+	public Location getNextOpenSpawnPoint() {
+		Random rand = HungerGames.getRandom();
+		Location loc;
+		do {
+			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+			if (loc == null) spawnPoints.remove(loc);
+			
+		} while (spawnTaken(loc));
+		return loc;
+	}
+	
 	private boolean spawnTaken(Location loc) {
-	    if (spawnsTaken.containsValue(loc)) return true;
+	    if (spawnsTaken.containsValue(loc) || loc == null) return true;
 	    return false;
 	}
 
@@ -733,6 +740,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean addSpawnPoint(Location loc) {
+		if (loc == null) return true;
 		for (Location l : spawnPoints) {
 			if (HungerGames.equals(l, loc)) return false;
 		}
@@ -753,26 +761,27 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 
 	public boolean removeSpawnPoint(Location loc) {
-	    Iterator<Location> iterator = spawnPoints.iterator();
-	    Location l = null;
-	    while (iterator.hasNext()) {
-		if (HungerGames.equals(loc, l = iterator.next())) {
-		    iterator.remove();
-		    for (String playerName : spawnsTaken.keySet()) {
-			Location comp = spawnsTaken.get(playerName);
-			if (HungerGames.equals(l, comp)) {
-			    spawnsTaken.remove(playerName);
-			    if (Bukkit.getPlayer(playerName) == null) continue;
-			    ChatUtils.error(Bukkit.getPlayer(playerName),
-				    "Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'", 
-				    playerName);
-			    leave(Bukkit.getPlayer(playerName));
+		if (loc == null) return true;
+		Iterator<Location> iterator = spawnPoints.iterator();
+		Location l = null;
+		while (iterator.hasNext()) {
+			if (HungerGames.equals(loc, l = iterator.next())) {
+				iterator.remove();
+				for (String playerName : spawnsTaken.keySet()) {
+					Location comp = spawnsTaken.get(playerName);
+					if (HungerGames.equals(l, comp)) {
+						spawnsTaken.remove(playerName);
+						if (Bukkit.getPlayer(playerName) == null) continue;
+						ChatUtils.error(Bukkit.getPlayer(playerName),
+							"Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'", 
+							playerName);
+						leave(Bukkit.getPlayer(playerName));
+					}
+				}
+				return true;
 			}
-		    }
-		    return true;
 		}
-	    }
-	    return false;
+		return false;
 	}
 
 	private static void dropInventory(Player player) {
