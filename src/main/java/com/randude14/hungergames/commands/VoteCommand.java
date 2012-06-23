@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -20,7 +20,7 @@ public class VoteCommand extends SubCommand{
 		game = GameManager.getSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" 
-				+ CommandUsage.USER_JOIN.getUsage() + "'", HungerGames.CMD_USER);
+				+ Commands.USER_JOIN.getUsage() + "'", HungerGames.CMD_USER);
 			return true;
 		}
 		game.addReadyPlayer(player);

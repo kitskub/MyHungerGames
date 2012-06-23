@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -18,7 +18,7 @@ public class ResumeCommand extends SubCommand{
 		if (!HungerGames.checkPermission(player, Perm.ADMIN_RESUME)) return true;
 			
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, CommandUsage.ADMIN_RESUME.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, Commands.ADMIN_RESUME.getUsage(), cmd.getLabel());
 			return true;
 		}
 

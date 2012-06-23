@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -19,7 +19,7 @@ public class StatCommand extends SubCommand{
 		if (!HungerGames.checkPermission(player, Perm.USER_STAT)) return true;
 
 		if (args.length < 1) {
-			ChatUtils.send(player, CommandUsage.USER_STAT.getUsage(), cmd.getLabel());
+			ChatUtils.send(player, Commands.USER_STAT.getUsage(), cmd.getLabel());
 			return true;
 		}
 

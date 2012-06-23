@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -25,13 +25,13 @@ public class RemoveCommand extends SubCommand{
 
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(),
 		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_CHEST.getUsageAndInfo(),
 		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_GAME.getUsageAndInfo(),
 		    HungerGames.CMD_ADMIN);
-	    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(),
+	    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(),
 		    HungerGames.CMD_ADMIN);
 	    return true;
 	}
@@ -42,7 +42,7 @@ public class RemoveCommand extends SubCommand{
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_SPAWNPOINT)) return true;
 	    
 	    if (args.length == 1) {
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_SPAWNPOINT.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_SPAWNPOINT.getUsage(),
 			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
@@ -62,7 +62,7 @@ public class RemoveCommand extends SubCommand{
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_CHEST)) return true;
 	    
 	    if (args.length == 1) {
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_CHEST.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_CHEST.getUsage(),
 			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
@@ -81,7 +81,7 @@ public class RemoveCommand extends SubCommand{
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_GAME)) return true;
 	    
 	    if (args.length == 1) {
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_GAME.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_GAME.getUsage(),
 			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
@@ -100,7 +100,7 @@ public class RemoveCommand extends SubCommand{
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_REMOVE_ITEMSET)) return true;
 	    
 	    if(args.length == 2){
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_REMOVE_ITEMSET.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_ITEMSET.getUsage(),
 			    HungerGames.CMD_ADMIN);
 	    }
 	    

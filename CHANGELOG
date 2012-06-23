@@ -5,6 +5,8 @@ v0.5
 - Changed the order that the inventory and other stuff is loaded on join and leave
 - Added a (hopefully) better /hg stat
 - Added null checks for spawnpoints
+- separation of some methods out of HungerGames
+- Added a getPerm() field to CommandUsage and changed name to Commands
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

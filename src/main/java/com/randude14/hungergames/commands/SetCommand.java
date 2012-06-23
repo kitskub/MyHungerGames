@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -23,9 +23,9 @@ public class SetCommand extends SubCommand{
 	
 	if (args.length == 0 || "?".equalsIgnoreCase(args[0])) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		ChatUtils.helpCommand(player, CommandUsage.ADMIN_SET_SPAWN.getUsageAndInfo(),
+		ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsageAndInfo(),
 				HungerGames.CMD_ADMIN);
-		ChatUtils.helpCommand(player, CommandUsage.ADMIN_SET_ENABLED.getUsageAndInfo(),
+		ChatUtils.helpCommand(player, Commands.ADMIN_SET_ENABLED.getUsageAndInfo(),
 				HungerGames.CMD_ADMIN);
 		return true;
 	}
@@ -34,7 +34,7 @@ public class SetCommand extends SubCommand{
 	if ("spawn".equalsIgnoreCase(args[0])) {
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_SET_SPAWN)) return true;
 	    if (args.length < 2) {
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_SET_SPAWN.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsage(),
 			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }
@@ -53,7 +53,7 @@ public class SetCommand extends SubCommand{
 	    if(!HungerGames.checkPermission(player, Perm.ADMIN_SET_ENABLED)) return true;
 	    
 	    if (args.length < 2) {
-		    ChatUtils.helpCommand(player, CommandUsage.ADMIN_SET_ENABLED.getUsage(),
+		    ChatUtils.helpCommand(player, Commands.ADMIN_SET_ENABLED.getUsage(),
 			    HungerGames.CMD_ADMIN);
 		    return true;
 	    }

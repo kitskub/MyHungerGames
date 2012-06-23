@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -19,7 +19,7 @@ public class SponsorCommand extends SubCommand{
 		if (!HungerGames.checkPermission(player, Perm.USER_SPONSOR)) return true;
 
 		if (args.length < 1) {
-			ChatUtils.send(player, CommandUsage.USER_SPONSOR.getUsage(), cmd.getLabel());
+			ChatUtils.send(player, Commands.USER_SPONSOR.getUsage(), cmd.getLabel());
 			return true;
 		}
 

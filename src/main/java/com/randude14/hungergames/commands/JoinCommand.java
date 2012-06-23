@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.Defaults.CommandUsage;
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -21,7 +21,7 @@ public class JoinCommand extends SubCommand{
 
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, CommandUsage.USER_JOIN.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, Commands.USER_JOIN.getUsage(), cmd.getLabel());
 			return true;
 		}
 
