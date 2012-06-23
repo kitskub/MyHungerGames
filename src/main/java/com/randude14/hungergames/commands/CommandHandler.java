@@ -109,6 +109,9 @@ public class CommandHandler implements CommandExecutor {
 		else if ("start".equalsIgnoreCase(args[0])) {
 			command = new StartCommand();
 		}
+		else if ("stop".equalsIgnoreCase(args[0])) {
+			command = new StopCommand();
+		}
 		else if ("reload".equalsIgnoreCase(args[0])) {
 			command = new ReloadCommand();
 		}
@@ -125,26 +128,18 @@ public class CommandHandler implements CommandExecutor {
 
 	private void getUserCommands(Player player, Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		ChatUtils.helpCommand(player, Commands.USER_LIST.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_JOIN.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_LEAVE.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_QUIT.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_REJOIN.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_SPONSOR.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_VOTE.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_STAT.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.USER_SPECTATE.getUsageAndInfo(), cmd.getLabel());
+		for (Commands c : Commands.values()) {
+			if (!c.getType().equals(Commands.ADMIN_COMMAND)) continue;
+			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
+		}
 	}
 
 	private void getAdminCommands(Player player, Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		ChatUtils.helpCommand(player, Commands.ADMIN_ADD_HELP.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_HELP.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_SET_HELP.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_KICK.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_RELOAD.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_RESTOCK.getUsageAndInfo(), cmd.getLabel());
-		ChatUtils.helpCommand(player, Commands.ADMIN_START.getUsageAndInfo(), cmd.getLabel());
+		for (Commands c : Commands.values()) {
+			if (!c.getType().equals(Commands.ADMIN_COMMAND)) continue;
+			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
+		}
 	}
 
 }

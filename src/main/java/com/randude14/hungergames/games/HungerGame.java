@@ -204,7 +204,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
 		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
 			ChatUtils.broadcast("Enough players have voted that they are ready. Starting game...", this.name);
-			start(player);
+			startGame(player, false);
 		} else {
 			String mess = Config.getVoteMessage(setup)
 					.replace("<player>", player.getName())
@@ -236,41 +236,96 @@ public class HungerGame implements Comparable<HungerGame> {
 		spectators.get(player.getName());
 	}
 	
-	public boolean start(Player player, int ticks) {
-		if (isRunning) return false;
+	public boolean stopGame(Player player, boolean isFinished) {
+		String result = stopGame(isFinished);
+		if (result != null) {
+			ChatUtils.error(player, result);
+			return false;
+		}
+		return true;
+	}
+	
+	public String stopGame(boolean isFinished) {
+		if (!isRunning && !isPaused && !isCounting) return "Game is not started";
 
-		if (stats.size() < Config.getMinPlayers(setup)) {
-			ChatUtils.error(player, "There are not enough players in %s", name);
-			return false;
-		}
-		if (isCounting) {
-			ChatUtils.error(player, "%s is already counting down.", name);
-			return false;
-		}
 		if (!enabled) {
-			ChatUtils.error(player, "%s is currently not enabled.", name);
-			return false;
+			return "%s is currently not enabled.";
 		}
-		GameStartEvent event = new GameStartEvent(this);
-		HungerGames.callEvent(event);
-		if (event.isCancelled()) {
-			return false;
+		if (!isFinished) {
+			GameStopEvent event = new GameStopEvent(this);
+			HungerGames.callEvent(event);
 		}
+		for (Player player : getRemainingPlayers()) {
+			teleportPlayerToSpawn(player);
+			GameManager.unfreezePlayer(player);
+			ItemStack[] contents = player.getInventory().getContents();
+			player.getInventory().clear();
+			InventorySave.loadInventory(player);
+			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
+		}
+		clear();
+		ResetHandler.resetChanges(this);
+		return null;
+	}
+	
+	/**
+	 * Starts the game with the specified number of ticks
+	 * 
+	 * @param player
+	 * @param ticks
+	 * @return true if game or countdown was successfully started
+	 */
+	public boolean startGame(Player player, int ticks) {
 		if (ticks <= 0) {
-			ChatUtils.broadcast("Starting %s. Go!!", name);
-			startGame();
+			String result = startGame(0);
+			if (result != null) {
+				ChatUtils.error(player, result);
+				return false;
+			}
 		} else {
-			countdown = new GameCountdown(this, ticks);
+			countdown = new GameCountdown(this, ticks, player);
 			isCounting = true;
 		}
 		return true;
 	}
 
-	public boolean start(Player player) {
-		return start(player, Config.getDefaultTime(setup));
+	/**
+	 * Starts this game with the default time if immediate is true. Otherwise, starts the game immediately.
+	 * 
+	 * @param player starter
+	 * @param immediate
+	 * @return
+	 */
+	public boolean startGame(Player player, boolean immediate) {
+		if(!immediate) return startGame(player, Config.getDefaultTime(setup));
+		return startGame(player, 0);
 	}
 
-	public void startGame() {
+	/**
+	 * Starts the game
+	 * 
+	 * @param ticks 
+	 * @return Null if game or countdown was not successfully started. Otherwise, error message.
+	 */
+	public String startGame(int ticks) {
+		if (ticks > 0) {
+			countdown = new GameCountdown(this, ticks);
+			isCounting = true;
+			return null;
+		}
+				
+		if (isRunning) return "Game is already running";
+
+		if (stats.size() < Config.getMinPlayers(setup)) return "There are not enough players in %s";
+		if (isCounting) return "%s is already counting down.";
+		if (!enabled) return "%s is currently not enabled.";
+		
+		GameStartEvent event = new GameStartEvent(this);
+		HungerGames.callEvent(event);
+		if (event.isCancelled()) {
+			return "Start was cancelled.";
+		}
+		
 		releasePlayers();
 		fillInventories();
 		for (String playerName : stats.keySet()) {
@@ -286,28 +341,17 @@ public class HungerGame implements Comparable<HungerGame> {
 		isPaused = false;
 		readyToPlay.clear();
 		countdown = null;
-	}
-
-	public boolean pauseGame(Player player) {
-		if(isPaused) {
-			ChatUtils.error(player, "Cannot pause a game that has been paused.");
-			return false;
-		}
-		return pauseGame();
+		ChatUtils.broadcast("Starting %s. Go!!", name);
+		return null;
 	}
 	
- 	public boolean resume(Player player, int ticks) {
-		if(!isPaused) {
-			ChatUtils.error(player, "Cannot resume a game that has not been paused.");
-		}
-		GameStartEvent event = new GameStartEvent(this, true);
-		HungerGames.callEvent(event);
-		if (event.isCancelled()) {
-			return false;
-		}
+ 	public boolean resumeGame(Player player, int ticks) {		
 		if (ticks <= 0) {
-			resumeGame();
-			ChatUtils.broadcast("Resuming %s. Go!!", name);
+			String result = resumeGame(0);
+			if (result != null) {
+				ChatUtils.error(player, result);
+				return false;
+			}
 		} else {
 			countdown = new GameCountdown(this, ticks, true);
 			isCounting = true;
@@ -315,11 +359,65 @@ public class HungerGame implements Comparable<HungerGame> {
 		return true;
 	}
 	
-	public boolean resume(Player player) {
-		return resume(player, Config.getDefaultTime(setup));
+	public boolean resumeGame(Player player, boolean immediate) {
+		if (!immediate) return resumeGame(player, Config.getDefaultTime(setup));
+		return resumeGame(player, 0);
 	}
 	
-	public boolean pauseGame() {
+	/**
+	 * Resumes the game
+	 * 
+	 * @param ticks 
+	 * @return Null if game or countdown was not successfully started. Otherwise, error message.
+	 */
+	public String resumeGame(int ticks) {
+		if(!isPaused) return "Cannot resume a game that has not been paused.";
+		if (ticks > 0) {
+			countdown = new GameCountdown(this, ticks, true);
+			isCounting = true;
+			return null;
+		}
+		GameStartEvent event = new GameStartEvent(this, true);
+		HungerGames.callEvent(event);
+		if (event.isCancelled()) {
+			return "Start was cancelled.";
+		}
+		
+		isRunning = true;
+		isPaused = false;
+		isCounting = false;
+		countdown = null;
+		for(String playerName : stats.keySet()) {
+			Player p = Bukkit.getPlayer(playerName);
+			if (p == null) continue;
+			InventorySave.saveAndClearInventory(p);
+			InventorySave.loadGameInventory(p);
+			p.teleport(spawnsSaved.remove(playerName));
+			World world = p.getWorld();
+			world.setFullTime(0L);
+			p.setHealth(20);
+			p.setFoodLevel(20);
+		}
+		ChatUtils.broadcast("Resuming %s. Go!!", name);
+		return null;
+	}
+	
+	public boolean pauseGame(Player player) {
+		String result = pauseGame();
+		if (result != null) {
+			ChatUtils.error(player, "Cannot pause a game that has been paused.");
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @return null if successful, message if not
+	 */
+	public String pauseGame() {
+		if(isPaused) return "Cannot pause a game that has been paused.";
+		
 		HungerGames.callEvent(new GamePauseEvent(this));
 		isRunning = false;
 		isCounting = false;
@@ -336,28 +434,9 @@ public class HungerGame implements Comparable<HungerGame> {
 			spawnsSaved.put(playerName, p.getLocation());
 			teleportPlayerToSpawn(p);
 		}
-		return true;
+		return null;
 	}
 	
-	public void resumeGame() {
-		isRunning = true;
-		isPaused = false;
-		isCounting = false;
-		countdown = null;
-		for(String playerName : stats.keySet()) {
-			Player p = Bukkit.getPlayer(playerName);
-			if (p == null) continue;
-			InventorySave.saveAndClearInventory(p);
-			InventorySave.loadGameInventory(p);
-			p.teleport(spawnsSaved.remove(playerName));
-			World world = p.getWorld();
-			world.setFullTime(0L);
-			p.setHealth(20);
-			p.setFoodLevel(20);
-		}
-		
-	}
-
 	private void releasePlayers() {
 		for (String playerName : stats.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
@@ -543,6 +622,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		allPlayers.clear();
 		isRunning = false;
 		isCounting = false;
+		isPaused = false;
 	}
 
 	public void teleportPlayerToSpawn(Player player) {
@@ -559,8 +639,13 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	}
 
-	public void checkForGameOver(boolean notifyOfRemaining) {// TODO config option
-	    if(!isRunning) return;
+	/**
+	 * 
+	 * @param notifyOfRemaining
+	 * @return true if is over, false if not
+	 */
+	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
+	    if(!isRunning) return false;
 	    List<Player> remaining = getRemainingPlayers();
 	    if (remaining.size() < 2) {
 		    Player winner = remaining.get(0);
@@ -570,20 +655,14 @@ public class HungerGame implements Comparable<HungerGame> {
 			    event = new GameEndEvent(this);
 		    } else {
 			    ChatUtils.broadcast("%s has won the game %s! Congratulations!", winner.getName(), name);
-			    playerLeaving(winner);
-			    if (!Config.getWinnerKeepsItems(setup)) {
-				    dropInventory(winner);
-			    }
-			    teleportPlayerToSpawn(winner);
-			    InventorySave.loadInventory(winner);
 			    event = new GameEndEvent(this, winner);
 		    }
-		    clear();
 		    HungerGames.callEvent(event);
-		    ResetHandler.resetChanges(this);
+		    stopGame(winner, true);
+		    return true;
 	    }
 
-	    if (!notifyOfRemaining) return;
+	    if (!notifyOfRemaining) return false;
 	    String mess = "Remaining players: ";
 	    for (int cntr = 0; cntr < remaining.size(); cntr++) {
 		    mess += remaining.get(cntr).getName();
@@ -593,6 +672,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	    }
 	    ChatUtils.broadcastRaw(mess, ChatColor.WHITE);
+	    return false;
 	}
 
 	public String getInfo() {

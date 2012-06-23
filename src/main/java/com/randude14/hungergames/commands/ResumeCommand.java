@@ -29,7 +29,7 @@ public class ResumeCommand extends SubCommand{
 		}
 
 		if(args.length == 1) {
-			if(!game.resume(player)) {
+			if(!game.resumeGame(player, false)) {
 				ChatUtils.error(player, "Failed to resume %s.", game.getName());
 			}
 
@@ -43,7 +43,7 @@ public class ResumeCommand extends SubCommand{
 				ChatUtils.error(player, "'%s' is not an integer.", args[1]);
 				return true;
 			}
-			if(!game.resume(player, seconds)) {
+			if(!game.resumeGame(player, seconds)) {
 				ChatUtils.error(player, "Failed to resume %s.", game.getName());
 			}
 

@@ -11,6 +11,11 @@ v0.5
 - Fixed changes by non-playing players that had left the game, but not quitted being added internally
 - Added a getPlayingSession()
 - Removed some double sending messages
+- Made InventorySave not use getArmorContents
+- Added /hg stop <game name>
+- Reorganization of stop, stopGame, start, startGame
+- added getType() to Commands
+
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

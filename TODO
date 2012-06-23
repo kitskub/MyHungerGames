@@ -6,6 +6,7 @@ HIGH:
 - Restart game
 - Enhance Spectating
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
+- Fix quit to separate playing players from non-playing
 
 MEDIUM:
 - Random events

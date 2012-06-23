@@ -10,16 +10,13 @@ public class InventorySave {
 	private static final Map<Player, InventorySave> savedGameInventories = new HashMap<Player, InventorySave>();
 	
 	private ItemStack[] contents;
-	private ItemStack[] armorContents;
 
 	private InventorySave(Player player) {
 		contents = player.getInventory().getContents();
-		armorContents = player.getInventory().getArmorContents();
 	}
 
 	private void loadInventoryTo(Player player) {
 		player.getInventory().setContents(contents);
-		player.getInventory().setArmorContents(armorContents);
 	}
 	
 	public static void saveAndClearInventory(Player player){

@@ -1,5 +1,7 @@
 package com.randude14.hungergames;
 
+import com.avaje.ebean.AdminAutofetch;
+
 public class Defaults {
 	
     public enum Message {
@@ -79,6 +81,7 @@ public class Defaults {
 	ADMIN_REMOVE_ITEMSET("hungergame.remove.itemset", ADMIN),
 	ADMIN_SET_ENABLED("hungergame.set.enabled", ADMIN),
 	ADMIN_SET_SPAWN("hungergame.set.spawn", ADMIN),
+	ADMIN_STOP("hungergame.game.stop", ADMIN),
 	ADMIN_START("hungergame.game.start", ADMIN),
 	ADMIN_PAUSE("hungergame.game.pause", ADMIN),
 	ADMIN_RESUME("hungergame.game.resume", ADMIN),
@@ -91,12 +94,12 @@ public class Defaults {
 	USER_LEAVE("hungergame.user.leave", USER),
 	USER_LIST("hungergame.user.list", USER),
 	USER_REJOIN("hungergame.user.rejoin", USER),
+	USER_SPECTATE("hungergame.user.spectate", USER),
 	USER_SPONSOR("hungergame.user.sponsor", USER),
 	USER_VOTE("hungergame.user.vote", USER),
 	USER_STAT("hungergame.user.stat", USER),
 	USER_HELP("hungergame.user.help", USER),
-	USER_QUIT("hungergame.user.quit", USER), 
-	USER_SPECTATE("hungergame.user.spectate", USER);
+	USER_QUIT("hungergame.user.quit", USER);
 
 	private String value;
 	private Perm parent;
@@ -115,45 +118,55 @@ public class Defaults {
 	}
     }
     
-    public enum Commands{
+    public enum Commands {	
+	    
+	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", null),
+	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
+	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name>", "add a chest", Perm.ADMIN_ADD_CHEST),
+	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
+	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
+	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", null),
+	ADMIN_REMOVE_SPAWNPOINT("ADMIN", "/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
+	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest", Perm.ADMIN_REMOVE_CHEST),
+	ADMIN_REMOVE_GAME("ADMIN", "/%s remove game <game name>", "remove a game", Perm.ADMIN_REMOVE_GAME),
+	ADMIN_REMOVE_ITEMSET("ADMIN", "/%s remove itemset <game name> <itemset name>", "remove a game", Perm.ADMIN_REMOVE_ITEMSET),
+	ADMIN_SET_HELP("ADMIN", "/%s set ?", "type for more help", null),
+	ADMIN_SET_ENABLED("ADMIN", "/%s set enabled <game name> <true/false>", "enable or disable a game", Perm.ADMIN_SET_ENABLED),
+	ADMIN_SET_SPAWN("ADMIN", "/%s set spawn <game name>", "set the spawnpoint for a game", Perm.ADMIN_SET_SPAWN),
+	ADMIN_START("ADMIN", "/%s start <game name> [seconds]", "manually start a game", Perm.ADMIN_START),
+	ADMIN_STOP("ADMIN", "/%s stop <game name>", "manually stop a game", Perm.ADMIN_STOP),
+	ADMIN_PAUSE("ADMIN", "/%s pause <game name>", "pause a game", Perm.ADMIN_PAUSE),
+	ADMIN_RESUME("ADMIN", "/%s resume <game name>", "resume a game", Perm.ADMIN_RESUME),
+	ADMIN_RELOAD("ADMIN", "/%s rejoin", "reload MyHungerGames", Perm.ADMIN_RELOAD),
+	ADMIN_KICK("ADMIN", "/%s kick <player>", "kick a player from a game", Perm.ADMIN_KICK),
+	ADMIN_RESTOCK("ADMIN", "/%s restock <game name>", "restock all a game's chests", Perm.ADMIN_RESTOCK),
+	USER_JOIN("USER", "/%s join <game name>", "join a game", Perm.USER_JOIN),
+	USER_LEAVE("USER", "/%s leave", "leave current game temporarily (if enabled)", Perm.USER_LEAVE),
+	USER_LIST("USER", "/%s list", "list games", Perm.USER_LIST),
+	USER_REJOIN("USER", "/%s rejoin", "rejoin your current game", Perm.USER_REJOIN),
+	USER_SPECTATE("USER", "/%s spectate <game name>", "puts player in creative to spectate a game or cancels a spectation", Perm.USER_SPECTATE),
+	USER_SPONSOR("USER", "/%s sponsor <player>", "sponsor a player an item", Perm.USER_SPONSOR),
+	USER_VOTE("USER", "/%s vote", "cast your vote that you are ready to play", Perm.USER_VOTE),
+	USER_STAT("USER", "/%s stat <game name>", "list stats for a game", Perm.USER_STAT),
+	USER_QUIT("USER", "/%s quit", "quits the current game indefinitely", Perm.USER_QUIT);
 	
-	ADMIN_ADD_HELP("/%s add ?", "type for more help", null),
-	ADMIN_ADD_SPAWNPOINT("/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
-	ADMIN_ADD_CHEST("/%s add chest <game name>", "add a chest", Perm.ADMIN_ADD_CHEST),
-	ADMIN_ADD_GAME("/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
-	ADMIN_ADD_ITEMSET("/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
-	ADMIN_REMOVE_HELP("/%s remove ?", "type for more help", null),
-	ADMIN_REMOVE_SPAWNPOINT("/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
-	ADMIN_REMOVE_CHEST("/%s remove chest <game name>", "remove a chest", Perm.ADMIN_REMOVE_CHEST),
-	ADMIN_REMOVE_GAME("/%s remove game <game name>", "remove a game", Perm.ADMIN_REMOVE_GAME),
-	ADMIN_REMOVE_ITEMSET("/%s remove itemset <game name> <itemset name>", "remove a game", Perm.ADMIN_REMOVE_ITEMSET),
-	ADMIN_SET_HELP("/%s set ?", "type for more help", null),
-	ADMIN_SET_ENABLED("/%s set enabled <game name> <true/false>", "enable or disable a game", Perm.ADMIN_SET_ENABLED),
-	ADMIN_SET_SPAWN("/%s set spawn <game name>", "set the spawnpoint for a game", Perm.ADMIN_SET_SPAWN),
-	ADMIN_START("/%s start <game name> [seconds]", "manually start a game", Perm.ADMIN_START),
-	ADMIN_PAUSE("/%s pause <game name>", "pause a game", Perm.ADMIN_PAUSE),
-	ADMIN_RESUME("/%s resume <game name>", "resume a game", Perm.ADMIN_RESUME),
-	ADMIN_RELOAD("/%s rejoin", "reload MyHungerGames", Perm.ADMIN_RELOAD),
-	ADMIN_KICK("/%s kick <player>", "kick a player from a game", Perm.ADMIN_KICK),
-	ADMIN_RESTOCK("/%s restock <game name>", "restock all a game's chests", Perm.ADMIN_RESTOCK),
-	USER_JOIN("/%s join <game name>", "join a game", Perm.USER_JOIN),
-	USER_LEAVE("/%s leave", "leave current game temporarily (if enabled)", Perm.USER_LEAVE),
-	USER_LIST("/%s list", "list games", Perm.USER_LIST),
-	USER_REJOIN("/%s rejoin", "rejoin your current game", Perm.USER_REJOIN),
-	USER_SPONSOR("/%s sponsor <player>", "sponsor a player an item", Perm.USER_SPONSOR),
-	USER_VOTE("/%s vote", "cast your vote that you are ready to play", Perm.USER_VOTE),
-	USER_STAT("/%s stat <game name>", "list stats for a game", Perm.USER_STAT),
-	USER_QUIT("/%s quit", "quits the current game indefinitely", Perm.USER_QUIT),
-	USER_SPECTATE("/%s spectate <game name>", "puts player in creative to spectate a game or cancels a spectation", Perm.USER_SPECTATE);
-	
+	private String type;
 	private String usage;
 	private String info;
 	private Perm perm;
 	
-	private Commands(String usage, String info, Perm perm) {
-	    this.usage = usage;
-	    this.info = info;
-	    this.perm = perm;
+	public static final String ADMIN_COMMAND = "ADMIN";
+	public static final String USER_COMMAND = "USER";
+	
+	private Commands(String type, String usage, String info, Perm perm) {
+		this.type = type;
+		this.usage = usage;
+		this.info = info;
+		this.perm = perm;
+	}
+	
+	public String getType() {
+		return type;
 	}
 	
 	public Perm getPerm() {

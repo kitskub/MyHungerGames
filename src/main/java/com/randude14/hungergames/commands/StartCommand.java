@@ -43,7 +43,7 @@ public class StartCommand extends SubCommand{
 		else {
 			seconds = Config.getDefaultTime(game.getSetup());
 		}
-		if (!game.start(player, seconds)) {
+		if (!game.startGame(player, seconds)) {
 			ChatUtils.error(player, "Failed to start %s.", game.getName());
 		}
 		return true;
