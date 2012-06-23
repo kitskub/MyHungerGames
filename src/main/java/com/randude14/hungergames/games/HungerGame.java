@@ -82,7 +82,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection spawnPointsSection = section.getConfigurationSection("spawn-points");
 			for (String key : spawnPointsSection.getKeys(false)) {
 				String str = spawnPointsSection.getString(key);
-				Location loc = HungerGames.parseToLoc(str);
+				Location loc = null;
+				try {
+					loc = HungerGames.parseToLoc(str);
+				}
+				catch (NumberFormatException e) {}
 				if (loc == null) {
 					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
@@ -96,7 +100,11 @@ public class HungerGame implements Comparable<HungerGame> {
 			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
 			for (String key : chestsSection.getKeys(false)) {
 				String str = chestsSection.getString(key);
-				Location loc = HungerGames.parseToLoc(str);
+								Location loc = null;
+				try {
+					loc = HungerGames.parseToLoc(str);
+				}
+				catch (NumberFormatException e) {}
 				if (loc == null) {
 					ChatUtils.warning("failed to load location '%s'", str);
 					continue;
@@ -115,7 +123,10 @@ public class HungerGame implements Comparable<HungerGame> {
                 }
                 
 		enabled = section.getBoolean("enabled", Boolean.TRUE);
-		spawn = HungerGames.parseToLoc(section.getString("spawn"));
+		try {
+			spawn = HungerGames.parseToLoc(section.getString("spawn"));
+		} 
+		catch (NumberFormatException numberFormatException) {}
 		HungerGames.callEvent(new GameLoadEvent(this));
 	}
 
@@ -351,7 +362,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		for (String playerName : stats.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
-			HungerGames.unfreezePlayer(p);
+			GameManager.unfreezePlayer(p);
 		}
 
 	}
@@ -458,7 +469,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    spawnsTaken.put(player.getName(), loc);
 	    player.teleport(loc);
 	    if(!Config.getShouldClearInv(setup)) InventorySave.saveAndClearInventory(player);
-	    if (!isRunning) HungerGames.freezePlayer(player);
+	    if (!isRunning) GameManager.freezePlayer(player);
 	    allPlayers.add(player.getName());
 	    return true;
 	}
@@ -520,7 +531,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private synchronized void playerLeaving(Player player) {
 		spawnsTaken.remove(player.getName());
 		spawnsSaved.remove(player.getName());
-		HungerGames.unfreezePlayer(player);
+		GameManager.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
 	}
 

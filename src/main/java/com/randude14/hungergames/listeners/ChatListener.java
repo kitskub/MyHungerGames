@@ -23,12 +23,12 @@ public class ChatListener implements Listener {
 	public void playerChat(PlayerChatEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (!HungerGames.getSponsors().containsKey(player.getName())) return;
+		if (!GameManager.getSponsors().containsKey(player.getName())) return;
 
 		int choice = 0;
 		event.setCancelled(true);
 		String mess = event.getMessage();
-		String sponsor = HungerGames.removeSponsor(player);
+		String sponsor = GameManager.removeSponsor(player);
 		try {
 			choice = Integer.parseInt(mess) - 1;
 		} catch (Exception ex) {

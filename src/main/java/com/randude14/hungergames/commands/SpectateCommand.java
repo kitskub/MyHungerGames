@@ -4,7 +4,6 @@ import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
 
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.command.Command;
@@ -20,9 +19,9 @@ public class SpectateCommand extends SubCommand{
     public boolean execute(CommandSender cs, Command cmd, String[] args) {
 	    Player player = (Player) cs;
 	    if (!HungerGames.checkPermission(player, Perm.USER_SPECTATE)) return true;
-	    if (GameManager.getGame(HungerGames.getSpectating(player)) != null) {
-		    GameManager.getGame(HungerGames.getSpectating(player)).removeSpectator(player);
-		    HungerGames.removeSpectator(player);
+	    if (GameManager.getGame(GameManager.getSpectating(player)) != null) {
+		    GameManager.getGame(GameManager.getSpectating(player)).removeSpectator(player);
+		    GameManager.removeSpectator(player);
 		    return true;
 	    }
 	    if (args.length < 1) {
@@ -35,7 +34,7 @@ public class SpectateCommand extends SubCommand{
 		    return true;
 	    }
 	    game.addSpectator(player);
-	    HungerGames.addSpectator(player, game.getName());
+	    GameManager.addSpectator(player, game.getName());
 	    return true;
     }
     

@@ -59,7 +59,7 @@ public class PlayerListener implements Listener {
 	public void playerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		Location frozenLoc = HungerGames.getFrozenLocation(player);
+		Location frozenLoc = GameManager.getFrozenLocation(player);
 		if (frozenLoc == null
 			|| GameManager.getSession(player) == null
 			|| !GameManager.getSession(player).getPlayerStat(player).isPlaying()

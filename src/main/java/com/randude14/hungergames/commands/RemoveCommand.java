@@ -5,6 +5,7 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameRemoveEvent;
+import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
@@ -51,7 +52,7 @@ public class RemoveCommand extends SubCommand{
 		return true;
 	    }
 	    
-	    HungerGames.addSpawnRemover(player, game.getName());
+	    SessionListener.addSpawnRemover(player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a spawn point to remove it from %s.",
 			    game.getName());
@@ -71,7 +72,7 @@ public class RemoveCommand extends SubCommand{
 		return true;
 	    }
 
-	    HungerGames.addChestRemover(player, args[1]);
+	    SessionListener.addChestRemover(player, args[1]);
 	    ChatUtils.send(player, ChatColor.GREEN,
 			    "Hit a chest to remove it from %s.", game.getName());
 	}

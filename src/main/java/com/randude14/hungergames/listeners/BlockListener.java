@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -41,7 +40,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		if (GameManager.getGame(HungerGames.getSpectating(player)) != null) { // TODO configurable
+		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
 			ChatUtils.error(player, "Cannot place this block while spectating %s.", session.getName());
 			player.sendMessage("You cannot place this block while spectating");
@@ -71,7 +70,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		if (GameManager.getGame(HungerGames.getSpectating(player)) != null) { // TODO configurable
+		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
 			ChatUtils.error(player, "Cannot break this block while spectating %s.", session.getName());
 			player.sendMessage("You cannot break this block while spectating");
@@ -102,9 +101,9 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		if (GameManager.getGame(HungerGames.getSpectating(player)) != null) { // TODO configurable
+		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", GameManager.getGame(HungerGames.getSpectating(player)).getName());
+			ChatUtils.error(player, "Cannot interact with this block while spectating %s.", GameManager.getGame(GameManager.getSpectating(player)).getName());
 			player.sendMessage("You cannot interact with this block while spectating");
 		}
 	}

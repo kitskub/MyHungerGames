@@ -24,14 +24,17 @@ public class Economy {
 	}
 	
 	public void withdraw(String player, double amount) {
+		if (econ == null) return;
 		econ.withdrawPlayer(player, amount);
 	}
 	
 	public void deposit(String player, double amount) {
+		if (econ == null) return;
 		econ.depositPlayer(player, amount);
 	}
 	
 	public boolean hasEnough(String player, double amount) {
+		if (econ == null) return true;
 		return econ.has(player, amount);
 	}
 

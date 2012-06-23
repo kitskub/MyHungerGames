@@ -1,7 +1,6 @@
 package com.randude14.hungergames;
 
 import com.randude14.hungergames.commands.CommandHandler;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.listeners.*;
 import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
@@ -13,12 +12,10 @@ import com.randude14.hungergames.utils.ChatUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.net.URL;
 
 import org.w3c.dom.Document;
@@ -29,12 +26,10 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.Inventory;
@@ -51,14 +46,7 @@ public class HungerGames extends JavaPlugin{
 	private static Economy econ;
 	private static GameManager manager;
 	private static Random rand;
-	private static Map<String, Location> frozenPlayers;
-	private static Map<String, String> sponsors; // <sponsor, sponsee>
-	private static Map<String, String> spectators; // <player, game>
-	private static Map<ItemStack, Float> globalChestLoot;
-	private static Map<ItemStack, Double> globalSponsorLoot;
-	private static Map<String, Map<ItemStack, Float>> chestLoots;
-	private static Map<String, Map<ItemStack, Double>> sponsorLoots;
-
+	
 	@Override
 	public void onEnable() {
 		instance = this;
@@ -67,9 +55,6 @@ public class HungerGames extends JavaPlugin{
 		getCommand(CMD_ADMIN).setExecutor(commands);
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
-		frozenPlayers = new HashMap<String, Location>();
-		sponsors = new HashMap<String, String>();
-		spectators = new HashMap<String, String>();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
@@ -81,14 +66,6 @@ public class HungerGames extends JavaPlugin{
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    ChatUtils.info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
-		}
-		globalChestLoot = Config.getGlobalChestLoot();
-		globalSponsorLoot = Config.getGlobalSponsorLoot();
-		chestLoots = new HashMap<String, Map<ItemStack, Float>>();
-		sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
-		for (String itemset : Config.getItemSets()) {
-		    chestLoots.put(itemset, Config.getChestLoot(itemset));
-		    sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
 		}
 		loadRegistry();
 		loadResetter();
@@ -158,21 +135,13 @@ public class HungerGames extends JavaPlugin{
 
 	public static void reload() {
 	    instance.reloadConfig();
-	    globalChestLoot = Config.getGlobalChestLoot();
-	    globalSponsorLoot = Config.getGlobalSponsorLoot();
-	    chestLoots = new HashMap<String, Map<ItemStack, Float>>();
-	    sponsorLoots = new HashMap<String, Map<ItemStack, Double>>();
-	    for (String itemset : Config.getItemSets()) {
-		chestLoots.put(itemset, Config.getChestLoot(itemset));
-		sponsorLoots.put(itemset, Config.getSponsorLoot(itemset));
-	    }
 	    GameManager.loadGames();
 	    loadRegistry();
-	    for (String playerName : sponsors.keySet()) {
+	    for (String playerName : GameManager.getSponsors().keySet()) {
 		Player player = Bukkit.getPlayer(playerName);
 		if (player == null) continue;
 		ChatUtils.error(player, "The items available for sponsoring have recently changed. Here are the new items...");
-		addSponsor(player, sponsors.remove(playerName));
+		GameManager.addSponsor(player, GameManager.removeSponsor(player));
 	    }
 	}
 
@@ -234,101 +203,6 @@ public class HungerGames extends JavaPlugin{
 		Bukkit.getServer().getScheduler().cancelTask(taskID);
 	}
 
-	public static void freezePlayer(Player player) {
-		frozenPlayers.put(player.getName(), player.getLocation());
-	}
-
-	public static void unfreezePlayer(Player player) {
-		frozenPlayers.remove(player.getName());
-	}
-
-	public static boolean isPlayerFrozen(Player player) {
-		return frozenPlayers.containsKey(player.getName());
-	}
-
-	public static void addChestAdder(Player player, String name) {
-		SessionListener.addChestAdder(player, name);
-	}
-
-	public static void addChestRemover(Player player, String name) {
-		SessionListener.addChestRemover(player, name);
-	}
-
-	public static void addSpawnAdder(Player player, String name) {
-		SessionListener.addSpawnAdder(player, name);
-	}
-
-	public static void addSpawnRemover(Player player, String name) {
-		SessionListener.addSpawnRemover(player, name);
-	}
-
-	public static boolean addSponsor(Player player, String playerToBeSponsored) {
-	    Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
-	    HungerGame game = GameManager.getSession(sponsoredPlayer);
-	    if (game == null || !game.getPlayerStat(player).isPlaying()) {
-		    ChatUtils.error(player, "That player is playing in a game.");
-		    return false;
-	    }
-	    List<String> itemsets = game.getItemSets();
-	    if (globalSponsorLoot.isEmpty() && (itemsets == null || itemsets.isEmpty())) {
-		    ChatUtils.error(player, "No items are available to sponsor.");
-		    return false;
-	    }
-
-	    if (!isEconomyEnabled()) {
-		    ChatUtils.error(player, "Economy use has been disabled.");
-		    return false;
-	    }
-	    sponsors.put(player.getName(), playerToBeSponsored);
-	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-	    ChatUtils.send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
-		    playerToBeSponsored);
-	    ChatUtils.send(player, "");
-	    int num = 1;
-	    Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
-	    for (ItemStack item : itemMap.keySet()) {
-		    String mess = String.format(">> %d - %s: %d", num, item.getType()
-				    .name(), item.getAmount());
-		    Set<Enchantment> enchants = item.getEnchantments().keySet();
-		    int cntr = 0;
-		    if (!enchants.isEmpty()) {
-			    mess += ", ";
-		    }
-		    for (Enchantment enchant : enchants) {
-			    mess += String.format("%s: %d", enchant.getName(), item.getEnchantmentLevel(enchant));
-			    if (cntr < enchants.size() - 1) {
-				    mess += ", ";
-			    }
-			    cntr++;
-		    }
-		    ChatUtils.send(player, ChatColor.GOLD, mess);
-		    num++;
-	    }
-	    return true;
-	}
-
-	public static Map<String, String> getSponsors() {
-		return Collections.unmodifiableMap(sponsors);
-	}
-	
-	public static String removeSponsor(Player player) {
-		return sponsors.remove(player.getName());
-	}
-	
-	public static void addSpectator(Player player, String gameName) {
-		spectators.put(player.getName(), gameName);
-	}
-	
-	public static String getSpectating(Player player) {
-	    if (player == null) return "";    
-	    if (!spectators.containsKey(player.getName())) return "";
-	    return spectators.get(player.getName());
-	}
-	
-	public static String removeSpectator(Player player) {
-		return spectators.remove(player.getName());
-	}
-
 	public String latestVersion() {
 		try {
 			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
@@ -357,7 +231,7 @@ public class HungerGames extends JavaPlugin{
 			loc.getPitch(), loc.getWorld().getName());
 	}
 
-	public static Location parseToLoc(String str) {
+	public static Location parseToLoc(String str) throws NumberFormatException{
 		if (str == null) {
 			return null;
 		}
@@ -383,14 +257,8 @@ public class HungerGames extends JavaPlugin{
 		return format;
 	}
 
-	public static Location getFrozenLocation(Player player) {
-		if (!frozenPlayers.containsKey(player.getName())) return null;
-		return frozenPlayers.get(player.getName());
-	}
-
 	public static void playerLeftServer(Player player) {
 		SessionListener.removePlayer(player);
-		sponsors.remove(player.getName());
 	}
 
 	public static boolean hasInventoryBeenCleared(Player player) {
@@ -413,8 +281,7 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	public static void fillInventory(Inventory inv, List<String> itemsets) {
-		if (globalChestLoot.isEmpty()
-				&& (itemsets == null || itemsets.isEmpty())) {
+		if (Config.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 		

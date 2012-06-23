@@ -5,6 +5,7 @@ import com.randude14.hungergames.Defaults.CommandUsage;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameCreateEvent;
+import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
@@ -49,7 +50,7 @@ public class AddCommand extends SubCommand{
 		 return true;
 	    }
 	    
-	    HungerGames.addSpawnAdder(player, game.getName());
+	    SessionListener.addSpawnAdder(player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN,
 		    "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
 	}
@@ -68,7 +69,7 @@ public class AddCommand extends SubCommand{
 		return true;
 	    }
 	    
-	    HungerGames.addChestAdder(player, args[1]);
+	    SessionListener.addChestAdder(player, args[1]);
 	    ChatUtils.send(player, ChatColor.GREEN,
 		    "Hit a chest to add it to %s.", game.getName());
 	}
