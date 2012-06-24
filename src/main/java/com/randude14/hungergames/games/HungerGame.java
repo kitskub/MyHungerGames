@@ -36,7 +36,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, Location> spawnsTaken;
 	private final Map<String, Location> spawnsSaved;
 	private final Map<String, Location> spectators;
-	private final Map<String, GameMode> spectatorGameMode;
+	private final Map<String, Boolean> spectatorFlying;
 	private final List<Location> spawnPoints;
 	private final List<Location> chests;
 	private final List<String> readyToPlay;
@@ -61,7 +61,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawnsTaken = new HashMap<String, Location>();
 		spawnsSaved = new HashMap<String, Location>();
 		spectators = new HashMap<String, Location>();
-		spectatorGameMode = new HashMap<String, GameMode>();
+		spectatorFlying = new HashMap<String, Boolean>();
 		stats = new TreeMap<String, PlayerStat>();
 		countdown = null;
 		allPlayers = new ArrayList<String>();
@@ -220,8 +220,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		Random rand = HungerGames.getRandom();
 		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 		player.teleport(loc);
-		spectatorGameMode.put(player.getName(), player.getGameMode());
-		player.setGameMode(GameMode.CREATIVE);
+		spectatorFlying.put(player.getName(), player.isFlying());
+		player.setFlying(true);
+		player.setAllowFlight(true);
 	}
 
 	public boolean isSpectating(Player player) {
@@ -230,7 +231,8 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	public void removeSpectator(Player player) {
 		player.teleport(spectators.remove(player.getName()));
-		player.setGameMode(spectatorGameMode.get(player.getName()));
+		player.setFlying(spectatorFlying.get(player.getName()));
+		player.setAllowFlight(spectatorFlying.get(player.getName()));
 	}
 
 	public void getSpectatorLocation(Player player) {

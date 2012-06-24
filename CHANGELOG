@@ -17,6 +17,7 @@ v0.5
 - added getType() to Commands
 - Improved Logging
 - Made players that quit who are not playing not drop their inventory
+- Spectators now just fly, and do not get creative
 
 
 v0.4.3

@@ -55,8 +55,8 @@ public class GameCountdown implements Runnable {
 	public void run() {
 		if (countdown <= 1) {
 			HungerGames.cancelTask(taskId);
-			game.startGame(starter, 0);
 			game.setCounting(false);
+			game.startGame(starter, 0);
 			return;
 		}
 		countdown--;

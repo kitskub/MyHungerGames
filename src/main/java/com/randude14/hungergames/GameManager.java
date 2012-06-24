@@ -98,7 +98,7 @@ public class GameManager{
 	 */
 	public static HungerGame getPlayingSession(Player player) {
 		for (HungerGame game : games) {
-			if (game.contains(player) && game.isPlaying(player)) {
+			if (game.isPlaying(player)) {
 				return game;
 			}
 

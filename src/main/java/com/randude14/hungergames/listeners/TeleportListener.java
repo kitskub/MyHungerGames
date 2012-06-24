@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 
 public class TeleportListener implements Listener {
@@ -17,6 +18,7 @@ public class TeleportListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session == null) return;
 		if(!Config.getCanTeleport(session.getSetup())) {
+			Logging.debug("Cancelling teleport for player: {0}", event.getPlayer().getName());
 			event.setCancelled(true);
 		}
 		

@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
 		Location frozenLoc = GameManager.getFrozenLocation(player);
 		if (frozenLoc == null
 			|| GameManager.getPlayingSession(player) == null
-			|| GameManager.getPlayingSession(player).isRunning()) {
+			|| !GameManager.getPlayingSession(player).isRunning()) {
 			return;
 		}
 		Location at = player.getLocation();
