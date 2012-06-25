@@ -600,20 +600,15 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 	
 	public synchronized boolean quit(Player player) {
-	    if (!contains(player)) {
-		ChatUtils.error(player, "You are not in the game %s.", name);
-		return false;
-	    }
-	    if(isRunning) {
-		stats.get(player.getName()).die();
-	    }
-	    else {
-		stats.remove(player.getName());
-	    }
 	    if (isPlaying(player)) {
+                    stats.remove(player.getName());
 		    dropInventory(player);
 		    teleportPlayerToSpawn(player);
 	    }
+            else {
+                ChatUtils.error(player, "You are not in the game %s.", name);
+		return false;
+            }
 	    playerLeaving(player);
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    return true;
@@ -664,6 +659,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 	    if(!isRunning) return false;
 	    List<Player> remaining = getRemainingPlayers();
+            if(remaining.size() < 1) return false;
 	    if (remaining.size() < 2) {
 		    Player winner = remaining.get(0);
 		    GameEndEvent event;

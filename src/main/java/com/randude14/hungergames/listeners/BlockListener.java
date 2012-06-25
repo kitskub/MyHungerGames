@@ -17,25 +17,21 @@ import com.randude14.hungergames.utils.ChatUtils;
 
 public class BlockListener implements Listener {
 	
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
-			String setup = session.getSetup();
-			List<Integer> list = Config.getSpecialBlocksPlace(setup);
-			boolean contains = list.contains(event.getBlock().getTypeId());
-			boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
-			if(contains && canPlaceBlocks) {
-				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
-			}
-
-			if(!contains && !canPlaceBlocks) {
-				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
+                        String setup = session.getSetup();
+			List<Integer> list = Config.getSpecialBlocksBreak(setup);
+                        List<Integer> listglobal = Config.getSpecialBlocksBreakGlobal();
+			boolean canPlaceBlockssetup = Config.getCanPlaceBlockGlobal();
+                        boolean canPlaceBlocks = Config.getCanPlaceBlock(setup);
+                        boolean containsglobal = listglobal.contains(event.getBlock().getTypeId());
+                        boolean containssetup = list.contains(event.getBlock().getTypeId());
+			if(!containsglobal && !containssetup && !canPlaceBlocks && !canPlaceBlockssetup) {
+                            ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
+                            event.setCancelled(true);
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
@@ -44,25 +40,21 @@ public class BlockListener implements Listener {
 		}
 	}
 	
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
 			List<Integer> list = Config.getSpecialBlocksBreak(setup);
-			boolean contains = list.contains(event.getBlock().getTypeId());
-			boolean canBreakBlocks = Config.getCanBreakBlock(setup);
-			if(contains && canBreakBlocks) {
-				ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
-			}
-
-			if(!contains && !canBreakBlocks) {
-				ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
+                        List<Integer> listglobal = Config.getSpecialBlocksBreakGlobal();
+			boolean canBreakBlockssetup = Config.getCanBreakBlock(setup);
+                        boolean canBreakBlocks = Config.getCanBreakBlockGlobal();
+                        boolean containsglobal = listglobal.contains(event.getBlock().getTypeId());
+                        boolean containssetup = list.contains(event.getBlock().getTypeId());
+			if(!containsglobal && !containssetup && !canBreakBlocks && !canBreakBlockssetup) {
+                            ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
+                            event.setCancelled(true);
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
@@ -71,7 +63,7 @@ public class BlockListener implements Listener {
 		}
 	}
 	
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getPlayingSession(player);
@@ -79,18 +71,15 @@ public class BlockListener implements Listener {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
 			List<Integer> list = Config.getSpecialBlocksInteract(setup);
-			boolean contains = list.contains(event.getClickedBlock().getTypeId());
-			boolean canInteractWithBlocks = Config.getCanInteractBlock(setup);
-			if(contains && canInteractWithBlocks) {
-				ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
-			}
-
-			if(!contains && !canInteractWithBlocks) {
-				ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
+                        List<Integer> listglobal = Config.getSpecialBlocksBreakGlobal();
+                        boolean containsglobal = listglobal.contains(event.getClickedBlock().getTypeId());
+			boolean containssetup = list.contains(event.getClickedBlock().getTypeId());
+			boolean canInteractSetup = Config.getCanInteractBlock(setup);
+                        boolean canInteractGlobal = Config.getCanInteractBlockGlobal();
+			if(!containssetup && !containsglobal && !canInteractSetup &&!canInteractGlobal) {
+                            ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
+                            event.setCancelled(true);
+                            return;
 			}
 		}
 		if (GameManager.getGame(GameManager.getSpectating(player)) != null) { // TODO configurable
