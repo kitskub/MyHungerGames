@@ -26,6 +26,12 @@
     </ciManagement>
     <dependencies>
         <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.2.5-R3.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
             <version>1.2.15</version>
@@ -48,11 +54,6 @@
 	    <!-- Because we don't have a repo for this dep! -->
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/HawkEye.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.2.5-R4.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
