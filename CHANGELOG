@@ -24,6 +24,7 @@ v0.5
 - If a player uses /hg leave before the game starts, immediately redirects to /hg quit
 - When a game is resumed from a pause, only players that were playing get put back in.
 - When a game is auto-started, the last player to join does not receive the start messages
+- Fixed block break/place/interact
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

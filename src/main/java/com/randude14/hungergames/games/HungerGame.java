@@ -604,17 +604,17 @@ public class HungerGame implements Comparable<HungerGame> {
 		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
+	    if (stats.get(player.getName()).isPlaying()) {
+		    dropInventory(player);
+		    teleportPlayerToSpawn(player);
+	    }
+	    playerLeaving(player);
 	    if(isRunning) {
 		stats.get(player.getName()).die();
 	    }
 	    else {
 		stats.remove(player.getName());
 	    }
-	    if (isPlaying(player)) {
-		    dropInventory(player);
-		    teleportPlayerToSpawn(player);
-	    }
-	    playerLeaving(player);
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    return true;
 	}

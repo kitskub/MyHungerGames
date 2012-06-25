@@ -103,7 +103,8 @@ itemsets:
 #	  #        chance: 0.01
 #	  #        DURABILITY: 3
 #	  sponsor-loot:
-  
+
+# Setups ADD to global in any list
 setups:
 #  test1:
 #		default-time: 5

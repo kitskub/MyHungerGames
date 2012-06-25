@@ -5,6 +5,7 @@ HIGH:
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
 - Clean up player join /rejoin to check for if a game is running
 - Move messages to methods, not commands
+- Make setups inheritable
 
 MEDIUM:
 - Random events
