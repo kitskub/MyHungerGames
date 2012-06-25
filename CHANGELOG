@@ -18,12 +18,19 @@ v0.5
 - Improved Logging
 - Made players that quit who are not playing not drop their inventory
 - Spectators now just fly, and do not get creative
-
+- Removed unneeded equals in HungerGame
+- Changed "should-clear-inv" to "require-inv-clear"
+- Better death handling to save a little CPU
+- If a player uses /hg leave before the game starts, immediately redirects to /hg quit
+- When a game is resumed from a pause, only players that were playing get put back in.
+- When a game is auto-started, the last player to join does not receive the start messages
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time
+
 v0.4.1
 - Fixed nullpointerexception in getspectating()
+
 v0.4
 - Might have fixed the games not saving
 - Fixed a nullpointerexception

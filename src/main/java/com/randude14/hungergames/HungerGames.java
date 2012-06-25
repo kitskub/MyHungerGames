@@ -115,7 +115,7 @@ public class HungerGames extends JavaPlugin{
 	    }
 	}
 	
-	private static void loadResetter() { // TODO finish implementation
+	private static void loadResetter() {
 	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
 		Logging.info("Hawkeye is installed, using for resetter.");
 		ResetHandler.setRessetter(ResetHandler.HAWKEYE);

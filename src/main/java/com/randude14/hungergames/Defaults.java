@@ -1,7 +1,5 @@
 package com.randude14.hungergames;
 
-import com.avaje.ebean.AdminAutofetch;
-
 public class Defaults {
 	
     public enum Message {
@@ -10,8 +8,8 @@ public class Defaults {
 	REJOIN("<player> has rejoined the game <gam"),
 	LEAVE("<player> has left the game <game>."),
 	QUIT("<player> has quit the game <game>."),
-	VOTE("<killer> killed <killed> in game <game>."),
-	KILL("<player> is ready to play <game>. Type /hg vote when you are ready to play.");
+	VOTE("<player> is ready to play <game>. Type /hg vote when you are ready to play."),
+	KILL("<killer> killed <killed> in game <game>.");
 	
 	private String value;
 	
@@ -36,7 +34,7 @@ public class Defaults {
 	RESPAWN_ON_DEATH(false),
 	DEFAULT_GAME("Test"),
 	LIVES(1),
-	SHOULD_CLEAR_INV(false),
+	REQUIRE_INV_CLEAR(false),
 	ALL_VOTE(false),
 	AUTO_VOTE(false),
 	CAN_PLACE_BLOCK(false),

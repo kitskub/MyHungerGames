@@ -9,12 +9,13 @@ public class PlayerStat {
 	private int deaths;
 	private int kills;
 	private boolean playing;
+	private boolean dead;
 	
 	public PlayerStat(Player player) {
 		deaths = 0;
 		kills = 0;
 		this.player = player;
-		this.playing = true;
+		this.playing = false;
 	}
 	
 	public void kill() {
@@ -23,12 +24,12 @@ public class PlayerStat {
 	
 	public void death() {
 		deaths++;
+		if (hasRunOutOfLives()) dead = true;
 	}
 	
 	public void die() {
-	    HungerGame game = GameManager.getGame(player.getName());
-	    deaths = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
-	    playing = false;
+		dead = true;
+		playing = false;
 	}
 	
 	public int getKills() {
@@ -40,10 +41,14 @@ public class PlayerStat {
 	}
 	
 	public boolean hasRunOutOfLives() {
+		if (dead) return true;
 		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
-		if(lives == 0) return true;
-		return deaths >= lives;
+		if (lives == 0 || deaths >= lives) {
+			dead = true;
+			return true;
+		}
+		return false;
 	}
 	
 	public int getLivesLeft() {
@@ -53,21 +58,21 @@ public class PlayerStat {
 		return lives - deaths;
 	}
 
-    /**
-     * @return true if player is playing
-     */
-    public boolean isPlaying() {
-	return playing;
-    }
+	/**
+	* @return true if player is currently "playing", disregarding lives
+	*/
+	public boolean isPlaying() {
+		return playing;
+	}
 
-    /**
-     * @param playing If player is currently playing
-     */
-    public void setPlaying(boolean playing) {
-	this.playing = playing;
-    }
+	/**
+	* @param playing 
+	*/
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
 
-    public Player getPlayer() {
-	    return player;
-    }
+	public Player getPlayer() {
+		return player;
+	}
 }

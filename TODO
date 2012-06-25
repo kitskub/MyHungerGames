@@ -3,6 +3,8 @@ HIGH:
 - economy config stuff
 - Enhance Spectating
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
+- Clean up player join /rejoin to check for if a game is running
+- Move messages to methods, not commands
 
 MEDIUM:
 - Random events
@@ -16,6 +18,7 @@ MEDIUM:
 - Minimize external resetting of changes from players who have left but not quitted
 - Make non-playing players that have lives orange (or yellow) in /hg stat
 - Add more block events
+- /hga kill <player>
 
 LOW:
 - Force damage

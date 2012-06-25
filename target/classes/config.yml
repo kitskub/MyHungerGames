@@ -36,7 +36,7 @@ global:
   lives: 1
   
   # whether players should clear their inventory before joining
-  should-clear-inv: false
+  require-inv-clear: false
   
   # require everyone that has joined the game to start
   all-vote: false

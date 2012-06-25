@@ -27,7 +27,8 @@ public class PlayerListener implements Listener {
 		Player killer = killed.getKiller();
 		if (killer != null) {
 			HungerGame gameOfKiller = GameManager.getPlayingSession(killer);
-			if (gameOfKilled.equals(gameOfKiller)) {
+			if (gameOfKiller == null) return;
+			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
 				gameOfKiller.killed(killer, killed);
 			}
 		}
@@ -60,15 +61,9 @@ public class PlayerListener implements Listener {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		Location frozenLoc = GameManager.getFrozenLocation(player);
-		if (frozenLoc == null
-			|| GameManager.getPlayingSession(player) == null
-			|| !GameManager.getPlayingSession(player).isRunning()) {
+		if (frozenLoc == null) {
 			return;
 		}
-		Location at = player.getLocation();
-		if (!HungerGames.equals(at, frozenLoc)) {
-			player.teleport(frozenLoc);
-		} 
-
+		player.teleport(frozenLoc);
 	}
 }

@@ -75,6 +75,7 @@ public class GameManager{
 
 	/**
 	 * This does not care about whether the player is actually playing the game or not.
+	 * This also does not care about whether a game is running
 	 * If the player has the potential to rejoin, and therefore has lives, that is the game returned.
 	 * 
 	 * @param player

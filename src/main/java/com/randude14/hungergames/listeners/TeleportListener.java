@@ -16,9 +16,9 @@ public class TeleportListener implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getPlayingSession(player);
-		if(session == null) return;
-		if(!Config.getCanTeleport(session.getSetup())) {
-			Logging.debug("Cancelling teleport for player: {0}", event.getPlayer().getName());
+		if (session == null) return;
+		if (!Config.getCanTeleport(session.getSetup())) {
+			Logging.debug("Cancelling a teleport.");
 			event.setCancelled(true);
 		}
 		

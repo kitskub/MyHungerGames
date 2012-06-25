@@ -86,8 +86,8 @@ public class Config {
 		return plugin.getConfig().getInt("global.lives", LIVES.getInt());
 	}
 	
-	public static boolean getShouldClearInvGlobal() {
-		return plugin.getConfig().getBoolean("global.should-clear-inv", SHOULD_CLEAR_INV.getBoolean());
+	public static boolean getRequireInvClear() {
+		return plugin.getConfig().getBoolean("global.require-inv-clear", REQUIRE_INV_CLEAR.getBoolean());
 	}
 	
 	public static boolean getAllVoteGlobal() {
@@ -233,8 +233,8 @@ public class Config {
 		return plugin.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
 	}
 	
-	public static boolean getShouldClearInv(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".should-clear-inv", getShouldClearInvGlobal());
+	public static boolean getRequireInvClear(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".require-inv-clear", getRequireInvClear());
 	}
 	
 	public static boolean getAllVote(String setup) {
