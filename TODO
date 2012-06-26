@@ -3,7 +3,6 @@ HIGH:
 - economy config stuff
 - Move messages to methods, not commands
 - Make setups inheritable
-- Cleanup SessionListener - only allow one
 - Add more listeners
 
 MEDIUM:

@@ -19,12 +19,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class SessionListener implements Listener {
-	private static final Map<String, Session> chestAdders = new HashMap<String, Session>();
-	private static final Map<String, Session> chestRemovers = new HashMap<String, Session>();
-	private static final Map<String, Session> spawnAdders = new HashMap<String, Session>();
-	private static final Map<String, Session> spawnRemovers = new HashMap<String, Session>();
-	private static final Map<String, Session> cuboidAdders = new HashMap<String, Session>();
-	
+	private static final Map<String, Session> sessions = new HashMap<String, Session>(); // <player, session>>
+
 	@EventHandler
 	public void playerClickedBlock(PlayerInteractEvent event) {
 	    if (event.isCancelled()) return;
@@ -32,13 +28,22 @@ public class SessionListener implements Listener {
 	    Action action = event.getAction();
 	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
 	    Block clickedBlock = event.getClickedBlock();
-	    if (chestAdders.containsKey(player.getName())) {
-		    Session session = chestAdders.get(player.getName());
-		    HungerGame game = session.getGame();
+	    SessionType type = null;
+	    HungerGame game = null;
+	    Session session = null;
+	    if (sessions.containsKey(player.getName())) {
+		    session = sessions.get(player.getName());
+		    type = session.getType();
+		    game = session.getGame();
 		    if (game == null) {
 			    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
+	    }
+	    else {
+		    return;
+	    }
+	    if (type == SessionType.CHEST_ADDER) {
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (!(clickedBlock.getState() instanceof Chest)) {
 				    ChatUtils.error(player, "Block is not a chest.");
@@ -54,17 +59,10 @@ public class SessionListener implements Listener {
 		}
 		else {
 			ChatUtils.send(player, "You have added %d chests to the game %s.", session.getBlocks().size(), game.getName());
-			chestAdders.remove(player.getName());
+			sessions.remove(player.getName());
 		}
 	    }
-
-	    else if (chestRemovers.containsKey(player.getName())) {
-		Session session = chestRemovers.get(player.getName());
-		HungerGame game = session.getGame();
-		if (game == null) {
-			ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
-			return;
-		}
+	    else if (type == SessionType.CHEST_REMOVER) {
 		if (action == Action.LEFT_CLICK_BLOCK) {
 		    if (!(clickedBlock.getState() instanceof Chest)) {
 			    ChatUtils.error(player, "Block is not a chest.");
@@ -80,17 +78,10 @@ public class SessionListener implements Listener {
 		}
 		else {
 		    ChatUtils.send(player, "You have removed %d chests from the game %s.", session.getBlocks().size(), game.getName());
-		    chestRemovers.remove(player.getName());
+		    sessions.remove(player.getName());
 		}
 	    }
-
-	    else if (spawnAdders.containsKey(player.getName())) {
-		    Session session = spawnAdders.get(player.getName());
-		    HungerGame game = session.getGame();
-		    if (game == null) {
-			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
-			    return;
-		    }
+	    else if (type == SessionType.SPAWN_ADDER) {
 		    Location loc = clickedBlock.getLocation();
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
@@ -104,16 +95,10 @@ public class SessionListener implements Listener {
 		    }
 		    else {
 			    ChatUtils.send(player, "You have added %d spawn points to the game %s.", session.getBlocks().size(), game.getName());
-			    spawnAdders.remove(player.getName());
+			    sessions.remove(player.getName());
 		    }
 	    }
-	    else if (spawnRemovers.containsKey(player.getName())) {
-		    Session session = spawnRemovers.get(player.getName());
-		    HungerGame game = session.getGame();
-		    if (game == null) {
-			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
-			    return;
-		    }
+	    else if (type == SessionType.SPAWN_REMOVER) {
 		    Location loc = clickedBlock.getLocation();
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
@@ -127,61 +112,60 @@ public class SessionListener implements Listener {
 		    }
 		    else {
 			    ChatUtils.send(player, "You have removed %d spawn points from the game %s.", session.getBlocks().size(), game.getName());
-			    spawnRemovers.remove(player.getName());
+			    sessions.remove(player.getName());
 		    }
 	    }
-	    else if (cuboidAdders.containsKey(player.getName())) {
-		    Session session = cuboidAdders.get(player.getName());
-		    HungerGame game = session.getGame();
-		    if (game == null) {
-			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
-			    return;
-		    }
+	    else if (type == SessionType.CUBOID_ADDER) {
 		    if (session.getBlocks().size() < 1) {
 			    session.clicked(clickedBlock);
 			    ChatUtils.send(player, "First corner set.");
 		    }
 		    else {
 			    game.addCuboid(session.getBlocks().get(0).getLocation(), clickedBlock.getLocation());
-			    cuboidAdders.remove(player.getName());
+			    sessions.remove(player.getName());
 			    ChatUtils.send(player, "Second corner and cuboid set.");
 		    }
 	    }
 	}
 	
 	public static void addChestAdder(Player player, String name) {
-		chestAdders.put(player.getName(),  new Session(name));
+		sessions.put(player.getName(),  new Session(SessionType.CHEST_ADDER, name));
 	}
 
 	public static void addChestRemover(Player player, String name) {
-		chestRemovers.put(player.getName(), new Session(name));
+		sessions.put(player.getName(), new Session(SessionType.CHEST_REMOVER, name));
 	}
 
 	public static void addSpawnAdder(Player player, String name) {
-		spawnAdders.put(player.getName(), new Session(name));
+		sessions.put(player.getName(), new Session(SessionType.SPAWN_ADDER, name));
 	}
 
 	public static void addSpawnRemover(Player player, String name) {
-		spawnRemovers.put(player.getName(), new Session(name));
+		sessions.put(player.getName(), new Session(SessionType.SPAWN_REMOVER, name));
 	}
 
 	public static void addCuboidAdder(Player player, String name) {
-		cuboidAdders.put(player.getName(), new Session(name));
+		sessions.put(player.getName(), new Session(SessionType.CUBOID_ADDER, name));
 	}
 	
 	public static void removePlayer(Player player) {
-		spawnAdders.remove(player.getName());
-		spawnRemovers.remove(player.getName());
-		chestAdders.remove(player.getName());
-		chestRemovers.remove(player.getName());
-		cuboidAdders.remove(player.getName());
+		sessions.remove(player.getName());
+	}
+	
+	private enum SessionType {
+		SPAWN_ADDER,
+		SPAWN_REMOVER,
+		CHEST_ADDER,
+		CHEST_REMOVER,
+		CUBOID_ADDER;
 	}
 	
 	private static class Session {
+		private SessionType type;
 		private List<Block> blocks;
 		private String game;
 
-		public Session(String game) {
+		public Session(SessionType type, String game) {
 			this.game = game;
 			this.blocks = new ArrayList<Block>();
 		}
@@ -198,5 +182,8 @@ public class SessionListener implements Listener {
 			return blocks;
 		}
 
+		public SessionType getType() {
+			return type;
+		}
 	}
 }
