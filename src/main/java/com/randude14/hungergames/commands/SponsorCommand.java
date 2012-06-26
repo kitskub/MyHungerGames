@@ -32,7 +32,7 @@ public class SponsorCommand extends SubCommand{
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 			return true;
 		}
-		GameManager.addSponsor(player, p.getName());
+		GameManager.addSponsor(player, p);
 		return true;
 	}
     

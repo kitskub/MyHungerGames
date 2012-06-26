@@ -58,6 +58,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CommandListener(), this);
 		pm.registerEvents(new PlayerListener(), this);
+		pm.registerEvents(new EntityListener(), this);
 		pm.registerEvents(new InventoryListener(), this);
 		pm.registerEvents(new SessionListener(), this);
 		pm.registerEvents(new ChatListener(), this);
@@ -135,12 +136,6 @@ public class HungerGames extends JavaPlugin{
 	    instance.reloadConfig();
 	    GameManager.loadGames();
 	    loadRegistry();
-	    for (String playerName : GameManager.getSponsors().keySet()) {
-		Player player = Bukkit.getPlayer(playerName);
-		if (player == null) continue;
-		ChatUtils.error(player, "The items available for sponsoring have recently changed. Here are the new items...");
-		GameManager.addSponsor(player, GameManager.removeSponsor(player));
-	    }
 	}
 
 	public static boolean hasPermission(Player player, Defaults.Perm perm) {

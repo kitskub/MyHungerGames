@@ -26,6 +26,12 @@ v0.5
 - When a game is auto-started, the last player to join does not receive the start messages
 - Fixed block break/place/interact
 - Added /hga add world <game> [world] and /hga add cuboid
+- Separated spectatorFlightAllowed from spectatorFlying
+- Made sponsoring a conversation rather than chat
+- Made spectators turn invisible
+- Spectators get God Mode
+- Spectators get removed when game is paused
+- Sponsors moved to HungerGame
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

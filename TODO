@@ -1,8 +1,6 @@
 HIGH:
 - Improved map reset
 - economy config stuff
-- Enhance Spectating
-- Ability for sponsors to invisibly teleport to a player to sponsor and stuff
 - Move messages to methods, not commands
 - Make setups inheritable
 - Cleanup SessionListener - only allow one
@@ -18,6 +16,8 @@ MEDIUM:
 - Improve resetting (including world tracking)
 - Minimize external resetting of changes from players who have left but not quitted
 - /hga kill <player>
+- Chat
+
 
 LOW:
 - Force damage
@@ -26,8 +26,6 @@ LOW:
 - Chest loot by command
 - Sponsor loot by command
 - Check command processing
-- Use conversation API for sponsors
 
 OPTIONAL:
-- Chat
 - Possible timed game events

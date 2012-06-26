@@ -42,6 +42,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, Location> spectators;
 	private final Set<String> allPlayers;
 	private final List<InventoryHolder> randomInvs;
+	private final Map<String, String> sponsors; // Just a list for info, <sponsor, sponsee>
 	private boolean isRunning;
 	private boolean isCounting;
 	private boolean isPaused;
@@ -61,6 +62,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	// Temporary
 	private final Map<String, Location> playerLocs;// For pausing
 	private final Map<String, Boolean> spectatorFlying; // If a spectator was flying
+	private final Map<String, Boolean> spectatorFlightAllowed; // If a spectator's flight was allowed
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
 
@@ -74,6 +76,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		spectators = new HashMap<String, Location>();
 		allPlayers = new HashSet<String>();
 		spawnPoints = new ArrayList<Location>();
+		sponsors = new HashMap<String, String>();
 		isRunning = isCounting = isPaused = false;
 		
 		chests = new ArrayList<Location>();
@@ -89,6 +92,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		readyToPlay = new ArrayList<String>();
 		playerLocs = new HashMap<String, Location>();
 		spectatorFlying = new HashMap<String, Boolean>();
+		spectatorFlightAllowed = new HashMap<String, Boolean>();
 		countdown = null;
 	}
 
@@ -217,8 +221,12 @@ public class HungerGame implements Comparable<HungerGame> {
 		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
 		player.teleport(loc);
 		spectatorFlying.put(player.getName(), player.isFlying());
+		spectatorFlightAllowed.put(player.getName(), player.getAllowFlight());
 		player.setFlying(true);
 		player.setAllowFlight(true);
+		for (Player p : getRemainingPlayers()) {
+			p.hidePlayer(player);
+		}
 	}
 
 	public boolean isSpectating(Player player) {
@@ -228,7 +236,10 @@ public class HungerGame implements Comparable<HungerGame> {
 	public void removeSpectator(Player player) {
 		player.teleport(spectators.remove(player.getName()));
 		player.setFlying(spectatorFlying.get(player.getName()));
-		player.setAllowFlight(spectatorFlying.get(player.getName()));
+		player.setAllowFlight(spectatorFlightAllowed.get(player.getName()));
+		for (Player p : getRemainingPlayers()) {
+			p.showPlayer(player);
+		}
 	}
 
 	public void getSpectatorLocation(Player player) {
@@ -439,13 +450,20 @@ public class HungerGame implements Comparable<HungerGame> {
 			countdown.cancel();
 			countdown = null;
 		}
-		for(String playerName : stats.keySet()) {
-			Player p = Bukkit.getPlayer(playerName);
+		for(Player p : getRemainingPlayers()) {
 			if (p == null) continue;
-			playerLocs.put(playerName, p.getLocation());
+			playerLocs.put(p.getName(), p.getLocation());
 			teleportPlayerToSpawn(p);
 			InventorySave.saveAndClearGameInventory(p);
 			InventorySave.loadInventory(p);
+			for (String spectatorName : spectators.keySet()) {
+				Player spectator = Bukkit.getPlayer(spectatorName);
+				p.showPlayer(spectator);
+			}
+		}
+		for (String spectatorName : spectators.keySet()) {
+			Player spectator = Bukkit.getPlayer(spectatorName);
+			removeSpectator(spectator);
 		}
 		return null;
 	}
@@ -564,6 +582,11 @@ public class HungerGame implements Comparable<HungerGame> {
 	    if(!Config.getRequireInvClear(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning) GameManager.freezePlayer(player);
 	    allPlayers.add(player.getName());
+	    for (String string : spectators.keySet()) {
+		    Player spectator = Bukkit.getPlayer(string);
+		    if (spectator == null) continue;
+		    player.hidePlayer(spectator);
+	    }
 	    return true;
 	}
 	
@@ -622,6 +645,11 @@ public class HungerGame implements Comparable<HungerGame> {
 		spawnsTaken.remove(player.getName());
 		playerLocs.remove(player.getName());
 		GameManager.unfreezePlayer(player);
+		for (String string : spectators.keySet()) {
+		    Player spectator = Bukkit.getPlayer(string);
+		    if (spectator == null) continue;
+		    player.showPlayer(spectator);
+		}
 		InventorySave.loadInventory(player);
 		checkForGameOver(false);
 	}
@@ -636,10 +664,12 @@ public class HungerGame implements Comparable<HungerGame> {
 		isCounting = false;
 		isPaused = false;
 		spectators.clear();
+		sponsors.clear();
 		
 		readyToPlay.clear();
 		playerLocs.clear();
 		spectatorFlying.clear();
+		spectatorFlightAllowed.clear();
 		countdown = null;
 	}
 
@@ -780,6 +810,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	}
 	
 	/**
+	 * Gets the players that have lives and are playing
 	 * 
 	 * @return the remaining players that have lives and are playing
 	 */
@@ -973,6 +1004,14 @@ public class HungerGame implements Comparable<HungerGame> {
 		cuboids.add(new Cuboid(one, two));
 	}
 
+	public Map<String, String> getSponsors() {
+		return Collections.unmodifiableMap(sponsors);
+	}
+
+	public void addSponsor(String player, String playerToBeSponsored) {
+		sponsors.put(player, playerToBeSponsored);
+	}
+	
 	public Set<World> getWorlds() {
 		Set<World> list = new HashSet<World>();
 		for (String s : worlds) {

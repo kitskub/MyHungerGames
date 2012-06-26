@@ -4,6 +4,7 @@ import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,6 +18,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.NumericPrompt;
+import org.bukkit.conversations.Prompt;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +32,6 @@ public class GameManager{
 	private static Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
 	private static Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
-	private static Map<String, String> sponsors = new HashMap<String, String>(); // <sponsor, sponsee>
 	private static Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
 	private static Map<String, Location> frozenPlayers = new HashMap<String, Location>();
 	
@@ -124,7 +128,12 @@ public class GameManager{
 	}
 
 	public static void playerLeftServer(Player player) {
-		sponsors.remove(player.getName());
+		if (spectators.containsKey(player.getName())) {
+			HungerGame spectated = GameManager.getGame(spectators.remove(player.getName()));
+			if (spectated == null) return;
+			spectated.removeSpectator(player);
+			return;
+		}
 		HungerGame game = getSession(player);
 		if (game == null) return;
 		game.quit(player);
@@ -187,57 +196,20 @@ public class GameManager{
 	}
 	
 	
-	public static boolean addSponsor(Player player, String playerToBeSponsored) {
-	    Player sponsoredPlayer = Bukkit.getPlayer(playerToBeSponsored);
-	    HungerGame game = GameManager.getPlayingSession(sponsoredPlayer);
+	public static boolean addSponsor(Player player, Player playerToBeSponsored) {
+	    HungerGame game = GameManager.getPlayingSession(playerToBeSponsored);
 	    if (game == null) {
 		    ChatUtils.error(player, player.getName() + " is not playing in a game.");
 		    return false;
 	    }
-	    List<String> itemsets = game.getItemSets();
-	    if (Config.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
-		    ChatUtils.error(player, "No items are available to sponsor.");
-		    return false;
-	    }
-
-	    if (!HungerGames.isEconomyEnabled()) {
-		    ChatUtils.error(player, "Economy use has been disabled.");
-		    return false;
-	    }
-	    sponsors.put(player.getName(), playerToBeSponsored);
-	    ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-	    ChatUtils.send(player, ChatColor.YELLOW, "Type the number next to the item you would like sponsor to %s.",
-		    playerToBeSponsored);
-	    ChatUtils.send(player, "");
-	    int num = 1;
-	    Map<ItemStack, Double> itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
-	    for (ItemStack item : itemMap.keySet()) {
-		    String mess = String.format(">> %d - %s: %d", num, item.getType()
-				    .name(), item.getAmount());
-		    Set<Enchantment> enchants = item.getEnchantments().keySet();
-		    int cntr = 0;
-		    if (!enchants.isEmpty()) {
-			    mess += ", ";
-		    }
-		    for (Enchantment enchant : enchants) {
-			    mess += String.format("%s: %d", enchant.getName(), item.getEnchantmentLevel(enchant));
-			    if (cntr < enchants.size() - 1) {
-				    mess += ", ";
-			    }
-			    cntr++;
-		    }
-		    ChatUtils.send(player, ChatColor.GOLD, mess);
-		    num++;
-	    }
+	    ConversationFactory convo = new ConversationFactory(plugin);
+	    convo.withFirstPrompt(new SponsorBeginPrompt(game, player, playerToBeSponsored));
+	    convo.withEscapeSequence("quit");
+	    convo.withTimeout(120);
+	    convo.thatExcludesNonPlayersWithMessage("Players only!");
+	    convo.buildConversation(player).begin();
+	    game.addSponsor(player.getName(), playerToBeSponsored.getName());
 	    return true;
-	}
-
-	public static Map<String, String> getSponsors() {
-		return Collections.unmodifiableMap(sponsors);
-	}
-	
-	public static String removeSponsor(Player player) {
-		return sponsors.remove(player.getName());
 	}
 	
 	public static void addSpectator(Player player, String gameName) {
@@ -245,8 +217,8 @@ public class GameManager{
 	}
 	
 	public static String getSpectating(Player player) {
-	    if (player == null) return "";    
-	    if (!spectators.containsKey(player.getName())) return "";
+	    if (player == null) return null;    
+	    if (!spectators.containsKey(player.getName())) return null;
 	    return spectators.get(player.getName());
 	}
 	
@@ -271,5 +243,116 @@ public class GameManager{
 			return null;
 		}
 		return frozenPlayers.get(player.getName());
+	}
+	
+	private static class SponsorBeginPrompt extends NumericPrompt {
+		HungerGame game;
+		Player player;
+		Player beingSponsored;
+		Map<ItemStack, Double> itemMap = null;
+		
+		public SponsorBeginPrompt(HungerGame game, Player player, Player playerToBeSponsored) {
+			this.game = game;
+			this.player = player;
+			this.beingSponsored = playerToBeSponsored;
+		}
+		
+		public String getPromptText(ConversationContext cc) {
+			List<String> itemsets = game.getItemSets();
+			if (Config.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+				cc.setSessionData("cancelled", true);
+				return "No items are available to sponsor. Reply to exit.";
+			}
+			if (!HungerGames.isEconomyEnabled()) {
+				cc.setSessionData("cancelled", true);
+				return "Economy is disabled. Reply to exit.";
+			}
+			cc.getForWhom().sendRawMessage("Available items to be sponsored:");
+			int num = 1;
+			itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
+			cc.setSessionData("items", itemMap);
+			for (ItemStack item : itemMap.keySet()) {
+				String mess = String.format(">> %d - %s: %d", num, item.getType().name(), item.getAmount());
+				Set<Enchantment> enchants = item.getEnchantments().keySet();
+				for (Enchantment enchant : enchants) {
+					mess += ", ";
+					mess += String.format("%s: %d", enchant.getName(), item.getEnchantmentLevel(enchant));
+				}
+				cc.getForWhom().sendRawMessage(ChatColor.GOLD + mess);
+				num++;
+			}
+			return "Select an item by typing the number next to it. Type quit at any time to quit";
+		}
+
+		@Override
+		protected boolean isInputValid(ConversationContext cc, String string) {
+			if (cc.getSessionData(cc) != null && (Boolean) cc.getSessionData(cc) == true) {
+				return true;
+			}
+			return super.isInputValid(cc, string);
+
+		}
+		
+		@Override
+		protected boolean isNumberValid(ConversationContext cc, Number number) {
+			if (itemMap == null) return false;
+			if (number.intValue() >= itemMap.size()) return false;
+			return true;
+		}
+		
+		@Override
+		protected String getFailedValidationText(ConversationContext context, String invalidInput) {
+			return "That is not a valid choice.";
+		}
+
+		@Override
+		protected String getInputNotNumericText(ConversationContext context, String invalidInput) {
+			return "That is not a valid number.";
+		}
+
+		@Override
+		protected Prompt acceptValidatedInput(ConversationContext cc, Number number) {
+			if (cc.getSessionData(cc) != null && (Boolean) cc.getSessionData(cc) == true) {
+				return END_OF_CONVERSATION;
+			}
+			
+			int choice = number.intValue() - 1;
+			ItemStack item = new ArrayList<ItemStack>(itemMap.keySet()).get(choice);
+			double price = itemMap.get(item);
+			
+			if (beingSponsored == null) {
+				cc.getForWhom().sendRawMessage("Sponsee is not online anymore.");
+				return END_OF_CONVERSATION;
+			}
+			if (!HungerGames.hasEnough(beingSponsored, price)) {
+				cc.getForWhom().sendRawMessage("You do not have enough money.");
+				return END_OF_CONVERSATION;
+			}
+			
+			HungerGames.withdraw(player, price);
+			if (item.getEnchantments().isEmpty()) {
+				ChatUtils.send(beingSponsored, "%s has sponsored you %d %s(s).",
+				player.getName(), item.getAmount(), item.getType().name());
+			} else {
+				ChatUtils.send(beingSponsored, "%s has sponsored you %d enchanted %s(s).",
+				player.getName(), item.getAmount(), item.getType().name());
+			}
+
+			for (ItemStack drop : beingSponsored.getInventory().addItem(item).values()) {
+				beingSponsored.getWorld().dropItem(beingSponsored.getLocation(),drop);
+			}
+
+			if (item.getEnchantments().isEmpty()) {
+				ChatUtils.send(beingSponsored, "You have sponsored %s %d %s(s) for $%.2f.",
+					player.getName(), item.getAmount(), item.getType().name(), price);
+			} else {
+				ChatUtils.send(beingSponsored, "You have sponsored %s %d enchanted %s(s) for $%.2f.",
+					player.getName(), item.getAmount(), item.getType().name(), price);
+			}
+			return END_OF_CONVERSATION;
+		}
+		
+		
+		
 	}
 }
