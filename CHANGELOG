@@ -32,6 +32,7 @@ v0.5
 - Spectators get God Mode
 - Spectators get removed when game is paused
 - Sponsors moved to HungerGame
+- Cleanup of SessionListener
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

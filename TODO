@@ -17,6 +17,7 @@ MEDIUM:
 - Minimize external resetting of changes from players who have left but not quitted
 - /hga kill <player>
 - Chat
+- Spectators get to sponsor at a certain interval
 
 
 LOW:

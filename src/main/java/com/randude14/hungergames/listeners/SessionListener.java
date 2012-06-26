@@ -1,7 +1,6 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -33,6 +31,7 @@ public class SessionListener implements Listener {
 	    Player player = event.getPlayer();
 	    Action action = event.getAction();
 	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
+	    Block clickedBlock = event.getClickedBlock();
 	    if (chestAdders.containsKey(player.getName())) {
 		    Session session = chestAdders.get(player.getName());
 		    HungerGame game = session.getGame();
@@ -40,19 +39,18 @@ public class SessionListener implements Listener {
 			    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
-		    Block block = event.getClickedBlock();
 		    if (action == Action.LEFT_CLICK_BLOCK) {
-			    if (!(block.getState() instanceof Chest)) {
+			    if (!(clickedBlock.getState() instanceof Chest)) {
 				    ChatUtils.error(player, "Block is not a chest.");
 				    return;
 			    }
-		    if (game.addChest(block.getLocation())) {
+		    if (game.addChest(clickedBlock.getLocation())) {
 			    ChatUtils.send(player, "Chest has been added to %s.", game.getName());
 		    }
 		    else {
 			    ChatUtils.error(player, "Chest has already been added to game %s.",game.getName());
 		    }
-		    session.clicked(event.getClickedBlock());
+		    session.clicked(clickedBlock);
 		}
 		else {
 			ChatUtils.send(player, "You have added %d chests to the game %s.", session.getBlocks().size(), game.getName());
@@ -67,19 +65,18 @@ public class SessionListener implements Listener {
 			ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			return;
 		}
-		Block block = event.getClickedBlock();
 		if (action == Action.LEFT_CLICK_BLOCK) {
-		    if (!(block.getState() instanceof Chest)) {
+		    if (!(clickedBlock.getState() instanceof Chest)) {
 			    ChatUtils.error(player, "Block is not a chest.");
 			    return;
 		    }
-		    if (game.removeChest(block.getLocation())) {
+		    if (game.removeChest(clickedBlock.getLocation())) {
 			ChatUtils.send(player, "Chest has been removed from %s.", game.getName());
 		    }
 		    else {
 			ChatUtils.error(player, "%s does not contain this chest.", game.getName());
 		    }
-		    session.clicked(event.getClickedBlock());
+		    session.clicked(clickedBlock);
 		}
 		else {
 		    ChatUtils.send(player, "You have removed %d chests from the game %s.", session.getBlocks().size(), game.getName());
@@ -94,7 +91,7 @@ public class SessionListener implements Listener {
 			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
-		    Location loc = event.getClickedBlock().getLocation();
+		    Location loc = clickedBlock.getLocation();
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.addSpawnPoint(loc)) {
@@ -103,7 +100,7 @@ public class SessionListener implements Listener {
 			    else {
 				    ChatUtils.error(player, "%s already has this spawn point.", game.getName());
 			    }
-			    session.clicked(event.getClickedBlock());
+			    session.clicked(clickedBlock);
 		    }
 		    else {
 			    ChatUtils.send(player, "You have added %d spawn points to the game %s.", session.getBlocks().size(), game.getName());
@@ -117,7 +114,7 @@ public class SessionListener implements Listener {
 			    ChatUtils.error(player, "%s has been removed recently due to unknown reasons.");
 			    return;
 		    }
-		    Location loc = event.getClickedBlock().getLocation();
+		    Location loc = clickedBlock.getLocation();
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.removeSpawnPoint(loc)) {
@@ -126,7 +123,7 @@ public class SessionListener implements Listener {
 			    else {
 				    ChatUtils.error(player, "%s does not contain this spawn point.", game.getName());
 			    }
-			    session.clicked(event.getClickedBlock());
+			    session.clicked(clickedBlock);
 		    }
 		    else {
 			    ChatUtils.send(player, "You have removed %d spawn points from the game %s.", session.getBlocks().size(), game.getName());
@@ -141,11 +138,11 @@ public class SessionListener implements Listener {
 			    return;
 		    }
 		    if (session.getBlocks().size() < 1) {
-			    session.clicked(event.getClickedBlock());
+			    session.clicked(clickedBlock);
 			    ChatUtils.send(player, "First corner set.");
 		    }
 		    else {
-			    game.addCuboid(session.getBlocks().get(0).getLocation(), event.getClickedBlock().getLocation());
+			    game.addCuboid(session.getBlocks().get(0).getLocation(), clickedBlock.getLocation());
 			    cuboidAdders.remove(player.getName());
 			    ChatUtils.send(player, "Second corner and cuboid set.");
 		    }
