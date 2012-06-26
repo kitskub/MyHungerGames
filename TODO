@@ -3,9 +3,10 @@ HIGH:
 - economy config stuff
 - Enhance Spectating
 - Ability for sponsors to invisibly teleport to a player to sponsor and stuff
-- Clean up player join /rejoin to check for if a game is running
 - Move messages to methods, not commands
 - Make setups inheritable
+- Cleanup SessionListener - only allow one
+- Add more listeners
 
 MEDIUM:
 - Random events
@@ -14,11 +15,8 @@ MEDIUM:
 - Hide players from each other
 - Sign listening
 - MatchMaterial in special-blocks
-- Add (better) logging
 - Improve resetting (including world tracking)
 - Minimize external resetting of changes from players who have left but not quitted
-- Make non-playing players that have lives orange (or yellow) in /hg stat
-- Add more block events
 - /hga kill <player>
 
 LOW:
@@ -29,7 +27,6 @@ LOW:
 - Sponsor loot by command
 - Check command processing
 - Use conversation API for sponsors
-- Add a "players-can-sponsor" option to allow playing players to be able sponsor
 
 OPTIONAL:
 - Chat

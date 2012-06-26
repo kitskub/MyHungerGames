@@ -70,9 +70,11 @@ public class Defaults {
 
 	ADMIN("hungergame.admin", null),
 	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint", ADMIN),
+	ADMIN_ADD_CUBOID("hungergame.add.cuboid", ADMIN),
 	ADMIN_ADD_CHEST("hungergame.add.chest", ADMIN),
 	ADMIN_ADD_GAME("hungergame.add.game", ADMIN),
 	ADMIN_ADD_ITEMSET("hungergame.add.itemset", ADMIN),
+	ADMIN_ADD_WORLD("hungergame.add.world", ADMIN),
 	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint", ADMIN),
 	ADMIN_REMOVE_CHEST("hungergame.remove.chest", ADMIN),
 	ADMIN_REMOVE_GAME("hungergame.remove.game", ADMIN),
@@ -120,9 +122,11 @@ public class Defaults {
 	    
 	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", null),
 	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
+	ADMIN_ADD_CUBOID("ADMIN", "/%s add cuboid <game name>", "add a cuboid", Perm.ADMIN_ADD_CUBOID),
 	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name>", "add a chest", Perm.ADMIN_ADD_CHEST),
 	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
 	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
+	ADMIN_ADD_WORLD("ADMIN", "/%s add world <game name> [world]", "adds the world specified or you are currently in to the game", Perm.ADMIN_ADD_WORLD),
 	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", null),
 	ADMIN_REMOVE_SPAWNPOINT("ADMIN", "/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
 	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest", Perm.ADMIN_REMOVE_CHEST),

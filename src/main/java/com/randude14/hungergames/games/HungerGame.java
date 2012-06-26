@@ -1,6 +1,7 @@
 package com.randude14.hungergames.games;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,52 +32,64 @@ import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.Cuboid;
+
 	
 public class HungerGame implements Comparable<HungerGame> {
+	// Per game
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
-	private final Map<String, Location> playerLocs;// For pausing
 	private final Map<String, Location> spectators;
-	private final Map<String, Boolean> spectatorFlying;
-	private final List<Location> spawnPoints;
-	private final List<Location> chests;
-	private final List<String> readyToPlay;
-	private final List<String> allPlayers;
-	private final String name;
-	private GameCountdown countdown;
-	private Location spawn;
-	private List<String> itemsets;
-	private String setup;
+	private final Set<String> allPlayers;
+	private final List<InventoryHolder> randomInvs;
 	private boolean isRunning;
 	private boolean isCounting;
 	private boolean isPaused;
-	private boolean enabled;
-        private List<InventoryHolder> randomInvs;
 
+	// Persistent
+	private final List<Location> chests;
+	private final List<Location> spawnPoints;
+	private final String name;
+	private final String setup;
+	private final List<String> itemsets;
+	private final Set<String> worlds;
+	private final Set<Cuboid> cuboids;
+	private boolean enabled;
+	private Location spawn;
+
+	
+	// Temporary
+	private final Map<String, Location> playerLocs;// For pausing
+	private final Map<String, Boolean> spectatorFlying; // If a spectator was flying
+	private final List<String> readyToPlay;
+	private GameCountdown countdown;
 
 	public HungerGame(String name) {
-		this.name = name;
-		spawnPoints = new ArrayList<Location>();
-		chests = new ArrayList<Location>();
-		readyToPlay = new ArrayList<String>();
-		spawnsTaken = new HashMap<String, Location>();
-		playerLocs = new HashMap<String, Location>();
-		spectators = new HashMap<String, Location>();
-		spectatorFlying = new HashMap<String, Boolean>();
-		stats = new TreeMap<String, PlayerStat>();
-		countdown = null;
-		allPlayers = new ArrayList<String>();
-		spawn = null;
-		isRunning = isCounting = isPaused = false;
-		setup = null;
-		itemsets = new ArrayList<String>();
-		enabled = true;
-                randomInvs = new ArrayList<InventoryHolder>();
+		this(name, null);
 	}
 
-	public HungerGame(String name, String setup) {
-		this(name);
-		this.setup = setup;
+	public HungerGame(final String name, final String setup) {
+		stats = new TreeMap<String, PlayerStat>();
+		spawnsTaken = new HashMap<String, Location>();
+		spectators = new HashMap<String, Location>();
+		allPlayers = new HashSet<String>();
+		spawnPoints = new ArrayList<Location>();
+		isRunning = isCounting = isPaused = false;
+		
+		chests = new ArrayList<Location>();
+		this.name = name;
+		this.setup = null;
+                randomInvs = new ArrayList<InventoryHolder>();
+		itemsets = new ArrayList<String>();
+		worlds = new HashSet<String>();
+		cuboids = new HashSet<Cuboid>();
+		enabled = true;
+		spawn = null;
+
+		readyToPlay = new ArrayList<String>();
+		playerLocs = new HashMap<String, Location>();
+		spectatorFlying = new HashMap<String, Boolean>();
+		countdown = null;
 	}
 
 	public void loadFrom(ConfigurationSection section) {
@@ -119,7 +134,8 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
                 
                 if(section.isList("itemsets")) {
-                    itemsets = section.getStringList("itemsets");
+			itemsets.clear();
+			itemsets.addAll(section.getStringList("itemsets"));
                 }
                 
 		enabled = section.getBoolean("enabled", Boolean.TRUE);
@@ -460,23 +476,6 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 
 	}
-
-	public void setEnabled(boolean flag) {
-		enabled = flag;
-	}
-
-	public void setSpawn(Location newSpawn) {
-		spawn = newSpawn;
-	}
-
-	public List<Player> getAllPlayers() {
-		List<Player> players = new ArrayList<Player>();
-		for (String s : allPlayers) {
-		    if (Bukkit.getPlayer(s) == null) continue;
-		    players.add(Bukkit.getPlayer(s));
-		}
-		return players;
-	}
 	
 	/**
 	 * Only used for players that have left the game, but not quitted. Only valid while game is running
@@ -627,15 +626,21 @@ public class HungerGame implements Comparable<HungerGame> {
 		checkForGameOver(false);
 	}
 
+	// Complete clear just to be sure
 	private void clear() {
 		stats.clear();
 		spawnsTaken.clear();
-		readyToPlay.clear();
 		randomInvs.clear();
 		allPlayers.clear();
 		isRunning = false;
 		isCounting = false;
 		isPaused = false;
+		spectators.clear();
+		
+		readyToPlay.clear();
+		playerLocs.clear();
+		spectatorFlying.clear();
+		countdown = null;
 	}
 
 	/**
@@ -675,7 +680,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			    event = new GameEndEvent(this, winner);
 		    }
 		    HungerGames.callEvent(event);
-		    stopGame(winner, true);
+		    stopGame(true);
 		    return true;
 	    }
 
@@ -900,7 +905,7 @@ public class HungerGame implements Comparable<HungerGame> {
 						spawnsTaken.remove(playerName);
 						if (Bukkit.getPlayer(playerName) == null) continue;
 						ChatUtils.error(Bukkit.getPlayer(playerName),
-							"Your spawn point has been recently removed. Try rejoining by typing '/hg join %s'", 
+							"Your spawn point has been recently removed. Try rejoining by typing '/hg rejoin %s'", 
 							playerName);
 						leave(Bukkit.getPlayer(playerName));
 					}
@@ -919,6 +924,23 @@ public class HungerGame implements Comparable<HungerGame> {
 		player.getInventory().clear();
 	}
 
+	public void setEnabled(boolean flag) {
+		enabled = flag;
+	}
+
+	public void setSpawn(Location newSpawn) {
+		spawn = newSpawn;
+	}
+
+	public List<Player> getAllPlayers() {
+		List<Player> players = new ArrayList<Player>();
+		for (String s : allPlayers) {
+		    if (Bukkit.getPlayer(s) == null) continue;
+		    players.add(Bukkit.getPlayer(s));
+		}
+		return players;
+	}
+	
 	public Location getSpawn() {
 		return spawn;
 	}
@@ -941,6 +963,27 @@ public class HungerGame implements Comparable<HungerGame> {
 	
 	public void setCounting(boolean counting) {
 		isCounting = counting;
+	}
+	
+	public void addWorld(World world) {
+		worlds.add(world.getName());
+	}
+
+	public void addCuboid(Location one, Location two) {
+		cuboids.add(new Cuboid(one, two));
+	}
+
+	public Set<World> getWorlds() {
+		Set<World> list = new HashSet<World>();
+		for (String s : worlds) {
+			if (Bukkit.getWorld(s) == null) continue;
+			list.add(Bukkit.getWorld(s));
+		}
+	return list;
+	}
+	
+	public Set<Cuboid> getCuboids() {
+		return Collections.unmodifiableSet(cuboids);
 	}
 
 	// sorts players by name ignoring case
