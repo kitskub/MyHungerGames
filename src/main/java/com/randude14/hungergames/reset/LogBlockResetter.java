@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class LogBlockResetter extends Resetter{
@@ -43,7 +44,12 @@ public class LogBlockResetter extends Resetter{
 	params.needPlayer = true;
 	params.silent = true;
 	try {
-	    CommandRollback commandRollback = plugin.getCommandsHandler().new CommandRollback(Bukkit.getConsoleSender(), params, true);
+		for (World w : game.getWorlds()) {
+			params.world = w;
+			CommandRollback commandRollback = plugin.getCommandsHandler().new CommandRollback(Bukkit.getConsoleSender(), params, true);
+		}
+		params.world = null;
+		
 	} catch (Exception e) {
 	    Logging.log(Level.SEVERE, "LogBlock resetting failed");
 	    return false;

@@ -2,14 +2,20 @@ package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.Cuboid;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+
 import uk.co.oliwali.HawkEye.PlayerSession;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
 import uk.co.oliwali.HawkEye.SearchParser;
@@ -43,7 +49,22 @@ public class HawkEyeResetter extends Resetter{
 		parser.players = gamePlayers;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		parser.dateFrom = sdf.format(new Date(startTimes.get(game)));
+		Set<String> worlds = new HashSet<String>();
+		for (World w : game.getWorlds()) {
+			worlds.add(w.getName());
+		}
+		parser.worlds = (String[]) worlds.toArray();
 		HawkEyeAPI.performSearch(new RollbackCallback(new PlayerSession(new Logging.LogCommandSender("HawkEye")), RollbackType.LOCAL), parser, SearchDir.DESC);
+		parser.worlds = null;
+		worlds.clear();
+		for (Cuboid c : game.getCuboids()) {
+			if (game.getWorlds().contains(c.getLower().getWorld())) continue;
+			worlds.clear();
+			worlds.add(c.getLower().getWorld().getName());
+			parser.worlds = (String[]) worlds.toArray();
+			parser.minLoc = c.getLower().toVector();
+			parser.maxLoc = c.getUpper().toVector();
+		}
 		return true;
 	}
 }

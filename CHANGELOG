@@ -33,6 +33,7 @@ v0.5
 - Spectators get removed when game is paused
 - Sponsors moved to HungerGame
 - Cleanup of SessionListener
+- Better resetting - made it use worlds and cuboids - NOTE LogBlock does not recognize cuboids
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

@@ -1,9 +1,9 @@
 HIGH:
-- Improved map reset
 - economy config stuff
 - Move messages to methods, not commands
 - Make setups inheritable
 - Add more listeners
+- "force-internal" for resetting
 
 MEDIUM:
 - Random events
@@ -12,8 +12,6 @@ MEDIUM:
 - Hide players from each other
 - Sign listening
 - MatchMaterial in special-blocks
-- Improve resetting (including world tracking)
-- Minimize external resetting of changes from players who have left but not quitted
 - /hga kill <player>
 - Chat
 - Spectators get to sponsor at a certain interval
@@ -26,6 +24,7 @@ LOW:
 - Chest loot by command
 - Sponsor loot by command
 - Check command processing
+- Minimize external resetting of changes from players who have left but not quitted
 
 OPTIONAL:
 - Possible timed game events
