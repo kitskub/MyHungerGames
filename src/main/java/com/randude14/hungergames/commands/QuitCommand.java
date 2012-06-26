@@ -1,6 +1,5 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -23,11 +22,7 @@ public class QuitCommand extends SubCommand{
 			return true;
 		}
 
-		if (game.quit(player)) {
-			String mess = Config.getQuitMessage(game.getSetup());
-			mess = mess.replace("<player>", player.getName()).replace("<game>", game.getName());
-			ChatUtils.broadcast(mess);
-		}
+		game.quit(player);
 		return true;
 	}
     

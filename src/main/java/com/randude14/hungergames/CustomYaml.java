@@ -1,7 +1,5 @@
 package com.randude14.hungergames;
 
-import com.randude14.hungergames.utils.ChatUtils;
-
 import java.io.File;
 
 import org.bukkit.configuration.file.FileConfiguration;

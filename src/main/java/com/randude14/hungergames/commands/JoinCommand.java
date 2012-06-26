@@ -5,7 +5,6 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;
@@ -31,18 +30,7 @@ public class JoinCommand extends SubCommand{
 			return true;
 		}
 
-		HungerGame currentSession = GameManager.getSession(player);
-		if (currentSession != null) {
-			ChatUtils.error(player, 
-				"You are already in the game '%s'. Leave that game before joining another.",
-				currentSession.getName());
-			return true;
-		}
-		if (game.join(player)) {
-			String mess = Config.getJoinMessage(game.getSetup());
-			mess = mess.replace("<player>", player.getName()).replace("<game>", game.getName());
-			ChatUtils.broadcast(mess);
-		}
+		game.join(player);
 		return true;
 	}
 }

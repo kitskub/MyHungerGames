@@ -137,10 +137,6 @@ public class GameManager{
 		HungerGame game = getSession(player);
 		if (game == null) return;
 		game.quit(player);
-		String mess = Config.getQuitMessage(game.getSetup())
-			.replace("<player>", player.getName())
-			.replace("<game>", game.getName());
-		ChatUtils.broadcast(mess);
 	}
 
 	public static void loadGames() {

@@ -1,6 +1,5 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -22,15 +21,7 @@ public class RejoinCommand extends SubCommand{
 			ChatUtils.error(player, "You are currently not in a game.");
 			return true;
 		}
-
-		if (game.rejoin(player)) {
-			String mess = Config.getRejoinMessage(game.getSetup());
-			mess = mess.replace("<player>", player.getName()).replace("<game>", game.getName());
-			ChatUtils.broadcast(mess);
-		}
-		else {
-			ChatUtils.error(player, "Failed to rejoin %s.", game.getName());
-		}
+		game.rejoin(player);
 		return true;
 	}
     
