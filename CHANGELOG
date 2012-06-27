@@ -43,6 +43,7 @@ v0.5
 - Setups can now inherit from others
 - Now uses matchMaterial in Config
 - Itemsets can now inherit from others
+- config can now have have data
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

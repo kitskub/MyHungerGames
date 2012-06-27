@@ -126,6 +126,7 @@ public class Config {
 		}
 		return null;
 	}
+	
 	/** returns first available list */
 	private static List<String> getStringList(String config, String setup, List<String> def) {
 		List<String> list = getStringList(config, setup, new HashSet<String>());
@@ -413,27 +414,38 @@ public class Config {
 		return getBoolean("force-damage", setup, getForceDamageGlobal());
 	}
 
-	// TODO make this use matchMaterial and check for data for more options
-	public static List<String> getSpecialBlocksPlace(String setup) {
-		return getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal());
+	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
+		List<ItemStack> list = new ArrayList<ItemStack>();
+		for (String s : getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal())){
+			list.add(getItemStack(s, 1));
+		}
+		return list;
 	}
 	
-	public static List<String> getSpecialBlocksBreak(String setup) {
-		return getStringList("special-blocks-break", setup, getSpecialBlocksBreakGlobal());
+	public static List<ItemStack> getSpecialBlocksBreak(String setup) {
+		List<ItemStack> list = new ArrayList<ItemStack>();
+		for (String s : getStringList("special-blocks-break", setup, getSpecialBlocksBreakGlobal())){
+			list.add(getItemStack(s, 1));
+		}
+		return list;
 	}
 	
-	public static List<String> getSpecialBlocksInteract(String setup) {
-		return getStringList("special-blocks-interact", setup, getSpecialBlocksInteractGlobal());
+	public static List<ItemStack> getSpecialBlocksInteract(String setup) {
+		List<ItemStack> list = new ArrayList<ItemStack>();
+		for (String s : getStringList("special-blocks-interact", setup, getSpecialBlocksPlaceGlobal())){
+			list.add(getItemStack(s, 1));
+		}
+		return list;
 	}
 
 	private static Boolean getCanPlaceBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-place-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(block.getType());
+			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
 		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -446,22 +458,22 @@ public class Config {
 		boolean can = false;
 		Boolean b = getCanPlaceBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-place")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
-		can |= getCanPlaceBlockGlobal() ^ list.contains(block.getType());
+		can |= getCanPlaceBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
 	}
 
 	private static Boolean getCanBreakBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-break-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(block.getType());
+			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
 		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -474,22 +486,22 @@ public class Config {
 		boolean can = false;
 		Boolean b = getCanBreakBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-break")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
-		can |= getCanBreakBlockGlobal() ^ list.contains(block.getType());
+		can |= getCanBreakBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
 	}
 
 	private static Boolean getCanInteractBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(block.getType());
+			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
 		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -502,11 +514,11 @@ public class Config {
 		boolean can = false;
 		Boolean b = getCanInteractBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
-		List<Material> list = new ArrayList<Material>();
+		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-interact")){
-			list.add(Material.matchMaterial(s));
+			list.add(getItemStack(s, 1));
 		}
-		can |= getCanInteractBlockGlobal() ^ list.contains(block.getType());
+		can |= getCanInteractBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
 	}
 
@@ -644,21 +656,25 @@ public class Config {
 	    return toRet;
 	}
 	
-	private static ItemStack getItemStack(String string, int stackSize){
-	    String[] keyParts = string.split(":");
-	    Material mat = Material.matchMaterial(keyParts[0]);
-	    if(mat == null) return null;
-	    MaterialData data = new MaterialData(mat);
-	    if(keyParts.length == 2){
-		try{
-		    data.setData(Integer.valueOf(keyParts[1]).byteValue());
+	private static ItemStack getItemStack(Block block) {
+		return new ItemStack(block.getType(), 1, block.getData());
+	}
+	
+	private static ItemStack getItemStack(String s, int stackSize){
+		String[] keyParts = s.split(":");
+		Material mat = Material.matchMaterial(keyParts[0]);
+		if(mat == null) return null;
+		MaterialData data = new MaterialData(mat);
+		if(keyParts.length == 2){
+			try{
+				data.setData(Integer.valueOf(keyParts[1]).byteValue());
+			}
+			catch(NumberFormatException e){}
 		}
-		catch(NumberFormatException e){}
-	    }
-	    ItemStack item = new ItemStack(mat, stackSize);
-	    item.setData(data);
+		ItemStack item = new ItemStack(mat, stackSize);
+		item.setData(data);
 	    
-	    return item;
+		return item;
 	}
 	
 }
