@@ -34,6 +34,12 @@ v0.5
 - Sponsors moved to HungerGame
 - Cleanup of SessionListener
 - Better resetting - made it use worlds and cuboids - NOTE LogBlock does not recognize cuboids
+- Better separation between commands and other methods
+- "force-internal" for resetting
+- "force-survival" config option
+- "freeze-player" config option
+- "force-damage" config option
+- Changes to playerLeaving and playerEntering (code)
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

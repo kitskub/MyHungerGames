@@ -1,9 +1,9 @@
 HIGH:
 - economy config stuff
-- Move messages to methods, not commands
 - Make setups inheritable
 - Add more listeners
-- "force-internal" for resetting
+- Remove items from ground after game ends
+- Remove reset-world in v0.6
 
 MEDIUM:
 - Random events
@@ -15,10 +15,10 @@ MEDIUM:
 - /hga kill <player>
 - Chat
 - Spectators get to sponsor at a certain interval
+- WebStats
 
 
 LOW:
-- Force damage
 - Map gen
 - Respawn at random spot if not spawnpoint
 - Chest loot by command

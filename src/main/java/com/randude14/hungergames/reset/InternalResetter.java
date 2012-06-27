@@ -81,10 +81,10 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
 	synchronized(toCheck) {
 		for (Block b : toCheck.keySet()) {
 			HungerGame game = insideGame(b);
-				if (game != null) {
-					addBlockState(game, b, toCheck.get(b));
-					toCheck.remove(b);
-				}
+			if (game != null) {
+				addBlockState(game, b, toCheck.get(b));
+				toCheck.remove(b);
+			}
 		    }
 	}
     }

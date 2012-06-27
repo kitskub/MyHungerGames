@@ -33,6 +33,7 @@ import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
+import org.bukkit.GameMode;
 
 	
 public class HungerGame implements Comparable<HungerGame> {
@@ -63,6 +64,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	private final Map<String, Location> playerLocs;// For pausing
 	private final Map<String, Boolean> spectatorFlying; // If a spectator was flying
 	private final Map<String, Boolean> spectatorFlightAllowed; // If a spectator's flight was allowed
+	private final Map<String, GameMode> playerGameModes; // Whether a player was in survival when game started
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
 
@@ -93,6 +95,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		playerLocs = new HashMap<String, Location>();
 		spectatorFlying = new HashMap<String, Boolean>();
 		spectatorFlightAllowed = new HashMap<String, Boolean>();
+		playerGameModes = new HashMap<String, GameMode>();
 		countdown = null;
 	}
 
@@ -265,11 +268,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		isRunning = false;
 		for (Player player : getRemainingPlayers()) {
-			teleportPlayerToSpawn(player);
-			GameManager.unfreezePlayer(player);
 			ItemStack[] contents = player.getInventory().getContents();
-			player.getInventory().clear();
-			InventorySave.loadInventory(player);
+			playerLeaving(player, false);
+			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
 		}
 		clear();
@@ -408,8 +409,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		for(String playerName : playerLocs.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
-			p.teleport(playerLocs.remove(playerName));
-			InventorySave.saveAndClearInventory(p);
+			playerEntering(p, enabled);
 			InventorySave.loadGameInventory(p);
 			World world = p.getWorld();
 			world.setFullTime(0L);
@@ -420,6 +420,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		isPaused = false;
 		isCounting = false;
 		countdown = null;
+
 		ChatUtils.broadcast("Resuming %s. Go!!", name);
 		return null;
 	}
@@ -451,13 +452,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		for(Player p : getRemainingPlayers()) {
 			if (p == null) continue;
 			playerLocs.put(p.getName(), p.getLocation());
-			teleportPlayerToSpawn(p);
 			InventorySave.saveAndClearGameInventory(p);
-			InventorySave.loadInventory(p);
-			for (String spectatorName : spectators.keySet()) {
-				Player spectator = Bukkit.getPlayer(spectatorName);
-				p.showPlayer(spectator);
-			}
+			playerLeaving(p, true);
+			teleportPlayerToSpawn(p);
 		}
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
@@ -520,8 +517,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) return false;
-		if (!playerEntering(player)) return false;
+		if (!playerEntering(player, false)) return false;
 		stats.get(player.getName()).setPlaying(true);
+		
 		String mess = Config.getRejoinMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(mess);
@@ -549,7 +547,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
 	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
-	    if(!playerEntering(player)) return false;
+	    if(!playerEntering(player, false)) return false;
 	    stats.put(player.getName(), new PlayerStat(player));
 	    if (isRunning) {
 		    stats.get(player.getName()).setPlaying(true);
@@ -557,12 +555,13 @@ public class HungerGame implements Comparable<HungerGame> {
 	    else {
 		    if (Config.getAutoVote(setup)) readyToPlay.add(player.getName());
 	    }
+
 	    String mess = Config.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess);
 	    return true;
 	}
-	
+
 	private synchronized boolean playerEnteringPreCheck(Player player) {
 	    if (!enabled) {
 		    ChatUtils.error(player, "%s is currently not enabled.", name);
@@ -582,14 +581,32 @@ public class HungerGame implements Comparable<HungerGame> {
 	    }
 	    return true;
 	}
-	
-	private synchronized boolean playerEntering(Player player) {
-	    Location loc = getNextOpenSpawnPoint();
-	    spawnsTaken.put(player.getName(), loc);
+
+	/**
+	 * When a player enters the game. Does not handle stats.
+	 * This handles the teleporting.
+	 * @param player
+	 * @param fromTemporary if the player leaving was temporary. Leave is not temporary.
+	 * @return
+	 */
+	private synchronized boolean playerEntering(Player player, boolean fromTemporary) {
+	    Location loc = null;
+	    if (!fromTemporary) {
+		    getNextOpenSpawnPoint();
+		    spawnsTaken.put(player.getName(), loc);
+	    }
+	    else {
+		    loc = spawnsTaken.get(player.getName());
+		    allPlayers.add(player.getName());
+	    }
+	    
 	    player.teleport(loc);
 	    if(!Config.getRequireInvClear(setup)) InventorySave.saveAndClearInventory(player);
-	    if (!isRunning) GameManager.freezePlayer(player);
-	    allPlayers.add(player.getName());
+	    if (!isRunning && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
+	    if (Config.getForceSurvival(setup)) {
+		    playerGameModes.put(player.getName(), player.getGameMode());
+		    player.setGameMode(GameMode.SURVIVAL);
+	    }
 	    for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
@@ -624,7 +641,9 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 		dropInventory(player);
 		teleportPlayerToSpawn(player);
-		playerLeaving(player);
+		playerLeaving(player, false);
+		checkForGameOver(false);
+
 		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 		String mess = Config.getLeaveMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
@@ -641,13 +660,15 @@ public class HungerGame implements Comparable<HungerGame> {
 		    dropInventory(player);
 		    teleportPlayerToSpawn(player);
 	    }
-	    playerLeaving(player);
 	    if(isRunning) {
 		stats.get(player.getName()).die();
 	    }
 	    else {
 		stats.remove(player.getName());
 	    }
+	    playerLeaving(player, false);
+	    checkForGameOver(false);
+
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    String mess = Config.getQuitMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
@@ -655,17 +676,25 @@ public class HungerGame implements Comparable<HungerGame> {
 	    return true;
 	}
 	
-	private synchronized void playerLeaving(Player player) {
-		spawnsTaken.remove(player.getName());
-		playerLocs.remove(player.getName());
-		GameManager.unfreezePlayer(player);
+	/**
+	 * Used when a player is exiting.
+	 * This does not handle teleporting and should be used before the teleport.
+	 * @param player
+	 */
+	private synchronized void playerLeaving(Player player, boolean temporary) {
+		if (Config.getForceSurvival(setup)) {
+			player.setGameMode(playerGameModes.remove(player.getName()));
+		}
 		for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
 		    player.showPlayer(spectator);
 		}
+		GameManager.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
-		checkForGameOver(false);
+		if (!temporary) {
+			spawnsTaken.remove(player.getName());
+		}
 	}
 
 	// Complete clear just to be sure
@@ -684,6 +713,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		playerLocs.clear();
 		spectatorFlying.clear();
 		spectatorFlightAllowed.clear();
+		playerGameModes.clear();
 		countdown = null;
 	}
 
@@ -800,8 +830,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		PlayerStat killedStat = stats.get(killed.getName());
 		killedStat.death();
 		if (killedStat.hasRunOutOfLives()) {
-			playerLeaving(killed);
-			InventorySave.loadInventory(killed);
+			playerLeaving(killed, false);
 			checkForGameOver(false);
 		}
 		else {

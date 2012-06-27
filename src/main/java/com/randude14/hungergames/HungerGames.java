@@ -117,18 +117,23 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	private static void loadResetter() {
+	    if (Config.getForceInternalGlobal()) {
+		    Logging.info("Forcing internal resetter.");
+		    ResetHandler.setRessetter(ResetHandler.INTERNAL);
+		    return;
+	    }
 	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
-		Logging.info("Hawkeye is installed, using for resetter.");
-		ResetHandler.setRessetter(ResetHandler.HAWKEYE);
-		return;
+		    Logging.info("Hawkeye is installed, using for resetter.");
+		    ResetHandler.setRessetter(ResetHandler.HAWKEYE);
+		    return;
 	    } else if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
-		Logging.info("LogBlock is installed, using for resetter.");
-		ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
-		return;
+		    Logging.info("LogBlock is installed, using for resetter.");
+		    ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
+		    return;
 	    } else {
-		Logging.info("No logging plugins installed, using internal resetter.");
-		ResetHandler.setRessetter(ResetHandler.INTERNAL);
-		return;
+		    Logging.info("No logging plugins installed, using internal resetter.");
+		    ResetHandler.setRessetter(ResetHandler.INTERNAL);
+		    return;
 	    }
 	}
 

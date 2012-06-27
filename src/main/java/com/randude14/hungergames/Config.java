@@ -133,6 +133,22 @@ public class Config {
 	public static boolean getResetChangesGlobal() {
 		return plugin.getConfig().getBoolean("global.reset-changes", RELOAD_WORLD.getBoolean());
 	}
+		
+	public static boolean getForceSurvivalGlobal() {
+		return plugin.getConfig().getBoolean("global.force-survival", FORCE_SURVIVAL.getBoolean());
+	}
+		
+	public static boolean getFreezePlayersGlobal() {
+		return plugin.getConfig().getBoolean("global.freeze-players", FREEZE_PLAYERS.getBoolean());
+	}
+		
+	public static boolean getForceDamageGlobal() {
+		return plugin.getConfig().getBoolean("global.force-damage", FORCE_DAMAGE.getBoolean());
+	}
+		
+	public static boolean getForceInternalGlobal() {
+		return plugin.getConfig().getBoolean("global.force-internal", FORCE_INTERNAL.getBoolean());
+	}
 	
 	public static List<Integer> getSpecialBlocksPlaceGlobal() {
 		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-place");
@@ -260,27 +276,39 @@ public class Config {
 	public static boolean getCanTeleport(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".can-teleport", getCanTeleportGlobal());
 	}
-	
+
 	public static boolean getUseCommand(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
 	}
-	
+
 	public static boolean getAutoAdd(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".auto-add", getAutoAddGlobal());
 	}
-	
+
 	public static boolean getReloadWorld(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".reload-world", getReloadWorldGlobal());
 	}
-	
+
 	public static String getReloadWorldName(String setup) {
 		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
 	}
-		
+
 	public static boolean getResetChanges(String setup) {
 		return plugin.getConfig().getBoolean("setups." + setup + ".reset-changes", getResetChangesGlobal());
 	}
-	
+
+	public static boolean getForceSurvival(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".force-survival", getForceSurvivalGlobal());
+	}
+
+	public static boolean getFreezePlayers(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".freeze-players", getFreezePlayersGlobal());
+	}
+
+	public static boolean getForceDamage(String setup) {
+		return plugin.getConfig().getBoolean("setups." + setup + ".force-damage", getForceDamageGlobal());
+	}
+
 	// TODO make this use matchMaterial and check for data for more options
 	public static List<Integer> getSpecialBlocksPlace(String setup) {
 		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-place");

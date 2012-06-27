@@ -44,7 +44,11 @@ public class Defaults {
 	USE_COMMAND(false),
 	AUTO_ADD(true),
 	RELOAD_WORLD(false),
-	RELOAD_WORLD_NAME("Default_world");
+	RELOAD_WORLD_NAME("Default_world"),
+	FORCE_SURVIVAL(true),
+	FREEZE_PLAYERS(true),
+	FORCE_DAMAGE(false),
+	FORCE_INTERNAL(false);
 	
 	
 	private Object value;
