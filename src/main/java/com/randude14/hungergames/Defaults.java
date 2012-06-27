@@ -48,7 +48,10 @@ public class Defaults {
 	FORCE_SURVIVAL(true),
 	FREEZE_PLAYERS(true),
 	FORCE_DAMAGE(false),
-	FORCE_INTERNAL(false);
+	FORCE_INTERNAL(false),
+	ISOLATE_PLAYER_CHAT(true),
+	CHAT_DISTANCE(15),
+	ALLOW_MINIMAL_MESSAGES(true);
 	
 	
 	private Object value;
@@ -63,6 +66,10 @@ public class Defaults {
 	
 	public int getInt(){
 	    return (Integer) value;
+	}
+	
+	public float getFloat(){
+	    return (Float) value;
 	}
 	
 	public String getString(){
@@ -100,6 +107,7 @@ public class Defaults {
 	USER_REJOIN("hungergame.user.rejoin", USER),
 	USER_SPECTATE("hungergame.user.spectate", USER),
 	USER_SPONSOR("hungergame.user.sponsor", USER),
+	USER_SUBSCRIBE("hungergame.user.subscribe", USER),
 	USER_VOTE("hungergame.user.vote", USER),
 	USER_STAT("hungergame.user.stat", USER),
 	USER_HELP("hungergame.user.help", USER),
@@ -152,6 +160,7 @@ public class Defaults {
 	USER_REJOIN("USER", "/%s rejoin", "rejoin your current game", Perm.USER_REJOIN),
 	USER_SPECTATE("USER", "/%s spectate <game name>", "puts player in creative to spectate a game or cancels a spectation", Perm.USER_SPECTATE),
 	USER_SPONSOR("USER", "/%s sponsor <player>", "sponsor a player an item", Perm.USER_SPONSOR),
+	USER_SUBSCRIBE("USER", "/%s subscribe", "subscribe", Perm.USER_SUBSCRIBE),
 	USER_VOTE("USER", "/%s vote", "cast your vote that you are ready to play", Perm.USER_VOTE),
 	USER_STAT("USER", "/%s stat <game name>", "list stats for a game", Perm.USER_STAT),
 	USER_QUIT("USER", "/%s quit", "quits the current game indefinitely", Perm.USER_QUIT);

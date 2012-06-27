@@ -146,7 +146,11 @@ public class Config {
 	public static boolean getForceInternalGlobal() {
 		return getGlobalBoolean("force-internal", FORCE_INTERNAL.getBoolean());
 	}
-
+		
+	public static boolean getAllowMinimalMessagesGlobal() {
+		return getGlobalBoolean("allow-minimal-messages", ALLOW_MINIMAL_MESSAGES.getBoolean());
+	}
+	
 	// Global
 	public static String getGlobalJoinMessage() {
 		return getGlobalString("join-message", JOIN.getMessage());
@@ -262,6 +266,14 @@ public class Config {
 		
 	public static boolean getForceDamageGlobal() {
 		return getGlobalBoolean("force-damange", FORCE_DAMAGE.getBoolean());
+	}
+		
+	public static boolean getIsolatePlayerChatGlobal() {
+		return getGlobalBoolean("isolate-player-chat", ISOLATE_PLAYER_CHAT.getBoolean());
+	}
+		
+	public static int getChatDistanceGlobal() {
+		return getGlobalInt("chat-distance", CHAT_DISTANCE.getInt());
 	}
 	
 	public static List<String> getSpecialBlocksPlaceGlobal() {
@@ -412,6 +424,14 @@ public class Config {
 
 	public static boolean getForceDamage(String setup) {
 		return getBoolean("force-damage", setup, getForceDamageGlobal());
+	}
+
+	public static boolean getIsolatePlayerChat(String setup) {
+		return getBoolean("isolate-player-chat", setup, getIsolatePlayerChatGlobal());
+	}
+
+	public static int getChatDistance(String setup) {
+		return getInteger("chat-distance", setup, getChatDistanceGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

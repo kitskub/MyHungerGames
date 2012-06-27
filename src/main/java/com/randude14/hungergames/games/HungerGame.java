@@ -204,14 +204,13 @@ public class HungerGame implements Comparable<HungerGame> {
 			return false;
 		}
 		readyToPlay.add(player.getName());
+		String mess = Config.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
+		ChatUtils.broadcast(mess, true);
 		int minVote = Config.getMinVote(setup);
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
 		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
-			ChatUtils.broadcast("Enough players have voted that they are ready. Starting game...", this.name);
+			ChatUtils.broadcast(true, "Enough players have voted that they are ready. Starting game...", this.name);
 			startGame(false);
-		} else {
-			String mess = Config.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
-			ChatUtils.broadcast(mess);
 		}
 		return true;
 	}
@@ -360,7 +359,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		isRunning = true;
 		isPaused = false;
 		readyToPlay.clear();
-		ChatUtils.broadcast("Starting %s. Go!!", name);
+		ChatUtils.broadcast(true, "Starting %s. Go!!", name);
 		return null;
 	}
 	
@@ -421,7 +420,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		isCounting = false;
 		countdown = null;
 
-		ChatUtils.broadcast("Resuming %s. Go!!", name);
+		ChatUtils.broadcast(true, "Resuming %s. Go!!", name);
 		return null;
 	}
 	
@@ -522,7 +521,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		
 		String mess = Config.getRejoinMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-		ChatUtils.broadcast(mess);
+		ChatUtils.broadcast(mess, true);
 		return true;
 	}
 
@@ -558,7 +557,7 @@ public class HungerGame implements Comparable<HungerGame> {
 
 	    String mess = Config.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-	    ChatUtils.broadcast(mess);
+	    ChatUtils.broadcast(mess, true);
 	    return true;
 	}
 
@@ -592,14 +591,14 @@ public class HungerGame implements Comparable<HungerGame> {
 	private synchronized boolean playerEntering(Player player, boolean fromTemporary) {
 	    Location loc = null;
 	    if (!fromTemporary) {
-		    getNextOpenSpawnPoint();
+		    loc = getNextOpenSpawnPoint();
 		    spawnsTaken.put(player.getName(), loc);
 	    }
 	    else {
 		    loc = spawnsTaken.get(player.getName());
 		    allPlayers.add(player.getName());
 	    }
-	    
+	    GameManager.addSubscribedPlayer(player);
 	    player.teleport(loc);
 	    if(!Config.getRequireInvClear(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
@@ -647,7 +646,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 		String mess = Config.getLeaveMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-		ChatUtils.broadcast(mess);
+		ChatUtils.broadcast(mess, true);
 		return true;
 	}
 	
@@ -672,7 +671,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    String mess = Config.getQuitMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-	    ChatUtils.broadcast(mess);
+	    ChatUtils.broadcast(mess, true);
 	    return true;
 	}
 	
@@ -747,10 +746,10 @@ public class HungerGame implements Comparable<HungerGame> {
 		    Player winner = remaining.get(0);
 		    GameEndEvent event;
 		    if (winner == null) {
-			    ChatUtils.broadcast("Strangely, there was no winner left.");
+			    ChatUtils.broadcast("Strangely, there was no winner left.", true);
 			    event = new GameEndEvent(this);
 		    } else {
-			    ChatUtils.broadcast("%s has won the game %s! Congratulations!", winner.getName(), name);
+			    ChatUtils.broadcast(true, "%s has won the game %s! Congratulations!", winner.getName(), name);
 			    event = new GameEndEvent(this, winner);
 		    }
 		    HungerGames.callEvent(event);
@@ -767,7 +766,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		    }
 
 	    }
-	    ChatUtils.broadcastRaw(mess, ChatColor.WHITE);
+	    ChatUtils.broadcastRaw(mess, ChatColor.WHITE, true);
 	    return false;
 	}
 
@@ -817,7 +816,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		killed(killed, false);
 		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed, message);
 		HungerGames.callEvent(event);
-		ChatUtils.broadcast(message);
+		ChatUtils.broadcast(message, true);
 	}
 
 	public void killed(Player killed) {

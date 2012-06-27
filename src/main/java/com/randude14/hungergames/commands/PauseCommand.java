@@ -29,7 +29,7 @@ public class PauseCommand extends SubCommand{
 		}
 
 		if(game.pauseGame(player)) {
-			ChatUtils.broadcast("%s has been paused.", game.getName());
+			ChatUtils.broadcast(true, "%s has been paused.", game.getName());
 		}
 		return true;
 	}

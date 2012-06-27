@@ -1,5 +1,7 @@
 package com.randude14.hungergames.utils;
 
+import com.randude14.hungergames.Config;
+import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.HungerGames;
 
@@ -17,8 +19,9 @@ public class ChatUtils {
 		return String.format("--------------------[%s]--------------------", HungerGames.getInstance().getName());
 	}
 
-	public static void broadcast(ChatColor color, String message) {
+	public static void broadcast(ChatColor color, String message, boolean subscribedOnly) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.isPlayerSubscribed(player)) continue;
 			player.sendMessage(color + getPrefix() + message);
 		}
 
@@ -26,19 +29,19 @@ public class ChatUtils {
 		Logging.info(message);
 	}
 
-	public static void broadcast(String message) {
-		broadcast(ChatColor.GREEN, message);
+	public static void broadcast(String message, boolean subscribedOnly) {
+		broadcast(ChatColor.GREEN, message, subscribedOnly);
 	}
 
-	public static void broadcast(String format, Object... args) {
-		broadcast(String.format(format, args));
+	public static void broadcast(boolean subscribedOnly, String format, Object... args) {
+		broadcast(String.format(format, args), subscribedOnly);
 	}
 
-	public static void broadcast(ChatColor color, String format, Object... args) {
-		broadcast(color, String.format(format, args));
+	public static void broadcast(boolean subscribedOnly, ChatColor color, String format, Object... args) {
+		broadcast(color, String.format(format, args), subscribedOnly);
 	}
 
-	public static void broadcastRaw(String message, ChatColor color) {
+	public static void broadcastRaw(String message, ChatColor color, boolean subscribedOnly) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			player.sendMessage(color + message);
 		}
@@ -47,12 +50,12 @@ public class ChatUtils {
 		Logging.info(message);
 	}
 		
-	public static void broadcastRaw(ChatColor color, String format, Object... args) {
-		broadcastRaw(String.format(format, args), color);
+	public static void broadcastRaw(boolean subscribedOnly, ChatColor color, String format, Object... args) {
+		broadcastRaw(String.format(format, args), color, subscribedOnly);
 	}
 
-	public static void broadcastRaw(String message) {
-		broadcastRaw(message, ChatColor.GREEN);
+	public static void broadcastRaw(String message, boolean subscribedOnly) {
+		broadcastRaw(message, ChatColor.GREEN, subscribedOnly);
 	}
 
 

@@ -3,6 +3,8 @@ HIGH:
 - Add more listeners
 - Remove items from ground after game ends
 - Remove reset-world in v0.6
+- config options for notifications
+- save random points in the arena for respawn/spectating
 
 MEDIUM:
 - Random events
@@ -11,10 +13,10 @@ MEDIUM:
 - Hide players from each other
 - Sign listening
 - /hga kill <player>
-- Chat
 - Spectators get to sponsor at a certain interval
 - WebStats
 - Rewards
+- Make /hg subscribe persistent
 
 
 LOW:

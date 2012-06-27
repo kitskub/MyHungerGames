@@ -5,15 +5,14 @@ import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,11 +28,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class GameManager{
 	private static final HungerGames plugin = HungerGames.getInstance();
-	private static Set<HungerGame> games = new TreeSet<HungerGame>();
-	private static CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
-	private static Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
-	private static Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
-	private static Map<String, Location> frozenPlayers = new HashMap<String, Location>();
+	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
+	private static final CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
+	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
+	private static final Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
+	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
+	private static final Set<String> subscribedPlayers = new HashSet<String>();
 	
 	public static boolean createGame(String name) {
 	    HungerGame game = new HungerGame(name);
@@ -239,6 +239,18 @@ public class GameManager{
 			return null;
 		}
 		return frozenPlayers.get(player.getName());
+	}
+	
+	public static boolean isPlayerSubscribed(Player player) {
+		return subscribedPlayers.contains(player.getName());
+	}
+	
+	public static void removedSubscribedPlayer(Player player) {
+		subscribedPlayers.remove(player.getName());
+	}
+	
+	public static void addSubscribedPlayer(Player player) {
+		subscribedPlayers.add(player.getName());
 	}
 	
 	private static class SponsorBeginPrompt extends NumericPrompt {

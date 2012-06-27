@@ -65,6 +65,9 @@ public class CommandHandler implements CommandExecutor {
 		else if ("stat".equalsIgnoreCase(args[0])) {
 			command = new StatCommand();
 		}
+		else if ("subscribe".equalsIgnoreCase(args[0])) {
+			command = new SubscribeCommand();
+		}
 		else {
 			if (!HungerGames.checkPermission(player, Perm.USER_HELP)) return;
 

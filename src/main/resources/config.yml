@@ -1,10 +1,11 @@
 global:
+  # GLOBAL ONLY
   default-game: 'Test'
   
   # In minutes, the number of time to wait between update checks
+  # GLOBAL ONLY
   update-delay: 30
   
-  # The following are default only, and will be overwritten by the setup, if applicable
   join-message: '<player> has joined the game <game>.'
   rejoin-message: '<player> has rejoined the game <game>'
   leave-message: '<player> has left the game <game>.'
@@ -99,6 +100,18 @@ global:
   # GLOBAL ONLY
   force-internal: false
   
+  isolate-player-chat: true
+  
+  # if isolate-player-chat is enabled, this is the maximum distance a player can hear another player from
+  # if this is 0, then in-game players can hear each other, but they can't hear out-of-game players
+  chat-distance: 15
+  
+  # if this is true, players who haven't done "/hg subscribe" won't see most messages
+  # players automatically get subscribed when they enter a game
+  # subscribers are not persistent between server restarts
+  # GLOBAL ONLY
+  allow-minimal-messages: true
+    
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:
