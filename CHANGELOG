@@ -41,6 +41,8 @@ v0.5
 - "force-damage" config option
 - Changes to playerLeaving and playerEntering (code)
 - Setups can now inherit from others
+- Now uses matchMaterial in Config
+- Itemsets can now inherit from others
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

@@ -1,5 +1,6 @@
 package com.randude14.hungergames.commands;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -16,6 +17,7 @@ public class ReloadCommand extends SubCommand{
 		if (!HungerGames.checkPermission(player, Perm.ADMIN_RELOAD)) return true;
 			
 		HungerGames.reload();
+		Config.reload();
 		ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
 		return true;
 	}

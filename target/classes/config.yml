@@ -112,6 +112,7 @@ itemsets:
 # To use one of these, when creating a game do 
 # /hga add itemset <name-of-game> <name-of-itemset>  NOTE make sure there are no space in the list of itemsets
 #  test:
+#   inherits: itemset1
 #	  chest-loot:
 #		  # Note DURABIlITY is an enchantment
 #	    DIAMOND_PICKAXE:
@@ -123,7 +124,7 @@ itemsets:
 # Setups ADD to global in any list
 setups:
 #  test1:
-#    inherit: parentSetup
+#    inherits: parentSetup, parentSetup2
 #    default-time: 5
 #    min-vote: 10
 #    allow-join-during-game: false

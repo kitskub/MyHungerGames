@@ -3,7 +3,6 @@ HIGH:
 - Add more listeners
 - Remove items from ground after game ends
 - Remove reset-world in v0.6
-- Make itemsets inheritable
 
 MEDIUM:
 - Random events
@@ -11,7 +10,6 @@ MEDIUM:
 - Fixed item chests
 - Hide players from each other
 - Sign listening
-- MatchMaterial in special-blocks
 - /hga kill <player>
 - Chat
 - Spectators get to sponsor at a certain interval
