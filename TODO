@@ -1,9 +1,9 @@
 HIGH:
 - economy config stuff
-- Make setups inheritable
 - Add more listeners
 - Remove items from ground after game ends
 - Remove reset-world in v0.6
+- Make itemsets inheritable
 
 MEDIUM:
 - Random events
@@ -16,6 +16,7 @@ MEDIUM:
 - Chat
 - Spectators get to sponsor at a certain interval
 - WebStats
+- Rewards
 
 
 LOW:

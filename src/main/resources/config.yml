@@ -102,9 +102,9 @@ global:
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:
-  #        stack-size: 1
-  #        chance: 0.01
-  #        DURABILITY: 3
+  #      stack-size: 1
+  #      chance: 0.01
+  #      DURABILITY: 3
   sponsor-loot:
     
 itemsets:
@@ -113,20 +113,21 @@ itemsets:
 # /hga add itemset <name-of-game> <name-of-itemset>  NOTE make sure there are no space in the list of itemsets
 #  test:
 #	  chest-loot:
-#	  # Example loot. Note DURABIlITY is an enchantment
-#	  #    DIAMOND_PICKAXE:
-#	  #        stack-size: 1
-#	  #        chance: 0.01
-#	  #        DURABILITY: 3
-#	  sponsor-loot:
+#		  # Note DURABIlITY is an enchantment
+#	    DIAMOND_PICKAXE:
+#       stack-size: 1
+#	      chance: 0.01
+#	      DURABILITY: 3
+#   sponsor-loot:
 
 # Setups ADD to global in any list
 setups:
 #  test1:
-#		default-time: 5
-#		min-vote: 10
-#		allow-join-during-game: false
-#		min-players: 2
-#		allow-rejoin: false
-#		winner-keeps-items: false
+#    inherit: parentSetup
+#    default-time: 5
+#    min-vote: 10
+#    allow-join-during-game: false
+#    min-players: 2
+#    allow-rejoin: false
+#    winner-keeps-items: false
   

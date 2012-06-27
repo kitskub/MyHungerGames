@@ -23,15 +23,7 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
-			List<Integer> list = Config.getSpecialBlocksPlace(setup);
-			List<Integer> listglobal = Config.getSpecialBlocksPlaceGlobal();
-			boolean canPlaceBlocksGlobal = Config.getCanPlaceBlockGlobal();
-			boolean canPlaceBlocksSetup = Config.getCanPlaceBlock(setup);
-			boolean containsGlobal = listglobal.contains(event.getBlock().getTypeId());
-			boolean containsSetup = list.contains(event.getBlock().getTypeId());
-			boolean canGlobal = containsGlobal ^ canPlaceBlocksGlobal;
-			boolean canSetup = containsSetup ^ canPlaceBlocksSetup;
-			if(canGlobal || canSetup) {
+			if(Config.getCanPlaceBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;
@@ -49,15 +41,7 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
-			List<Integer> list = Config.getSpecialBlocksBreak(setup);
-			List<Integer> listglobal = Config.getSpecialBlocksBreakGlobal();
-			boolean canBreakBlocksGlobal = Config.getCanBreakBlockGlobal();
-			boolean canBreakBlocksSetup = Config.getCanBreakBlock(setup);
-			boolean containsGlobal = listglobal.contains(event.getBlock().getTypeId());
-			boolean containsSetup = list.contains(event.getBlock().getTypeId());
-			boolean canGlobal = containsGlobal ^ canBreakBlocksGlobal;
-			boolean canSetup = containsSetup ^ canBreakBlocksSetup;
-			if(canGlobal || canSetup) {
+			if(Config.getCanBreakBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;
@@ -76,15 +60,7 @@ public class BlockListener implements Listener {
 		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
-			List<Integer> list = Config.getSpecialBlocksInteract(setup);
-			List<Integer> listglobal = Config.getSpecialBlocksInteractGlobal();
-			boolean canInteractBlocksGlobal = Config.getCanInteractBlockGlobal();
-			boolean canInteractBlocksSetup = Config.getCanInteractBlock(setup);
-			boolean containsGlobal = listglobal.contains(event.getClickedBlock().getTypeId());
-			boolean containsSetup = list.contains(event.getClickedBlock().getTypeId());
-			boolean canGlobal = containsGlobal ^ canInteractBlocksGlobal;
-			boolean canSetup = containsSetup ^ canInteractBlocksSetup;
-			if(canGlobal || canSetup) {
+			if(Config.getCanInteractBlock(setup, event.getClickedBlock())) {
 				ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;

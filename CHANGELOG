@@ -40,6 +40,7 @@ v0.5
 - "freeze-player" config option
 - "force-damage" config option
 - Changes to playerLeaving and playerEntering (code)
+- Setups can now inherit from others
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

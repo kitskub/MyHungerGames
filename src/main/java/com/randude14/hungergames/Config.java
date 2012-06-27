@@ -1,5 +1,8 @@
 package com.randude14.hungergames;
 
+import org.bukkit.block.Block;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,155 +23,213 @@ import static com.randude14.hungergames.Defaults.Config.*;
 public class Config {
 	private static final HungerGames plugin = HungerGames.getInstance();
 	
-	// Global only
-	public static String getDefaultGame() {
-		return plugin.getConfig().getString("global.default-game", DEFAULT_GAME.getString());
+	private static boolean getGlobalBoolean(String config, boolean def) {
+		return plugin.getConfig().getBoolean("global." + config, def);
 	}
 	
-	public static long getUpdateDelay() {
-		return plugin.getConfig().getLong("global.update-delay", UPDATE_DELAY.getInt());
+	private static String getGlobalString(String config, String def) {
+		return plugin.getConfig().getString("global." + config, def);
+	}
+	
+	private static int getGlobalInt(String config, int def) {
+		return plugin.getConfig().getInt("global." + config, def);
+	}
+	
+	private static List<String> getGlobalStringList(String config, List<String> def) {
+		if (plugin.getConfig().contains("global." + config)) {
+			return plugin.getConfig().getStringList("global." + config);
+
+		}
+		return def;
+	}
+	
+	private static boolean getBoolean(String config, String setup, boolean def) {
+		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
+			return plugin.getConfig().getBoolean("setups." + setup + "." + config);
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + config)) {
+				return plugin.getConfig().getBoolean("setups." + parent + "." + config);
+			}
+		}
+		return def;
+	}
+	
+	private static String getString(String config, String setup, String def) {
+		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
+			return plugin.getConfig().getString("setups." + setup + "." + config);
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + config)) {
+				return plugin.getConfig().getString("setups." + parent + "." + config);
+			}
+		}
+		return def;
+	}
+	
+	private static int getInt(String config, String setup, int def) {
+		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
+			return plugin.getConfig().getInt("setups." + setup + "." + config);
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + config)) {
+				return plugin.getConfig().getInt("setups." + parent + "." + config);
+			}
+		}
+		return def;
+	}
+	
+	private static List<String> getStringList(String config, String setup, List<String> def) {
+		Set<String> strings = new HashSet<String>();
+		strings.addAll(plugin.getConfig().getStringList("setups." + setup + "." + config));
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			strings.addAll(plugin.getConfig().getStringList("setups." + parent + "." + config));
+		}
+		strings.addAll(def);
+		return new ArrayList<String>(strings);
+	}
+
+	
+	// Global only
+	public static String getDefaultGame() {
+		return getGlobalString("default-game", DEFAULT_GAME.getString());
+	}
+	
+	public static int getUpdateDelay() {
+		return getGlobalInt("update-delay", UPDATE_DELAY.getInt());
+	}
+		
+	public static boolean getForceInternalGlobal() {
+		return getGlobalBoolean("force-internal", FORCE_INTERNAL.getBoolean());
 	}
 
 	// Global
 	public static String getGlobalJoinMessage() {
-		return plugin.getConfig().getString("global.join-message", JOIN.getMessage());
+		return getGlobalString("join-message", JOIN.getMessage());
 	}
 	
 	public static String getGlobalRejoinMessage() {
-		return plugin.getConfig().getString("global.rejoin-message", REJOIN.getMessage());
+		return getGlobalString("rejoin-message", REJOIN.getMessage());
 	}
 	
 	public static String getGlobalLeaveMessage() {
-		return plugin.getConfig().getString("global.leave-message", LEAVE.getMessage());
+		return getGlobalString("leave-message", LEAVE.getMessage());
 	}
 	
 	public static String getGlobalQuitMessage() {
-		return plugin.getConfig().getString("global.quit-message", QUIT.getMessage());
+		return getGlobalString("quit-message", QUIT.getMessage());
 	}
 	
 	public static String getGlobalKillMessage() {
-		return plugin.getConfig().getString("global.kill-message", KILL.getMessage());
+		return getGlobalString("kill-message", KILL.getMessage());
 	}
 	
 	public static String getGlobalVoteMessage() {
-		return plugin.getConfig().getString("global.vote-message", VOTE.getMessage());
+		return getGlobalString("vote-message", VOTE.getMessage());
 	}
 	
 	public static int getGlobalMinVote() {
-		return plugin.getConfig().getInt("global.min-vote", MIN_VOTE.getInt());
+		return getGlobalInt("min-vote", MIN_VOTE.getInt());
 	}
 	
 	public static int getGlobalMinPlayers() {
-		return plugin.getConfig().getInt("global.min-players", MIN_PLAYERS.getInt());
+		return getGlobalInt("min-players", MIN_PLAYERS.getInt());
 	}
-	
+
 	public static int getGlobalDefaultTime() {
-		return plugin.getConfig().getInt("global.default-time", DEFAULT_TIME.getInt());
-	}
-	
-	public static boolean getGlobalAllowRejoin() {
-		return plugin.getConfig().getBoolean("global.allow-rejoin", ALLOW_REJOIN.getBoolean());
-	}
-	
-	public static boolean getGlobalAllowJoinWhileRunning() {
-		return plugin.getConfig().getBoolean("global.allow-join-during-game", ALLOW_JOIN_WHILE_RUNNING.getBoolean());
-	}
-	
-	public static boolean getGlobalWinnerKeepsItems(){
-		return plugin.getConfig().getBoolean("global.winner-keeps-items", WINNER_KEEPS_ITEMS.getBoolean());
-	}
-	
-	public static boolean shouldRespawnAtSpawnPointGlobal() {
-		return plugin.getConfig().getBoolean("global.spawnpoint-on-death", RESPAWN_ON_DEATH.getBoolean());
+		return getGlobalInt("default-time", DEFAULT_TIME.getInt());
 	}
 	
 	public static int getLivesGlobal() {
-		return plugin.getConfig().getInt("global.lives", LIVES.getInt());
+		return getGlobalInt("lives", LIVES.getInt());
+	}
+
+	public static boolean getGlobalAllowRejoin() {
+		return getGlobalBoolean("allow-rejoin", ALLOW_REJOIN.getBoolean());
+	}
+
+	public static boolean getGlobalAllowJoinWhileRunning() {
+		return getGlobalBoolean("allow-join-during-game", ALLOW_JOIN_WHILE_RUNNING.getBoolean());
+	}
+
+	public static boolean getGlobalWinnerKeepsItems(){
+		return getGlobalBoolean("winner-keeps-items", WINNER_KEEPS_ITEMS.getBoolean());
+	}
+	
+	public static boolean shouldRespawnAtSpawnPointGlobal() {
+		return getGlobalBoolean("spawnpoint-on-death", RESPAWN_ON_DEATH.getBoolean());
 	}
 	
 	public static boolean getRequireInvClear() {
-		return plugin.getConfig().getBoolean("global.require-inv-clear", REQUIRE_INV_CLEAR.getBoolean());
+		return getGlobalBoolean("require-inv-clear", REQUIRE_INV_CLEAR.getBoolean());
 	}
 	
 	public static boolean getAllVoteGlobal() {
-		return plugin.getConfig().getBoolean("global.all-vote", ALL_VOTE.getBoolean());
+		return getGlobalBoolean("all-vote", ALL_VOTE.getBoolean());
 	}
 	
 	public static boolean getAutoVoteGlobal() {
-		return plugin.getConfig().getBoolean("global.auto-vote", AUTO_VOTE.getBoolean());
+		return getGlobalBoolean("auto-vote", AUTO_VOTE.getBoolean());
 	}
 	
 	public static boolean getCanPlaceBlockGlobal() {
-		return plugin.getConfig().getBoolean("global.can-place-block", CAN_PLACE_BLOCK.getBoolean());
+		return getGlobalBoolean("can-place-block", CAN_PLACE_BLOCK.getBoolean());
 	}
 	
 	public static boolean getCanBreakBlockGlobal() {
-		return plugin.getConfig().getBoolean("global.can-break-block", CAN_BREAK_BLOCK.getBoolean());
+		return getGlobalBoolean("can-break-block", CAN_BREAK_BLOCK.getBoolean());
 	}
 	
 	public static boolean getCanInteractBlockGlobal() {
-		return plugin.getConfig().getBoolean("global.can-interact-block", CAN_INTERACT_BLOCK.getBoolean());
+		return getGlobalBoolean("can-interact-block", CAN_INTERACT_BLOCK.getBoolean());
 	}
 	
 	public static boolean getCanTeleportGlobal() {
-		return plugin.getConfig().getBoolean("global.can-teleport", CAN_TELEPORT.getBoolean());
+		return getGlobalBoolean("can-teleport", CAN_TELEPORT.getBoolean());
 	}
 	
 	public static boolean getUseCommandGlobal() {
-		return plugin.getConfig().getBoolean("global.use-command", USE_COMMAND.getBoolean());
+		return getGlobalBoolean("use-command", USE_COMMAND.getBoolean());
 	}
 	
 	public static boolean getAutoAddGlobal() {
-		return plugin.getConfig().getBoolean("global.auto-add", AUTO_ADD.getBoolean());
+		return getGlobalBoolean("auto-add", AUTO_ADD.getBoolean());
 	}
 	
 	public static boolean getReloadWorldGlobal() {
-		return plugin.getConfig().getBoolean("global.reload-world", RELOAD_WORLD.getBoolean());
+		return getGlobalBoolean("reload-world", RELOAD_WORLD.getBoolean());
 	}
 	
 	public static String getReloadWorldNameGlobal() {
-		return plugin.getConfig().getString("global.reload-world-name", RELOAD_WORLD_NAME.getString());
+		return getGlobalString("reload-world-name", RELOAD_WORLD_NAME.getString());
 	}
 		
 	public static boolean getResetChangesGlobal() {
-		return plugin.getConfig().getBoolean("global.reset-changes", RELOAD_WORLD.getBoolean());
+		return getGlobalBoolean("reset-changes", RELOAD_WORLD.getBoolean());
 	}
 		
 	public static boolean getForceSurvivalGlobal() {
-		return plugin.getConfig().getBoolean("global.force-survival", FORCE_SURVIVAL.getBoolean());
+		return getGlobalBoolean("force-survival", FORCE_SURVIVAL.getBoolean());
 	}
 		
 	public static boolean getFreezePlayersGlobal() {
-		return plugin.getConfig().getBoolean("global.freeze-players", FREEZE_PLAYERS.getBoolean());
+		return getGlobalBoolean("freeze-players", FREEZE_PLAYERS.getBoolean());
 	}
 		
 	public static boolean getForceDamageGlobal() {
-		return plugin.getConfig().getBoolean("global.force-damage", FORCE_DAMAGE.getBoolean());
-	}
-		
-	public static boolean getForceInternalGlobal() {
-		return plugin.getConfig().getBoolean("global.force-internal", FORCE_INTERNAL.getBoolean());
+		return getGlobalBoolean("force-damange", FORCE_DAMAGE.getBoolean());
 	}
 	
-	public static List<Integer> getSpecialBlocksPlaceGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-place");
-		if(list == null)
-			return Collections.emptyList();
-		return list;
+	public static List<String> getSpecialBlocksPlaceGlobal() {
+		return getGlobalStringList("special-blocks-place", new ArrayList<String>());
 	}
 	
-	public static List<Integer> getSpecialBlocksBreakGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-break");
-		if(list == null)
-			return Collections.emptyList();
-		return list;
+	public static List<String> getSpecialBlocksBreakGlobal() {
+		return getGlobalStringList("special-blocks-break", new ArrayList<String>());
 	}
 	
-	public static List<Integer> getSpecialBlocksInteractGlobal() {
-		List<Integer> list = plugin.getConfig().getIntegerList("global.special-blocks-interact");
-		if(list == null)
-			return Collections.emptyList();
-		return list;
+	public static List<String> getSpecialBlocksInteractGlobal() {
+		return getGlobalStringList("special-blocks-interact", new ArrayList<String>());
 	}
 	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
@@ -193,144 +254,207 @@ public class Config {
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".join-message", getGlobalJoinMessage());
+		return getString("join-message", setup, getGlobalJoinMessage());
 
 	}
 	
 	public static String getRejoinMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".rejoin-message", getGlobalRejoinMessage());
+		return getString("rejoin-message", setup, getGlobalRejoinMessage());
 	}
 	
 	public static String getLeaveMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".leave-message", getGlobalLeaveMessage());
+		return getString("leave-message", setup, getGlobalLeaveMessage());
 	}
 	
 	public static String getQuitMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".quit-message", getGlobalQuitMessage());
+		return getString("quit-message", setup, getGlobalQuitMessage());
 	}
 	
 	public static String getKillMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".kill-message", getGlobalKillMessage());
+		return getString("kill-message", setup, getGlobalKillMessage());
 	}
 	
 	public static String getVoteMessage(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".vote-message", getGlobalVoteMessage());
+		return getString("vote-message", setup, getGlobalVoteMessage());
 	}
 	
 	public static int getMinVote(String setup) {
-		return plugin.getConfig().getInt("setups." + setup + ".min-vote", getGlobalMinVote());
+		return getInt("min-vote", setup, getGlobalMinVote());
 	}
 	
 	public static int getMinPlayers(String setup) {
-		return plugin.getConfig().getInt("setups." + setup + ".min-players", getGlobalMinPlayers());
+		return getInt("min-players", setup, getGlobalMinPlayers());
 	}
 	
 	public static int getDefaultTime(String setup) {
-		return plugin.getConfig().getInt("setups." + setup + ".default-time", getGlobalDefaultTime());
-	}
-	
-	public static boolean getAllowRejoin(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".allow-rejoin", getGlobalAllowRejoin());
-	}
-	
-	public static boolean getAllowJoinWhileRunning(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".allow-join-during-game", getGlobalAllowJoinWhileRunning());
-	}
-	
-	public static boolean getWinnerKeepsItems(String setup){
-		return plugin.getConfig().getBoolean("setups." + setup + ".winner-keeps-items", getGlobalWinnerKeepsItems());
-	}
-	
-	public static boolean shouldRespawnAtSpawnPoint(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".spawnpoint-on-death", shouldRespawnAtSpawnPointGlobal());
+		return getInt("default-time", setup, getGlobalDefaultTime());
 	}
 	
 	public static int getLives(String setup) {
 		return plugin.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
 	}
+
+	public static boolean getAllowRejoin(String setup) {
+		return getBoolean("allow-rejoin", setup, getGlobalAllowRejoin());
+	}
+	
+	public static boolean getAllowJoinWhileRunning(String setup) {
+		return getBoolean("allow-join-during-game", setup, getGlobalAllowJoinWhileRunning());
+	}
+	
+	public static boolean getWinnerKeepsItems(String setup){
+		return getBoolean("winner-keeps-items", setup, getGlobalWinnerKeepsItems());
+	}
+	
+	public static boolean shouldRespawnAtSpawnPoint(String setup) {
+		return getBoolean("spawnpoint-on-death", setup, shouldRespawnAtSpawnPointGlobal());
+	}
 	
 	public static boolean getRequireInvClear(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".require-inv-clear", getRequireInvClear());
+		return getBoolean("require-inv-clear", setup, getRequireInvClear());
 	}
 	
 	public static boolean getAllVote(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".all-vote", getAllVoteGlobal());
+		return getBoolean("all-vote", setup, getAllVoteGlobal());
 	}
 
 	public static boolean getAutoVote(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".auto-vote", getAllVoteGlobal());
+		return getBoolean("auto-vote", setup, getAutoVoteGlobal());
 	}
 	
 	public static boolean getCanPlaceBlock(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-place-block", getCanPlaceBlockGlobal());
+		return getBoolean("can-place-block", setup, getCanPlaceBlockGlobal());
 	}
 	
 	public static boolean getCanBreakBlock(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-break-block", getCanBreakBlockGlobal());
+		return getBoolean("can-break-block", setup, getCanBreakBlockGlobal());
 	}
 	
 	public static boolean getCanInteractBlock(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-interact-block", getCanInteractBlockGlobal());
+		return getBoolean("can-interact-block", setup, getCanInteractBlockGlobal());
 	}
-	
+
 	public static boolean getCanTeleport(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".can-teleport", getCanTeleportGlobal());
+		return getBoolean("can-teleport", setup, getCanTeleportGlobal());
 	}
 
 	public static boolean getUseCommand(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".use-command", getUseCommandGlobal());
+		return getBoolean("use-command", setup, getUseCommandGlobal());
 	}
 
 	public static boolean getAutoAdd(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".auto-add", getAutoAddGlobal());
+		return getBoolean("auto-add", setup, getAutoAddGlobal());
 	}
 
 	public static boolean getReloadWorld(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".reload-world", getReloadWorldGlobal());
+		return getBoolean("reload-world", setup, getReloadWorldGlobal());
 	}
 
 	public static String getReloadWorldName(String setup) {
-		return plugin.getConfig().getString("setups." + setup + ".reload-world-name", getReloadWorldNameGlobal());
+		return getString("reload-world-name", setup, getReloadWorldNameGlobal());
 	}
 
 	public static boolean getResetChanges(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".reset-changes", getResetChangesGlobal());
+		return getBoolean("reset-changes", setup, getResetChangesGlobal());
 	}
 
 	public static boolean getForceSurvival(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".force-survival", getForceSurvivalGlobal());
+		return getBoolean("force-survival", setup, getForceSurvivalGlobal());
 	}
 
 	public static boolean getFreezePlayers(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".freeze-players", getFreezePlayersGlobal());
+		return getBoolean("freeze-players", setup, getFreezePlayersGlobal());
 	}
 
 	public static boolean getForceDamage(String setup) {
-		return plugin.getConfig().getBoolean("setups." + setup + ".force-damage", getForceDamageGlobal());
+		return getBoolean("force-damage", setup, getForceDamageGlobal());
 	}
 
 	// TODO make this use matchMaterial and check for data for more options
-	public static List<Integer> getSpecialBlocksPlace(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-place");
-		if(list == null)
-			return getSpecialBlocksPlaceGlobal();
-	    return list;
+	public static List<String> getSpecialBlocksPlace(String setup) {
+		return getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal());
 	}
 	
-	public static List<Integer> getSpecialBlocksBreak(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-break");
-		if(list == null)
-			return getSpecialBlocksBreakGlobal();
-	    return list;
+	public static List<String> getSpecialBlocksBreak(String setup) {
+		return getStringList("special-blocks-break", setup, getSpecialBlocksBreakGlobal());
 	}
 	
-	public static List<Integer> getSpecialBlocksInteract(String setup) {
-		List<Integer> list = plugin.getConfig().getIntegerList("setups." + setup + ".special-blocks-interact");
-		if(list == null)
-			return getSpecialBlocksInteractGlobal();
-	    return list;
+	public static List<String> getSpecialBlocksInteract(String setup) {
+		return getStringList("special-blocks-interact", setup, getSpecialBlocksInteractGlobal());
+	}
+
+	public static boolean getCanPlaceBlock(String setup, Block block) {
+		boolean can = false;
+		List<Integer> list = new ArrayList<Integer>();
+		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")) {
+			try {
+				int i = Integer.parseInt(s);
+				list.add(i);
+			} catch (NumberFormatException numberFormatException) {
+			}
+		}
+		if (plugin.getConfig().contains("setups." + setup + "." + "can-place-block")) {
+			can |= plugin.getConfig().contains("setups." + setup + "." + "can-place-block") 
+				^ plugin.getConfig().getIntegerList("setups." + setup + "." + "special-blocks-place").contains(block.getTypeId());
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + "can-place-block")) {
+				can |= plugin.getConfig().contains("setups." + parent + "." + "can-place-block") 
+					^ plugin.getConfig().getIntegerList("setups." + parent + "." + "special-blocks-place").contains(block.getTypeId());
+			}
+		}
+		can |= getCanPlaceBlock(setup) ^ plugin.getConfig().getIntegerList("global.special-blocks-place").contains(block.getTypeId());
+		return can;
 	}
 	
+	public static boolean getCanBreakBlock(String setup, Block block) {
+		boolean can = false;
+		List<Integer> list = new ArrayList<Integer>();
+		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")) {
+			try {
+				int i = Integer.parseInt(s);
+				list.add(i);
+			} catch (NumberFormatException numberFormatException) {
+			}
+		}
+		if (plugin.getConfig().contains("setups." + setup + "." + "can-break-block")) {
+			can |= plugin.getConfig().contains("setups." + setup + "." + "can-break-block") 
+				^ plugin.getConfig().getIntegerList("setups." + setup + "." + "special-blocks-break").contains(block.getTypeId());
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + "can-break-block")) {
+				can |= plugin.getConfig().contains("setups." + parent + "." + "can-break-block") 
+					^ plugin.getConfig().getIntegerList("setups." + parent + "." + "special-blocks-break").contains(block.getTypeId());
+			}
+		}
+		can |= getCanBreakBlock(setup) ^ plugin.getConfig().getIntegerList("global.special-blocks-break").contains(block.getTypeId());
+		return can;
+	}
+	
+	public static boolean getCanInteractBlock(String setup, Block block) {
+		boolean can = false;
+		List<Integer> list = new ArrayList<Integer>();
+		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")) {
+			try {
+				int i = Integer.parseInt(s);
+				list.add(i);
+			} catch (NumberFormatException numberFormatException) {
+			}
+		}
+		if (plugin.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
+			can |= plugin.getConfig().contains("setups." + setup + "." + "can-interact-block") 
+				^ plugin.getConfig().getIntegerList("setups." + setup + "." + "special-blocks-interact").contains(block.getTypeId());
+		}
+		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+			if (plugin.getConfig().contains("setups." + parent + "." + "can-interact-block")) {
+				can |= plugin.getConfig().contains("setups." + parent + "." + "can-interact-block") 
+					^ plugin.getConfig().getIntegerList("setups." + parent + "." + "special-blocks-interact").contains(block.getTypeId());
+			}
+		}
+		can |= getCanInteractBlock(setup) ^ plugin.getConfig().getIntegerList("global.special-blocks-interact").contains(block.getTypeId());
+		return can;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static List<String> getSetups(){
 	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("setups");
