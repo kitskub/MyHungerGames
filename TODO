@@ -5,7 +5,6 @@ HIGH:
 
 MEDIUM:
 - Random events
-- check saving
 - Fixed item chests
 - Hide players from each other
 - Sign listening
@@ -14,14 +13,11 @@ MEDIUM:
 - WebStats
 - Rewards
 - Make /hg subscribe persistent
-- ability for spectators to choose what player to go to
-
 
 LOW:
 - Map gen
 - Chest loot by command
 - Sponsor loot by command
-- Check command processing
 - Minimize external resetting of changes from players who have left but not quitted
 - economy config stuff
 - Add more listeners

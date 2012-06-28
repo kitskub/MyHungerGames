@@ -6,6 +6,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 
 import com.randude14.hungergames.utils.ChatUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +34,18 @@ public class SpectateCommand extends SubCommand{
 		    ChatUtils.error(player, "%s is not a running game.", args[0]);
 		    return true;
 	    }
-	    game.addSpectator(player);
+	    if (args.length == 2) {
+		    game.addSpectator(player, null);    
+	    }
+	    else {
+		    Player spectated = Bukkit.getPlayer(args[2]);
+		    if (spectated == null) {
+			    game.addSpectator(player, null);
+		    }
+		    else {
+			    game.addSpectator(player, spectated);
+		    }
+	    }
 	    GameManager.addSpectator(player, game.getName());
 	    return true;
     }

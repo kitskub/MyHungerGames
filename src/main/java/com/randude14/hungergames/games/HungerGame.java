@@ -227,10 +227,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return true;
 	}
 
-	public void addSpectator(Player player) {
+	public void addSpectator(Player player, Player spectated) {
 		spectators.put(player.getName(), player.getLocation());
 		Random rand = HungerGames.getRandom();
 		Location loc = randomLocs.get(rand.nextInt(randomLocs.size()));
+		if (spectated != null) loc = spectated.getLocation();
 		player.teleport(loc);
 		spectatorFlying.put(player.getName(), player.isFlying());
 		spectatorFlightAllowed.put(player.getName(), player.getAllowFlight());
