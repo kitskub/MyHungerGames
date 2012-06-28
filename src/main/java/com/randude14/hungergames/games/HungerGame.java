@@ -34,6 +34,8 @@ import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 
 	
 public class HungerGame implements Comparable<HungerGame> {
@@ -272,6 +274,7 @@ public class HungerGame implements Comparable<HungerGame> {
 			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
 		}
+		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		clear();
 		ResetHandler.resetChanges(this);
 		return null;
@@ -1066,6 +1069,25 @@ public class HungerGame implements Comparable<HungerGame> {
 		return Collections.unmodifiableSet(cuboids);
 	}
 
+	public void removeItemsOnGround() {
+		for (String s : worlds) {
+			World w = Bukkit.getWorld(s);
+			if (w == null) continue;
+			for (Entity e : w.getEntities()) {
+				if (!(e instanceof Item)) continue;
+				e.remove();
+			}
+		}
+		for (Cuboid c : cuboids) {
+			if (worlds.contains(c.getLower().getWorld().getName())) continue;
+			for (Entity e : c.getLower().getWorld().getEntities()) {
+				if (!(e instanceof Item)) continue;
+				if (!c.isLocationWithin(e.getLocation())) continue;
+				e.remove();
+			}
+		}
+	}
+	
 	// sorts players by name ignoring case
 	private class PlayerComparator implements Comparator<Player> {
 
@@ -1079,5 +1101,4 @@ public class HungerGame implements Comparable<HungerGame> {
 		}
 
 	}
-
 }

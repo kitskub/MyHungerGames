@@ -1,7 +1,4 @@
 HIGH:
-- economy config stuff
-- Add more listeners
-- Remove items from ground after game ends
 - Remove reset-world in v0.6
 - config options for notifications
 - save random points in the arena for respawn/spectating
@@ -26,6 +23,8 @@ LOW:
 - Sponsor loot by command
 - Check command processing
 - Minimize external resetting of changes from players who have left but not quitted
+- economy config stuff
+- Add more listeners
 
 OPTIONAL:
 - Possible timed game events

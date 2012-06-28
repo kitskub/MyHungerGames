@@ -51,7 +51,8 @@ public class Defaults {
 	FORCE_INTERNAL(false),
 	ISOLATE_PLAYER_CHAT(true),
 	CHAT_DISTANCE(15),
-	ALLOW_MINIMAL_MESSAGES(true);
+	ALLOW_MINIMAL_MESSAGES(true),
+	REMOVE_ITEMS(true);
 	
 	
 	private Object value;

@@ -276,6 +276,10 @@ public class Config {
 		return getGlobalInt("chat-distance", CHAT_DISTANCE.getInt());
 	}
 	
+	public static boolean getRemoveItemsGlobal() {
+		return getGlobalBoolean("remove-items", REMOVE_ITEMS.getBoolean());
+	}
+	
 	public static List<String> getSpecialBlocksPlaceGlobal() {
 		return getGlobalStringList("special-blocks-place", new ArrayList<String>());
 	}
@@ -432,6 +436,10 @@ public class Config {
 
 	public static int getChatDistance(String setup) {
 		return getInteger("chat-distance", setup, getChatDistanceGlobal());
+	}
+
+	public static boolean getRemoveItems(String setup) {
+		return getBoolean("remove-items", setup, getRemoveItemsGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

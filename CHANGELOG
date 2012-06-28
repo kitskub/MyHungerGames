@@ -46,6 +46,7 @@ v0.5
 - config can now have have data
 - config options to limit the distance that players can hear each other
 - config option to allow players to receive minimal messages
+- config option to allow items to be deleted on the ground after a game ends
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

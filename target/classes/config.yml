@@ -111,7 +111,10 @@ global:
   # subscribers are not persistent between server restarts
   # GLOBAL ONLY
   allow-minimal-messages: true
-    
+  
+  # whether to remove items off the ground when a game ends
+  remove-items: true
+
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:
