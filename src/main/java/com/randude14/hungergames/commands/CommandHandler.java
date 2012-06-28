@@ -157,6 +157,9 @@ public class CommandHandler implements CommandExecutor {
 		else if ("kick".equalsIgnoreCase(args[0])) {
 			command = new KickCommand();
 		}
+		else if ("kill".equalsIgnoreCase(args[0])) {
+			command = new KillCommand();
+		}
 		else if ("start".equalsIgnoreCase(args[0])) {
 			command = new StartCommand();
 		}

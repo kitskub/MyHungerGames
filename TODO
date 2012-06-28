@@ -4,9 +4,6 @@ HIGH:
 MEDIUM:
 - Random events
 - Fixed item chests
-- Hide players from each other
-- Sign listening
-- /hga kill <player>
 - Spectators get to sponsor at a certain interval
 - WebStats
 - Rewards
@@ -18,6 +15,7 @@ LOW:
 - Minimize external resetting of changes from players who have left but not quitted
 - economy config stuff
 - Add more listeners
+- Hide players from each other
 
 OPTIONAL:
 - Possible timed game events

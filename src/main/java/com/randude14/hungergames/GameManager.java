@@ -69,7 +69,7 @@ public class GameManager{
 
 	public static HungerGame getGame(String name) {
 		for (HungerGame game : games) {
-			if (game.getName().equals(name)) {
+			if (game.getName().equalsIgnoreCase(name)) {
 				return game;
 			}
 

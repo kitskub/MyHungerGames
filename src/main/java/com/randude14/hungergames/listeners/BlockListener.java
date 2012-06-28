@@ -9,6 +9,7 @@ import com.randude14.hungergames.utils.ChatUtils;
 import java.util.logging.Level;
 
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.event.EventPriority;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BlockListener implements Listener {
@@ -36,6 +38,13 @@ public class BlockListener implements Listener {
 			event.setCancelled(true);
 			ChatUtils.error(player, "You cannot place this block while spectating %s.", GameManager.getSpectating(player));
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onSignChange(SignChangeEvent event) {
+		Sign sign = (Sign) event.getBlock();
+		if(!sign.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
+		InternalListener.addSign(sign);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

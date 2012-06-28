@@ -272,10 +272,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (!enabled) {
 			return String.format("%s is currently not enabled.", name);
 		}
-		if (!isFinished) {
-			GameStopEvent event = new GameStopEvent(this);
-			HungerGames.callEvent(event);
-		}
 		isRunning = false;
 		for (Player player : getRemainingPlayers()) {
 			ItemStack[] contents = player.getInventory().getContents();
@@ -284,6 +280,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
 		}
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
+		if (!isFinished) {
+			GameStopEvent event = new GameStopEvent(this);
+			HungerGames.callEvent(event);
+		}
 		clear();
 		ResetHandler.resetChanges(this);
 		return null;
@@ -452,7 +452,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public String pauseGame() {
 		if(isPaused) return "Cannot pause a game that has been paused.";
 		
-		HungerGames.callEvent(new GamePauseEvent(this));
 		isRunning = false;
 		isCounting = false;
 		isPaused = true;
@@ -471,6 +470,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			Player spectator = Bukkit.getPlayer(spectatorName);
 			removeSpectator(spectator);
 		}
+		HungerGames.callEvent(new GamePauseEvent(this));
 		return null;
 	}
 	
@@ -768,8 +768,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			    ChatUtils.broadcast(true, "%s has won the game %s! Congratulations!", winner.getName(), name);
 			    event = new GameEndEvent(this, winner);
 		    }
-		    HungerGames.callEvent(event);
 		    stopGame(true);
+		    HungerGames.callEvent(event);
 		    return true;
 	    }
 

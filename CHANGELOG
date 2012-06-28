@@ -52,6 +52,7 @@ v0.5
 - Added a player option to /hg spectate to allow spectators to teleport to a specific player
 - Another possible fix for chest stuff
 - New command system
+- Sign listening
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time
