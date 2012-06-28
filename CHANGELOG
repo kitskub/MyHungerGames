@@ -48,6 +48,7 @@ v0.5
 - config option to allow players to receive minimal messages
 - config option to allow items to be deleted on the ground after a game ends
 - Fixed official name to "MyHungerGames" instead of "HungerGames"
+- Respawning players and spectators now can respawn at random locations that other players have been
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

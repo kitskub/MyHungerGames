@@ -20,7 +20,7 @@ public class ChatListener implements Listener {
 			if (receipientGame != null) {
 				if (Config.getIsolatePlayerChat(receipientGame.getSetup())) {
 					if (chatterGame != null) {
-						if (chatterGame.getName().equals(receipientGame.getName()) 
+						if (chatterGame.compareTo(receipientGame) == 0 
 							&& event.getPlayer().getLocation().getWorld() == p.getLocation().getWorld()) {
 							float distanceRequired = Config.getChatDistance(receipientGame.getSetup());
 							if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) <= distanceRequired) {
@@ -38,6 +38,4 @@ public class ChatListener implements Listener {
 			}
 		}
 	}
-	
-	
 }

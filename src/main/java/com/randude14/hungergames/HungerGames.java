@@ -7,8 +7,8 @@ import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.Permission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.reset.ResetHandler;
-
 import com.randude14.hungergames.utils.ChatUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -38,13 +38,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 
 	
-public class HungerGame implements Comparable<HungerGame> {
+public class HungerGame implements Comparable<HungerGame>, Runnable{
 	// Per game
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
 	private final Map<String, Location> spectators;
 	private final Set<String> allPlayers;
 	private final List<InventoryHolder> randomInvs;
+	private final List<Location> randomLocs;
 	private final Map<String, String> sponsors; // Just a list for info, <sponsor, sponsee>
 	private boolean isRunning;
 	private boolean isCounting;
@@ -87,6 +88,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		this.name = name;
 		this.setup = null;
                 randomInvs = new ArrayList<InventoryHolder>();
+		randomLocs = new ArrayList<Location>();
 		itemsets = new ArrayList<String>();
 		worlds = new HashSet<String>();
 		cuboids = new HashSet<Cuboid>();
@@ -184,6 +186,14 @@ public class HungerGame implements Comparable<HungerGame> {
 		HungerGames.callEvent(new GameSaveEvent(this));
 	}
 
+	public void run() {
+		if (!isRunning) return;
+		Random rand = HungerGames.getRandom();
+		Location loc = getRemainingPlayers().get(rand.nextInt(getRemainingPlayers().size())).getLocation();
+		if (randomLocs.size() >= 15) randomLocs.remove(rand.nextInt(15));
+		randomLocs.add(loc);
+	}
+	
 	public int compareTo(HungerGame game) {
 		return game.name.compareToIgnoreCase(name);
 	}
@@ -220,7 +230,7 @@ public class HungerGame implements Comparable<HungerGame> {
 	public void addSpectator(Player player) {
 		spectators.put(player.getName(), player.getLocation());
 		Random rand = HungerGames.getRandom();
-		Location loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
+		Location loc = randomLocs.get(rand.nextInt(randomLocs.size()));
 		player.teleport(loc);
 		spectatorFlying.put(player.getName(), player.isFlying());
 		spectatorFlightAllowed.put(player.getName(), player.getAllowFlight());
@@ -347,7 +357,7 @@ public class HungerGame implements Comparable<HungerGame> {
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
-		
+		HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
 		releasePlayers();
 		fillInventories();
 		for (String playerName : stats.keySet()) {
@@ -841,9 +851,8 @@ public class HungerGame implements Comparable<HungerGame> {
 				GameManager.addPlayerRespawn(killed, respawn);
 			}
 			else {
-				Location respawn = spawnsTaken.get(killed.getName());
+				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 				GameManager.addPlayerRespawn(killed, respawn);
-				// TODO needs a random
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
@@ -980,8 +989,7 @@ public class HungerGame implements Comparable<HungerGame> {
 						spawnsTaken.remove(playerName);
 						if (Bukkit.getPlayer(playerName) == null) continue;
 						ChatUtils.error(Bukkit.getPlayer(playerName),
-							"Your spawn point has been recently removed. Try rejoining by typing '/hg rejoin %s'", 
-							playerName);
+							"Your spawn point has been recently removed. Try rejoining by typing '/hg rejoin %s'", name);
 						leave(Bukkit.getPlayer(playerName));
 					}
 				}
