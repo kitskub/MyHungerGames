@@ -12,13 +12,16 @@ import org.bukkit.entity.Player;
 
 public class PauseCommand extends SubCommand{
 
+	public PauseCommand() {
+		super(Commands.ADMIN_PAUSE);
+	}
+
 	@Override
-	public boolean execute(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.ADMIN_PAUSE)) return true;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, Commands.ADMIN_PAUSE.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 			return true;
 		}
 

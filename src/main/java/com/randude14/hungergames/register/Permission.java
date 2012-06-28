@@ -1,24 +1,21 @@
 package com.randude14.hungergames.register;
 
 import com.randude14.hungergames.Defaults.Perm;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public abstract class Permission {
 	
-	public boolean hasPermission(Player player, String permission) {
-		return hasPermission(player.getWorld().getName(), player.getName(), permission);
-	}
-	
-	public boolean hasPermission(Player player, Perm permission) {
-		if (hasPermission(player.getWorld().getName(), player.getName(), permission.getPermission())) {
+	public boolean hasPermission(CommandSender cs, Perm permission) {
+		if (permission == null) return true;
+		if (hasPermission(cs, permission.getPermission())) {
 			return true;
 		}
 		if (permission.getParent() != null) {
-			return hasPermission(player, permission.getParent());
+			return hasPermission(cs, permission.getParent());
 		}
 		return false;
 	}
 	
-	public abstract boolean hasPermission(String world, String player, String permission);
+	public abstract boolean hasPermission(CommandSender cs, String permission);
 
 }

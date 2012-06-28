@@ -25,10 +25,12 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -142,8 +144,8 @@ public class HungerGames extends JavaPlugin{
 	    loadRegistry();
 	}
 
-	public static boolean hasPermission(Player player, Defaults.Perm perm) {
-		return HungerGames.perm.hasPermission(player, perm);
+	public static boolean hasPermission(CommandSender cs, Defaults.Perm perm) {
+		return HungerGames.perm.hasPermission(cs, perm);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
@@ -305,9 +307,9 @@ public class HungerGames extends JavaPlugin{
 		return instance;
 	}
 
-	public static boolean checkPermission(Player player, Defaults.Perm perm) {
-		if (!HungerGames.hasPermission(player, perm)) {
-			ChatUtils.error(player, "You do not have permission.");
+	public static boolean checkPermission(CommandSender cs, Defaults.Perm perm) {
+		if (!HungerGames.hasPermission(cs, perm)) {
+			cs.sendMessage(ChatColor.RED + "You do not have permission.");
 			return false;
 		}
 		return true;

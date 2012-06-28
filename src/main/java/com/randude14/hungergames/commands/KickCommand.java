@@ -14,13 +14,16 @@ import org.bukkit.entity.Player;
 
 public class KickCommand extends SubCommand{
 
+	public KickCommand() {
+		super(Commands.ADMIN_KICK);
+	}
+
 	@Override
-	public boolean execute(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.ADMIN_KICK)) return true;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, Commands.ADMIN_KICK.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 			return true;
 		}
 

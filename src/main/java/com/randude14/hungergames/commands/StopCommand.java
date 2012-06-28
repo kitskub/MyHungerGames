@@ -1,9 +1,7 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Defaults.Commands;
-import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;
@@ -12,13 +10,16 @@ import org.bukkit.entity.Player;
 
 public class StopCommand extends SubCommand{
 
+	public StopCommand() {
+		super(Commands.ADMIN_STOP);
+	}
+
 	@Override
-	public boolean execute(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.ADMIN_STOP)) return true;
 		
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, Commands.ADMIN_STOP.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 			return true;
 		}
 				

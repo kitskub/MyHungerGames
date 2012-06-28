@@ -89,13 +89,61 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		if ("add".equalsIgnoreCase(args[0])) {
-			command = new AddCommand();
+			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
+				ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CUBOID.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_WORLD.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				return;
+			}
+			if (args[1].equalsIgnoreCase("spawnpoint")) command = new AddSpawnPointCommand();
+			else if (args[1].equalsIgnoreCase("cuboid")) command = new AddCuboidCommand();
+			else if (args[1].equalsIgnoreCase("chest")) command = new AddChestCommand();
+			else if (args[1].equalsIgnoreCase("game")) command = new AddGameCommand();
+			else if (args[1].equalsIgnoreCase("itemset")) command = new AddItemSetCommand();
+			else if (args[1].equalsIgnoreCase("world")) command = new AddWorldCommand();
+			else {
+				ChatUtils.error(player, "Command not recognized.");
+				return;
+			}
+			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
 		}
 		else if ("remove".equalsIgnoreCase(args[0])) {
-			command = new RemoveCommand();
+			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
+				ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_SPAWNPOINT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				return;
+			}
+			if (args[1].equalsIgnoreCase("spawnpoint")) command = new RemoveSpawnPointCommand();
+			else if (args[1].equalsIgnoreCase("chest")) command = new RemoveChestCommand();
+			else if (args[1].equalsIgnoreCase("game")) command = new RemoveGameCommand();
+			else if (args[1].equalsIgnoreCase("itemset")) command = new RemoveItemSetCommand();
+			else {
+				ChatUtils.error(player, "Command not recognized.");
+				return;
+			}
+			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
 		}
 		else if ("set".equalsIgnoreCase(args[0])) {
-			command = new SetCommand();
+			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
+				ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+				ChatUtils.helpCommand(player, Commands.ADMIN_SET_SPAWN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_SET_ENABLED.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				return;
+			}
+			if (args[1].equalsIgnoreCase("spawn")) command = new SetSpawnCommand();
+			else if (args[1].equalsIgnoreCase("enabled")) command = new SetEnabledCommand();
+			else {
+				ChatUtils.error(player, "Command not recognized.");
+				return;
+			}
+			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
 		}
 		else if ("restock".equalsIgnoreCase(args[0])) {
 			command = new RestockCommand();

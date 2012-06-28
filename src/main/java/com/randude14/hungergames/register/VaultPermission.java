@@ -1,6 +1,8 @@
 package com.randude14.hungergames.register;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultPermission extends Permission {
@@ -23,8 +25,10 @@ public class VaultPermission extends Permission {
 	}
 
 	@Override
-	public boolean hasPermission(String world, String player, String permission) {
-		return perm.has(world, player, permission);
+	public boolean hasPermission(CommandSender cs, String permission) {
+		if (cs instanceof Player) {
+			return perm.has(((Player) cs).getWorld(), ((Player) cs).getName(), permission);
+		}
+		return perm.has(cs, permission);
 	}
-
 }

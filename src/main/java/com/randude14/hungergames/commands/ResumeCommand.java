@@ -12,13 +12,16 @@ import org.bukkit.entity.Player;
 
 public class ResumeCommand extends SubCommand{
 
+	public ResumeCommand() {
+		super(Commands.ADMIN_RESUME);
+	}
+
 	@Override
-	public boolean execute(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-		if (!HungerGames.checkPermission(player, Perm.ADMIN_RESUME)) return true;
 			
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, Commands.ADMIN_RESUME.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 			return true;
 		}
 

@@ -51,6 +51,7 @@ v0.5
 - Respawning players and spectators now can respawn at random locations that other players have been
 - Added a player option to /hg spectate to allow spectators to teleport to a specific player
 - Another possible fix for chest stuff
+- New command system
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

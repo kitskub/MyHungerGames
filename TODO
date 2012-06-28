@@ -10,7 +10,6 @@ MEDIUM:
 - Spectators get to sponsor at a certain interval
 - WebStats
 - Rewards
-- Make /hg subscribe persistent
 
 LOW:
 - Map gen
@@ -22,3 +21,4 @@ LOW:
 
 OPTIONAL:
 - Possible timed game events
+- ability to turn off matchmaterial to allow custom blocks
