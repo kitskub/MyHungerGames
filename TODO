@@ -1,7 +1,5 @@
 HIGH:
 - Remove reset-world in v0.6
-- config options for notifications
-- randomInvs should be better interconnected...
 
 MEDIUM:
 - Random events

@@ -31,7 +31,6 @@ import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
@@ -278,25 +277,24 @@ public class HungerGames extends JavaPlugin{
 		return true;
 	}
 
-	public static void fillInventory(Inventory inv, List<String> itemsets) {
+	public static void fillChest(Chest chest, List<String> itemsets) {
 		if (Config.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 		
-		inv.clear();
+		chest.getInventory().clear();
 		int num = 3 + rand.nextInt(8);
-		Map<ItemStack, Float> itemMap = Config
-				.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Float> itemMap = Config.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		for (int cntr = 0; cntr < num; cntr++) {
-			int index = rand.nextInt(inv.getSize());
-			if (inv.getItem(index) != null) {
+			int index = rand.nextInt(chest.getInventory().getSize());
+			if (chest.getInventory().getItem(index) != null) {
 				cntr--;
 				continue;
 			}
 			ItemStack item = items.get(rand.nextInt(items.size()));
 			if (itemMap.get(item) >= rand.nextFloat()) {
-				inv.setItem(index, item);
+				chest.getInventory().setItem(index, item);
 			}
 
 		}

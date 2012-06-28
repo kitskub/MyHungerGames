@@ -12,18 +12,6 @@ import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Chest;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameCountdown;
 import com.randude14.hungergames.GameManager;
@@ -33,7 +21,19 @@ import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Chest;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 
@@ -44,7 +44,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private final Map<String, Location> spawnsTaken;
 	private final Map<String, Location> spectators;
 	private final Set<String> allPlayers;
-	private final List<InventoryHolder> randomInvs;
 	private final List<Location> randomLocs;
 	private final Map<String, String> sponsors; // Just a list for info, <sponsor, sponsee>
 	private boolean isRunning;
@@ -87,7 +86,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		chests = new ArrayList<Location>();
 		this.name = name;
 		this.setup = null;
-                randomInvs = new ArrayList<InventoryHolder>();
 		randomLocs = new ArrayList<Location>();
 		itemsets = new ArrayList<String>();
 		worlds = new HashSet<String>();
@@ -485,11 +483,16 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	}
 
-	public void addAndFillInventory(Inventory inv) {
-		if(!randomInvs.contains(inv.getHolder())) {
+	public void addAndFillChest(Chest chest) {
+		if(!chests.contains(chest.getLocation())) {
 			Logging.debug("Inventory Holder was not in randomInvs.");
-			HungerGames.fillInventory(inv, itemsets);
-			randomInvs.add(inv.getHolder());
+			HungerGames.fillChest(chest, itemsets);
+			chests.add(chest.getLocation());
+			Block b = chest.getLocation().getBlock();
+			if (b.getRelative(BlockFace.NORTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+			else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+			else if (b.getRelative(BlockFace.EAST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+			else if (b.getRelative(BlockFace.WEST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
 		}
 	}
         
@@ -498,7 +501,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		Location loc = chests.get(cntr);
 		if (!(loc.getBlock().getState() instanceof Chest)) continue;
 		Chest chest = (Chest) loc.getBlock().getState();
-		HungerGames.fillInventory(chest.getInventory(), itemsets);
+		HungerGames.fillChest(chest, itemsets);
 	    }
 
 	}
@@ -714,7 +717,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private void clear() {
 		stats.clear();
 		spawnsTaken.clear();
-		randomInvs.clear();
 		allPlayers.clear();
 		isRunning = false;
 		isCounting = false;
@@ -949,18 +951,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public boolean addChest(Location loc) {
-		for (Location l : chests) {
-		    if (HungerGames.equals(l, loc)) return false;
-		}
+		if (chests.contains(loc)) return false;
 		chests.add(loc);
 		return true;
 	}
 
 	public boolean addSpawnPoint(Location loc) {
 		if (loc == null) return true;
-		for (Location l : spawnPoints) {
-			if (HungerGames.equals(l, loc)) return false;
-		}
+		if (spawnPoints.contains(loc)) return false;
 		spawnPoints.add(loc);
 		return true;
 	}
