@@ -154,16 +154,9 @@ public class GameManager{
 	}
 
 	public static void saveGames() {
-		FileConfiguration config = yaml.getConfig();
-		ConfigurationSection section = config.createSection("games");
 		for (HungerGame game : games) {
-		    ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
-		    if(saveSection == null) {
-			saveSection = section.createSection(game.getName());
-		    }
-		    game.saveTo(saveSection);
+		    saveGame(game);
 		}
-		yaml.save();
 	}
 	
 	public static void reloadGame(HungerGame game){
