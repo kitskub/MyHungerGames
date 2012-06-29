@@ -1,0 +1,6 @@
+chests:
+#  example:
+#    inherits: example1
+#    DIAMOND_PICKAXE:
+#      stack-size: 1
+#      DURABILITY: 3

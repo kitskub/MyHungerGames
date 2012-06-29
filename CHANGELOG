@@ -53,6 +53,8 @@ v0.5
 - Another possible fix for chest stuff
 - New command system
 - Sign listening
+- fixed item chests are in
+- added a generic data map to Session
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

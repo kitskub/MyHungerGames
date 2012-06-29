@@ -126,6 +126,33 @@ public class SessionListener implements Listener {
 			    ChatUtils.send(player, "Second corner and cuboid set.");
 		    }
 	    }
+	    else if (type == SessionType.FIXED_CHEST_ADDER) {
+		    game.addFixedChest(clickedBlock.getLocation(), session.getData().get("name"));
+		    sessions.remove(player.getName());
+		    ChatUtils.send(player, "Chest is now a fixed item chest.");
+	    }
+	    else if (type == SessionType.FIXED_CHEST_REMOVER) {
+		    game.removeFixedChest(clickedBlock.getLocation());
+		    sessions.remove(player.getName());
+		    ChatUtils.send(player, "Chest is no longer a fixed item chest.");
+	    }
+	}
+	
+	// TODO convert all these
+	public static void addSession(SessionType type, Player player, String game) {
+		sessions.put(player.getName(),  new Session(type, game));
+	}
+	
+	public static void addSession(SessionType type, Player player, String game, String... data) {
+		sessions.put(player.getName(),  new Session(type, game, data));
+	}
+	
+	public static void addFixedChestAdder(Player player, String name) {
+		sessions.put(player.getName(),  new Session(SessionType.FIXED_CHEST_ADDER, name));
+	}
+
+	public static void addFixedChestRemover(Player player, String name) {
+		sessions.put(player.getName(), new Session(SessionType.FIXED_CHEST_REMOVER, name));
 	}
 	
 	public static void addChestAdder(Player player, String name) {
@@ -152,7 +179,9 @@ public class SessionListener implements Listener {
 		sessions.remove(player.getName());
 	}
 	
-	private enum SessionType {
+	public enum SessionType {
+		FIXED_CHEST_ADDER,
+		FIXED_CHEST_REMOVER,
 		SPAWN_ADDER,
 		SPAWN_REMOVER,
 		CHEST_ADDER,
@@ -164,10 +193,19 @@ public class SessionListener implements Listener {
 		private SessionType type;
 		private List<Block> blocks;
 		private String game;
+		private Map<String, String> data;
 
 		public Session(SessionType type, String game) {
+			this(type, game, "");
+		}
+		
+		public Session(SessionType type, String game, String... args) {
 			this.game = game;
 			this.blocks = new ArrayList<Block>();
+			if (args.length % 2 == 1) return;
+			for (int i = 0; i < args.length; i += 2) {
+				data.put(args[i], args[i + 1]);
+			}
 		}
 
 		public HungerGame getGame() {
@@ -184,6 +222,10 @@ public class SessionListener implements Listener {
 
 		public SessionType getType() {
 			return type;
+		}
+
+		public Map<String, String> getData() {
+			return data;
 		}
 	}
 }

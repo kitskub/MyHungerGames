@@ -31,8 +31,7 @@ public class AddSpawnPointCommand extends SubCommand{
 	    }
 	    
 	    SessionListener.addSpawnAdder(player, game.getName());
-	    ChatUtils.send(player, ChatColor.GREEN,
-		    "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
+	    ChatUtils.send(player, ChatColor.GREEN, "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
 	    return true;
 	}
 	

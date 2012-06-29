@@ -1,12 +1,14 @@
 HIGH:
 - Remove reset-world in v0.6
+- Make permissions and commands hard-coded
+- Check chests and fixedChests for location issues going between doubles and non-doubles
 
 MEDIUM:
 - Random events
-- Fixed item chests
 - Spectators get to sponsor at a certain interval
 - WebStats
 - Rewards
+- check /hg quit
 
 LOW:
 - Map gen

@@ -48,7 +48,8 @@ public class BlockListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerBreakBlockMonitor(BlockBreakEvent event) {
+	public void onchestBreak(BlockBreakEvent event) {
+		if (!(event.getBlock() instanceof Chest)) return;
 		for (HungerGame game : GameManager.getGames()) {
 			game.removeChest(event.getBlock().getLocation());
 		}

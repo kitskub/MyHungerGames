@@ -52,6 +52,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	// Persistent
 	private final List<Location> chests;
+	private final Map<Location, String> fixedChests;
 	private final List<Location> spawnPoints;
 	private final String name;
 	private final String setup;
@@ -84,6 +85,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		isRunning = isCounting = isPaused = false;
 		
 		chests = new ArrayList<Location>();
+		fixedChests = new HashMap<Location, String>();
 		this.name = name;
 		this.setup = null;
 		randomLocs = new ArrayList<Location>();
@@ -485,24 +487,27 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public void addAndFillChest(Chest chest) {
+		if (fixedChests.containsKey(chest.getLocation())) return;
 		if(!chests.contains(chest.getLocation())) {
-			Logging.debug("Inventory Holder was not in randomInvs.");
+			Logging.debug("Inventory Location was not in randomInvs.");
 			HungerGames.fillChest(chest, itemsets);
-			chests.add(chest.getLocation());
-			Block b = chest.getLocation().getBlock();
-			if (b.getRelative(BlockFace.NORTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
-			else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
-			else if (b.getRelative(BlockFace.EAST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
-			else if (b.getRelative(BlockFace.WEST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+			addChest(chest.getLocation());
 		}
 	}
         
 	public void fillInventories() {
-	    for (int cntr = 0; cntr < chests.size(); cntr++) {
-		Location loc = chests.get(cntr);
-		if (!(loc.getBlock().getState() instanceof Chest)) continue;
-		Chest chest = (Chest) loc.getBlock().getState();
-		HungerGames.fillChest(chest, itemsets);
+	    Location prev = null;
+	    for (Location loc : chests) {
+		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) continue;
+		    if (!(loc.getBlock().getState() instanceof Chest)) continue;
+		    Chest chest = (Chest) loc.getBlock().getState();
+		    HungerGames.fillChest(chest, itemsets);
+	    }
+	    for (Location loc : fixedChests.keySet()) {
+		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) continue;
+		    if (!(loc.getBlock().getState() instanceof Chest)) continue;
+		    Chest chest = (Chest) loc.getBlock().getState();
+		    HungerGames.fillFixedChest(chest, fixedChests.get(loc));   
 	    }
 
 	}
@@ -952,28 +957,54 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public boolean addChest(Location loc) {
-		if (chests.contains(loc)) return false;
+		if (chests.contains(loc) || fixedChests.containsKey(loc)) return false;
 		chests.add(loc);
+		Block b = loc.getBlock();
+		if (b.getRelative(BlockFace.NORTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+		else if (b.getRelative(BlockFace.EAST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+		else if (b.getRelative(BlockFace.WEST) instanceof Chest) chests.add(b.getRelative(BlockFace.NORTH).getLocation());
+		return true;
+	}
+
+	public boolean addFixedChest(Location loc, String fixedChest) {
+		if (loc == null || fixedChest == null || fixedChest.equalsIgnoreCase("")) return false;
+		if (fixedChests.keySet().contains(loc)) return false;
+		removeChest(loc);
+		fixedChests.put(loc, fixedChest);
 		return true;
 	}
 
 	public boolean addSpawnPoint(Location loc) {
-		if (loc == null) return true;
+		if (loc == null) return false;
 		if (spawnPoints.contains(loc)) return false;
 		spawnPoints.add(loc);
 		return true;
 	}
 
-	public boolean removeChest(Location loc) {
-		Iterator<Location> iterator = chests.iterator();
-		while (iterator.hasNext()) {
-			if (HungerGames.equals(loc, iterator.next())) {
-				iterator.remove();
-				return true;
-			}
+	/**
+	 * Removes chest from fixedChests and adds it to chests
+	 * @param loc
+	 * @return
+	 */
+	public boolean removeFixedChest(Location loc) {
+		if (loc == null) return false;
+		fixedChests.remove(loc);
+		return chests.add(loc);
+	}
 
+	public boolean removeChest(Location loc) {
+		Block b = loc.getBlock();
+		Location ad = null;
+		if (b.getRelative(BlockFace.NORTH) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.EAST) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.WEST) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		if (ad != null) {
+			chests.remove(ad);
+			fixedChests.remove(ad);
 		}
-		return false;
+		return chests.remove(loc) || fixedChests.remove(loc) != null;
 	}
 
 	public boolean removeSpawnPoint(Location loc) {
@@ -1076,7 +1107,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public Set<Cuboid> getCuboids() {
 		return Collections.unmodifiableSet(cuboids);
 	}
-
+	
 	public void removeItemsOnGround() {
 		for (String s : worlds) {
 			World w = Bukkit.getWorld(s);

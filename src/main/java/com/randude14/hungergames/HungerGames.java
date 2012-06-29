@@ -279,6 +279,19 @@ public class HungerGames extends JavaPlugin{
 		return true;
 	}
 
+	public static void fillFixedChest(Chest chest, String name) {
+		chest.getInventory().clear();
+		List<ItemStack> items = ChestsConfig.getFixedChest(name);
+		for (ItemStack stack : items) {
+			int index = 0;
+			do {
+				index = rand.nextInt(chest.getInventory().getSize());
+			} while (chest.getInventory().getItem(index) != null);
+			
+			chest.getInventory().setItem(index, stack);
+		}
+	}
+	
 	public static void fillChest(Chest chest, List<String> itemsets) {
 		if (Config.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;

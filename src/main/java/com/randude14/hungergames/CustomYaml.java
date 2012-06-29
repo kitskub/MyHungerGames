@@ -22,7 +22,7 @@ public class CustomYaml {
 		return config;
 	}
 
-	private void load() {
+	public void load() {
 		try {
 		    config.load(file);
 		} catch (Exception ex) {
