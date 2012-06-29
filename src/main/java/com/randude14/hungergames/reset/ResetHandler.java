@@ -31,6 +31,10 @@ public class ResetHandler{
 	    resetter.init();
     }
     
+    public static void gameStarting(HungerGame game) {
+	    resetter.beginGame(game);
+    }
+    
     private static boolean reloadWorld(String worldName) {
 	// Unload
 	World world = HungerGames.getInstance().getServer().getWorld(worldName); // At this point, all players SHOULD be out, so this is just a safety for anyone else

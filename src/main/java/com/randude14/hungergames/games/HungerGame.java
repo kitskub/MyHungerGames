@@ -357,6 +357,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			return "Start was cancelled.";
 		}
 		HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
+		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
 		for (String playerName : stats.keySet()) {

@@ -28,7 +28,7 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
-			if(Config.getCanPlaceBlock(setup, event.getBlock())) {
+			if(!Config.getCanPlaceBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;
@@ -60,7 +60,7 @@ public class BlockListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
-			if(Config.getCanBreakBlock(setup, event.getBlock())) {
+			if(!Config.getCanBreakBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;
@@ -92,7 +92,7 @@ public class BlockListener implements Listener {
 		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
-			if(Config.getCanInteractBlock(setup, event.getClickedBlock())) {
+			if(!Config.getCanInteractBlock(setup, event.getClickedBlock())) {
 				ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;
