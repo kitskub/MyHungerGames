@@ -12,11 +12,12 @@ LOW:
 - Map gen
 - Chest loot by command
 - Sponsor loot by command
-- Minimize external resetting of changes from players who have left but not quitted
 - economy config stuff
-- Add more listeners
-- Hide players from each other
 
 OPTIONAL:
 - Possible timed game events
-- ability to turn off matchmaterial to allow custom blocks
+- Hide players from each other
+
+UNCONFIRMED:
+- Minimize external resetting of changes from players who have left but not quitted
+- Add more listeners

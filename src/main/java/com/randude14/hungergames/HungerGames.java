@@ -305,12 +305,12 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	public static void fillChest(Chest chest, List<String> itemsets) {
-		if (Config.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+		if (ChestsConfig.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 
 		chest.getInventory().clear();
-		Map<ItemStack, Float> itemMap = Config.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Float> itemMap = ChestsConfig.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		int size = chest.getInventory().getSize();
 		final int maxItemSize = 100;

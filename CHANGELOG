@@ -58,7 +58,10 @@ v0.5
 - number of items in a chest is now chosen by: numItems = Math.ceil((size * Math.sqrt(items.size()))/10)
 - Added creeper explosions to internal listener
 - Hardcode permissions
-- Fixed a string that may just be the cause for all the permissions stir
+- Fixed a string that may just be the cause for all the permissions stir 
+- BREAKING make sure permissions are in the form of hungergame.admin/user.* if using star
+- Moved itemsets to chestconfig.yml
+- Add use-match-material in chestconfig.yml to allow for custom blocks to be used
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

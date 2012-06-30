@@ -1,6 +1,26 @@
+global:
+  # with this false, you cannot use item names, but you can use custom blocks
+  use-match-material: true
+  chest-loot:
+  sponsor-loot:
+
 chests:
 #  example:
 #    inherits: example1
 #    DIAMOND_PICKAXE:
 #      stack-size: 1
 #      DURABILITY: 3
+
+itemsets:
+# Example game
+# To use one of these, when creating a game do 
+# /hga add itemset <name-of-game> <name-of-itemset>  NOTE make sure there are no space in the list of itemsets
+#  test:
+#   inherits: itemset1
+#	  chest-loot:
+#		  # Note DURABIlITY is an enchantment
+#	    DIAMOND_PICKAXE:
+#       stack-size: 1
+#	      chance: 0.01
+#	      DURABILITY: 3
+#   sponsor-loot:

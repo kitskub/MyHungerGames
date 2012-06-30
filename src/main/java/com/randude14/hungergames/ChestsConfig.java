@@ -2,11 +2,15 @@ package com.randude14.hungergames;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -19,6 +23,158 @@ public class ChestsConfig {
 		chestConfig.load();
 	}
 	
+	public static boolean useMatchMaterial() {
+		return chestConfig.getConfig().getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getBoolean());
+	}
+	
+	// Itemsets
+	public static List<String> getItemSets(){
+	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("itemsets");
+	    if(section == null) return Collections.emptyList();
+	    List<String> list = new ArrayList<String>(section.getKeys(false));
+	    return (list == null) ? new ArrayList<String>() : list;
+	}
+	
+	public static Map<ItemStack, Float> getAllChestLootWithGlobal(List<String> itemsets){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    if(itemsets != null) {
+		for(String s : itemsets){
+			toRet.putAll(getChestLoot(s));
+		}
+	    }
+	    toRet.putAll(getGlobalChestLoot());
+	    return toRet;
+	}
+	
+	public static Map<ItemStack, Double> getAllSponsorLootWithGlobal(List<String> itemsets){
+	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
+	    if(itemsets != null){
+		for(String s : itemsets){
+			toRet.putAll(getSponsorLoot(s));
+		}
+	    }
+	    toRet.putAll(getGlobalSponsorLoot());
+	    return toRet;
+	}
+	
+	/** For safe recursiveness */
+	private static Map<ItemStack, Float> getChestLoot(String itemset, Set<String> checked) {
+		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
+		if (checked.contains(itemset)) return chestLoot;
+		chestLoot.putAll(readChestLoot(plugin.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot")));
+		checked.add(itemset);
+		for (String parent : plugin.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
+			chestLoot.putAll(getChestLoot(parent, checked));
+		}
+		return chestLoot;
+	}
+	public static Map<ItemStack, Float> getChestLoot(String itemset){
+		return getChestLoot(itemset, new HashSet<String>());
+	}
+	
+	/** For safe recursiveness */
+	private static Map<ItemStack, Double> getSponsorLoot(String itemset, Set<String> checked) {
+		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
+		if (checked.contains(itemset)) return chestLoot;
+		chestLoot.putAll(readSponsorLoot(plugin.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot")));
+		checked.add(itemset);
+		for (String parent : plugin.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
+			checked.add(parent);
+			chestLoot.putAll(getSponsorLoot(parent, checked));
+		}
+		return chestLoot;
+	}
+	public static Map<ItemStack, Double> getSponsorLoot(String itemset){
+		return getSponsorLoot(itemset, new HashSet<String>());
+	}
+	
+	
+	public static void addChestLoot(ItemStack item, float f){
+	    // TODO chest loot by command
+	}
+	
+	public static void addSponsorLoot(ItemStack item, double f){
+	    // TODO sponsor loot by command
+	}
+	
+	private static Map<ItemStack, Float> readChestLoot(ConfigurationSection itemSection){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    if(itemSection == null) return toRet;
+	    
+	    for(String key : itemSection.getKeys(false)) {
+		    ConfigurationSection section = itemSection.getConfigurationSection(key);
+		    int stackSize = section.getInt("stack-size", 1);
+		    ItemStack item = getItemStack(key, stackSize);
+		    if(item == null) continue;
+		    
+		    for(String str : section.getKeys(false)) {
+			    Enchantment enchant = Enchantment.getByName(str);
+			    if(enchant == null || !enchant.canEnchantItem(item)) {
+				    continue;
+			    }
+			    int level = section.getInt(str, 1);
+			    try {
+				    item.addEnchantment(enchant, level);
+			    } catch (Exception ex) {
+			    }
+		    }
+		    
+		    float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
+		    toRet.put(item, chance);
+	    }
+	    return toRet;
+	}
+	
+	private static Map<ItemStack, Double> readSponsorLoot(ConfigurationSection itemSection){
+	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
+	    if(itemSection == null) return toRet;
+	    
+	    for(String key : itemSection.getKeys(false)) {
+		    ConfigurationSection section = itemSection.getConfigurationSection(key);
+		    int stackSize = section.getInt("stack-size", 1);
+		    ItemStack item = getItemStack(key, stackSize);
+		    if(item == null) continue;
+
+		    for(String str : section.getKeys(false)) {
+			    Enchantment enchant = Enchantment.getByName(str);
+			    if(enchant == null || !enchant.canEnchantItem(item)) {
+				    continue;
+			    }
+			    int level = section.getInt(str, 1);
+			    try {
+				    item.addEnchantment(enchant, level);
+			    } catch (Exception ex) {
+			    }
+
+		    }
+
+		    double money = section.getDouble("money", 10.00);
+		    toRet.put(item, money);
+	    }
+	    return toRet;
+	}
+	
+	public static Map<ItemStack, Float> getGlobalChestLoot() {
+		plugin.reloadConfig();
+		FileConfiguration config = chestConfig.getConfig();
+		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
+		ConfigurationSection itemSection = config.getConfigurationSection("global.chest-loot");
+		if(itemSection == null) return chestLoot;
+		
+		return readChestLoot(itemSection);
+	}
+	
+	public static Map<ItemStack, Double> getGlobalSponsorLoot() {
+		plugin.reloadConfig();
+		FileConfiguration config = plugin.getConfig();
+		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
+		ConfigurationSection itemSection = config.getConfigurationSection("global.sponsor-loot");
+		if(itemSection == null) return sponsorLoot;
+		
+		return readSponsorLoot(itemSection);
+	}
+
+
 	public static Set<String> getFixedChests() {
 		return chestConfig.getConfig().getConfigurationSection("chests").getKeys(false);
 	}
@@ -66,16 +222,26 @@ public class ChestsConfig {
 	
 	private static ItemStack getItemStack(String s, int stackSize){
 		String[] keyParts = s.split(":");
-		Material mat = Material.matchMaterial(keyParts[0]);
-		if(mat == null) return null;
-		MaterialData data = new MaterialData(mat);
+		int id = -1;
+		if (useMatchMaterial()) {
+			id = Material.matchMaterial(keyParts[0]).getId();
+		}
+		else {
+			try {
+				id = Integer.parseInt(keyParts[0]);
+			} catch (NumberFormatException numberFormatException) {
+				id = -1;
+			}
+		}
+		if(id == -1) return null;
+		MaterialData data = new MaterialData(id);
 		if(keyParts.length == 2){
 			try{
 				data.setData(Integer.valueOf(keyParts[1]).byteValue());
 			}
 			catch(NumberFormatException e){}
 		}
-		ItemStack item = new ItemStack(mat, stackSize);
+		ItemStack item = new ItemStack(id, stackSize);
 		item.setData(data);
 	    
 		return item;

@@ -260,7 +260,7 @@ public class GameManager{
 		
 		public String getPromptText(ConversationContext cc) {
 			List<String> itemsets = game.getItemSets();
-			if (Config.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+			if (ChestsConfig.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 				cc.setSessionData("cancelled", true);
 				return "No items are available to sponsor. Reply to exit.";
 			}
@@ -270,7 +270,7 @@ public class GameManager{
 			}
 			cc.getForWhom().sendRawMessage("Available items to be sponsored:");
 			int num = 1;
-			itemMap = Config.getAllSponsorLootWithGlobal(itemsets);
+			itemMap = ChestsConfig.getAllSponsorLootWithGlobal(itemsets);
 			cc.setSessionData("items", itemMap);
 			for (ItemStack item : itemMap.keySet()) {
 				String mess = String.format(">> %d - %s: %d", num, item.getType().name(), item.getAmount());
