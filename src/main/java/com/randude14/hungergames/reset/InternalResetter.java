@@ -28,6 +28,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -101,6 +102,13 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onExplosion(EntityExplodeEvent event) {
+	    for (Block b : event.blockList()) {
+		    addToCheck(b, b.getState());
+	    }
     }
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
