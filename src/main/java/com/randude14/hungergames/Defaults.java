@@ -1,5 +1,7 @@
 package com.randude14.hungergames;
 
+import org.bukkit.permissions.Permission;
+
 public class Defaults {
 	
     public enum Message {
@@ -80,51 +82,52 @@ public class Defaults {
 
     public enum Perm {
 
-	ADMIN("hungergame.admin", null),
-	ADMIN_ADD_SPAWNPOINT("hungergame.add.spawnpoint", ADMIN),
-	ADMIN_ADD_CUBOID("hungergame.add.cuboid", ADMIN),
-	ADMIN_ADD_CHEST("hungergame.add.chest", ADMIN),
-	ADMIN_ADD_GAME("hungergame.add.game", ADMIN),
-	ADMIN_ADD_ITEMSET("hungergame.add.itemset", ADMIN),
-	ADMIN_ADD_WORLD("hungergame.add.world", ADMIN),
-	ADMIN_REMOVE_SPAWNPOINT("hungergame.remove.spawnpoint", ADMIN),
-	ADMIN_REMOVE_CHEST("hungergame.remove.chest", ADMIN),
-	ADMIN_REMOVE_GAME("hungergame.remove.game", ADMIN),
-	ADMIN_REMOVE_ITEMSET("hungergame.remove.itemset", ADMIN),
-	ADMIN_SET_ENABLED("hungergame.set.enabled", ADMIN),
-	ADMIN_SET_FIXED_CHEST("hungergame.set.fixedchest", ADMIN),
-	ADMIN_SET_SPAWN("hungergame.set.spawn", ADMIN),
-	ADMIN_STOP("hungergame.game.stop", ADMIN),
-	ADMIN_START("hungergame.game.start", ADMIN),
-	ADMIN_PAUSE("hungergame.game.pause", ADMIN),
-	ADMIN_RESUME("hungergame.game.resume", ADMIN),
-	ADMIN_RELOAD("hungergame.admin.reload", ADMIN),
-	ADMIN_KICK("hungergame.admin.kick", ADMIN),
-	ADMIN_KILL("hungergame.admin.kill", ADMIN),
-	ADMIN_HELP("hungergame.admin.help", ADMIN),
-	ADMIN_RESTOCK("hungergame.admin.restock", ADMIN),
-	USER("hungergame.user", null),
-	USER_JOIN("hungergame.user.join", USER),
-	USER_LEAVE("hungergame.user.leave", USER),
-	USER_LIST("hungergame.user.list", USER),
-	USER_REJOIN("hungergame.user.rejoin", USER),
-	USER_SPECTATE("hungergame.user.spectate", USER),
-	USER_SPONSOR("hungergame.user.sponsor", USER),
-	USER_SUBSCRIBE("hungergame.user.subscribe", USER),
-	USER_VOTE("hungergame.user.vote", USER),
-	USER_STAT("hungergame.user.stat", USER),
-	USER_HELP("hungergame.user.help", USER),
-	USER_QUIT("hungergame.user.quit", USER);
+	ALL(new Permission("hungergame.*"), null),
+	ADMIN(new Permission("hungergame.admin.*"), ALL),
+	ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
+	ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
+	ADMIN_ADD_CHEST(new Permission("hungergame.add.chest"), ADMIN),
+	ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),
+	ADMIN_ADD_ITEMSET(new Permission("hungergame.add.itemset"), ADMIN),
+	ADMIN_ADD_WORLD(new Permission("hungergame.add.world"), ADMIN),
+	ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
+	ADMIN_REMOVE_CHEST(new Permission("hungergame.remove.chest"), ADMIN),
+	ADMIN_REMOVE_GAME(new Permission("hungergame.remove.game"), ADMIN),
+	ADMIN_REMOVE_ITEMSET(new Permission("hungergame.remove.itemset"), ADMIN),
+	ADMIN_SET_ENABLED(new Permission("hungergame.set.enabled"), ADMIN),
+	ADMIN_SET_FIXED_CHEST(new Permission("hungergame.set.fixedchest"), ADMIN),
+	ADMIN_SET_SPAWN(new Permission("hungergame.set.spawn"), ADMIN),
+	ADMIN_STOP(new Permission("hungergame.game.stop"), ADMIN),
+	ADMIN_START(new Permission("hungergame.game.start"), ADMIN),
+	ADMIN_PAUSE(new Permission("hungergame.game.pause"), ADMIN),
+	ADMIN_RESUME(new Permission("hungergame.game.resume"), ADMIN),
+	ADMIN_RELOAD(new Permission("hungergame.admin.reload"), ADMIN),
+	ADMIN_KICK(new Permission("hungergame.admin.kick"), ADMIN),
+	ADMIN_KILL(new Permission("hungergame.admin.kill"), ADMIN),
+	ADMIN_HELP(new Permission("hungergame.admin.help"), ADMIN),
+	ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
+	USER(new Permission("hungergame.user.*"), ALL),
+	USER_JOIN(new Permission("hungergame.user.join"), USER),
+	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
+	USER_LIST(new Permission("hungergame.user.list"), USER),
+	USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),
+	USER_SPECTATE(new Permission("hungergame.user.spectate"), USER),
+	USER_SPONSOR(new Permission("hungergame.user.sponsor"), USER),
+	USER_SUBSCRIBE(new Permission("hungergame.user.subscribe"), USER),
+	USER_VOTE(new Permission("hungergame.user.vote"), USER),
+	USER_STAT(new Permission("hungergame.user.stat"), USER),
+	USER_HELP(new Permission("hungergame.user.help"), USER),
+	USER_QUIT(new Permission("hungergame.user.quit"), USER);
 
-	private String value;
+	private Permission value;
 	private Perm parent;
 	
-	private Perm(String permission, Perm parent) {
+	private Perm(Permission permission, Perm parent) {
 		this.value = permission;
 		this.parent = parent;
 	}
 	
-	public String getPermission(){
+	public Permission getPermission(){
 		return value;
 	}
 	
@@ -135,19 +138,19 @@ public class Defaults {
     
     public enum Commands {	
 	    
-	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", null),
+	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", Perm.ADMIN_HELP),
 	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
 	ADMIN_ADD_CUBOID("ADMIN", "/%s add cuboid <game name>", "add a cuboid", Perm.ADMIN_ADD_CUBOID),
 	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name>", "add a chest", Perm.ADMIN_ADD_CHEST),
 	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
 	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
 	ADMIN_ADD_WORLD("ADMIN", "/%s add world <game name> [world]", "adds the world specified or you are currently in to the game", Perm.ADMIN_ADD_WORLD),
-	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", null),
+	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", Perm.ADMIN_HELP),
 	ADMIN_REMOVE_SPAWNPOINT("ADMIN", "/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
 	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest", Perm.ADMIN_REMOVE_CHEST),
 	ADMIN_REMOVE_GAME("ADMIN", "/%s remove game <game name>", "remove a game", Perm.ADMIN_REMOVE_GAME),
 	ADMIN_REMOVE_ITEMSET("ADMIN", "/%s remove itemset <game name> <itemset name>", "remove a game", Perm.ADMIN_REMOVE_ITEMSET),
-	ADMIN_SET_HELP("ADMIN", "/%s set ?", "type for more help", null),
+	ADMIN_SET_HELP("ADMIN", "/%s set ?", "type for more help", Perm.ADMIN_HELP),
 	ADMIN_SET_ENABLED("ADMIN", "/%s set enabled <game name> <true/false>", "enable or disable a game", Perm.ADMIN_SET_ENABLED),
 	ADMIN_SET_FIXED_CHEST("ADMIN", "/%s set fixedchest <game name> <name|false>", "Sets a chest to a specific fixed chest itemset or removes it from being a fixed chest if name is false", Perm.ADMIN_SET_FIXED_CHEST),
 	ADMIN_SET_SPAWN("ADMIN", "/%s set spawn <game name>", "set the spawnpoint for a game", Perm.ADMIN_SET_SPAWN),

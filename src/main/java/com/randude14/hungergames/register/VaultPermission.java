@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class VaultPermission extends Permission {
+public class VaultPermission extends HGPermission {
 	private final net.milkbowl.vault.permission.Permission perm;
 	
 	public VaultPermission() {

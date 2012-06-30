@@ -3,11 +3,11 @@ package com.randude14.hungergames.register;
 import com.randude14.hungergames.Defaults.Perm;
 import org.bukkit.command.CommandSender;
 
-public abstract class Permission {
+public abstract class HGPermission {
 	
 	public boolean hasPermission(CommandSender cs, Perm permission) {
 		if (permission == null) return true;
-		if (hasPermission(cs, permission.getPermission())) {
+		if (hasPermission(cs, permission.getPermission().getName())) {
 			return true;
 		}
 		if (permission.getParent() != null) {

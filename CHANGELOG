@@ -57,6 +57,8 @@ v0.5
 - added a generic data map to Session
 - number of items in a chest is now chosen by: numItems = Math.ceil((size * Math.sqrt(items.size()))/10)
 - Added creeper explosions to internal listener
+- Hardcode permissions
+- Fixed a string that may just be the cause for all the permissions stir
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

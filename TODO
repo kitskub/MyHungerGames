@@ -1,7 +1,5 @@
 HIGH:
 - Remove reset-world in v0.6
-- Make permissions and commands hard-coded
-- Check chests and fixedChests for location issues going between doubles and non-doubles
 
 MEDIUM:
 - Random events

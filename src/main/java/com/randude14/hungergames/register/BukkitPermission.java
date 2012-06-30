@@ -2,7 +2,7 @@ package com.randude14.hungergames.register;
 
 import org.bukkit.command.CommandSender;
 
-public class BukkitPermission extends Permission {
+public class BukkitPermission extends HGPermission {
 	
 	@Override
 	public boolean hasPermission(CommandSender cs, String permission) {

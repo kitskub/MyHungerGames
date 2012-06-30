@@ -1,10 +1,11 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.listeners.*;
 import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
-import com.randude14.hungergames.register.Permission;
+import com.randude14.hungergames.register.HGPermission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -35,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,7 +44,7 @@ public class HungerGames extends JavaPlugin{
 	public static final String CMD_ADMIN = "hga";
 	public static final String CMD_USER = "hg";
 	private static HungerGames instance;
-	private static Permission perm;
+	private static HGPermission perm;
 	private static Economy econ;
 	private static GameManager manager;
 	private static Random rand;
@@ -50,9 +52,7 @@ public class HungerGames extends JavaPlugin{
 	@Override
 	public void onEnable() {
 		instance = this;
-		CommandHandler commands = new CommandHandler();
-		getCommand(CMD_USER).setExecutor(commands);
-		getCommand(CMD_ADMIN).setExecutor(commands);
+		registerCommands();
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		PluginManager pm = getServer().getPluginManager();
@@ -100,6 +100,18 @@ public class HungerGames extends JavaPlugin{
 	    Logging.info("Disabled.");
 	}
 
+	private static void registerCommands() {
+		CommandHandler commands = new CommandHandler();
+		instance.getCommand(CMD_USER).setExecutor(commands);
+		instance.getCommand(CMD_ADMIN).setExecutor(commands);
+		for (Commands c : Commands.values()) {
+			Permission permission = c.getPerm().getPermission();
+			if (c.getPerm().getParent() != null) {
+				permission.addParent(c.getPerm().getParent().getPermission(), true);
+			}
+		}
+	}
+	
 	private static void loadRegistry() {
 	    if (!VaultPermission.isVaultInstalled()) {
 		Logging.info("Vault is not installed, defaulting to Bukkit perms.");
