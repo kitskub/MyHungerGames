@@ -1,6 +1,6 @@
 global:
   # GLOBAL ONLY
-  default-game: 'Test'
+  default-game: 'Default'
   
   # In minutes, the number of time to wait between update checks
   # GLOBAL ONLY
@@ -119,6 +119,7 @@ global:
   # Example loot. Note DURABIlITY is an enchantment
   #    DIAMOND_PICKAXE:
   #      stack-size: 1
+  #      # scale of 0-1, anything over 1 will always be allowed if it is picked
   #      chance: 0.01
   #      DURABILITY: 3
   sponsor-loot:

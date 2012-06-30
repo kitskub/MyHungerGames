@@ -296,17 +296,19 @@ public class HungerGames extends JavaPlugin{
 		if (Config.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
-		
+
 		chest.getInventory().clear();
-		int num = 3 + rand.nextInt(8);
 		Map<ItemStack, Float> itemMap = Config.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
-		for (int cntr = 0; cntr < num; cntr++) {
-			int index = rand.nextInt(chest.getInventory().getSize());
-			if (chest.getInventory().getItem(index) != null) {
-				cntr--;
-				continue;
-			}
+		int size = chest.getInventory().getSize();
+		final int maxItemSize = 100;
+		int numItems = items.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(items.size()))/Math.sqrt(maxItemSize));
+		for (int cntr = 0; cntr < numItems; cntr++) {
+			int index = 0;
+			do {
+				index = rand.nextInt(chest.getInventory().getSize());
+			} while (chest.getInventory().getItem(index) != null);
+			
 			ItemStack item = items.get(rand.nextInt(items.size()));
 			if (itemMap.get(item) >= rand.nextFloat()) {
 				chest.getInventory().setItem(index, item);

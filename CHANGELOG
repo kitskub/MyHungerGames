@@ -55,6 +55,7 @@ v0.5
 - Sign listening
 - fixed item chests are in
 - added a generic data map to Session
+- number of items in a chest is now chosen by: numItems = Math.ceil((size * Math.sqrt(items.size()))/10)
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

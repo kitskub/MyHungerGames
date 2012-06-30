@@ -109,7 +109,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
+			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("remove".equalsIgnoreCase(args[0])) {
 			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
@@ -128,7 +128,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
+			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("set".equalsIgnoreCase(args[0])) {
 			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
@@ -143,7 +143,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			ArrayUtils.removeElement(args, args[0]); // Need to remove that extra arg
+			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("restock".equalsIgnoreCase(args[0])) {
 			command = new RestockCommand();
