@@ -148,7 +148,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			itemsets.clear();
 			itemsets.addAll(section.getStringList("itemsets"));
                 }
-                
+		
+                if(section.isList("worlds")) {
+			itemsets.clear();
+			itemsets.addAll(section.getStringList("worlds"));
+                }
+		if (section.isList("cuboids")) {
+			List<Cuboid> cuboidList = new ArrayList<Cuboid>();
+			for (String s : section.getStringList("cuboids")) {
+				cuboidList.add(Cuboid.parseFromString(s));
+			}
+			cuboids.clear();
+			cuboids.addAll(cuboidList);
+		}
 		enabled = section.getBoolean("enabled", Boolean.TRUE);
 		try {
 			spawn = HungerGames.parseToLoc(section.getString("spawn"));
@@ -177,9 +189,18 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
                 
                 if(!itemsets.isEmpty()) {
-                    section.set("itemsets", itemsets);
+			section.set("itemsets", itemsets);
                 }
-                
+                if (!worlds.isEmpty()) {
+			section.set("worlds", worlds);
+		}
+                if (!cuboids.isEmpty()) {
+			List<String> cuboidStringList = new ArrayList<String>();
+			for (Cuboid c : cuboids) {
+				cuboidStringList.add(c.parseToString());
+			}
+			section.set("cuboids", cuboids);
+		}
 		section.set("enabled", enabled);
 		if (getSpawn() != null) section.set("spawn", HungerGames.parseToString(getSpawn()));
 		

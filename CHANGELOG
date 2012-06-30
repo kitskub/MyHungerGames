@@ -62,6 +62,8 @@ v0.5
 - BREAKING make sure permissions are in the form of hungergame.admin/user.* if using star
 - Moved itemsets to chestconfig.yml
 - Add use-match-material in chestconfig.yml to allow for custom blocks to be used
+- Added chest and sponsor loot by command
+- Fixed world and cuboid saving/loading
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

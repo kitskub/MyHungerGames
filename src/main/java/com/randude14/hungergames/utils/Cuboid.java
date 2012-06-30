@@ -1,5 +1,6 @@
 package com.randude14.hungergames.utils;
 
+import com.randude14.hungergames.HungerGames;
 import org.bukkit.Location;
 
 public class Cuboid {
@@ -22,6 +23,11 @@ public class Cuboid {
 			);
 	}
 	
+	private Cuboid(Location lower, Location upper, boolean internal) {
+		this.lower = lower;
+		this.upper = upper;
+	}
+	
 	public boolean isLocationWithin(Location loc) {
 		return (upper.getX() >  loc.getX() && lower.getX() < loc.getX()
 			&& upper.getZ() > loc.getZ() && lower.getZ() < loc.getZ()
@@ -34,5 +40,16 @@ public class Cuboid {
 
 	public Location getUpper() {
 		return upper;
+	}
+	
+	public String parseToString() {
+		return HungerGames.parseToString(lower) + " " + HungerGames.parseToString(upper);
+	}
+	
+	public static Cuboid parseFromString(String string) {
+		String[] parts = string.split(" ");
+		Location lower = HungerGames.parseToLoc(parts[0]);
+		Location upper = HungerGames.parseToLoc(parts[0]);
+		return new Cuboid(lower, upper, true);
 	}
 }

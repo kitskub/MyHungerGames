@@ -29,7 +29,7 @@ public class ChestsConfig {
 	
 	// Itemsets
 	public static List<String> getItemSets(){
-	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("itemsets");
+	    ConfigurationSection section = chestConfig.getConfig().getConfigurationSection("itemsets");
 	    if(section == null) return Collections.emptyList();
 	    List<String> list = new ArrayList<String>(section.getKeys(false));
 	    return (list == null) ? new ArrayList<String>() : list;
@@ -61,9 +61,9 @@ public class ChestsConfig {
 	private static Map<ItemStack, Float> getChestLoot(String itemset, Set<String> checked) {
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readChestLoot(plugin.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot")));
+		chestLoot.putAll(readChestLoot(chestConfig.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot")));
 		checked.add(itemset);
-		for (String parent : plugin.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
+		for (String parent : chestConfig.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			chestLoot.putAll(getChestLoot(parent, checked));
 		}
 		return chestLoot;
@@ -76,9 +76,9 @@ public class ChestsConfig {
 	private static Map<ItemStack, Double> getSponsorLoot(String itemset, Set<String> checked) {
 		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readSponsorLoot(plugin.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot")));
+		chestLoot.putAll(readSponsorLoot(chestConfig.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot")));
 		checked.add(itemset);
-		for (String parent : plugin.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
+		for (String parent : chestConfig.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			checked.add(parent);
 			chestLoot.putAll(getSponsorLoot(parent, checked));
 		}
@@ -89,12 +89,52 @@ public class ChestsConfig {
 	}
 	
 	
-	public static void addChestLoot(ItemStack item, float f){
-	    // TODO chest loot by command
+	/**
+	 * Adds itemstack to chestLoot of the itemset provided, or global if itemset is empty or null
+	 * @param itemset
+	 * @param item
+	 * @param chance
+	 */
+	public static void addChestLoot(String itemset, ItemStack item, float chance){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    ConfigurationSection itemSection = null;
+	    if (itemset == null || itemset.equalsIgnoreCase("")){
+		    itemSection = chestConfig.getConfig().getConfigurationSection("global.chest-loot");
+	    }
+	    else {
+		    itemSection = chestConfig.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
+	    }
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(item.getTypeId());
+	    builder.append(item.getData().getData());
+	    builder.append(",");
+	    builder.append(System.currentTimeMillis());
+	    itemSection = itemSection.createSection(builder.toString());
+	    itemSection.set("stack-size", item.getAmount());
+	    itemSection.set("chance", chance);
+	    for (Enchantment enchantment : item.getEnchantments().keySet()) {
+		    itemSection.set(enchantment.getName(), item.getEnchantments().get(enchantment));
+	    }
 	}
 	
-	public static void addSponsorLoot(ItemStack item, double f){
-	    // TODO sponsor loot by command
+	public static void addSponsorLoot(String itemset, ItemStack item, double cost){
+	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	    ConfigurationSection itemSection = null;
+	    if (itemset == null || itemset.equalsIgnoreCase("")){
+		    itemSection = chestConfig.getConfig().getConfigurationSection("global.chest-loot");
+	    }
+	    else {
+		    itemSection = chestConfig.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
+	    }
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(item.getTypeId());
+	    builder.append(item.getData().getData());
+	    itemSection = itemSection.createSection(builder.toString());
+	    itemSection.set("stack-size", item.getAmount());
+	    itemSection.set("money", cost);
+	    for (Enchantment enchantment : item.getEnchantments().keySet()) {
+		    itemSection.set(enchantment.getName(), item.getEnchantments().get(enchantment));
+	    }
 	}
 	
 	private static Map<ItemStack, Float> readChestLoot(ConfigurationSection itemSection){
@@ -166,7 +206,7 @@ public class ChestsConfig {
 	
 	public static Map<ItemStack, Double> getGlobalSponsorLoot() {
 		plugin.reloadConfig();
-		FileConfiguration config = plugin.getConfig();
+		FileConfiguration config = chestConfig.getConfig();
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
 		ConfigurationSection itemSection = config.getConfigurationSection("global.sponsor-loot");
 		if(itemSection == null) return sponsorLoot;
@@ -182,9 +222,9 @@ public class ChestsConfig {
 	private static List<ItemStack> getFixedChest(String chest, Set<String> checked) {
 		List<ItemStack> fixedChests = new ArrayList<ItemStack>();
 		if (checked.contains(chest)) return fixedChests;
-		fixedChests.addAll(readFixedChest(plugin.getConfig().getConfigurationSection("chests." + chest)));
+		fixedChests.addAll(readFixedChest(chestConfig.getConfig().getConfigurationSection("chests." + chest)));
 		checked.add(chest);
-		for (String parent : plugin.getConfig().getStringList("chests." + chest + ".inherits")) {
+		for (String parent : chestConfig.getConfig().getStringList("chests." + chest + ".inherits")) {
 			fixedChests.addAll(getFixedChest(parent, checked));
 		}
 		return fixedChests;
@@ -221,7 +261,7 @@ public class ChestsConfig {
 	}
 	
 	private static ItemStack getItemStack(String s, int stackSize){
-		String[] keyParts = s.split(":");
+		String[] keyParts = s.split(",")[0].split(":");
 		int id = -1;
 		if (useMatchMaterial()) {
 			id = Material.matchMaterial(keyParts[0]).getId();

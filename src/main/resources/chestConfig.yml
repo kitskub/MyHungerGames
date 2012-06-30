@@ -7,7 +7,10 @@ global:
 chests:
 #  example:
 #    inherits: example1
-#    DIAMOND_PICKAXE:
+#    DIAMOND_PICKAXE,1:
+#      stack-size: 1
+#      DURABILITY: 3
+#    DIAMOND_PICKAXE,2:
 #      stack-size: 1
 #      DURABILITY: 3
 
@@ -19,8 +22,14 @@ itemsets:
 #   inherits: itemset1
 #	  chest-loot:
 #		  # Note DURABIlITY is an enchantment
-#	    DIAMOND_PICKAXE:
+#     # anything after a comma is ignored and is only there so you can have multiple of the same item. 
+#     # Items added by code will have a generated number after it. Ignore it.
+#	    278,1:
 #       stack-size: 1
 #	      chance: 0.01
 #	      DURABILITY: 3
 #   sponsor-loot:
+#	    278,1:
+#       stack-size: 1
+#	      money: 10.00
+#	      DURABILITY: 3

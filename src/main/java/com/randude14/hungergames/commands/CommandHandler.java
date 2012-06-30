@@ -3,6 +3,7 @@ package com.randude14.hungergames.commands;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
@@ -94,22 +95,28 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPAWNPOINT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CUBOID.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST_LOOT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPONSOR_LOOT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_WORLD.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				return;
 			}
 			if (args[1].equalsIgnoreCase("spawnpoint")) command = new AddSpawnPointCommand();
 			else if (args[1].equalsIgnoreCase("cuboid")) command = new AddCuboidCommand();
 			else if (args[1].equalsIgnoreCase("chest")) command = new AddChestCommand();
+			else if (args[1].equalsIgnoreCase("chestloot")) command = new AddChestLootCommand();
 			else if (args[1].equalsIgnoreCase("game")) command = new AddGameCommand();
 			else if (args[1].equalsIgnoreCase("itemset")) command = new AddItemSetCommand();
+			else if (args[1].equalsIgnoreCase("sponsorloot")) command = new AddSponsorLootCommand();
 			else if (args[1].equalsIgnoreCase("world")) command = new AddWorldCommand();
 			else {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
+			Logging.debug("Array before:" + args);
 			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
+			Logging.debug("Array after:" + args);
 		}
 		else if ("remove".equalsIgnoreCase(args[0])) {
 			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
@@ -183,7 +190,7 @@ public class CommandHandler implements CommandExecutor {
 	private void getUserCommands(Player player, Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Commands c : Commands.values()) {
-			if (!c.getType().equals(Commands.ADMIN_COMMAND)) continue;
+			if (!c.getType().equalsIgnoreCase(Commands.USER_COMMAND)) continue;
 			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
 		}
 	}
@@ -191,7 +198,7 @@ public class CommandHandler implements CommandExecutor {
 	private void getAdminCommands(Player player, Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Commands c : Commands.values()) {
-			if (!c.getType().equals(Commands.ADMIN_COMMAND)) continue;
+			if (!c.getType().equalsIgnoreCase(Commands.ADMIN_COMMAND)) continue;
 			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
 		}
 	}
