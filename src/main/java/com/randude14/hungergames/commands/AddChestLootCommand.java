@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.ChestsConfig;
+import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -20,16 +20,24 @@ public class AddChestLootCommand extends SubCommand{
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);return true;
+			ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
+			return true;
 		}
-		float chance = Float.valueOf(args[0]);
+		float chance = 0;
+		try {
+			chance = Float.valueOf(args[0]);
+		}
+		catch (NumberFormatException e) {
+			ChatUtils.send(player, ChatColor.GREEN, "{0} is not a valid number", args[0]);
+		}
+		
 		if (args.length < 2) {
-			ChestsConfig.addChestLoot(null, player.getItemInHand(), chance);
+			ItemConfig.addChestLoot(null, player.getItemInHand(), chance);
 		}
 		else {
-			ChestsConfig.addChestLoot(args[1], player.getItemInHand(), chance);
+			ItemConfig.addChestLoot(args[1], player.getItemInHand(), chance);
 		}
-		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to chest loot", game.getName());
+		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to chest loot");
 		return true;
 	}
 	

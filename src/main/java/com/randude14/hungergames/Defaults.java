@@ -55,7 +55,8 @@ public class Defaults {
 	CHAT_DISTANCE(15),
 	ALLOW_MINIMAL_MESSAGES(true),
 	REMOVE_ITEMS(true),
-	USE_MATCH_MATERIAL(true);
+	USE_MATCH_MATERIAL(true),
+	MAX_RANDOM_ITEMS(5);
 	
 	
 	private Object value;
@@ -85,12 +86,13 @@ public class Defaults {
 
 	ALL(new Permission("hungergame.*"), null),
 	ADMIN(new Permission("hungergame.admin.*"), ALL),
-	ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
 	ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
 	ADMIN_ADD_CHEST(new Permission("hungergame.add.chest"), ADMIN),
 	ADMIN_ADD_CHEST_LOOT(new Permission("hungergame.add.chestloot"), ADMIN),
 	ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),
 	ADMIN_ADD_ITEMSET(new Permission("hungergame.add.itemset"), ADMIN),
+	ADMIN_ADD_REWARD(new Permission("hungergame.add.reward"), ADMIN),
+	ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
 	ADMIN_ADD_SPONSOR_LOOT(new Permission("hungergame.add.sponsorloot"), ADMIN),
 	ADMIN_ADD_WORLD(new Permission("hungergame.add.world"), ADMIN),
 	ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
@@ -142,12 +144,13 @@ public class Defaults {
     public enum Commands {	
 	    
 	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", Perm.ADMIN_HELP),
-	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
 	ADMIN_ADD_CUBOID("ADMIN", "/%s add cuboid <game name>", "add a cuboid", Perm.ADMIN_ADD_CUBOID),
 	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name>", "add a chest", Perm.ADMIN_ADD_CHEST),
 	ADMIN_ADD_CHEST_LOOT("ADMIN", "/%s add chestloot  <chance> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_CHEST_LOOT),
 	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
-	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
+	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_REWARD),
+	ADMIN_ADD_REWARD("ADMIN", "/%s add reward [chance]", "add current item in hand to static rewards or as a random if chance is specified", Perm.ADMIN_ADD_SPAWNPOINT),
+	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
 	ADMIN_ADD_SPONSOR_LOOT("ADMIN", "/%s add sponsorloot <money> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_SPONSOR_LOOT),
 	ADMIN_ADD_WORLD("ADMIN", "/%s add world <game name> [world]", "adds the world specified or you are currently in to the game", Perm.ADMIN_ADD_WORLD),
 	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", Perm.ADMIN_HELP),

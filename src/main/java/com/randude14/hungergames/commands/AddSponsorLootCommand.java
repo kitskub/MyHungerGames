@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.ChestsConfig;
+import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -24,10 +24,10 @@ public class AddSponsorLootCommand extends SubCommand{
 		}
 		float chance = Float.valueOf(args[0]);
 		if (args.length < 2) {
-			ChestsConfig.addSponsorLoot(null, player.getItemInHand(), chance);
+			ItemConfig.addSponsorLoot(null, player.getItemInHand(), chance);
 		}
 		else {
-			ChestsConfig.addSponsorLoot(args[1], player.getItemInHand(), chance);
+			ItemConfig.addSponsorLoot(args[1], player.getItemInHand(), chance);
 		}
 		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to sponsor loot", game.getName());
 		return true;

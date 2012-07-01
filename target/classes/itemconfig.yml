@@ -1,5 +1,6 @@
 global:
   # with this false, you cannot use item names, but you can use custom blocks
+  # GLOBAL ONLY
   use-match-material: true
   chest-loot:
   sponsor-loot:
@@ -32,4 +33,19 @@ itemsets:
 #	    278,1:
 #       stack-size: 1
 #	      money: 10.00
+#	      DURABILITY: 3
+
+rewards:
+  # Every one of the below will be given
+  static:
+#    DIAMOND_PICKAXE,1:
+#      stack-size: 1
+#      DURABILITY: 3
+  # The max amount of items that can be given to a player randomly
+  max-random: 5
+  # The following will be randomly given to the player
+  random:
+#	    278,1:
+#       stack-size: 1
+#	      chance: 0.01
 #	      DURABILITY: 3

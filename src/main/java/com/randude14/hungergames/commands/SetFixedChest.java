@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.ChestsConfig;
+import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -41,7 +41,7 @@ public class SetFixedChest extends SubCommand{
 		    ChatUtils.send(player, "Click chest to remove it from being a fixed item chest.");
 		    return true;
 	    }
-	    if (!ChestsConfig.getFixedChests().contains(name)) {
+	    if (!ItemConfig.getFixedChests().contains(name)) {
 		    ChatUtils.sendDoesNotExist(player, name);
 		    return true;
 	    }

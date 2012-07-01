@@ -1,12 +1,11 @@
 HIGH:
 - Remove reset-world in v0.6
+- Config converter
 
 MEDIUM:
 - Random events
 - Spectators get to sponsor at a certain interval
 - WebStats
-- Rewards
-- check /hg quit
 
 LOW:
 - Map gen

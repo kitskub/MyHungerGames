@@ -13,6 +13,7 @@ import com.randude14.hungergames.utils.ChatUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -293,7 +294,7 @@ public class HungerGames extends JavaPlugin{
 
 	public static void fillFixedChest(Chest chest, String name) {
 		chest.getInventory().clear();
-		List<ItemStack> items = ChestsConfig.getFixedChest(name);
+		List<ItemStack> items = ItemConfig.getFixedChest(name);
 		for (ItemStack stack : items) {
 			int index = 0;
 			do {
@@ -305,12 +306,12 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	public static void fillChest(Chest chest, List<String> itemsets) {
-		if (ChestsConfig.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
+		if (ItemConfig.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
 
 		chest.getInventory().clear();
-		Map<ItemStack, Float> itemMap = ChestsConfig.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Float> itemMap = ItemConfig.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		int size = chest.getInventory().getSize();
 		final int maxItemSize = 100;
@@ -327,9 +328,30 @@ public class HungerGames extends JavaPlugin{
 			}
 
 		}
-
 	}
 
+	public static void rewardPlayer(Player player) {
+		List<ItemStack> items = new ArrayList<ItemStack>();
+		items.addAll(ItemConfig.getStaticRewards());
+		
+		Map<ItemStack, Float> itemMap = ItemConfig.getRandomRewards();
+
+		int size = ItemConfig.getMaxRandomItems();
+		final int maxItemSize = 25;
+		int numItems = items.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(items.size()))/Math.sqrt(maxItemSize));
+		for (int cntr = 0; cntr < numItems; cntr++) {			
+			ItemStack item = items.get(rand.nextInt(items.size()));
+			if (itemMap.get(item) >= rand.nextFloat()) {
+				items.add(item);
+			}
+
+		}
+		HashMap<Integer, ItemStack> addItem = player.getInventory().addItem((ItemStack[]) items.toArray());
+		for (Integer i : addItem.keySet()) {
+			player.getLocation().getWorld().dropItem(player.getLocation(), addItem.get(i));
+		}
+	}
+	
 	public static HungerGames getInstance() {
 		return instance;
 	}

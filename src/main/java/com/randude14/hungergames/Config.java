@@ -7,13 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.block.Block;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
+import static com.randude14.hungergames.utils.ConfigUtils.*;
 
 
 public class Config {
@@ -145,6 +144,10 @@ public class Config {
 		
 	public static boolean getAllowMinimalMessagesGlobal() {
 		return getGlobalBoolean("allow-minimal-messages", ALLOW_MINIMAL_MESSAGES.getBoolean());
+	}
+	
+	public static boolean getUseMatchMaterialGlobal() {
+		return getGlobalBoolean("use-match-material", USE_MATCH_MATERIAL.getBoolean());
 	}
 	
 	// Global
@@ -421,7 +424,7 @@ public class Config {
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal())){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		return list;
 	}
@@ -429,7 +432,7 @@ public class Config {
 	public static List<ItemStack> getSpecialBlocksBreak(String setup) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : getStringList("special-blocks-break", setup, getSpecialBlocksBreakGlobal())){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		return list;
 	}
@@ -437,7 +440,7 @@ public class Config {
 	public static List<ItemStack> getSpecialBlocksInteract(String setup) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : getStringList("special-blocks-interact", setup, getSpecialBlocksPlaceGlobal())){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		return list;
 	}
@@ -446,7 +449,7 @@ public class Config {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-place-block")) {
 			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(getItemStack(block));
@@ -464,7 +467,7 @@ public class Config {
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-place")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanPlaceBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
@@ -474,7 +477,7 @@ public class Config {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-break-block")) {
 			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(getItemStack(block));
@@ -492,7 +495,7 @@ public class Config {
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-break")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanBreakBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
@@ -502,7 +505,7 @@ public class Config {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		if (plugin.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
 			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(getItemStack(block));
@@ -520,7 +523,7 @@ public class Config {
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : plugin.getConfig().getStringList("global.special-blocks-interact")){
-			list.add(getItemStack(s, 1));
+			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanInteractBlockGlobal() ^ list.contains(getItemStack(block));
 		return can;
@@ -531,27 +534,6 @@ public class Config {
 	    if(section == null) return Collections.emptyList();
 	    List<String> list = (List<String>) section.getKeys(false);
 	    return (list == null) ? new ArrayList<String>() : list;
-	}
-	
-	private static ItemStack getItemStack(Block block) {
-		return new ItemStack(block.getType(), 1, block.getData());
-	}
-	
-	private static ItemStack getItemStack(String s, int stackSize){
-		String[] keyParts = s.split(":");
-		Material mat = Material.matchMaterial(keyParts[0]);
-		if(mat == null) return null;
-		MaterialData data = new MaterialData(mat);
-		if(keyParts.length == 2){
-			try{
-				data.setData(Integer.valueOf(keyParts[1]).byteValue());
-			}
-			catch(NumberFormatException e){}
-		}
-		ItemStack item = new ItemStack(mat, stackSize);
-		item.setData(data);
-	    
-		return item;
 	}
 	
 }

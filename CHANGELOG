@@ -65,6 +65,9 @@ v0.5
 - Added chest and sponsor loot by command
 - Fixed world and cuboid saving/loading
 - Added the ability for admins with "hungergame.stop" to be able to talk to players by typing "hg" in the beginning of the message
+- Renamed chestconfig.yml to itemconfig.yml
+- Switched around some methods in Config and ItemConfig
+- Added rewards
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

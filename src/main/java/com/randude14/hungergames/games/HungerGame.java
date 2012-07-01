@@ -306,7 +306,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			contents = (ItemStack[]) list.toArray();
 			playerLeaving(player, false);
 			teleportPlayerToSpawn(player);
-			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
+			if (isFinished && Config.getWinnerKeepsItems(setup)) {
+				HashMap<Integer, ItemStack> addItem = player.getInventory().addItem(contents);
+				for (Integer i : addItem.keySet()) {
+					player.getLocation().getWorld().dropItem(player.getLocation(), addItem.get(i));
+				}
+			}
+			if (isFinished) HungerGames.rewardPlayer(player);
 		}
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		if (!isFinished) {
