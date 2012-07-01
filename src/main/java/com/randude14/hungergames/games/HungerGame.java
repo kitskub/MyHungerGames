@@ -22,6 +22,7 @@ import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -298,6 +299,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		isRunning = false;
 		for (Player player : getRemainingPlayers()) {
 			ItemStack[] contents = player.getInventory().getContents();
+			List<ItemStack> list = new ArrayList<ItemStack>();
+			for (ItemStack i : contents) {
+				if (i != null) list.add(i);
+			}
+			contents = (ItemStack[]) list.toArray();
 			playerLeaving(player, false);
 			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) player.getInventory().addItem(contents);
@@ -518,15 +524,30 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
         
 	public void fillInventories() {
 	    Location prev = null;
+	    Logging.debug("Filling inventories. Chests size: {0} fixedChests size: {1}", chests.size(), fixedChests.size());
 	    for (Location loc : chests) {
-		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) continue;
-		    if (!(loc.getBlock().getState() instanceof Chest)) continue;
+		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
+			    Logging.debug("Cancelling a fill because previous was a chest");
+			    continue;
+		    }
+		    if (!(loc.getBlock().getState() instanceof Chest)) {
+			    Logging.debug("Cancelling a fill because previous was a chest");
+			    continue;
+		    }
+		    prev = loc;
 		    Chest chest = (Chest) loc.getBlock().getState();
 		    HungerGames.fillChest(chest, itemsets);
 	    }
 	    for (Location loc : fixedChests.keySet()) {
-		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) continue;
-		    if (!(loc.getBlock().getState() instanceof Chest)) continue;
+		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
+			    Logging.debug("Cancelling a fill because previous was a chest");
+			    continue;
+		    }
+		    if (!(loc.getBlock().getState() instanceof Chest)) {
+			    Logging.debug("Cancelling a fill because previous was a chest");
+			    continue;
+		    }
+		    prev = loc;
 		    Chest chest = (Chest) loc.getBlock().getState();
 		    HungerGames.fillFixedChest(chest, fixedChests.get(loc));   
 	    }
@@ -814,7 +835,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public String getInfo() {
-		return String.format("%s[%d/%d] Enabled: %b", name, stats.size(), spawnPoints.size(), enabled);
+		return String.format("%s[%d/%d] Enabled: %b", name, getRemainingPlayers(), spawnPoints.size(), enabled);
 	}
 
 	/**

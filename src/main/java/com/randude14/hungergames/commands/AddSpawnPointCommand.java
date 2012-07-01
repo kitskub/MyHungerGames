@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.listeners.SessionListener;
+import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -30,7 +31,7 @@ public class AddSpawnPointCommand extends SubCommand{
 		 return true;
 	    }
 	    
-	    SessionListener.addSpawnAdder(player, game.getName());
+	    SessionListener.addSession(SessionType.SPAWN_ADDER, player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN, "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
 	    return true;
 	}

@@ -38,6 +38,7 @@ public class ResetHandler{
     private static boolean reloadWorld(String worldName) {
 	// Unload
 	World world = HungerGames.getInstance().getServer().getWorld(worldName); // At this point, all players SHOULD be out, so this is just a safety for anyone else
+	if (world == null) return false;
 	for (Player p : world.getPlayers()) {
 		World spawn = Bukkit.getWorlds().get(0);
 		if (spawn == world) spawn = Bukkit.getWorlds().get(1); // NullpointerException? It's possible

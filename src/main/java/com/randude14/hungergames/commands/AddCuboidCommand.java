@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.listeners.SessionListener;
+import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,7 @@ public class AddCuboidCommand extends SubCommand{
 	    }
 	    
 	    ChatUtils.send(player, "Click the two corners add a cuboid.");
-	    SessionListener.addCuboidAdder(player, game.getName());
+	    SessionListener.addSession(SessionType.CUBOID_ADDER, player, game.getName());
 	    return true;
 	}
 	

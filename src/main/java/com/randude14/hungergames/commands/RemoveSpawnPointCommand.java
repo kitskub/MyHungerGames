@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.listeners.SessionListener;
+import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
@@ -32,7 +33,7 @@ public class RemoveSpawnPointCommand extends SubCommand{
 		return true;
 	    }
 	    
-	    SessionListener.addSpawnRemover(player, game.getName());
+	    SessionListener.addSession(SessionType.SPAWN_REMOVER, player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN, "Hit a spawn point to remove it from %s.", game.getName());
 	    return true;
 	}

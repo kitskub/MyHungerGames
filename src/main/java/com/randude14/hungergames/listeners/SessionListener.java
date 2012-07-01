@@ -1,6 +1,7 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -14,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,9 +23,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class SessionListener implements Listener {
 	private static final Map<String, Session> sessions = new HashMap<String, Session>(); // <player, session>>
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void playerClickedBlock(PlayerInteractEvent event) {
-	    if (event.isCancelled()) return;
 	    Player player = event.getPlayer();
 	    Action action = event.getAction();
 	    if (!(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) return;
@@ -41,6 +42,7 @@ public class SessionListener implements Listener {
 		    }
 	    }
 	    else {
+		    Logging.debug("No key for sessionlisteners. Cancelling");
 		    return;
 	    }
 	    if (type == SessionType.CHEST_ADDER) {
@@ -136,6 +138,8 @@ public class SessionListener implements Listener {
 		    sessions.remove(player.getName());
 		    ChatUtils.send(player, "Chest is no longer a fixed item chest.");
 	    }
+	    else {
+		    Logging.debug("Failed to get sessionlistener.");	    }
 	}
 	
 	// TODO convert all these
@@ -146,35 +150,7 @@ public class SessionListener implements Listener {
 	public static void addSession(SessionType type, Player player, String game, String... data) {
 		sessions.put(player.getName(),  new Session(type, game, data));
 	}
-	
-	public static void addFixedChestAdder(Player player, String name) {
-		sessions.put(player.getName(),  new Session(SessionType.FIXED_CHEST_ADDER, name));
-	}
 
-	public static void addFixedChestRemover(Player player, String name) {
-		sessions.put(player.getName(), new Session(SessionType.FIXED_CHEST_REMOVER, name));
-	}
-	
-	public static void addChestAdder(Player player, String name) {
-		sessions.put(player.getName(),  new Session(SessionType.CHEST_ADDER, name));
-	}
-
-	public static void addChestRemover(Player player, String name) {
-		sessions.put(player.getName(), new Session(SessionType.CHEST_REMOVER, name));
-	}
-
-	public static void addSpawnAdder(Player player, String name) {
-		sessions.put(player.getName(), new Session(SessionType.SPAWN_ADDER, name));
-	}
-
-	public static void addSpawnRemover(Player player, String name) {
-		sessions.put(player.getName(), new Session(SessionType.SPAWN_REMOVER, name));
-	}
-
-	public static void addCuboidAdder(Player player, String name) {
-		sessions.put(player.getName(), new Session(SessionType.CUBOID_ADDER, name));
-	}
-	
 	public static void removePlayer(Player player) {
 		sessions.remove(player.getName());
 	}

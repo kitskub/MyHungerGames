@@ -6,6 +6,9 @@ import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.utils.ChatUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -114,9 +117,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			Logging.debug("Array before:" + args);
-			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
-			Logging.debug("Array after:" + args);
+			args = (String[]) ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("remove".equalsIgnoreCase(args[0])) {
 			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
@@ -135,7 +136,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
+			args = (String[]) ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("set".equalsIgnoreCase(args[0])) {
 			if (args.length == 1 || "?".equalsIgnoreCase(args[1])) {
@@ -150,7 +151,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.error(player, "Command not recognized.");
 				return;
 			}
-			ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
+			args = (String[]) ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
 		else if ("restock".equalsIgnoreCase(args[0])) {
 			command = new RestockCommand();

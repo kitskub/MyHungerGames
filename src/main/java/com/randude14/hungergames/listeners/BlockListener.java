@@ -42,7 +42,7 @@ public class BlockListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
-		Sign sign = (Sign) event.getBlock();
+		Sign sign = (Sign) event.getBlock().getState();
 		if(!sign.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
 		InternalListener.addSign(sign);
 	}

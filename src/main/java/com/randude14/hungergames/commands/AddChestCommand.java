@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.listeners.SessionListener;
+import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -31,7 +32,7 @@ public class AddChestCommand extends SubCommand{
 		return true;
 	    }
 	    
-	    SessionListener.addChestAdder(player, args[0]);
+	    SessionListener.addSession(SessionType.CHEST_ADDER, player, args[0]);
 	    ChatUtils.send(player, ChatColor.GREEN, "Hit a chest to add it to %s.", game.getName());
 	    return true;
 	}
