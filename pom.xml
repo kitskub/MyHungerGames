@@ -2,58 +2,99 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.randude14</groupId>
-  <artifactId>MyHungerGames</artifactId>
-  <version>0.5-dev</version>
-  <packaging>jar</packaging>
+	<groupId>com.randude14</groupId>
+	<artifactId>MyHungerGames</artifactId>
+	<version>0.5-dev</version>
+	<packaging>jar</packaging>
 
-  <name>MyHungerGames</name>
-  <url>http://maven.apache.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-    <repositories>
-        <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
-    </repositories>
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.chrisgward.com</url>
-    </ciManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.2.5-R4.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.2.15</version>
-            <!-- Because we don't have a repo for this dep! -->
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Vault.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>de.diddiz.LogBlock</groupId>
-            <artifactId>LogBlock</artifactId>
-            <version>1.52</version>
-	    <!-- Because we don't have a repo for this dep! -->
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/LogBlock.jar</systemPath>
-        </dependency>
-	<dependency>
-            <groupId>uk.co.oliwali.HawkEye</groupId>
-            <artifactId>HawkEye</artifactId>
-            <version>1.0.7b</version>
-	    <!-- Because we don't have a repo for this dep! -->
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/HawkEye.jar</systemPath>
-        </dependency>
-    </dependencies>
+	<name>MyHungerGames</name>
+	<url>http://maven.apache.org</url>
+  
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<performRelease>true</performRelease>
+	</properties>
+    
+ 	<!-- Build settings -->
+	<build>
+		<defaultGoal>clean install</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>set-properties</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<properties>
+								<name></name>
+							</properties>
+							<source>
+							StringBuilder builder = new StringBuilder();
+							builder.append(project.artifactId).append("-").append(project.version);
+							if (project.version.split("-").length == 1) {
+							name = builder.toString();
+							} else {
+							java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMddyyyyHHmm");
+							// name = builder.append("-").append(System.currentTimeMillis()).toString();
+							name = builder.append("-").append(sdf.format(new Date())).toString();
+							}
+							print(name);
+							project.build.finalName = name;
+							</source>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
+	</repositories>
+	
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.chrisgward.com</url>
+	</ciManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>1.2.5-R4.0</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.2.15</version>
+			<!-- Because we don't have a repo for this dep! -->
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Vault.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>de.diddiz.LogBlock</groupId>
+			<artifactId>LogBlock</artifactId>
+			<version>1.52</version>
+			<!-- Because we don't have a repo for this dep! -->
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/LogBlock.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>uk.co.oliwali.HawkEye</groupId>
+			<artifactId>HawkEye</artifactId>
+			<version>1.0.7b</version>
+			<!-- Because we don't have a repo for this dep! -->
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/HawkEye.jar</systemPath>
+		</dependency>
+	</dependencies>
 </project>
