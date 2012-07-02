@@ -22,7 +22,6 @@ import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
-import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -43,10 +42,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	// Per game
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
-	private final Map<String, Location> spectators;
 	private final Set<String> allPlayers;
 	private final List<Location> randomLocs;
 	private final Map<String, String> sponsors; // Just a list for info, <sponsor, sponsee>
+	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
 	private boolean isRunning;
 	private boolean isCounting;
 	private boolean isPaused;
@@ -56,7 +55,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private final Map<Location, String> fixedChests;
 	private final List<Location> spawnPoints;
 	private final String name;
-	private final String setup;
+	private String setup;
 	private final List<String> itemsets;
 	private final Set<String> worlds;
 	private final Set<Cuboid> cuboids;
@@ -66,11 +65,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	
 	// Temporary
 	private final Map<String, Location> playerLocs;// For pausing
+	private final Map<String, Location> spectators;
 	private final Map<String, Boolean> spectatorFlying; // If a spectator was flying
 	private final Map<String, Boolean> spectatorFlightAllowed; // If a spectator's flight was allowed
 	private final Map<String, GameMode> playerGameModes; // Whether a player was in survival when game started
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
+	private int locTaskId = 0;
 
 	public HungerGame(String name) {
 		this(name, null);
@@ -79,17 +80,17 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public HungerGame(final String name, final String setup) {
 		stats = new TreeMap<String, PlayerStat>();
 		spawnsTaken = new HashMap<String, Location>();
-		spectators = new HashMap<String, Location>();
 		allPlayers = new HashSet<String>();
 		spawnPoints = new ArrayList<Location>();
 		sponsors = new HashMap<String, String>();
+		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
 		isRunning = isCounting = isPaused = false;
+		randomLocs = new ArrayList<Location>();
 		
 		chests = new ArrayList<Location>();
 		fixedChests = new HashMap<Location, String>();
 		this.name = name;
 		this.setup = null;
-		randomLocs = new ArrayList<Location>();
 		itemsets = new ArrayList<String>();
 		worlds = new HashSet<String>();
 		cuboids = new HashSet<Cuboid>();
@@ -98,6 +99,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 		readyToPlay = new ArrayList<String>();
 		playerLocs = new HashMap<String, Location>();
+		spectators = new HashMap<String, Location>();
 		spectatorFlying = new HashMap<String, Boolean>();
 		spectatorFlightAllowed = new HashMap<String, Boolean>();
 		playerGameModes = new HashMap<String, GameMode>();
@@ -127,7 +129,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
 			for (String key : chestsSection.getKeys(false)) {
 				String str = chestsSection.getString(key);
-								Location loc = null;
+				Location loc = null;
 				try {
 					loc = HungerGames.parseToLoc(str);
 				}
@@ -144,6 +146,31 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			}
 
 		}
+
+		if (section.contains("fixedchests")) {
+			ConfigurationSection fixedChestsSection = section.getConfigurationSection("chests");
+			for (String key : fixedChestsSection.getKeys(false)) {
+				String str = fixedChestsSection.getString(key);
+				String[] split = str.split(",");
+				if (split.length != 2) continue;
+				Location loc = null;
+				try {
+					loc = HungerGames.parseToLoc(split[0]);
+				}
+				catch (NumberFormatException e) {
+				}
+				if (loc == null) {
+					Logging.warning("failed to load location '%s'", str);
+					continue;
+				}
+				if (!(loc.getBlock().getState() instanceof Chest)) {
+					Logging.warning("'%s' is no longer a chest.", str);
+					continue;
+				}
+				fixedChests.put(loc, split[1]);
+			}
+
+		}
                 
                 if(section.isList("itemsets")) {
 			itemsets.clear();
@@ -151,8 +178,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
                 }
 		
                 if(section.isList("worlds")) {
-			itemsets.clear();
-			itemsets.addAll(section.getStringList("worlds"));
+			worlds.clear();
+			worlds.addAll(section.getStringList("worlds"));
                 }
 		if (section.isList("cuboids")) {
 			List<Cuboid> cuboidList = new ArrayList<Cuboid>();
@@ -162,48 +189,50 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			cuboids.clear();
 			cuboids.addAll(cuboidList);
 		}
-		enabled = section.getBoolean("enabled", Boolean.TRUE);
+		enabled = section.getBoolean("enabled", true);
+		if (section.contains("setup")) setup = section.getString("setup");
 		try {
-			spawn = HungerGames.parseToLoc(section.getString("spawn"));
+			if (section.contains("spawn")) spawn = HungerGames.parseToLoc(section.getString("spawn"));
 		} 
 		catch (NumberFormatException numberFormatException) {}
 		HungerGames.callEvent(new GameLoadEvent(this));
 	}
 
 	public void saveTo(ConfigurationSection section) {
-		if (!spawnPoints.isEmpty()) {
-			ConfigurationSection spawnPointsSection = section.createSection("spawn-points");
-			for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
-				Location loc = spawnPoints.get(cntr);
-				if (loc == null) continue;
-				spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
-			}
+		ConfigurationSection spawnPointsSection = section.createSection("spawn-points");
+		ConfigurationSection chestsSection = section.createSection("chests");
+		ConfigurationSection fixedChestsSection = section.createSection("fixedchests");
+		
+		for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
+			Location loc = spawnPoints.get(cntr);
+			if (loc == null) continue;
+			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
 		}
-
-		if (!chests.isEmpty()) {
-			ConfigurationSection chestsSection = section.createSection("chests");
-			for (int cntr = 0; cntr < chests.size(); cntr++) {
-				Location loc = chests.get(cntr);
-				chestsSection.set("chest" + (cntr + 1), HungerGames.parseToString(loc));
-			}
-
+		
+		for (int cntr = 0; cntr < chests.size(); cntr++) {
+			Location loc = chests.get(cntr);
+			chestsSection.set("chest" + (cntr + 1), HungerGames.parseToString(loc));
 		}
-                
-                if(!itemsets.isEmpty()) {
-			section.set("itemsets", itemsets);
-                }
-                if (!worlds.isEmpty()) {
+		
+		int cntr = 0;
+		for (Location loc : fixedChests.keySet()) {
+			fixedChestsSection.set("fixedchest" + (cntr + 1), HungerGames.parseToString(loc) + "," + fixedChests.get(loc));
+			cntr++;
+		}
+		section.set("itemsets", itemsets);
+		if (!worlds.isEmpty()) {
 			section.set("worlds", worlds);
-		}
-                if (!cuboids.isEmpty()) {
 			List<String> cuboidStringList = new ArrayList<String>();
 			for (Cuboid c : cuboids) {
 				cuboidStringList.add(c.parseToString());
 			}
+		}
+		if (!cuboids.isEmpty()) {
 			section.set("cuboids", cuboids);
 		}
 		section.set("enabled", enabled);
-		if (getSpawn() != null) section.set("spawn", HungerGames.parseToString(getSpawn()));
+		section.set("setup", setup);
+		section.set("spawn", spawn);
 		
 		HungerGames.callEvent(new GameSaveEvent(this));
 	}
@@ -251,6 +280,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	public void addSpectator(Player player, Player spectated) {
 		spectators.put(player.getName(), player.getLocation());
+		if (Config.getSpectatorSponsorPeriod(setup) != 0) {
+			 spectatorSponsoringRunnable.addSpectator(player);
+		}
 		Random rand = HungerGames.getRandom();
 		Location loc = randomLocs.get(rand.nextInt(randomLocs.size()));
 		if (spectated != null) loc = spectated.getLocation();
@@ -269,6 +301,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public void removeSpectator(Player player) {
+		spectatorSponsoringRunnable.removeSpectator(player);
 		player.teleport(spectators.remove(player.getName()));
 		player.setFlying(spectatorFlying.get(player.getName()));
 		player.setAllowFlight(spectatorFlightAllowed.get(player.getName()));
@@ -307,13 +340,18 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			playerLeaving(player, false);
 			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) {
-				HashMap<Integer, ItemStack> addItem = player.getInventory().addItem(contents);
-				for (Integer i : addItem.keySet()) {
-					player.getLocation().getWorld().dropItem(player.getLocation(), addItem.get(i));
+				for (ItemStack i : player.getInventory().addItem(contents).values()) {
+					player.getLocation().getWorld().dropItem(player.getLocation(), i);
 				}
 			}
 			if (isFinished) HungerGames.rewardPlayer(player);
 		}
+		for (String spectatorName : spectators.keySet()) {
+			Player spectator = Bukkit.getPlayer(spectatorName);
+			removeSpectator(spectator);
+		}
+		spectatorSponsoringRunnable.cancel();
+		HungerGames.cancelTask(locTaskId);
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		if (!isFinished) {
 			GameStopEvent event = new GameStopEvent(this);
@@ -391,7 +429,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
-		HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
+		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
+		spectatorSponsoringRunnable.setTaskId(HungerGames.scheduleTask(spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
@@ -530,7 +569,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
         
 	public void fillInventories() {
 	    Location prev = null;
-	    Logging.debug("Filling inventories. Chests size: {0} fixedChests size: {1}", chests.size(), fixedChests.size());
+	    Logging.debug("Filling inventories. Chests size: %s fixedChests size: %s", chests.size(), fixedChests.size());
 	    for (Location loc : chests) {
 		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
 			    Logging.debug("Cancelling a fill because previous was a chest");
@@ -777,6 +816,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		isPaused = false;
 		spectators.clear();
 		sponsors.clear();
+		randomLocs.clear();
 		
 		readyToPlay.clear();
 		playerLocs.clear();
@@ -841,7 +881,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public String getInfo() {
-		return String.format("%s[%d/%d] Enabled: %b", name, getRemainingPlayers(), spawnPoints.size(), enabled);
+		return String.format("%s[%d/%d] Enabled: %b", name, getRemainingPlayers().size(), spawnPoints.size(), enabled);
 	}
 
 	/**

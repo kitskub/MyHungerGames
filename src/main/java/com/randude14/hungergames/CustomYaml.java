@@ -18,10 +18,13 @@ public class CustomYaml {
 	}
 	
 	public FileConfiguration getConfig() {
-		load();
 		return config;
 	}
 
+	public File getFile() {
+		return file;
+	}
+	
 	public void load() {
 		try {
 		    config.load(file);

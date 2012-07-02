@@ -8,6 +8,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.util.logging.SimpleFormatter;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permissible;
@@ -34,6 +35,7 @@ public class Logging {
 			File file = new File(instance.getDataFolder(), "myhungergames.log");
 			if (!file.exists()) file.createNewFile();
 			FileHandler handler = new FileHandler(file.getPath(), true);
+			handler.setFormatter(new SimpleFormatter());
 			logger.addHandler(handler);
 			logger.setLevel(Level.FINEST);
 			Logger parent = Logger.getLogger("Minecraft");

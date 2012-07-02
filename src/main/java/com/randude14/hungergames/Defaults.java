@@ -56,7 +56,8 @@ public class Defaults {
 	ALLOW_MINIMAL_MESSAGES(true),
 	REMOVE_ITEMS(true),
 	USE_MATCH_MATERIAL(true),
-	MAX_RANDOM_ITEMS(5);
+	MAX_RANDOM_ITEMS(5),
+	SPECTATOR_SPONSOR_PERIOD(0);
 	
 	
 	private Object value;

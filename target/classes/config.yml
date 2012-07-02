@@ -117,6 +117,10 @@ global:
   
   # whether to remove items off the ground when a game ends
   remove-items: true
+  
+  # This is the amount of time, in seconds, before spectators can sponsor a random item for free. Restarts once reaches time.
+  # This is rounded up to the nearest half-minute mark
+  spectator-sponsor-period: 0
 
   chest-loot:
   # Example loot. Note DURABIlITY is an enchantment

@@ -68,6 +68,9 @@ v0.5
 - Renamed chestconfig.yml to itemconfig.yml
 - Switched around some methods in Config and ItemConfig
 - Added rewards
+- Added a config updater
+- Added the ability for spectators to sponsor a random sponsor-loot item for free at a certain interval
+- Spectators now get removed on stopGame()
 
 v0.4.3
 - Fixed nullpointerexception in getSpectating() for real this time

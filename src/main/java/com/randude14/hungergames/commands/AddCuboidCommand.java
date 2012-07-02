@@ -21,6 +21,7 @@ public class AddCuboidCommand extends SubCommand{
 	    Player player = (Player) cs;
 	    if(args.length < 1){
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
+		    return true;
 	    }
 	    game = GameManager.getGame(args[0]);
 	    

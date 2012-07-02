@@ -1,6 +1,7 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GameLoadEvent;
@@ -22,7 +23,6 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +32,11 @@ public class InternalListener implements Runnable, Listener{
 
 	private static final Map<ListenerType, Map<HungerGame, List<Location>>> listeners = new EnumMap<ListenerType, Map<HungerGame, List<Location>>>(ListenerType.class);
 	private static List<OffQueue> queues = new ArrayList<OffQueue>();
+	private static int taskId = 0;
+	
+	public InternalListener() {
+		taskId = HungerGames.scheduleTask(this, 0, 1);
+	}
 	
 	/**
 	 * Add a sign. Does not check first line.

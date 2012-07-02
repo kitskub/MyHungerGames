@@ -19,6 +19,7 @@ public class AddItemSetCommand extends SubCommand {
 	    Player player = (Player) cs;
 	    if(args.length < 2){
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
+		    return true;
 	    }
 	    game = GameManager.getGame(args[0]);
 	    

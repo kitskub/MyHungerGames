@@ -42,7 +42,6 @@ public class SessionListener implements Listener {
 		    }
 	    }
 	    else {
-		    Logging.debug("No key for sessionlisteners. Cancelling");
 		    return;
 	    }
 	    if (type == SessionType.CHEST_ADDER) {
@@ -142,9 +141,8 @@ public class SessionListener implements Listener {
 		    Logging.debug("Failed to get sessionlistener.");	    }
 	}
 	
-	// TODO convert all these
 	public static void addSession(SessionType type, Player player, String game) {
-		sessions.put(player.getName(),  new Session(type, game));
+		sessions.put(player.getName(), new Session(type, game));
 	}
 	
 	public static void addSession(SessionType type, Player player, String game, String... data) {
@@ -166,10 +164,10 @@ public class SessionListener implements Listener {
 	}
 	
 	private static class Session {
-		private SessionType type;
+		private final SessionType type;
 		private List<Block> blocks;
-		private String game;
-		private Map<String, String> data;
+		private final String game;
+		private final Map<String, String> data;
 
 		public Session(SessionType type, String game) {
 			this(type, game, "");
@@ -177,7 +175,9 @@ public class SessionListener implements Listener {
 		
 		public Session(SessionType type, String game, String... args) {
 			this.game = game;
+			this.type = type;
 			this.blocks = new ArrayList<Block>();
+			data = new HashMap<String, String>();
 			if (args.length % 2 == 1) return;
 			for (int i = 0; i < args.length; i += 2) {
 				data.put(args[i], args[i + 1]);

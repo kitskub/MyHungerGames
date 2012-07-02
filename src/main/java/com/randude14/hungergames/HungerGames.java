@@ -13,7 +13,6 @@ import com.randude14.hungergames.utils.ChatUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -56,24 +55,22 @@ public class HungerGames extends JavaPlugin{
 		registerCommands();
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new BlockListener(), this);
-		pm.registerEvents(new CommandListener(), this);
-		pm.registerEvents(new PlayerListener(), this);
-		pm.registerEvents(new EntityListener(), this);
-		pm.registerEvents(new InventoryListener(), this);
-		pm.registerEvents(new SessionListener(), this);
-		pm.registerEvents(new ChatListener(), this);
-		pm.registerEvents(new TeleportListener(), this);
+		registerEvents();
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    Logging.info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
 		}
+		if (!ItemConfig.getConfig().getFile().exists()) {
+		    Logging.info("itemconfig.yml not found. Saving defaults.");
+		    ItemConfig.create();
+		}
+		ItemConfig.reload();
+		updateConfig();
 		loadRegistry();
 		loadResetter();
 		callTasks();
 		GameManager.loadGames();
-		Logging.info("Games loaded.");
+		Logging.info("%s games loaded.", GameManager.getGames().size());
 		try {
 		    Metrics metrics = new Metrics();
 		    metrics.beginMeasuringPlugin(this);
@@ -151,6 +148,43 @@ public class HungerGames extends JavaPlugin{
 	    }
 	}
 
+	private static void registerEvents() {
+		PluginManager pm = Bukkit.getPluginManager();
+		pm.registerEvents(new BlockListener(), instance);
+		pm.registerEvents(new CommandListener(), instance);
+		pm.registerEvents(new PlayerListener(), instance);
+		pm.registerEvents(new EntityListener(), instance);
+		pm.registerEvents(new InternalListener(), instance);
+		pm.registerEvents(new InventoryListener(), instance);
+		pm.registerEvents(new SessionListener(), instance);
+		pm.registerEvents(new ChatListener(), instance);
+		pm.registerEvents(new TeleportListener(), instance);
+	}
+	
+	private static void updateConfig() {
+		if (instance.getConfig().contains("global.chest-loot")) {
+			for (String key : instance.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
+				Object value = instance.getConfig().get("global.chest-loot." + key);
+				ItemConfig.getConfig().getConfig().set("global.chest-loot." + key, value);
+				instance.getConfig().set("global.chest-loot." + key, null);
+			}
+		}
+		if (instance.getConfig().contains("global.sponsor-loot")) {
+			for (String key : instance.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
+				Object value = instance.getConfig().get("global.sponsor-loot." + key);
+				ItemConfig.getConfig().getConfig().set("global.sponsor-loot." + key, value);
+				instance.getConfig().set("global.sponsor-loot." + key, null);
+			}
+		}
+		if (instance.getConfig().contains("itemsets")) {
+			for (String key : instance.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
+				Object value = instance.getConfig().get("itemsets." + key);
+				ItemConfig.getConfig().getConfig().set("itemsets." + key, value);
+				instance.getConfig().set("itemsets." + key, null);
+			}
+		}
+	}
+	
 	public static void reload() {
 	    instance.reloadConfig();
 	    GameManager.loadGames();
@@ -346,9 +380,8 @@ public class HungerGames extends JavaPlugin{
 			}
 
 		}
-		HashMap<Integer, ItemStack> addItem = player.getInventory().addItem((ItemStack[]) items.toArray());
-		for (Integer i : addItem.keySet()) {
-			player.getLocation().getWorld().dropItem(player.getLocation(), addItem.get(i));
+		for (ItemStack i : player.getInventory().addItem((ItemStack[]) items.toArray()).values()) {
+			player.getLocation().getWorld().dropItem(player.getLocation(), i);
 		}
 	}
 	

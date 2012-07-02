@@ -20,7 +20,8 @@ public class AddSponsorLootCommand extends SubCommand{
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);return true;
+			ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
+			return true;
 		}
 		float chance = Float.valueOf(args[0]);
 		if (args.length < 2) {

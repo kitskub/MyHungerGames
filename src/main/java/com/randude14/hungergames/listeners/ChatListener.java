@@ -26,7 +26,7 @@ public class ChatListener implements Listener {
 						if (chatterGame.compareTo(receipientGame) == 0 
 							&& event.getPlayer().getLocation().getWorld() == p.getLocation().getWorld()) {
 							float distanceRequired = Config.getChatDistance(receipientGame.getSetup());
-							if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) <= distanceRequired) {
+							if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) >= distanceRequired) {
 								if (HungerGames.checkPermission(event.getPlayer(), Perm.ADMIN_STOP)) {
 									if (event.getMessage().startsWith("hg ")) {
 										event.setMessage(event.getMessage().substring(3));
@@ -37,7 +37,7 @@ public class ChatListener implements Listener {
 										return;
 									}
 								}
-								Logging.debug("Cancelling chat because too close.");
+								Logging.debug("Cancelling chat because too far.");
 								event.setCancelled(true);
 							}
 						}

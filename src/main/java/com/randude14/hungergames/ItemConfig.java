@@ -22,6 +22,14 @@ public class ItemConfig {
 		itemConfig.load();
 	}
 	
+	public static void create() {
+		HungerGames.getInstance().saveResource("itemconfig.yml", false);
+	}
+	
+	public static CustomYaml getConfig() {
+		return itemConfig;
+	}
+	
 	public static boolean useMatchMaterial() {
 		return itemConfig.getConfig().getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getBoolean());
 	}

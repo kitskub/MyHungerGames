@@ -290,6 +290,10 @@ public class Config {
 	public static List<String> getSpecialBlocksInteractGlobal() {
 		return getGlobalStringList("special-blocks-interact", new ArrayList<String>());
 	}
+		
+	public static int getSpectatorSponsorPeriodGlobal() {
+		return getGlobalInt("spectator-sponsor-period", SPECTATOR_SPONSOR_PERIOD.getInt());
+	}
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -421,6 +425,10 @@ public class Config {
 		return getBoolean("remove-items", setup, getRemoveItemsGlobal());
 	}
 
+	public static int getSpectatorSponsorPeriod(String setup) {
+		return getInteger("spectator-sponsor-period", setup, getSpectatorSponsorPeriodGlobal());
+	}
+	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal())){

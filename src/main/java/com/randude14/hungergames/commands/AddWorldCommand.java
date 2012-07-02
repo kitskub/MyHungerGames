@@ -27,6 +27,7 @@ public class AddWorldCommand extends SubCommand{
  
 	    if(args.length < 1){
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
+		    return true;
 	    }
 	    game = GameManager.getGame(args[0]);
 	    
@@ -45,6 +46,7 @@ public class AddWorldCommand extends SubCommand{
 		    }
 		    else {
 			    game.addWorld(player.getWorld());
+			    ChatUtils.send(player, "World added!");
 		    }
 	    }
 	return true;

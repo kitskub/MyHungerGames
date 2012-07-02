@@ -170,7 +170,7 @@ public class GameManager{
 	}
 
 	public static void saveGame(HungerGame game){
-	    Logging.log(Level.INFO, "Saving a game");
+		Logging.log(Level.INFO, "Saving a game");
 		FileConfiguration config = yaml.getConfig();
 		ConfigurationSection section = config.getConfigurationSection("games");
 		if(section == null){
@@ -200,7 +200,7 @@ public class GameManager{
 	    game.addSponsor(player.getName(), playerToBeSponsored.getName());
 	    return true;
 	}
-	
+
 	public static void addSpectator(Player player, String gameName) {
 		spectators.put(player.getName(), gameName);
 	}
@@ -352,8 +352,5 @@ public class GameManager{
 			}
 			return END_OF_CONVERSATION;
 		}
-		
-		
-		
 	}
 }
