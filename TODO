@@ -1,5 +1,6 @@
 HIGH:
 - Remove reset-world in v0.6
+- Dedicated server mode
 
 MEDIUM:
 - Random events

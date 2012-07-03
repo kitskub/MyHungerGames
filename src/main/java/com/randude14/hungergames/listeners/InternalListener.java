@@ -75,9 +75,15 @@ public class InternalListener implements Runnable, Listener{
 	
 	private void callListeners(ListenerType type, HungerGame game) {
 		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
-		if (gameMap == null) gameMap = listeners.put(type, new HashMap<HungerGame, List<Location>>());
+		if (gameMap == null) {
+			listeners.put(type, new HashMap<HungerGame, List<Location>>());
+			gameMap = listeners.get(type);
+		}
 		List<Location> locs = gameMap.get(game);
-		if (locs == null) locs = gameMap.put(game, new ArrayList<Location>());
+		if (locs == null) {
+			gameMap.put(game, new ArrayList<Location>());
+			locs = gameMap.get(game);
+		}
 		List<Sign> signs = new ArrayList<Sign>();
 		for (Location loc : locs) {
 			if (!(loc.getBlock() instanceof Sign)) {
