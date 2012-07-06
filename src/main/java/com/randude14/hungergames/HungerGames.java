@@ -380,7 +380,7 @@ public class HungerGames extends JavaPlugin{
 			}
 
 		}
-		for (ItemStack i : player.getInventory().addItem((ItemStack[]) items.toArray()).values()) {
+		for (ItemStack i : player.getInventory().addItem(items.toArray(new ItemStack[0])).values()) {
 			player.getLocation().getWorld().dropItem(player.getLocation(), i);
 		}
 	}

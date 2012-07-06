@@ -1,6 +1,7 @@
 HIGH:
 - Remove reset-world in v0.6
 - Dedicated server mode
+- Better file handling
 
 MEDIUM:
 - Random events

@@ -141,8 +141,12 @@ public class GameManager{
 
 	public static void loadGames() {
 		FileConfiguration config = yaml.getConfig();
+		yaml.load();
 		ConfigurationSection gamesSection = config.getConfigurationSection("games");
-		if (gamesSection == null) return;
+		if (gamesSection == null) {
+			Logging.debug("gameSection is null.");
+			return;
+		}
 		games.clear();
 		for (String name : gamesSection.getKeys(false)) {
 			ConfigurationSection gameSection = gamesSection.getConfigurationSection(name);
@@ -161,6 +165,7 @@ public class GameManager{
 	
 	public static void reloadGame(HungerGame game){
 		FileConfiguration config = yaml.getConfig();
+		yaml.load();
 		ConfigurationSection gameSection = config.getConfigurationSection("games." + game.getName());
 		if (gameSection == null) {
 			return;

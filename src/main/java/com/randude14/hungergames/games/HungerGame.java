@@ -336,7 +336,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			for (ItemStack i : contents) {
 				if (i != null) list.add(i);
 			}
-			contents = (ItemStack[]) list.toArray();
+			contents = list.toArray(new ItemStack[list.size()]);
 			playerLeaving(player, false);
 			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) {
@@ -765,17 +765,20 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		ChatUtils.error(player, "You are not in the game %s.", name);
 		return false;
 	    }
-	    if (stats.get(player.getName()).isPlaying()) {
+	    boolean wasPlaying = stats.get(player.getName()).isPlaying();
+	    if (wasPlaying) {
 		    dropInventory(player);
-		    teleportPlayerToSpawn(player);
 	    }
 	    if(isRunning) {
-		stats.get(player.getName()).die();
+		    stats.get(player.getName()).die();
 	    }
 	    else {
-		stats.remove(player.getName());
+		    stats.remove(player.getName());
 	    }
 	    playerLeaving(player, false);
+	    if (wasPlaying || !isRunning) {
+		    teleportPlayerToSpawn(player);
+	    }
 	    checkForGameOver(false);
 
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
@@ -791,7 +794,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @param player
 	 */
 	private synchronized void playerLeaving(Player player, boolean temporary) {
-		if (Config.getForceSurvival(setup)) {
+		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
 		for (String string : spectators.keySet()) {
@@ -885,9 +888,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	/**
-	 * 
+	 * Checks if players are in the game and have lives, regardless is game is running and if they are playing.
 	 * @param players players to check
-	 * @return true if players are in the game and have lives, regardless if they are playing or not
+	 * @return
 	 */
 	public boolean contains(Player... players) {
 	    for (Player player : players) {
