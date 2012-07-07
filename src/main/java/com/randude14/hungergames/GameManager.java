@@ -3,7 +3,6 @@ package com.randude14.hungergames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
