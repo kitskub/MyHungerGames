@@ -1,7 +1,7 @@
 HIGH:
 - Remove reset-world in v0.6
 - Dedicated server mode
-- Better file handling
+- Fix sign listening
 
 MEDIUM:
 - Random events
@@ -10,10 +10,12 @@ MEDIUM:
 LOW:
 - Map gen
 - economy config stuff
+- NPCs
 
 OPTIONAL:
 - Possible timed game events
 - Hide players from each other
+- Lang pack
 
 UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted

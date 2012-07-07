@@ -52,11 +52,11 @@ public class SessionListener implements Listener {
 			    }
 		    if (game.addChest(clickedBlock.getLocation())) {
 			    ChatUtils.send(player, "Chest has been added to %s.", game.getName());
+			    session.clicked(clickedBlock);
 		    }
 		    else {
 			    ChatUtils.error(player, "Chest has already been added to game %s.",game.getName());
 		    }
-		    session.clicked(clickedBlock);
 		}
 		else {
 			ChatUtils.send(player, "You have added %d chests to the game %s.", session.getBlocks().size(), game.getName());
@@ -70,12 +70,12 @@ public class SessionListener implements Listener {
 			    return;
 		    }
 		    if (game.removeChest(clickedBlock.getLocation())) {
-			ChatUtils.send(player, "Chest has been removed from %s.", game.getName());
+			    ChatUtils.send(player, "Chest has been removed from %s.", game.getName());
+			    session.clicked(clickedBlock);
 		    }
 		    else {
 			ChatUtils.error(player, "%s does not contain this chest.", game.getName());
 		    }
-		    session.clicked(clickedBlock);
 		}
 		else {
 		    ChatUtils.send(player, "You have removed %d chests from the game %s.", session.getBlocks().size(), game.getName());
@@ -88,11 +88,11 @@ public class SessionListener implements Listener {
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.addSpawnPoint(loc)) {
 				    ChatUtils.send(player, "Spawn point has been added to %s.", game.getName());
+				    session.clicked(clickedBlock);
 			    }
 			    else {
 				    ChatUtils.error(player, "%s already has this spawn point.", game.getName());
 			    }
-			    session.clicked(clickedBlock);
 		    }
 		    else {
 			    ChatUtils.send(player, "You have added %d spawn points to the game %s.", session.getBlocks().size(), game.getName());
@@ -105,11 +105,11 @@ public class SessionListener implements Listener {
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.removeSpawnPoint(loc)) {
 				    ChatUtils.send(player, "Spawn point has been removed from %s.", game.getName());
+				    session.clicked(clickedBlock);
 			    }
 			    else {
 				    ChatUtils.error(player, "%s does not contain this spawn point.", game.getName());
 			    }
-			    session.clicked(clickedBlock);
 		    }
 		    else {
 			    ChatUtils.send(player, "You have removed %d spawn points from the game %s.", session.getBlocks().size(), game.getName());

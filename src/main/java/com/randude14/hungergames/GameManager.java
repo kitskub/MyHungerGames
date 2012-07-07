@@ -11,12 +11,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.NumericPrompt;
@@ -29,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
 public class GameManager{
 	private static final HungerGames plugin = HungerGames.getInstance();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
-	private static final CustomYaml yaml = new CustomYaml(new File(plugin.getDataFolder(), "games.yml"));
+	private static final YamlConfiguration yaml = Files.GAMES.getConfig();
 	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
 	private static final Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
@@ -140,11 +139,8 @@ public class GameManager{
 	}
 
 	public static void loadGames() {
-		FileConfiguration config = yaml.getConfig();
-		yaml.load();
-		ConfigurationSection gamesSection = config.getConfigurationSection("games");
+		ConfigurationSection gamesSection = yaml.getConfigurationSection("games");
 		if (gamesSection == null) {
-			Logging.debug("gameSection is null.");
 			return;
 		}
 		games.clear();
@@ -164,9 +160,7 @@ public class GameManager{
 	}
 	
 	public static void reloadGame(HungerGame game){
-		FileConfiguration config = yaml.getConfig();
-		yaml.load();
-		ConfigurationSection gameSection = config.getConfigurationSection("games." + game.getName());
+		ConfigurationSection gameSection = yaml.getConfigurationSection("games." + game.getName());
 		if (gameSection == null) {
 			return;
 		}
@@ -175,18 +169,16 @@ public class GameManager{
 	}
 
 	public static void saveGame(HungerGame game){
-		Logging.log(Level.INFO, "Saving a game");
-		FileConfiguration config = yaml.getConfig();
-		ConfigurationSection section = config.getConfigurationSection("games");
+		ConfigurationSection section = yaml.getConfigurationSection("games");
 		if(section == null){
-		    section = config.createSection("games");
+		    section = yaml.createSection("games");
 		}
 		ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
 		if(saveSection == null) {
 		    saveSection = section.createSection(game.getName());
 		}
 		game.saveTo(saveSection);
-		yaml.save();
+		Files.GAMES.save();
 	}
 	
 	

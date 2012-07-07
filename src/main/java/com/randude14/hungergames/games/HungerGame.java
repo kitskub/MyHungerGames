@@ -134,7 +134,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 					loc = HungerGames.parseToLoc(str);
 				}
 				catch (NumberFormatException e) {}
-				if (loc == null) {
+				if (loc == null || loc.getWorld() == null) {
 					Logging.warning("failed to load location '%s'", str);
 					continue;
 				}
@@ -206,6 +206,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
 			Location loc = spawnPoints.get(cntr);
 			if (loc == null) continue;
+			Logging.debug("Saving a spawnpoint. It's location is: " + loc);
 			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
 		}
 		

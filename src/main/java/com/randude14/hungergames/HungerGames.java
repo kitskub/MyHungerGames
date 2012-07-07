@@ -12,11 +12,15 @@ import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,15 +60,11 @@ public class HungerGames extends JavaPlugin{
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
 		registerEvents();
+		Files.loadAll();
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 		    Logging.info("config.yml not found. Saving defaults.");
 		    saveDefaultConfig();
 		}
-		if (!ItemConfig.getConfig().getFile().exists()) {
-		    Logging.info("itemconfig.yml not found. Saving defaults.");
-		    ItemConfig.create();
-		}
-		ItemConfig.reload();
 		updateConfig();
 		loadRegistry();
 		loadResetter();
@@ -83,10 +83,8 @@ public class HungerGames extends JavaPlugin{
 	private void callTasks() {
 	    HungerGames.scheduleTask(new Runnable() {
 		public void run() {
-		    String installedVersion = getDescription().getVersion();
-		    String checkVersion = latestVersion();
-		    if (!checkVersion.equalsIgnoreCase(installedVersion))
-			    Logging.warning("There is a new version: %s (You are running %s)", checkVersion, installedVersion);
+		    if (!latestVersionCheck())
+			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), getDescription().getVersion());
 		}
 	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
@@ -162,31 +160,30 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	private static void updateConfig() {
-		if (instance.getConfig().contains("global.chest-loot")) {
-			for (String key : instance.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
-				Object value = instance.getConfig().get("global.chest-loot." + key);
-				ItemConfig.getConfig().getConfig().set("global.chest-loot." + key, value);
-				instance.getConfig().set("global.chest-loot." + key, null);
+		if (Files.CONFIG.getConfig().contains("global.chest-loot")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("global.chest-loot." + key);
+				Files.ITEMCONFIG.getConfig().set("global.chest-loot." + key, value);
+				Files.CONFIG.getConfig().set("global.chest-loot." + key, null);
 			}
 		}
-		if (instance.getConfig().contains("global.sponsor-loot")) {
-			for (String key : instance.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
-				Object value = instance.getConfig().get("global.sponsor-loot." + key);
-				ItemConfig.getConfig().getConfig().set("global.sponsor-loot." + key, value);
-				instance.getConfig().set("global.sponsor-loot." + key, null);
+		if (Files.CONFIG.getConfig().contains("global.sponsor-loot")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("global.sponsor-loot." + key);
+				Files.ITEMCONFIG.getConfig().set("global.sponsor-loot." + key, value);
+				Files.CONFIG.getConfig().set("global.sponsor-loot." + key, null);
 			}
 		}
-		if (instance.getConfig().contains("itemsets")) {
-			for (String key : instance.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
-				Object value = instance.getConfig().get("itemsets." + key);
-				ItemConfig.getConfig().getConfig().set("itemsets." + key, value);
-				instance.getConfig().set("itemsets." + key, null);
+		if (Files.CONFIG.getConfig().contains("itemsets")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("itemsets." + key);
+				Files.ITEMCONFIG.getConfig().set("itemsets." + key, value);
+				Files.CONFIG.getConfig().set("itemsets." + key, null);
 			}
 		}
 	}
 	
 	public static void reload() {
-	    instance.reloadConfig();
 	    GameManager.loadGames();
 	    loadRegistry();
 	}
@@ -249,6 +246,38 @@ public class HungerGames extends JavaPlugin{
 		Bukkit.getServer().getScheduler().cancelTask(taskID);
 	}
 
+	public boolean latestVersionCheck(){
+		String datePub = null;
+		long timeMod = 0;
+		try {
+			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
+			doc.getDocumentElement().normalize();
+			NodeList nodes = doc.getElementsByTagName("item");
+			Node firstNode = nodes.item(0);
+			if (firstNode.getNodeType() == 1) {
+				Element firstElement = (Element) firstNode;
+				NodeList firstElementTagName = firstElement.getElementsByTagName("pubDate");
+				Element firstNameElement = (Element) firstElementTagName.item(0);
+				NodeList firstNodes = firstNameElement.getChildNodes();
+				datePub = firstNodes.item(0).getNodeValue();
+			}
+		} catch (Exception ex) {
+		}
+		DateFormat pubDate = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
+		try {
+			File jarFile = new File
+			(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			timeMod = jarFile.lastModified();
+		} catch (URISyntaxException e1) {
+		}
+		try {
+			return pubDate.parse(datePub).getTime() <= (timeMod + 86400000);
+		} catch (ParseException parseException) {
+			return false;
+		}
+	}
+	
 	public String latestVersion() {
 		try {
 			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");

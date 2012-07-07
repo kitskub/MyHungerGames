@@ -2,6 +2,7 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GameLoadEvent;
@@ -41,23 +42,25 @@ public class InternalListener implements Runnable, Listener{
 	/**
 	 * Add a sign. Does not check first line.
 	 * @param sign
+	 * @return  
 	 */
-	public static void addSign(Sign sign) {
+	public static boolean addSign(Sign sign) {
 		String id = sign.getLine(1);
 		ListenerType type = ListenerType.byId(id);
-		if (type == null) return;
+		if (type == null) return false;
 		HungerGame game = GameManager.getGame(sign.getLine(2));
 		if (game == null) {
 			sign.setLine(1, "");
 			sign.setLine(2, "BAD GAME NAME!");
 			sign.setLine(3, "");
-			return;
+			return false;
 		}
 		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
 		if (gameMap == null) gameMap = listeners.put(type, new HashMap<HungerGame, List<Location>>());
 		List<Location> locs = gameMap.get(game);
 		if (locs == null) locs = gameMap.put(game, new ArrayList<Location>());
 		locs.add(sign.getLocation());
+		return true;
 	}
 
 	public void run() {
@@ -74,6 +77,7 @@ public class InternalListener implements Runnable, Listener{
 	}
 	
 	private void callListeners(ListenerType type, HungerGame game) {
+		Logging.debug("Calling listener: " + type.name());
 		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
 		if (gameMap == null) {
 			listeners.put(type, new HashMap<HungerGame, List<Location>>());

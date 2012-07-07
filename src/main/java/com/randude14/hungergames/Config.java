@@ -16,27 +16,22 @@ import static com.randude14.hungergames.utils.ConfigUtils.*;
 
 
 public class Config {
-	private static final HungerGames plugin = HungerGames.getInstance();
-	
-	public static void reload() {
-		plugin.reloadConfig();
-	}
 	
 	private static boolean getGlobalBoolean(String config, boolean def) {
-		return plugin.getConfig().getBoolean("global." + config, def);
+		return Files.CONFIG.getConfig().getBoolean("global." + config, def);
 	}
 	
 	private static String getGlobalString(String config, String def) {
-		return plugin.getConfig().getString("global." + config, def);
+		return Files.CONFIG.getConfig().getString("global." + config, def);
 	}
 	
 	private static int getGlobalInt(String config, int def) {
-		return plugin.getConfig().getInt("global." + config, def);
+		return Files.CONFIG.getConfig().getInt("global." + config, def);
 	}
 	
 	private static List<String> getGlobalStringList(String config, List<String> def) {
-		if (plugin.getConfig().contains("global." + config)) {
-			return plugin.getConfig().getStringList("global." + config);
+		if (Files.CONFIG.getConfig().contains("global." + config)) {
+			return Files.CONFIG.getConfig().getStringList("global." + config);
 
 		}
 		return def;
@@ -48,11 +43,11 @@ public class Config {
 	 */
 	private static Boolean getBoolean(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
-		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
-			return plugin.getConfig().getBoolean("setups." + setup + "." + config);
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + config);
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			Boolean b = getBoolean(config, parent, checked);
 			if (b != null) return b;
 		}
@@ -69,11 +64,11 @@ public class Config {
 	 */	
 	private static String getString(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
-		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
-			return plugin.getConfig().getString("setups." + setup + "." + config);
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.CONFIG.getConfig().getString("setups." + setup + "." + config);
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			String s = getString(config, parent, checked);
 			if (s != null) return s;
 		}
@@ -90,11 +85,11 @@ public class Config {
 	 */
 	private static Integer getInteger(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
-		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
-			return plugin.getConfig().getInt("setups." + setup + "." + config);
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.CONFIG.getConfig().getInt("setups." + setup + "." + config);
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			Integer i = getInteger(config, parent, checked);
 			if (i != null) return i;
 		}
@@ -111,11 +106,11 @@ public class Config {
 	 */
 	private static List<String> getStringList(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
-		if (plugin.getConfig().contains("setups." + setup + "." + config)) {
-			return plugin.getConfig().getStringList("setups." + setup + "." + config);
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.CONFIG.getConfig().getStringList("setups." + setup + "." + config);
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			List<String> list = getStringList(config, parent, checked);
 			if (list != null) return list;
 		}
@@ -334,7 +329,7 @@ public class Config {
 	}
 	
 	public static int getLives(String setup) {
-		return plugin.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
+		return Files.CONFIG.getConfig().getInt("setups." + setup + ".lives", getLivesGlobal());
 	}
 
 	public static boolean getAllowRejoin(String setup) {
@@ -456,14 +451,14 @@ public class Config {
 	private static Boolean getCanPlaceBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
+		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
-		if (plugin.getConfig().contains("setups." + setup + "." + "can-place-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(getItemStack(block));
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-place-block")) {
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			Boolean b = getCanPlaceBlock(parent, block, checked);
 			can |= b;
 		}
@@ -474,7 +469,7 @@ public class Config {
 		Boolean b = getCanPlaceBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("global.special-blocks-place")){
+		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-place")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanPlaceBlockGlobal() ^ list.contains(getItemStack(block));
@@ -484,14 +479,14 @@ public class Config {
 	private static Boolean getCanBreakBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
+		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
-		if (plugin.getConfig().contains("setups." + setup + "." + "can-break-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(getItemStack(block));
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-break-block")) {
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			Boolean b = getCanBreakBlock(parent, block, checked);
 			can |= b;
 		}
@@ -502,7 +497,7 @@ public class Config {
 		Boolean b = getCanBreakBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("global.special-blocks-break")){
+		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-break")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanBreakBlockGlobal() ^ list.contains(getItemStack(block));
@@ -512,14 +507,14 @@ public class Config {
 	private static Boolean getCanInteractBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
+		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
-		if (plugin.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
-			can |= plugin.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(getItemStack(block));
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(getItemStack(block));
 		}
 		checked.add(setup);
-		for (String parent : plugin.getConfig().getStringList("setups." + setup + ".inherits")) {
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			Boolean b = getCanInteractBlock(parent, block, checked);
 			can |= b;
 		}
@@ -530,7 +525,7 @@ public class Config {
 		Boolean b = getCanInteractBlock(setup, block, new HashSet<String>());
 		if (b != null) can |= b;
 		List<ItemStack> list = new ArrayList<ItemStack>();
-		for (String s : plugin.getConfig().getStringList("global.special-blocks-interact")){
+		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-interact")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
 		}
 		can |= getCanInteractBlockGlobal() ^ list.contains(getItemStack(block));
@@ -538,7 +533,7 @@ public class Config {
 	}
 
 	public static List<String> getSetups(){
-	    ConfigurationSection section = plugin.getConfig().getConfigurationSection("setups");
+	    ConfigurationSection section = Files.CONFIG.getConfig().getConfigurationSection("setups");
 	    if(section == null) return Collections.emptyList();
 	    List<String> list = (List<String>) section.getKeys(false);
 	    return (list == null) ? new ArrayList<String>() : list;

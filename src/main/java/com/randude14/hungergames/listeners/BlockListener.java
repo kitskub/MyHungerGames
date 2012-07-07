@@ -42,9 +42,15 @@ public class BlockListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
+		Logging.debug("Sign change listener");
 		Sign sign = (Sign) event.getBlock().getState();
 		if(!sign.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
-		InternalListener.addSign(sign);
+		if (InternalListener.addSign(sign)) {
+			ChatUtils.send(event.getPlayer(), "Sign was created successfully.");
+		}
+		else {
+			ChatUtils.error(event.getPlayer(), "Sign was not created.");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
