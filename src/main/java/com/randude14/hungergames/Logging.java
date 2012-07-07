@@ -32,8 +32,7 @@ public class Logging {
 		try {
 			HungerGames instance = HungerGames.getInstance();
 			instance.getDataFolder().mkdirs();
-			File file = new File(instance.getDataFolder(), "myhungergames.log");
-			if (!file.exists()) file.createNewFile();
+			File file = Files.LOG.getFile();
 			FileHandler handler = new FileHandler(file.getPath(), true);
 			handler.setFormatter(new SimpleFormatter());
 			logger.addHandler(handler);

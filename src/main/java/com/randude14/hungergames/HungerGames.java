@@ -61,10 +61,6 @@ public class HungerGames extends JavaPlugin{
 		manager = new GameManager();
 		registerEvents();
 		Files.loadAll();
-		if (!new File(getDataFolder(), "config.yml").exists()) {
-		    Logging.info("config.yml not found. Saving defaults.");
-		    saveDefaultConfig();
-		}
 		updateConfig();
 		loadRegistry();
 		loadResetter();
@@ -266,8 +262,7 @@ public class HungerGames extends JavaPlugin{
 		}
 		DateFormat pubDate = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
 		try {
-			File jarFile = new File
-			(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			File jarFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 			timeMod = jarFile.lastModified();
 		} catch (URISyntaxException e1) {
 		}
