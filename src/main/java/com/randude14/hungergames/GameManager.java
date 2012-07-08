@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 public class GameManager{
 	private static final HungerGames plugin = HungerGames.getInstance();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
-	private static final YamlConfiguration yaml = Files.GAMES.getConfig();
 	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
 	private static final Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
@@ -138,7 +137,7 @@ public class GameManager{
 	}
 
 	public static void loadGames() {
-		ConfigurationSection gamesSection = yaml.getConfigurationSection("games");
+		ConfigurationSection gamesSection = Files.GAMES.getConfig().getConfigurationSection("games");
 		if (gamesSection == null) {
 			return;
 		}
@@ -159,7 +158,7 @@ public class GameManager{
 	}
 	
 	public static void reloadGame(HungerGame game){
-		ConfigurationSection gameSection = yaml.getConfigurationSection("games." + game.getName());
+		ConfigurationSection gameSection = Files.GAMES.getConfig().getConfigurationSection("games." + game.getName());
 		if (gameSection == null) {
 			return;
 		}
@@ -168,9 +167,9 @@ public class GameManager{
 	}
 
 	public static void saveGame(HungerGame game){
-		ConfigurationSection section = yaml.getConfigurationSection("games");
+		ConfigurationSection section = Files.GAMES.getConfig().getConfigurationSection("games");
 		if(section == null){
-		    section = yaml.createSection("games");
+		    section = Files.GAMES.getConfig().createSection("games");
 		}
 		ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
 		if(saveSection == null) {

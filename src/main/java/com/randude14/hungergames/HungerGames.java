@@ -1,5 +1,7 @@
 package com.randude14.hungergames;
 
+import com.google.common.base.Strings;
+
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.listeners.*;
@@ -45,8 +47,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HungerGames extends JavaPlugin{
-	public static final String CMD_ADMIN = "hga";
-	public static final String CMD_USER = "hg";
+	public static final String CMD_ADMIN = "hga", CMD_USER = "hg";
 	private static HungerGames instance;
 	private static HGPermission perm;
 	private static Economy econ;
@@ -87,9 +88,10 @@ public class HungerGames extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
-	    GameManager.saveGames();
-	    Logging.info("Games saved.");
-	    Logging.info("Disabled.");
+		GameManager.saveGames();
+		Logging.info("Games saved.");
+		Files.saveAll();
+		Logging.info("Disabled.");
 	}
 
 	private static void registerCommands() {
@@ -180,8 +182,9 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	public static void reload() {
-	    GameManager.loadGames();
-	    loadRegistry();
+		Files.loadAll();
+		GameManager.loadGames();
+		loadRegistry();
 	}
 
 	public static boolean hasPermission(CommandSender cs, Defaults.Perm perm) {
@@ -297,11 +300,13 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	public static String parseToString(Location loc) {
+		if (loc == null) return "";
 		return String.format("%.2f %.2f %.2f %.2f %.2f %s", loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), 
 			loc.getPitch(), loc.getWorld().getName());
 	}
 
 	public static Location parseToLoc(String str) throws NumberFormatException{
+		Strings.emptyToNull(str);
 		if (str == null) {
 			return null;
 		}

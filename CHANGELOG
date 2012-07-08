@@ -1,3 +1,10 @@
+v0.5.1
+- Bug fixes
+- Now uses Files instead of CustomYaml
+- Command package refactor
+- Fixed GameCountdown stuff
+- Fixed sign listening stuff
+
 v0.5
 - Code Cleanup
 - Many small fixes

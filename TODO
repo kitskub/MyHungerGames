@@ -1,7 +1,8 @@
 HIGH:
 - Remove reset-world in v0.6
 - Dedicated server mode
-- Fix sign listening
+- Save signs
+- Tutorial
 
 MEDIUM:
 - Random events

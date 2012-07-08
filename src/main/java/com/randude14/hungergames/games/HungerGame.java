@@ -233,7 +233,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		section.set("enabled", enabled);
 		section.set("setup", setup);
-		section.set("spawn", spawn);
+		section.set("spawn", HungerGames.parseToString(spawn));
 		
 		HungerGames.callEvent(new GameSaveEvent(this));
 	}
@@ -368,11 +368,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * 
 	 * @param player
 	 * @param ticks
+	 * @param includeCheck 
 	 * @return true if game or countdown was successfully started
 	 */
-	public boolean startGame(Player player, int ticks) {
+	public boolean startGame(Player player, int ticks, boolean includeCheck) {
 		if (ticks <= 0) {
-			String result = startGame(0);
+			String result = startGame(0, includeCheck);
 			if (result != null) {
 				ChatUtils.error(player, result);
 				return false;
@@ -392,8 +393,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return
 	 */
 	public boolean startGame(Player player, boolean immediate) {
-		if(!immediate) return startGame(player, Config.getDefaultTime(setup));
-		return startGame(player, 0);
+		if(!immediate) return startGame(player, Config.getDefaultTime(setup), true);
+		return startGame(player, 0, true);
 	}
 
 	/**
@@ -403,27 +404,28 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return
 	 */
 	public boolean startGame(boolean immediate) {
-		if(!immediate) return startGame(Config.getDefaultTime(setup)) == null;
-		return startGame(0) == null;
+		if(!immediate) return startGame(Config.getDefaultTime(setup), true) == null;
+		return startGame(0, true) == null;
 	}
 	
 	/**
 	 * Starts the game
 	 * 
 	 * @param ticks 
-	 * @return Null if game or countdown was not successfully started. Otherwise, error message.
+	 * @param includeCheck 
+	 * @return Null if game or countdown was successfully started. Otherwise, error message.
 	 */
-	public String startGame(int ticks) {
+	public String startGame(int ticks, boolean includeCheck) {
+		if (includeCheck) {
+			String result = startGamePreCheck();
+			if (result != null) return result;
+		}
+		
 		if (ticks > 0) {
 			countdown = new GameCountdown(this, ticks);
 			isCounting = true;
 			return null;
 		}
-		
-		if (isRunning) return "Game is already running";
-		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
-		if (isCounting) return String.format("%s is already counting down.", name);
-		if (!enabled) return String.format("%s is currently not enabled.", name);
 		
 		GameStartEvent event = new GameStartEvent(this);
 		HungerGames.callEvent(event);
@@ -451,6 +453,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return null;
 	}
 	
+	private String startGamePreCheck() {
+		if (isRunning) return "Game is already running";
+		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
+		if (isCounting) return String.format("%s is already counting down.", name);
+		if (!enabled) return String.format("%s is currently not enabled.", name);
+		return null;
+	}
  	public boolean resumeGame(Player player, int ticks) {		
 		if (ticks <= 0) {
 			String result = resumeGame(0);
@@ -885,7 +894,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public String getInfo() {
-		return String.format("%s[%d/%d] Enabled: %b", name, getRemainingPlayers().size(), spawnPoints.size(), enabled);
+		return String.format("%s[%d/%d] Enabled: %b", name, spawnsTaken.size(), spawnPoints.size(), enabled);
 	}
 
 	/**

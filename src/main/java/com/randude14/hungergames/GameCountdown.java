@@ -11,11 +11,13 @@ public class GameCountdown implements Runnable {
 	private int countdown;
 	private int taskId;
 	private Player starter;
+	private boolean isResuming;
 	
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
 		taskId = HungerGames.scheduleTask(this, 20L, 20L);
+		this.isResuming = isResuming;
 		if(isResuming) {
 			ChatUtils.broadcast(true, "Resuming %s in %s...",
 					game.getName(), HungerGames.formatTime(countdown));
@@ -56,7 +58,12 @@ public class GameCountdown implements Runnable {
 		if (countdown <= 1) {
 			HungerGames.cancelTask(taskId);
 			game.setCounting(false);
-			game.startGame(starter, 0);
+			if (isResuming) {
+				game.resumeGame(starter, 0);
+			}
+			else {
+				game.startGame(starter, 0, false);
+			}
 			return;
 		}
 		countdown--;
