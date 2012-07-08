@@ -98,7 +98,6 @@ public class InternalListener implements Runnable, Listener{
 	}
 	
 	private void callListeners(ListenerType type, HungerGame game) {
-		Logging.debug("Calling listener: " + type.name());
 		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
 		if (gameMap == null) {
 			listeners.put(type, new HashMap<HungerGame, List<Location>>());
@@ -142,7 +141,7 @@ public class InternalListener implements Runnable, Listener{
 				}
 			}
 			else {
-				System.out.println("Location is no longer a sign");
+				Logging.warning("Location is no longer a sign");
 				toRemove.add(loc);
 				continue;
 			}
