@@ -1,6 +1,5 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameCreateEvent;
@@ -17,11 +16,7 @@ import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
 import com.randude14.hungergames.api.event.PlayerQuitGameEvent;
 import com.randude14.hungergames.games.HungerGame;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,7 +28,7 @@ import org.bukkit.event.Listener;
 
 public class InternalListener implements Runnable, Listener{
 
-	private static final Map<ListenerType, Map<HungerGame, List<Location>>> listeners = new EnumMap<ListenerType, Map<HungerGame, List<Location>>>(ListenerType.class);
+	private static final Map<ListenerType, Map<HungerGame, List<Location>>> listeners = Collections.synchronizedMap(new EnumMap<ListenerType, Map<HungerGame, List<Location>>>(ListenerType.class));
 	private static List<OffQueue> queues = new ArrayList<OffQueue>();
 	private static int taskId = 0;
 	
@@ -41,41 +36,65 @@ public class InternalListener implements Runnable, Listener{
 		taskId = HungerGames.scheduleTask(this, 0, 1);
 	}
 	
+	private class SignData {
+		private Location loc;
+		private Material type;
+		private byte data;
+		private String[] lines;
+
+		public SignData(Location loc, Material type, byte data, String[] lines) {
+			this.loc = loc;
+			this.type = type;
+			this.data = data;
+			this.lines = lines;
+		}
+	}
+	
 	/**
-	 * Add a sign. Does not check first line.
+	 * Add a sign. Does not check
+	 * @param type 
+	 * @param game 
 	 * @param sign
 	 * @return  
 	 */
-	public static boolean addSign(Sign sign) {
-		String id = sign.getLine(1);
-		ListenerType type = ListenerType.byId(id);
-		if (type == null) return false;
-		HungerGame game = GameManager.getGame(sign.getLine(2));
-		if (game == null) {
-			sign.setLine(1, "");
-			sign.setLine(2, "BAD GAME NAME!");
-			sign.setLine(3, "");
-			return false;
-		}
+	public static boolean addSign(ListenerType type, HungerGame game, Sign sign) {
 		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
-		if (gameMap == null) gameMap = listeners.put(type, new HashMap<HungerGame, List<Location>>());
+		if (gameMap == null) {
+			listeners.put(type, new HashMap<HungerGame, List<Location>>());
+			gameMap = listeners.get(type);
+		}
 		List<Location> locs = gameMap.get(game);
-		if (locs == null) locs = gameMap.put(game, new ArrayList<Location>());
+		if (locs == null) {
+			gameMap.put(game, new ArrayList<Location>());
+			locs = gameMap.get(game);
+		}
 		locs.add(sign.getLocation());
 		return true;
 	}
 
 	public void run() {
+		List<OffQueue> toRemove = new ArrayList<OffQueue>();
 		for (OffQueue queue : queues) {
 			if (queue.removeTick()) {
-				for (Block b : queue.blocks.keySet()) {
-					b.setType(Material.SIGN);
-					Sign sign = (Sign) b;
-					sign.setData(queue.blocks.get(b).getData());
-					
+				for (SignData sign : queue.signs) {
+					Block b = sign.loc.getBlock();
+					b.setType(Material.AIR);
+					b.setType(sign.type);
+					b.setTypeIdAndData(sign.type.getId(), sign.data, true);
+					if (sign.lines != null) {
+						if (b.getState() instanceof Sign) {
+							Sign signBlock = (Sign) b.getState();
+							for (int i = 0; i < sign.lines.length; i++) {
+								signBlock.setLine(i, sign.lines[i]);
+							}
+							signBlock.update();
+						}
+					}
 				}
+				toRemove.add(queue);
 			}
 		}
+		queues.removeAll(toRemove);
 	}
 	
 	private void callListeners(ListenerType type, HungerGame game) {
@@ -90,15 +109,45 @@ public class InternalListener implements Runnable, Listener{
 			gameMap.put(game, new ArrayList<Location>());
 			locs = gameMap.get(game);
 		}
-		List<Sign> signs = new ArrayList<Sign>();
+		List<Location> toRemove = new ArrayList<Location>();
+		List<SignData> signs = new ArrayList<SignData>();
 		for (Location loc : locs) {
-			if (!(loc.getBlock() instanceof Sign)) {
-				locs.remove(loc);
+			String[] lines = null;
+			Block block = loc.getBlock();
+			if (block.getState() instanceof Sign) {
+				Sign sign = (Sign) block.getState();
+				lines = sign.getLines();
+			}
+			if (loc.getBlock().getType() == Material.SIGN_POST) {
+				loc.getBlock().setTypeIdAndData(Material.REDSTONE_TORCH_ON.getId(), (byte) 0x5,true);
+				signs.add(new SignData(loc, Material.SIGN_POST, (byte) 0x1, lines));
+			}
+			else if (loc.getBlock().getType() == Material.WALL_SIGN) {
+				byte data = loc.getBlock().getData(); // Correspond to the direction of the wall sign
+				if (data == 0x2) { // South
+					loc.getBlock().setTypeIdAndData(Material.REDSTONE_TORCH_ON.getId(),(byte) 0x4, true);
+					signs.add(new SignData(loc, Material.WALL_SIGN, (byte) 0x2, lines));
+				}
+				else if (data == 0x3) { // North
+					loc.getBlock().setTypeIdAndData(Material.REDSTONE_TORCH_ON.getId(),(byte) 0x3, true);
+					signs.add(new SignData(loc, Material.WALL_SIGN, (byte) 0x3, lines));
+				}
+				else if (data == 0x4) { // East
+					loc.getBlock().setTypeIdAndData(Material.REDSTONE_TORCH_ON.getId(),(byte) 0x2, true);
+					signs.add(new SignData(loc, Material.WALL_SIGN, (byte) 0x4, lines));
+				}
+				else if (data == 0x5) { // West
+					loc.getBlock().setTypeIdAndData(Material.REDSTONE_TORCH_ON.getId(),(byte) 0x1, true);
+					signs.add(new SignData(loc, Material.WALL_SIGN, (byte) 0x5, lines));
+				}
+			}
+			else {
+				System.out.println("Location is no longer a sign");
+				toRemove.add(loc);
 				continue;
 			}
-			signs.add((Sign) loc.getBlock());
-			loc.getBlock().setType(Material.REDSTONE_TORCH_ON);
 		}
+		locs.removeAll(toRemove);
 		queues.add(new OffQueue(signs));
 	}
 	
@@ -195,14 +244,12 @@ public class InternalListener implements Runnable, Listener{
 		}
 	}
 	
-	class OffQueue {
+	private class OffQueue {
 		private int ticksLeft;
-		private Map<Block, Sign> blocks = new HashMap<Block, Sign>();
+		private List<SignData> signs = new ArrayList<SignData>();
 
-		public OffQueue(List<Sign> signs) {
-			for (Sign s : signs) {
-				blocks.put(s.getBlock(), s);
-			}
+		public OffQueue(List<SignData> signs) {
+			this.signs.addAll(signs);
 			ticksLeft = 20;
 		}
 		

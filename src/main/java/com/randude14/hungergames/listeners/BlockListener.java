@@ -42,10 +42,21 @@ public class BlockListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
-		Logging.debug("Sign change listener");
+		Logging.debug(event.getLine(0));
+		if(!event.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
+		Logging.debug("Sign change listener 1");
+		String[] lines = event.getLines();
+		InternalListener.ListenerType type = InternalListener.ListenerType.byId(lines[1]);
+		if (type == null) return;
+		HungerGame game = GameManager.getGame(lines[2]);
+		if (game == null) {
+			event.setLine(1, "");
+			event.setLine(2, "BAD GAME NAME!");
+			event.setLine(3, "");
+			return;
+		}
 		Sign sign = (Sign) event.getBlock().getState();
-		if(!sign.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
-		if (InternalListener.addSign(sign)) {
+		if (InternalListener.addSign(type, game, sign)) {
 			ChatUtils.send(event.getPlayer(), "Sign was created successfully.");
 		}
 		else {
