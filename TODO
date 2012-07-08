@@ -7,6 +7,8 @@ HIGH:
 MEDIUM:
 - Random events
 - WebStats
+- Cannon boom on death
+- Permission to create sign listeners
 
 LOW:
 - Map gen
@@ -17,6 +19,7 @@ OPTIONAL:
 - Possible timed game events
 - Hide players from each other
 - Lang pack
+- Better messages on death
 
 UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
