@@ -866,7 +866,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if(!isRunning) return false;
 	    List<Player> remaining = getRemainingPlayers();
 	    if (remaining.size() < 2) {
-		    Player winner = remaining.get(0);
+                    Player winner = null;
+                    if (!remaining.isEmpty()) {
+                            winner = remaining.get(0);
+                    }
 		    GameEndEvent event;
 		    if (winner == null) {
 			    ChatUtils.broadcast("Strangely, there was no winner left.", true);
