@@ -455,7 +455,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	
 	private String startGamePreCheck() {
 		if (isRunning) return "Game is already running";
-		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
+		if (stats.size() < Config.getMinPlayers(setup) || stats.size() < 2) return String.format("There are not enough players in %s", name);
 		if (isCounting) return String.format("%s is already counting down.", name);
 		if (!enabled) return String.format("%s is currently not enabled.", name);
 		return null;
