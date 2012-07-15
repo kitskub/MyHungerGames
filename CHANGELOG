@@ -2,6 +2,7 @@ v0.5.2
 - Possibly fixed config issues
 - Added catch for /hga set fixedchest
 - Added hungergame.user.autosubscribe NOTE: this should not inherit from hungergame.user.* or hungergame.* if it does, it's a bug!
+- Fixed auto-vote
 
 v0.5.1
 - Bug fixes
