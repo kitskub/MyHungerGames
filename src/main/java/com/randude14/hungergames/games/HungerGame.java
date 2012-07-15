@@ -271,7 +271,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		String mess = Config.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
 		ChatUtils.broadcast(mess, true);
 		int minVote = Config.getMinVote(setup);
-		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup))
+		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup) && !Config.getAllVote(setup))
 		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
 			ChatUtils.broadcast(true, "Enough players have voted that they are ready. Starting game...", this.name);
 			startGame(false);
@@ -668,16 +668,15 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
 	    stats.put(player.getName(), new PlayerStat(player));
+	    String mess = Config.getJoinMessage(setup);
+	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
+	    ChatUtils.broadcast(mess, true);
 	    if (isRunning) {
 		    stats.get(player.getName()).setPlaying(true);
 	    }
 	    else {
-		    if (Config.getAutoVote(setup)) readyToPlay.add(player.getName());
+		    if (Config.getAutoVote(setup)) addReadyPlayer(player);
 	    }
-
-	    String mess = Config.getJoinMessage(setup);
-	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-	    ChatUtils.broadcast(mess, true);
 	    return true;
 	}
 

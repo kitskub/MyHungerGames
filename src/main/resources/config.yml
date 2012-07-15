@@ -42,7 +42,8 @@ global:
   # whether players should clear their inventory before joining
   require-inv-clear: false
   
-  # require everyone that has joined the game to start
+  # require everyone that has joined the game to vote before the game is auto-starterd
+  # will not work when auto-vote is on
   all-vote: false
   
   # when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
