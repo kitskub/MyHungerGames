@@ -33,11 +33,13 @@ public enum Files {
 	public void load() {
 		File file = getFile();
 		try {
-			if (hasDefault) {
-				if (!file.exists()) HungerGames.getInstance().saveResource(path, false);
-			}
-			else {
-				file.createNewFile();
+			if (!file.exists()) {
+				if (hasDefault) {
+					if (!file.exists()) HungerGames.getInstance().saveResource(path, false);
+				}
+				else {
+					file.createNewFile();
+				}
 			}
 			if (type == FileType.YML) {
 				Logging.debug("Loading: " + path);
