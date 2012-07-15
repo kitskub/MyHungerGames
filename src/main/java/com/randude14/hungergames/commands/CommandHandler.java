@@ -1,46 +1,15 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.commands.user.StatCommand;
-import com.randude14.hungergames.commands.user.SubscribeCommand;
-import com.randude14.hungergames.commands.user.VoteCommand;
-import com.randude14.hungergames.commands.user.SponsorCommand;
-import com.randude14.hungergames.commands.user.SpectateCommand;
-import com.randude14.hungergames.commands.admin.KillCommand;
-import com.randude14.hungergames.commands.admin.RestockCommand;
-import com.randude14.hungergames.commands.admin.remove.RemoveItemSetCommand;
-import com.randude14.hungergames.commands.admin.remove.RemoveGameCommand;
-import com.randude14.hungergames.commands.admin.KickCommand;
-import com.randude14.hungergames.commands.admin.ResumeCommand;
-import com.randude14.hungergames.commands.admin.remove.RemoveSpawnPointCommand;
-import com.randude14.hungergames.commands.admin.PauseCommand;
-import com.randude14.hungergames.commands.admin.ReloadCommand;
-import com.randude14.hungergames.commands.admin.remove.RemoveChestCommand;
-import com.randude14.hungergames.commands.admin.StopCommand;
-import com.randude14.hungergames.commands.admin.set.SetEnabledCommand;
-import com.randude14.hungergames.commands.admin.StartCommand;
-import com.randude14.hungergames.commands.admin.set.SetSpawnCommand;
-import com.randude14.hungergames.commands.user.JoinCommand;
-import com.randude14.hungergames.commands.user.QuitCommand;
-import com.randude14.hungergames.commands.user.LeaveCommand;
-import com.randude14.hungergames.commands.user.ListCommand;
-import com.randude14.hungergames.commands.user.RejoinCommand;
-import com.randude14.hungergames.commands.admin.add.AddSpawnPointCommand;
-import com.randude14.hungergames.commands.admin.add.AddChestLootCommand;
-import com.randude14.hungergames.commands.admin.add.AddItemSetCommand;
-import com.randude14.hungergames.commands.admin.add.AddCuboidCommand;
-import com.randude14.hungergames.commands.admin.add.AddSponsorLootCommand;
-import com.randude14.hungergames.commands.admin.add.AddGameCommand;
-import com.randude14.hungergames.commands.admin.add.AddWorldCommand;
-import com.randude14.hungergames.commands.admin.add.AddChestCommand;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.commands.admin.*;
+import com.randude14.hungergames.commands.admin.add.*;
+import com.randude14.hungergames.commands.admin.remove.*;
+import com.randude14.hungergames.commands.admin.set.*;
+import com.randude14.hungergames.commands.user.*;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -179,6 +148,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 			if (args[1].equalsIgnoreCase("spawn")) command = new SetSpawnCommand();
 			else if (args[1].equalsIgnoreCase("enabled")) command = new SetEnabledCommand();
+			else if (args[1].equalsIgnoreCase("fixedchest")) command = new SetFixedChestCommand();
 			else {
 				ChatUtils.error(player, "Command not recognized.");
 				return;

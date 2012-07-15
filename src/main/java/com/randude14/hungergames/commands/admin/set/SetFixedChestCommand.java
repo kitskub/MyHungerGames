@@ -17,9 +17,9 @@ import org.bukkit.entity.Player;
  *
  *
  */
-public class SetFixedChest extends SubCommand{
+public class SetFixedChestCommand extends SubCommand{
 
-    public SetFixedChest() {
+    public SetFixedChestCommand() {
 	    super(Commands.ADMIN_SET_FIXED_CHEST);
     }
 
