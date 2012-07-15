@@ -230,7 +230,7 @@ public class GameManager{
 	}
 	
 	public static boolean isPlayerSubscribed(Player player) {
-		return subscribedPlayers.contains(player.getName());
+		return subscribedPlayers.contains(player.getName()) || HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_SUBSCRIBE);
 	}
 	
 	public static void removedSubscribedPlayer(Player player) {

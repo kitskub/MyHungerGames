@@ -113,6 +113,7 @@ public class Defaults {
 	ADMIN_HELP(new Permission("hungergame.admin.help"), ADMIN),
 	ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
 	USER(new Permission("hungergame.user.*"), ALL),
+	USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 	USER_LIST(new Permission("hungergame.user.list"), USER),
