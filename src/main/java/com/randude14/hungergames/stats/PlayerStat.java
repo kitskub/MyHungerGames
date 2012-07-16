@@ -1,29 +1,36 @@
-package com.randude14.hungergames.games;
+package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.games.HungerGame;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import java.util.List;
+
 import org.bukkit.entity.Player;
 
 public class PlayerStat {
+	public static final String NODODY = "NOBODY";
 	private Player player;
-	private int deaths;
-	private int kills;
+	private List<String> deaths;
+	private List<String> kills;
 	private boolean playing;
 	private boolean dead;
 	
 	public PlayerStat(Player player) {
-		deaths = 0;
-		kills = 0;
+		deaths = new ArrayList<String>();
+		kills = new ArrayList<String>();
 		this.player = player;
 		this.playing = false;
 	}
 	
-	public void kill() {
-		kills++;
+	public void kill(String player) {
+		kills.add(player);
 	}
 	
-	public void death() {
-		deaths++;
+	public void death(String player) {
+		deaths.add(player);
 		if (hasRunOutOfLives()) dead = true;
 	}
 	
@@ -32,19 +39,27 @@ public class PlayerStat {
 		playing = false;
 	}
 	
-	public int getKills() {
-		return kills;
+	public List<String> getKills() {
+		return Collections.unmodifiableList(kills);
 	}
 	
-	public int getDeaths() {
+	public int getNumKills() {
+		return kills.size();
+	}
+	
+	public List<String> getDesths() {
 		return deaths;
+	}
+	
+	public int getNumDeaths() {
+		return deaths.size();
 	}
 	
 	public boolean hasRunOutOfLives() {
 		if (dead) return true;
 		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
-		if (lives == 0 || deaths >= lives) {
+		if (lives == 0 || deaths.size() >= lives) {
 			dead = true;
 			return true;
 		}
@@ -55,7 +70,7 @@ public class PlayerStat {
 		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
 		if(lives == 0) return -1;
-		return lives - deaths;
+		return lives - deaths.size();
 	}
 
 	/**

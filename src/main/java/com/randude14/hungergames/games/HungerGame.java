@@ -18,7 +18,9 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.reset.ResetHandler;
+import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
+import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
@@ -348,6 +350,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				}
 			}
 			if (isFinished) HungerGames.rewardPlayer(player);
+			StatHandler.updateStat(stats.get(player.getName()));// TODO: this might be a little slow to do it this way. Thread?
 		}
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
@@ -935,26 +938,21 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public void killed(Player killer, Player killed) {
 		if (!isRunning || stats.get(killed.getName()).hasRunOutOfLives()) return;
 
-		PlayerStat killerStat = stats.get(killer.getName());
-		killerStat.kill();
-		String message = Config.getKillMessage(setup).replace("<killer>", killer.getName())
-			.replace("<killed>", killed.getName())
-			.replace("<game>", name);
-		killed(killed, false);
-		PlayerKillEvent event = new PlayerKillEvent(this, killer, killed, message);
-		HungerGames.callEvent(event);
-		ChatUtils.broadcast(message, true);
-	}
-
-	public void killed(Player killed) {
-		killed(killed, true);
-	}
-
-	private void killed(Player killed, boolean callEvent) {
-		if (!isRunning) return;
-
 		PlayerStat killedStat = stats.get(killed.getName());
-		killedStat.death();
+		PlayerKillEvent event;
+		if (killer != null) {
+			PlayerStat killerStat = stats.get(killer.getName());
+			killerStat.kill(killed.getName());
+			String message = Config.getKillMessage(setup).replace("<killer>", killer.getName()).replace("<killed>", killed.getName()).replace("<game>", name);
+			event = new PlayerKillEvent(this, killer, killed, message);
+			ChatUtils.broadcast(message, true);
+			killedStat.death(killer.getName());
+		}
+		else {
+			event = new PlayerKillEvent(this, killed);
+			killedStat.death(PlayerStat.NODODY);
+		}
+
 		if (killedStat.hasRunOutOfLives()) {
 			playerLeaving(killed, false);
 			checkForGameOver(false);
@@ -970,10 +968,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
-		if (callEvent) {
-			HungerGames.callEvent(new PlayerKillEvent(this, killed));
-		}
+		HungerGames.callEvent(event);
+	}
 
+	public void killed(Player killed) {
+		killed(null, killed);
 	}
 	
 	/**

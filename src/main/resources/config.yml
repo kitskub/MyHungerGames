@@ -123,16 +123,6 @@ global:
   # This is rounded up to the nearest half-minute mark
   spectator-sponsor-period: 0
 
-  chest-loot:
-  # Example loot. Note DURABIlITY is an enchantment
-  #    DIAMOND_PICKAXE:
-  #      stack-size: 1
-  #      # scale of 0-1, anything over 1 will always be allowed if it is picked
-  #      chance: 0.01
-  #      DURABILITY: 3
-  sponsor-loot:
-
-
 # Setups ADD to global in any list
 setups:
 #  test1:

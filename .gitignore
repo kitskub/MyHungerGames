@@ -1,3 +1,4 @@
 .classpath
 .project
 nb-configuration.xml
+src/main/php/config.php
