@@ -1,15 +1,17 @@
 package com.randude14.hungergames.utils;
 
+import com.randude14.hungergames.Logging;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 public class ConfigUtils {	
 	
@@ -18,19 +20,22 @@ public class ConfigUtils {
 	}
 	
 	public static ItemStack getItemStack(String s, int stackSize, boolean useMatchMaterial){
+		s = s.split(",")[0];
 		String[] keyParts = s.split(":");
 		Material mat = Material.matchMaterial(keyParts[0]);
-		if(mat == null) return null;
-		MaterialData data = new MaterialData(mat);
-		if(keyParts.length == 2){
-			try{
-				data.setData(Integer.valueOf(keyParts[1]).byteValue());
-			}
-			catch(NumberFormatException e){}
+		if(mat == null) {
+			Logging.debug("Material with name {0} could not be loaded.", keyParts[0]);
+			return null;
 		}
 		ItemStack item = new ItemStack(mat, stackSize);
-		item.setData(data);
-	    
+		if(keyParts.length == 2){
+			try{
+				item.setDurability(Short.valueOf(keyParts[1]));
+			}
+			catch(NumberFormatException e){
+				Logging.debug("Can't convert {0} to short", keyParts[1]);
+			}
+		}
 		return item;
 	}
 		

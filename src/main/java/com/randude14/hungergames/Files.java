@@ -3,6 +3,7 @@ package com.randude14.hungergames;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,6 +46,13 @@ public enum Files {
 				Logging.debug("Loading: " + path);
 				yamlConfig = new YamlConfiguration();
 				yamlConfig.load(file);
+				if (hasDefault) {
+					InputStream defConfigStream = HungerGames.getInstance().getResource(path);
+					if (defConfigStream != null) {
+						YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+						yamlConfig.setDefaults(defConfig);
+					}
+				}
 			}
 			else if (type == FileType.LOG) {
 			}

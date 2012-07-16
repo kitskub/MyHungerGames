@@ -149,7 +149,9 @@ public class ItemConfig {
 
 
 	public static Set<String> getFixedChests() {
-		return itemConfig.getConfigurationSection("chests").getKeys(false);
+		ConfigurationSection chestSection = itemConfig.getConfigurationSection("chests");
+		if (chestSection == null) return new HashSet<String>();
+		return chestSection.getKeys(false);
 	}
 	
 	private static List<ItemStack> getFixedChest(String chest, Set<String> checked) {

@@ -64,10 +64,10 @@ public class PlayerListener implements Listener {
 		if (frozenLoc == null) {
 			return;
 		}
-		double px = player.getLocation().getX();
-		double pz = player.getLocation().getZ();
-		double fx = frozenLoc.getX();
-		double fz = frozenLoc.getY();
+		int px = player.getLocation().getBlockX();
+		int pz = player.getLocation().getBlockZ();
+		int fx = frozenLoc.getBlockX();
+		int fz = frozenLoc.getBlockZ();
 		if ((px != fx) || (pz != fz)) {
 			player.teleport(frozenLoc);
 		}

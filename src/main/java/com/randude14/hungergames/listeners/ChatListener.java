@@ -37,17 +37,17 @@ public class ChatListener implements Listener {
 										return;
 									}
 								}
-								Logging.debug("Cancelling chat because too far.");
+								//Logging.debug("Cancelling chat because too far.");
 								event.setCancelled(true);
 							}
 						}
 						else {
-							Logging.debug("Cancelling chat because games are not the same or different worlds.");
+							//Logging.debug("Cancelling chat because games are not the same or different worlds.");
 							event.setCancelled(true);
 						}
 					}
 					else {
-						Logging.debug("Cancelling chat because chatter was not in the gamer.");
+						//Logging.debug("Cancelling chat because chatter was not in the gamer.");
 						event.setCancelled(true);
 					}
 				}

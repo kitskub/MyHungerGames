@@ -128,17 +128,26 @@ public class SessionListener implements Listener {
 		    }
 	    }
 	    else if (type == SessionType.FIXED_CHEST_ADDER) {
-		    game.addFixedChest(clickedBlock.getLocation(), session.getData().get("name"));
-		    sessions.remove(player.getName());
-		    ChatUtils.send(player, "Chest is now a fixed item chest.");
+		    if (game.addFixedChest(clickedBlock.getLocation(), session.getData().get("name"))) {
+			    sessions.remove(player.getName());
+			    ChatUtils.send(player, "Chest is now a fixed item chest.");
+		    }
+		    else {
+			    ChatUtils.error(player, "That is not a chest!");    
+		    }
 	    }
 	    else if (type == SessionType.FIXED_CHEST_REMOVER) {
-		    game.removeFixedChest(clickedBlock.getLocation());
-		    sessions.remove(player.getName());
-		    ChatUtils.send(player, "Chest is no longer a fixed item chest.");
+		    if (game.removeFixedChest(clickedBlock.getLocation())) {
+			    sessions.remove(player.getName());
+			    ChatUtils.send(player, "Chest is no longer a fixed item chest.");
+		    }
+		    else {
+			    ChatUtils.error(player, "That is not a chest!");    
+		    }
 	    }
 	    else {
-		    Logging.debug("Failed to get sessionlistener.");	    }
+		    //Logging.debug("Failed to get sessionlistener.");
+	    }
 	}
 	
 	public static void addSession(SessionType type, Player player, String game) {

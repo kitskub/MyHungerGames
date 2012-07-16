@@ -344,14 +344,12 @@ public class HungerGames extends JavaPlugin{
 			}
 
 		}
-		/* TODO: this should be included above. Be on the lookout for bug reports
 		for (ItemStack item : inventory.getArmorContents()) {
 			if (item != null && item.getType() != Material.AIR) {
 				return false;
 			}
 
 		}
-		*/
 		return true;
 	}
 

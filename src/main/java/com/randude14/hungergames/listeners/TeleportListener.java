@@ -18,7 +18,7 @@ public class TeleportListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if (session == null) return;
 		if (!Config.getCanTeleport(session.getSetup())) {
-			Logging.debug("Cancelling a teleport.");
+			//Logging.debug("Cancelling a teleport.");
 			event.setCancelled(true);
 		}
 		

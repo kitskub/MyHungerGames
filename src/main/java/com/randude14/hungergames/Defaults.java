@@ -168,7 +168,7 @@ public class Defaults {
 	ADMIN_STOP("ADMIN", "/%s stop <game name>", "manually stop a game", Perm.ADMIN_STOP),
 	ADMIN_PAUSE("ADMIN", "/%s pause <game name>", "pause a game", Perm.ADMIN_PAUSE),
 	ADMIN_RESUME("ADMIN", "/%s resume <game name>", "resume a game", Perm.ADMIN_RESUME),
-	ADMIN_RELOAD("ADMIN", "/%s rejoin", "reload MyHungerGames", Perm.ADMIN_RELOAD),
+	ADMIN_RELOAD("ADMIN", "/%s reload", "reload MyHungerGames", Perm.ADMIN_RELOAD),
 	ADMIN_KICK("ADMIN", "/%s kick <player>", "kick a player from a game", Perm.ADMIN_KICK),
 	ADMIN_KILL("ADMIN", "/%s kill <player>", "kills a player in a game ", Perm.ADMIN_KILL),
 	ADMIN_RESTOCK("ADMIN", "/%s restock <game name>", "restock all a game's chests", Perm.ADMIN_RESTOCK),

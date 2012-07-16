@@ -21,6 +21,7 @@ public class InventorySave {
 	
 	public static void saveAndClearInventory(Player player){
 	    savedInventories.put(player, new InventorySave(player));
+	    player.getInventory().clear();
 	}
 
 	public static void loadInventory(Player player){
@@ -29,7 +30,8 @@ public class InventorySave {
 	}
 	
 	public static void saveAndClearGameInventory(Player player){
-	    savedGameInventories.put(player, new InventorySave(player));
+		savedGameInventories.put(player, new InventorySave(player));
+		player.getInventory().clear();
 	}
 
 	public static void loadGameInventory(Player player){

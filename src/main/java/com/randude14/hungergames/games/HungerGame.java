@@ -148,7 +148,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 
 		if (section.contains("fixedchests")) {
-			ConfigurationSection fixedChestsSection = section.getConfigurationSection("chests");
+			ConfigurationSection fixedChestsSection = section.getConfigurationSection("fixedchests");
 			for (String key : fixedChestsSection.getKeys(false)) {
 				String str = fixedChestsSection.getString(key);
 				String[] split = str.split(",");
@@ -206,7 +206,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		for (int cntr = 0; cntr < spawnPoints.size(); cntr++) {
 			Location loc = spawnPoints.get(cntr);
 			if (loc == null) continue;
-			Logging.debug("Saving a spawnpoint. It's location is: " + loc);
+			//Logging.debug("Saving a spawnpoint. It's location is: " + loc);
 			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
 		}
 		
@@ -215,8 +215,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			chestsSection.set("chest" + (cntr + 1), HungerGames.parseToString(loc));
 		}
 		
+		Logging.debug("FixedChest size when saving: %s", fixedChests.size());
 		int cntr = 0;
 		for (Location loc : fixedChests.keySet()) {
+			Logging.debug("Saving a fixedchest with index %s", cntr + 1);
 			fixedChestsSection.set("fixedchest" + (cntr + 1), HungerGames.parseToString(loc) + "," + fixedChests.get(loc));
 			cntr++;
 		}
@@ -571,7 +573,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public void addAndFillChest(Chest chest) {
 		if (fixedChests.containsKey(chest.getLocation())) return;
 		if(!chests.contains(chest.getLocation())) {
-			Logging.debug("Inventory Location was not in randomInvs.");
+			//Logging.debug("Inventory Location was not in randomInvs.");
 			HungerGames.fillChest(chest, itemsets);
 			addChest(chest.getLocation());
 		}
@@ -582,11 +584,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    Logging.debug("Filling inventories. Chests size: %s fixedChests size: %s", chests.size(), fixedChests.size());
 	    for (Location loc : chests) {
 		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
-			    Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because previous was a chest");
 			    continue;
 		    }
 		    if (!(loc.getBlock().getState() instanceof Chest)) {
-			    Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because previous was a chest");
 			    continue;
 		    }
 		    prev = loc;
@@ -595,11 +597,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    for (Location loc : fixedChests.keySet()) {
 		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
-			    Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because previous was a chest");
 			    continue;
 		    }
 		    if (!(loc.getBlock().getState() instanceof Chest)) {
-			    Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because previous was a chest");
 			    continue;
 		    }
 		    prev = loc;
@@ -1073,6 +1075,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public boolean addFixedChest(Location loc, String fixedChest) {
 		if (loc == null || fixedChest == null || fixedChest.equalsIgnoreCase("")) return false;
 		if (fixedChests.keySet().contains(loc)) return false;
+		if (!(loc.getBlock().getState() instanceof Chest)) return false;
 		removeChest(loc);
 		fixedChests.put(loc, fixedChest);
 		return true;
@@ -1092,6 +1095,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 */
 	public boolean removeFixedChest(Location loc) {
 		if (loc == null) return false;
+		if (!(loc.getBlock().getState() instanceof Chest)) return false;
 		fixedChests.remove(loc);
 		return chests.add(loc);
 	}
