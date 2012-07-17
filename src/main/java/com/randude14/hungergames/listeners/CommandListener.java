@@ -21,7 +21,7 @@ public class CommandListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session == null) return;
 		if(!Config.getUseCommand(session.getSetup())) {
-			ChatUtils.error(player, "Cannot use commands while in game %s.");
+			ChatUtils.error(player, "Cannot use commands while in game %s.", session.getName());
 			event.setCancelled(true);
 		}
 		
