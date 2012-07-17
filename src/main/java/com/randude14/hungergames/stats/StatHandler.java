@@ -1,5 +1,7 @@
 package com.randude14.hungergames.stats;
 
+import com.randude14.hungergames.utils.ConnectionUtils;
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Logging;
 import java.io.IOException;
 import java.sql.Date;
@@ -20,9 +22,9 @@ import java.util.Map;
 *   day
 */
 public class StatHandler {
-	public final static String url = "";
-	
 	public static void updateStat(PlayerStat stat) {
+		String urlString = Config.getWebStatsIP();
+		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("authId", "");
 		map.put("requestType", "update");
@@ -39,7 +41,7 @@ public class StatHandler {
 		map.put("kills", String.valueOf(stat.getNumKills()));
 		map.put("deaths", String.valueOf(stat.getNumKills()));
 		try {
-			ConnectionUtils.post(url, map);
+			ConnectionUtils.post(urlString, map);
 		} catch (IllegalStateException ex) {
 			Logging.debug("Error when updating stat: " + ex.getMessage());
 		} catch (IOException ex) {

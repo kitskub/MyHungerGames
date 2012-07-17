@@ -128,6 +128,10 @@ public class Config {
 	public static String getDefaultGame() {
 		return getGlobalString("default-game", DEFAULT_GAME.getString());
 	}
+
+	public static String getWebStatsIP() {
+		return getGlobalString("webstats-ip", WEBSTATS_IP.getString());
+	}
 	
 	public static int getUpdateDelay() {
 		return getGlobalInt("update-delay", UPDATE_DELAY.getInt());

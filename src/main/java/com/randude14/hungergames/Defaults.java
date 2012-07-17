@@ -57,7 +57,8 @@ public class Defaults {
 	REMOVE_ITEMS(true),
 	USE_MATCH_MATERIAL(true),
 	MAX_RANDOM_ITEMS(5),
-	SPECTATOR_SPONSOR_PERIOD(0);
+	SPECTATOR_SPONSOR_PERIOD(0),
+	WEBSTATS_IP("0.0.0.0");
 	
 	
 	private Object value;

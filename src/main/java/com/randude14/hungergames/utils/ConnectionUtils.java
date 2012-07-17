@@ -1,4 +1,4 @@
-package com.randude14.hungergames.stats;
+package com.randude14.hungergames.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
