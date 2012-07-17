@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.commands.CommandHandler;
+import com.randude14.hungergames.games.PlayerQueueHandler;
 import com.randude14.hungergames.listeners.*;
 import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
@@ -156,6 +157,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new SessionListener(), instance);
 		pm.registerEvents(new ChatListener(), instance);
 		pm.registerEvents(new TeleportListener(), instance);
+		if (Config.getAutoJoin()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
 	private static void updateConfig() {

@@ -820,6 +820,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		InventorySave.loadInventory(player);
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
+			PlayerQueueHandler.addPlayer(player);
 		}
 	}
 
@@ -1060,6 +1061,18 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return isRunning;
 	}
 
+	public boolean isCounting() {
+		return isCounting;
+	}
+
+	public boolean isPaused() {
+		return isPaused;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	public boolean addChest(Location loc) {
 		if (chests.contains(loc) || fixedChests.containsKey(loc)) return false;
 		chests.add(loc);
@@ -1233,6 +1246,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 	}
 	
+	public int getSize() {
+		return spawnPoints.size();
+	}
+
 	// sorts players by name ignoring case
 	private class PlayerComparator implements Comparator<Player> {
 

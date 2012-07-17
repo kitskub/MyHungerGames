@@ -137,6 +137,10 @@ public class Config {
 		return getGlobalInt("update-delay", UPDATE_DELAY.getInt());
 	}
 		
+	public static boolean getAutoJoin() {
+		return getGlobalBoolean("auto-join", AUTO_JOIN.getBoolean());
+	}
+
 	public static boolean getForceInternalGlobal() {
 		return getGlobalBoolean("force-internal", FORCE_INTERNAL.getBoolean());
 	}

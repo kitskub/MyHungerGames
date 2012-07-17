@@ -11,6 +11,10 @@ global:
   # GLOBAL ONLY
   webstats-ip: 0.0.0.0
   
+  # whether players should automatically join the game when there is an available spot in a game
+  # GLOBAL ONLY
+  auto-join: false
+  
   # with this false, you cannot use item names, but you can use custom blocks
   use-match-material: true
   

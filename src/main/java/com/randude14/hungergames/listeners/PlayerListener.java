@@ -3,6 +3,7 @@ package com.randude14.hungergames.listeners;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.games.PlayerQueueHandler;
 
 
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 
 public class PlayerListener implements Listener {
@@ -71,5 +73,10 @@ public class PlayerListener implements Listener {
 		if ((px != fx) || (pz != fz)) {
 			player.teleport(frozenLoc);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void playerJoin(PlayerJoinEvent event) {
+		PlayerQueueHandler.addPlayer(event.getPlayer());
 	}
 }

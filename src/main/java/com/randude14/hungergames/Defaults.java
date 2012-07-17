@@ -29,6 +29,7 @@ public class Defaults {
 	MIN_VOTE(5),
 	MIN_PLAYERS(2),
 	UPDATE_DELAY(30),
+	AUTO_JOIN(false),
 	DEFAULT_TIME(10),
 	ALLOW_REJOIN(true),
 	ALLOW_JOIN_WHILE_RUNNING(false),
