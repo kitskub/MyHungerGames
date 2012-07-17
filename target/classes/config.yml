@@ -6,6 +6,11 @@ global:
   # GLOBAL ONLY
   update-delay: 30
   
+  # IP to use to connect to webstats
+  # use 0.0.0.0 to not record webstats
+  # GLOBAL ONLY
+  webstats-ip: 0.0.0.0
+  
   # with this false, you cannot use item names, but you can use custom blocks
   use-match-material: true
   

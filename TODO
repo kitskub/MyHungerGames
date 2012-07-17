@@ -1,13 +1,12 @@
 HIGH:
 - Remove reset-world in v0.6
-- Dedicated server mode
-- Save signs
-- Tutorial'
-- Listen for leaves despawning
+- Dedicated server mode?
+- Tutorial
 
 MEDIUM:
 - Random events
-- WebStats
+- WebStats - finish
+- leaderboards
 - Cannon boom on death
 - Permission to create sign listeners
 - Add chests to internal listening w/config option
@@ -20,6 +19,7 @@ LOW:
 - Allow autosubscribe.<game>
 - /hga test
 - Rarity
+- Enhance Spectating
 
 OPTIONAL:
 - Possible timed game events

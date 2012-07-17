@@ -47,12 +47,15 @@ public class BlockListener implements Listener {
 		String[] lines = event.getLines();
 		InternalListener.ListenerType type = InternalListener.ListenerType.byId(lines[1]);
 		if (type == null) return;
-		HungerGame game = GameManager.getGame(lines[2]);
-		if (game == null) {
-			event.setLine(1, "");
-			event.setLine(2, "BAD GAME NAME!");
-			event.setLine(3, "");
-			return;
+		HungerGame game = null;
+		if (lines[2] != null && !lines[2].equals("")) {
+			game = GameManager.getGame(lines[2]);
+			if (game == null) {
+				event.setLine(1, "");
+				event.setLine(2, "BAD GAME NAME!");
+				event.setLine(3, "");
+				return;
+			}
 		}
 		Sign sign = (Sign) event.getBlock().getState();
 		if (InternalListener.addSign(type, game, sign)) {

@@ -1,5 +1,6 @@
 package com.randude14.hungergames.listeners;
 
+import com.randude14.hungergames.Files;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameCreateEvent;
@@ -22,18 +23,57 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-public class InternalListener implements Runnable, Listener{
+public class InternalListener implements Runnable, Listener {
 
-	private static final Map<ListenerType, Map<HungerGame, List<Location>>> listeners = Collections.synchronizedMap(new EnumMap<ListenerType, Map<HungerGame, List<Location>>>(ListenerType.class));
+	private static final Map<ListenerType, Map<String, List<Location>>> listeners = Collections.synchronizedMap(new EnumMap<ListenerType, Map<String, List<Location>>>(ListenerType.class));
+	private static final Map<ListenerType, List<Location>> allGameListeners = Collections.synchronizedMap(new EnumMap<ListenerType, List<Location>>(ListenerType.class));
 	private static List<OffQueue> queues = new ArrayList<OffQueue>();
 	private static int taskId = 0;
 	
 	public InternalListener() {
 		taskId = HungerGames.scheduleTask(this, 0, 1);
+		loadSigns();
+	}
+	
+	public static void loadSigns() {
+		YamlConfiguration config = Files.SIGNS.getConfig();
+		for (ListenerType type : ListenerType.values()) {
+			if (!listeners.containsKey(type)) listeners.put(type, new HashMap<String, List<Location>>());
+			ConfigurationSection section = config.getConfigurationSection(type.name());
+			if (section == null) continue;
+			for (String game : section.getKeys(false)) {
+				if (!listeners.get(type).containsKey(game)) listeners.get(type).put(game, new ArrayList<Location>());
+				ConfigurationSection gameSection = section.getConfigurationSection(game);
+				List<Location> list = new ArrayList<Location>();
+				List<String> stringList = gameSection.getStringList("locs");
+				for (String s : stringList) {
+					list.add(HungerGames.parseToLoc(s));
+				}
+				listeners.get(type).get(game).addAll(list);
+			}
+		}
+	}
+	
+	public static void saveSigns() {
+		YamlConfiguration config = Files.SIGNS.getConfig();
+		for (ListenerType type : ListenerType.values()) {
+			ConfigurationSection section = config.createSection(type.name());
+			for (String game : listeners.get(type).keySet()) {
+				ConfigurationSection gameSection = section.createSection(game);
+				List<Location> list = listeners.get(type).get(game);
+				List<String> stringList = new ArrayList<String>();
+				for (Location l : list) {
+					stringList.add(HungerGames.parseToString(l));
+				}
+				gameSection.set("locs", stringList);
+			}
+		}
 	}
 	
 	private class SignData {
@@ -49,7 +89,7 @@ public class InternalListener implements Runnable, Listener{
 			this.lines = lines;
 		}
 	}
-	
+
 	/**
 	 * Add a sign. Does not check
 	 * @param type 
@@ -58,18 +98,29 @@ public class InternalListener implements Runnable, Listener{
 	 * @return  
 	 */
 	public static boolean addSign(ListenerType type, HungerGame game, Sign sign) {
-		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
-		if (gameMap == null) {
-			listeners.put(type, new HashMap<HungerGame, List<Location>>());
-			gameMap = listeners.get(type);
+		if (game != null) {
+			Map<String, List<Location>> gameMap = listeners.get(type);
+			if (gameMap == null) {
+				listeners.put(type, new HashMap<String, List<Location>>());
+				gameMap = listeners.get(type);
+			}
+			List<Location> locs = gameMap.get(game.getName());
+			if (locs == null) {
+				gameMap.put(game.getName(), new ArrayList<Location>());
+				locs = gameMap.get(game.getName());
+			}
+			locs.add(sign.getLocation());
+			return true;
 		}
-		List<Location> locs = gameMap.get(game);
-		if (locs == null) {
-			gameMap.put(game, new ArrayList<Location>());
-			locs = gameMap.get(game);
+		else {
+			List<Location> locs = allGameListeners.get(type);
+			if (locs == null) {
+				allGameListeners.put(type, new ArrayList<Location>());
+				locs = allGameListeners.get(type);
+			}
+			locs.add(sign.getLocation());
+			return true;
 		}
-		locs.add(sign.getLocation());
-		return true;
 	}
 
 	public void run() {
@@ -98,18 +149,19 @@ public class InternalListener implements Runnable, Listener{
 	}
 	
 	private void callListeners(ListenerType type, HungerGame game) {
-		Map<HungerGame, List<Location>> gameMap = listeners.get(type);
+		Map<String, List<Location>> gameMap = listeners.get(type);
 		if (gameMap == null) {
-			listeners.put(type, new HashMap<HungerGame, List<Location>>());
+			listeners.put(type, new HashMap<String, List<Location>>());
 			gameMap = listeners.get(type);
 		}
-		List<Location> locs = gameMap.get(game);
+		List<Location> locs = gameMap.get(game.getName());
 		if (locs == null) {
-			gameMap.put(game, new ArrayList<Location>());
-			locs = gameMap.get(game);
+			gameMap.put(game.getName(), new ArrayList<Location>());
+			locs = gameMap.get(game.getName());
 		}
 		List<Location> toRemove = new ArrayList<Location>();
 		List<SignData> signs = new ArrayList<SignData>();
+		locs.addAll(allGameListeners.get(type));
 		for (Location loc : locs) {
 			String[] lines = null;
 			Block block = loc.getBlock();
@@ -146,7 +198,8 @@ public class InternalListener implements Runnable, Listener{
 				continue;
 			}
 		}
-		locs.removeAll(toRemove);
+		listeners.get(type).get(game.getName()).removeAll(toRemove);
+		allGameListeners.get(type).removeAll(toRemove);
 		queues.add(new OffQueue(signs));
 	}
 	

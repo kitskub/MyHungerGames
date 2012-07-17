@@ -89,6 +89,7 @@ public class HungerGames extends JavaPlugin{
 	@Override
 	public void onDisable() {
 		GameManager.saveGames();
+		InternalListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
 		Logging.info("Disabled.");
@@ -184,6 +185,7 @@ public class HungerGames extends JavaPlugin{
 	public static void reload() {
 		Files.loadAll();
 		GameManager.loadGames();
+		InternalListener.loadSigns();
 		loadRegistry();
 	}
 
