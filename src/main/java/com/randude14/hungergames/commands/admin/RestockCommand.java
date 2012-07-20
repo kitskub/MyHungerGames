@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -23,8 +24,10 @@ public class RestockCommand extends SubCommand{
 		    return true;
 	    }
 	    game = GameManager.getGame(args[0]);
-	    if (game == null || !game.isRunning()) {
-		    ChatUtils.error(player, "%s is not a running game.", game.getName());
+	    if (game == null) {
+	    }
+	    if (!game.isRunning()) {
+		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
 		    return true;
 	    }
 	    game.fillInventories();

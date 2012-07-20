@@ -12,6 +12,7 @@ public enum Files {
 	CONFIG("config.yml", FileType.YML, true),
 	ITEMCONFIG("itemconfig.yml", FileType.YML, true),
 	GAMES("games.yml", FileType.YML, false),
+	LANG("lang.yml", FileType.YML, true),
 	LOG("myhungergames.log", FileType.LOG, false),
 	SIGNS("signs.yml", FileType.YML, false);
 

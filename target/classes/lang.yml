@@ -1,0 +1,64 @@
+global-only:  
+  # Message to player when they don't have permission
+  no-perm: 'You do not have permission'
+
+  # Sent when something does not exist
+  # params: Item <item>
+  not-exist: '<item> does not exist.'
+
+global:
+  # Message to player when a player joins game
+  # params: Player <player>; Game <game>
+  join-message: '<player> has joined the game <game>.'
+
+  # Message to player when a player rejoins game
+  # params: Player <player>; Game <game>
+  rejoin-message: '<player> has rejoined the game <game>'
+
+  # Message to player when a player leaves game
+  # params: Player <player>; Game <game>
+  leave-message: '<player> has left the game <game>.'
+
+  # Message to player when a player quit game
+  # params: Player <player>; Game <game>
+  quit-message: '<player> has quit the game <game>.'
+
+  # Message to player when a player kill game
+  # params: Player <player>; Game <game>
+  kill-message: '<killer> killed <killed> in game <game>.'
+
+  # Message to player when a player vote game
+  # params: Player <player>; Game <game>
+  vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
+  
+  # Message when there is not a winner
+  no-winner: 'Strangely, there was no winner left.'
+
+  # Message when someone wins
+  # params: Player <player>; Game <game>
+  win: '<player> has won the game <game>! Congratulations!'
+  
+  # Message when a game is already counting down
+  # params: Game <game>
+  already-counting-down: '<game> is already counting down.'
+  
+  # Message when a game is not enabled
+  # params: Game <game>
+  not-enabled: '<game> is currently not enabled.'
+  
+  # Message when a game is not running
+  # params: Game <game>
+  not-running: '<game> is not running.'
+  
+  # Message when a game is running
+  # params: Game <game>
+  running: '<game> is an already running game.'
+
+  # Message when not in a game
+  not-in-game: 'You are not in a game.'
+  
+  # Message when in a game
+  # params: Game <game>
+  in-game: 'You are in <game>.'
+# These names have to match the ones in the config.yml to work properly
+setups:

@@ -3,6 +3,7 @@ package com.randude14.hungergames.commands.admin.add;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -33,7 +34,7 @@ public class AddWorldCommand extends SubCommand{
 	    game = GameManager.getGame(args[0]);
 	    
 	    if (game == null) {
-		    ChatUtils.sendDoesNotExist(player, args[0]);
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return true;
 	    }
 	    if (args.length == 1) {
@@ -42,7 +43,7 @@ public class AddWorldCommand extends SubCommand{
 	    else {
 		    World world = Bukkit.getWorld(args[1]);
 		    if (world == null) {
-			    ChatUtils.sendDoesNotExist(player, args[1]);
+			    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[1]));
 			    return true;
 		    }
 		    else {

@@ -18,13 +18,6 @@ global:
   # with this false, you cannot use item names, but you can use custom blocks
   use-match-material: true
   
-  join-message: '<player> has joined the game <game>.'
-  rejoin-message: '<player> has rejoined the game <game>'
-  leave-message: '<player> has left the game <game>.'
-  quit-message: '<player> has quit the game <game>.'
-  kill-message: '<killer> killed <killed> in game <game>.'
-  vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
-  
   # Time, in seconds, after game starts before players can move
   default-time: 10
   

@@ -3,6 +3,7 @@ package com.randude14.hungergames.commands.user;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -28,7 +29,7 @@ public class JoinCommand extends SubCommand{
 
 		game = GameManager.getGame(name);
 		if (game == null) {
-			ChatUtils.sendDoesNotExist(player, name);
+			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return true;
 		}
 

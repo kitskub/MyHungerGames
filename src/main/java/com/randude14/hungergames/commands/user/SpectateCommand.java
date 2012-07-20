@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 
 import com.randude14.hungergames.utils.ChatUtils;
@@ -32,8 +33,12 @@ public class SpectateCommand extends SubCommand{
 		    return true;
 	    }
 	    game = GameManager.getGame(args[0]);
-	    if (game == null || !game.isRunning()) {
-		    ChatUtils.error(player, "%s is not a running game.", args[0]);
+	    if (game == null) {
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
+		    return true;
+	    }
+	    if (!game.isRunning()) {
+		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
 		    return true;
 	    }
 	    if (args.length == 2) {

@@ -4,6 +4,7 @@ import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.listeners.SessionListener.SessionType;
@@ -32,7 +33,7 @@ public class SetFixedChestCommand extends SubCommand{
 	    }
 	    game = GameManager.getGame(args[0]);
 	    if (game == null) {
-		    ChatUtils.sendDoesNotExist(player, args[0]);
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return true;
 	    }
 	    
@@ -43,7 +44,7 @@ public class SetFixedChestCommand extends SubCommand{
 		    return true;
 	    }
 	    if (!ItemConfig.getFixedChests().contains(name)) {
-		    ChatUtils.sendDoesNotExist(player, name);
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 		    return true;
 	    }
 	    SessionListener.addSession(SessionType.FIXED_CHEST_ADDER, player, game.getName(), "name", name);

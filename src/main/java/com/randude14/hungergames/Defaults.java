@@ -4,18 +4,29 @@ import org.bukkit.permissions.Permission;
 
 public class Defaults {
 	
-    public enum Message {
+    public enum Lang {
 	
 	JOIN("<player> has joined the game <game>."),
 	REJOIN("<player> has rejoined the game <gam"),
 	LEAVE("<player> has left the game <game>."),
 	QUIT("<player> has quit the game <game>."),
 	VOTE("<player> is ready to play <game>. Type /hg vote when you are ready to play."),
-	KILL("<killer> killed <killed> in game <game>.");
+	KILL("<killer> killed <killed> in game <game>."),
+	NO_PERM("You do not have permission."),
+	NO_WINNER("You do not have permission."),
+	WIN("You do not have permission."),
+	ALREADY_COUNTING_DOWN("<game> is already counting down."),
+	NOT_ENABLED("<game> is currently not enabled."),
+	NOT_RUNNING("<game> is not running."),
+	NOT_EXIST("<item> does not exist."),
+	RUNNING("<game> is an already running game."),
+	IN_GAME("You are in <game>."),
+	NOT_IN_GAME("You are not in a game.");
+	
 	
 	private String value;
 	
-	private Message(String message) {
+	private Lang(String message) {
 	    this.value = message;
 	}
 	

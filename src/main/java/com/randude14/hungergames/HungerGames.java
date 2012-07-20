@@ -424,7 +424,7 @@ public class HungerGames extends JavaPlugin{
 
 	public static boolean checkPermission(CommandSender cs, Defaults.Perm perm) {
 		if (!HungerGames.hasPermission(cs, perm)) {
-			cs.sendMessage(ChatColor.RED + "You do not have permission.");
+			cs.sendMessage(ChatColor.RED + Lang.getNoPerm());
 			return false;
 		}
 		return true;

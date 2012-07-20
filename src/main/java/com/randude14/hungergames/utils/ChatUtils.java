@@ -95,9 +95,5 @@ public class ChatUtils {
 
 	public static void error(Player player, String format, Object... args) {
 		error(player, String.format(format, args));
-	}
-	
-	public static void sendDoesNotExist(Player player, String s) {
-		error(player, "%s does not exist.", s);
 	}	
 }

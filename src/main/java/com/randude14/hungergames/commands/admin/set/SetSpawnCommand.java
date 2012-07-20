@@ -3,6 +3,7 @@ package com.randude14.hungergames.commands.admin.set;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -30,7 +31,7 @@ public class SetSpawnCommand extends SubCommand{
 	    }
 	    game = GameManager.getGame(args[0]);
 	    if (game == null) {
-		    ChatUtils.sendDoesNotExist(player, args[0]);
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return true;
 	    }
 	    

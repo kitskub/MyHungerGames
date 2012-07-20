@@ -1,5 +1,6 @@
 package com.randude14.hungergames.games;
 
+import com.randude14.hungergames.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,11 +13,6 @@ import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.randude14.hungergames.Config;
-import com.randude14.hungergames.GameCountdown;
-import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
@@ -263,11 +259,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			return false;
 		}
 		if (isCounting) {
-			ChatUtils.error(player, "%s is already counting down.", name);
+			ChatUtils.error(player, Lang.getAlreadyCountingDown(setup).replace("<game>", name));
 			return false;
 		}
 		if (isRunning) {
-			ChatUtils.error(player, "%s is already a running game.", name);
+			ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
 			return false;
 		}
 		if(isPaused) {
@@ -275,7 +271,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			return false;
 		}
 		readyToPlay.add(player.getName());
-		String mess = Config.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
+		String mess = Lang.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
 		ChatUtils.broadcast(mess, true);
 		int minVote = Config.getMinVote(setup);
 		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup) && !Config.getAllVote(setup))
@@ -334,9 +330,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public String stopGame(boolean isFinished) {
 		if (!isRunning && !isPaused && !isCounting) return "Game is not started";
 
-		if (!enabled) {
-			return String.format("%s is currently not enabled.", name);
-		}
+		if (!enabled) return Lang.getNotEnabled(setup).replace("<game>", name);
+
 		isRunning = false;
 		for (Player player : getRemainingPlayers()) {
 			ItemStack[] contents = player.getInventory().getContents();
@@ -462,10 +457,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 	
 	private String startGamePreCheck() {
-		if (isRunning) return "Game is already running";
+		if (isRunning) return Lang.getNotInGame(setup).replace("<game>", name);
 		if (stats.size() < Config.getMinPlayers(setup) || stats.size() < 2) return String.format("There are not enough players in %s", name);
-		if (isCounting) return String.format("%s is already counting down.", name);
-		if (!enabled) return String.format("%s is currently not enabled.", name);
+		if (isCounting) return Lang.getAlreadyCountingDown(setup).replace("<game>", name);
+		if (!enabled) return Lang.getNotEnabled(setup).replace("<game>", name);
 		return null;
 	}
  	public boolean resumeGame(Player player, int ticks) {		
@@ -625,7 +620,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 */
 	public synchronized boolean rejoin(Player player) {
 		if (!isRunning) {
-			ChatUtils.error(player, "Game is not running!");
+			ChatUtils.error(player, Lang.getNotRunning(setup).replace("<game>", name));
 			return false;
 		}
 		if(!playerEnteringPreCheck(player)) return false;
@@ -634,7 +629,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			return false;
 		}
 		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
-			ChatUtils.error(player, "You are not in the game %s.", name);
+			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 			return false;
 		}
 		if (stats.get(player.getName()).isPlaying()){
@@ -647,7 +642,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (!playerEntering(player, false)) return false;
 		stats.get(player.getName()).setPlaying(true);
 		
-		String mess = Config.getRejoinMessage(setup);
+		String mess = Lang.getRejoinMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(mess, true);
 		return true;
@@ -659,12 +654,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		    return false;
 	    }
 	    if (stats.containsKey(player.getName())) {
+		    ChatUtils.error(player, Lang.getInGame(setup).replace("<game>", name));
 		    ChatUtils.error(player, "You are already in this game.");
 		    return false;
 	    }
 	    if (!playerEnteringPreCheck(player)) return false;
 	    if (isRunning && !Config.getAllowJoinWhileRunning(setup)) {
-		    ChatUtils.error(player, "%s is already running and you cannot join while that is so.", name);
+		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
 	    if(isPaused) {
@@ -676,7 +672,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
 	    stats.put(player.getName(), new PlayerStat(player));
-	    String mess = Config.getJoinMessage(setup);
+	    String mess = Lang.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
 	    if (isRunning) {
@@ -690,7 +686,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	private synchronized boolean playerEnteringPreCheck(Player player) {
 	    if (!enabled) {
-		    ChatUtils.error(player, "%s is currently not enabled.", name);
+			ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
 		    return false;
 	    }
 
@@ -772,7 +768,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		checkForGameOver(false);
 
 		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
-		String mess = Config.getLeaveMessage(setup);
+		String mess = Lang.getLeaveMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(mess, true);
 		return true;
@@ -780,8 +776,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	
 	public synchronized boolean quit(Player player) {
 	    if (!contains(player)) {
-		ChatUtils.error(player, "You are not in the game %s.", name);
-		return false;
+		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
+		    return false;
 	    }
 	    boolean wasPlaying = stats.get(player.getName()).isPlaying();
 	    if (wasPlaying) {
@@ -800,7 +796,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    checkForGameOver(false);
 
 	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
-	    String mess = Config.getQuitMessage(setup);
+	    String mess = Lang.getQuitMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
 	    return true;
@@ -890,10 +886,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			}
 			GameEndEvent event;
 			if (winner == null) {
-				ChatUtils.broadcast("Strangely, there was no winner left.", true);
+				ChatUtils.broadcast(Lang.getNoWinner(setup), true);
 				event = new GameEndEvent(this, null);
 			} else {
-				ChatUtils.broadcast(true, "%s has won the game %s! Congratulations!", winner.getName(), name);
+				ChatUtils.broadcast(true, Lang.getWin(setup).replace("<player>", winner.getName()).replace("<game>", name));
 				event = new GameEndEvent(this, winner);
 			}
 			stopGame(true);
@@ -957,7 +953,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (killer != null) {
 			PlayerStat killerStat = stats.get(killer.getName());
 			killerStat.kill(killed.getName());
-			String message = Config.getKillMessage(setup).replace("<killer>", killer.getName()).replace("<killed>", killed.getName()).replace("<game>", name);
+			String message = Lang.getKillMessage(setup).replace("<killer>", killer.getName()).replace("<killed>", killed.getName()).replace("<game>", name);
 			event = new PlayerKillEvent(this, killer, killed, message);
 			ChatUtils.broadcast(message, true);
 			killedStat.death(killer.getName());

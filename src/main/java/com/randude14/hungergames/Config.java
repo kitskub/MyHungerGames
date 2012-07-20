@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-import static com.randude14.hungergames.Defaults.Message.*;
 import static com.randude14.hungergames.Defaults.Config.*;
 import static com.randude14.hungergames.utils.ConfigUtils.*;
 
@@ -154,30 +153,6 @@ public class Config {
 	}
 	
 	// Global
-	public static String getGlobalJoinMessage() {
-		return getGlobalString("join-message", JOIN.getMessage());
-	}
-	
-	public static String getGlobalRejoinMessage() {
-		return getGlobalString("rejoin-message", REJOIN.getMessage());
-	}
-	
-	public static String getGlobalLeaveMessage() {
-		return getGlobalString("leave-message", LEAVE.getMessage());
-	}
-	
-	public static String getGlobalQuitMessage() {
-		return getGlobalString("quit-message", QUIT.getMessage());
-	}
-	
-	public static String getGlobalKillMessage() {
-		return getGlobalString("kill-message", KILL.getMessage());
-	}
-	
-	public static String getGlobalVoteMessage() {
-		return getGlobalString("vote-message", VOTE.getMessage());
-	}
-	
 	public static int getGlobalMinVote() {
 		return getGlobalInt("min-vote", MIN_VOTE.getInt());
 	}
@@ -307,31 +282,6 @@ public class Config {
 	}
 	
 	// Setups
-	public static String getJoinMessage(String setup) {
-		return getString("join-message", setup, getGlobalJoinMessage());
-
-	}
-	
-	public static String getRejoinMessage(String setup) {
-		return getString("rejoin-message", setup, getGlobalRejoinMessage());
-	}
-	
-	public static String getLeaveMessage(String setup) {
-		return getString("leave-message", setup, getGlobalLeaveMessage());
-	}
-	
-	public static String getQuitMessage(String setup) {
-		return getString("quit-message", setup, getGlobalQuitMessage());
-	}
-	
-	public static String getKillMessage(String setup) {
-		return getString("kill-message", setup, getGlobalKillMessage());
-	}
-	
-	public static String getVoteMessage(String setup) {
-		return getString("vote-message", setup, getGlobalVoteMessage());
-	}
-	
 	public static int getMinVote(String setup) {
 		return getInteger("min-vote", setup, getGlobalMinVote());
 	}

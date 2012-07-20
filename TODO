@@ -8,7 +8,6 @@ MEDIUM:
 - Add chests to internal listening w/config option
 
 LOW:
-- Map gen
 - economy config stuff
 - NPCs
 - /hga test
@@ -17,11 +16,12 @@ LOW:
 OPTIONAL:
 - Possible timed game events
 - Hide players from each other
-- Lang pack
 - Better messages on death
 - Maybe add some way for worlds to reset while games are not running
 - Make subscribing game-based
+- Map gen
 
 UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
 - Add more listeners
+- More lang messages

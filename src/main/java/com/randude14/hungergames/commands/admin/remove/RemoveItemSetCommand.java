@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.command.Command;
@@ -24,8 +25,8 @@ public class RemoveItemSetCommand extends SubCommand {
 	    }
 	    
 	    if(game == null){
-		ChatUtils.sendDoesNotExist(player, args[0]);
-		return true;
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
+		    return true;
 	    }
 	    game.removeItemSet(args[1]);
 	    return true;
