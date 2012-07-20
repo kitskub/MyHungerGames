@@ -4,6 +4,9 @@ v0.6
 - Signs can now listen for any game by leaving third line blank
 - Added auto-join feature
 - Added death cannon
+- Removed Game_Load, Game_Create, and Game_Remove signs
+- Added sign creation perms in the form of admin.create.sign for all or admin.create.sign.<name> for individual
+- Added auto-join-allowed config option and permission
 
 v0.5.2
 - Possibly fixed config issues

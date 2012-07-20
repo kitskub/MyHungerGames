@@ -301,6 +301,10 @@ public class Config {
 	public static int getDeathCannonGlobal() {
 		return getGlobalInt("death-cannon", DEATH_CANNON.getInt());
 	}
+		
+	public static boolean getAutoJoinAllowedGlobal() {
+		return getGlobalBoolean("auto-join-allowed", AUTO_JOIN_ALLOWED.getBoolean());
+	}
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -438,6 +442,10 @@ public class Config {
 
 	public static int getDeathCannon(String setup) {
 		return getInteger("death-cannon", setup, getDeathCannonGlobal());
+	}
+		
+	public static boolean getAutoJoinAllowed(String setup) {
+		return getBoolean("auto-join-allowed", setup, getAutoJoinAllowedGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

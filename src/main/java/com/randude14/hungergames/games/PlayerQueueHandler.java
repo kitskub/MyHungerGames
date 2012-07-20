@@ -1,5 +1,7 @@
 package com.randude14.hungergames.games;
 
+import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GameStopEvent;
@@ -25,6 +27,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 
 	public static void addPlayer(Player player) {
 		if (!enabled) return;
+		if (!HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_JOIN_ALLOWED)) return;
 		queuedPlayers.offer(player.getName());
 	}
 	
@@ -40,6 +43,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	
 	public void gameDone(HungerGame game) {
 		if (!enabled) return;
+		if (!Config.getAutoJoinAllowed(game.getSetup())) return;
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
 		queuedGames.offer(game);
 	}

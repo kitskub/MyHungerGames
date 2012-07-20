@@ -1,5 +1,7 @@
 package com.randude14.hungergames.listeners;
 
+import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.Files;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
@@ -204,28 +206,13 @@ public class InternalListener implements Runnable, Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGameCreate(GameCreateEvent event) {
-		callListeners(ListenerType.GAME_CREATE, event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameEnd(GameEndEvent event) {
 		callListeners(ListenerType.GAME_END, event.getGame());
-	} 
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGameLoad(GameLoadEvent event) {
-		callListeners(ListenerType.GAME_LOAD, event.getGame());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGamePause(GamePauseEvent event) {
 		callListeners(ListenerType.GAME_PAUSE, event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGameRemove(GameRemoveEvent event) {
-		callListeners(ListenerType.GAME_REMOVE, event.getGame());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -264,24 +251,31 @@ public class InternalListener implements Runnable, Listener {
 	}
 	
 	public enum ListenerType {
-		GAME_CREATE("gamecreate"),
-		GAME_END("gameend"),
-		GAME_LOAD("gameload"),
-		GAME_PAUSE("gamepause"),
-		GAME_REMOVE("gameremove"),
-		GAME_START("gamestart"),
-		GAME_STOP("gamestop"),
-		PLAYER_JOIN("playerjoin"),
-		PLAYER_KICK("playerkick"),
-		PLAYER_KILL("playerkill"),
-		PLAYER_LEAVE("playerleave"),
-		PLAYER_QUIT("playerquit");
+		GAME_END("gameend", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEEND),
+		GAME_PAUSE("gamepause", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEPAUSE),
+		GAME_START("gamestart", Defaults.Perm.ADMIN_CREATE_SIGN_GAMESTART),
+		GAME_STOP("gamestop", Defaults.Perm.ADMIN_CREATE_SIGN_GAMESTOP),
+		PLAYER_JOIN("playerjoin", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERJOIN),
+		PLAYER_KICK("playerkick", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKICK),
+		PLAYER_KILL("playerkill", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKILL),
+		PLAYER_LEAVE("playerleave", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERLEAVE),
+		PLAYER_QUIT("playerquit", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERQUIT);
 		
 		private String id;
+		private Perm perm;
 		private static final Map<String, ListenerType> map = new HashMap<String, ListenerType>();
 		
-		private ListenerType(String id) {
+		private ListenerType(String id, Perm perm) {
 			this.id = id;
+			this.perm = perm;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public Perm getPerm() {
+			return perm;
 		}
 		
 		public static ListenerType byId(String string) {

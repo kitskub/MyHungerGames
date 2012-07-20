@@ -60,7 +60,8 @@ public class Defaults {
 	MAX_RANDOM_ITEMS(5),
 	SPECTATOR_SPONSOR_PERIOD(0),
 	WEBSTATS_IP("0.0.0.0"),
-	DEATH_CANNON(1);
+	DEATH_CANNON(1),
+	AUTO_JOIN_ALLOWED(true);
 	
 	
 	private Object value;
@@ -99,6 +100,16 @@ public class Defaults {
 	ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
 	ADMIN_ADD_SPONSOR_LOOT(new Permission("hungergame.add.sponsorloot"), ADMIN),
 	ADMIN_ADD_WORLD(new Permission("hungergame.add.world"), ADMIN),
+	ADMIN_CREATE_SIGN(new Permission("hungergame.create.sign"), ADMIN),
+	ADMIN_CREATE_SIGN_GAMEEND(new Permission("hungergame.create.sign.gameend"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_GAMEPAUSE(new Permission("hungergame.create.sign.gamepause"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_GAMESTART(new Permission("hungergame.create.sign.gamestart"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_GAMESTOP(new Permission("hungergame.create.sign.gamestop"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_PLAYERJOIN(new Permission("hungergame.create.sign.playerjoin"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_PLAYERKICK(new Permission("hungergame.create.sign.playerkick"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_PLAYERKILL(new Permission("hungergame.create.sign.playerkill"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_PLAYERLEAVE(new Permission("hungergame.create.sign.playerleave"), ADMIN_CREATE_SIGN),
+	ADMIN_CREATE_SIGN_PLAYERQUIT(new Permission("hungergame.create.sign.playerquit"), ADMIN_CREATE_SIGN),
 	ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
 	ADMIN_REMOVE_CHEST(new Permission("hungergame.remove.chest"), ADMIN),
 	ADMIN_REMOVE_GAME(new Permission("hungergame.remove.game"), ADMIN),
@@ -117,6 +128,7 @@ public class Defaults {
 	ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
 	USER(new Permission("hungergame.user.*"), ALL),
 	USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null),
+	USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 	USER_LIST(new Permission("hungergame.user.list"), USER),

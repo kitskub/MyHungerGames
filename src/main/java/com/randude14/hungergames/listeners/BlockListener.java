@@ -1,7 +1,9 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -58,6 +60,13 @@ public class BlockListener implements Listener {
 			}
 		}
 		Sign sign = (Sign) event.getBlock().getState();
+		if (!HungerGames.checkPermission(event.getPlayer(), type.getPerm())) {
+			event.setLine(1, "");
+			event.setLine(2, "NO PERMISSION!");
+			event.setLine(3, "");
+			return;
+		}
+
 		if (InternalListener.addSign(type, game, sign)) {
 			ChatUtils.send(event.getPlayer(), "Sign was created successfully.");
 		}

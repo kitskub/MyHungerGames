@@ -136,6 +136,10 @@ global:
   # If 2, a cannon sound will be played only on the last death
   # Any other number will turn it off
   death-cannon: 1
+  
+  # This is to check if the game allows players to auto-join
+  # Only matters if auto-join is true
+  auto-join-allowed: true
 
 # Setups ADD to global in any list
 setups:
