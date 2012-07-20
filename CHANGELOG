@@ -7,6 +7,7 @@ v0.6
 - Removed Game_Load, Game_Create, and Game_Remove signs
 - Added sign creation perms in the form of admin.create.sign for all or admin.create.sign.<name> for individual
 - Added auto-join-allowed config option and permission
+- Removed reload-world as it was buggy and unneeded
 
 v0.5.2
 - Possibly fixed config issues

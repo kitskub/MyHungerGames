@@ -245,14 +245,6 @@ public class Config {
 	public static boolean getAutoAddGlobal() {
 		return getGlobalBoolean("auto-add", AUTO_ADD.getBoolean());
 	}
-	
-	public static boolean getReloadWorldGlobal() {
-		return getGlobalBoolean("reload-world", RELOAD_WORLD.getBoolean());
-	}
-	
-	public static String getReloadWorldNameGlobal() {
-		return getGlobalString("reload-world-name", RELOAD_WORLD_NAME.getString());
-	}
 		
 	public static boolean getResetChangesGlobal() {
 		return getGlobalBoolean("reset-changes", RELOAD_WORLD.getBoolean());
@@ -398,14 +390,6 @@ public class Config {
 
 	public static boolean getAutoAdd(String setup) {
 		return getBoolean("auto-add", setup, getAutoAddGlobal());
-	}
-
-	public static boolean getReloadWorld(String setup) {
-		return getBoolean("reload-world", setup, getReloadWorldGlobal());
-	}
-
-	public static String getReloadWorldName(String setup) {
-		return getString("reload-world-name", setup, getReloadWorldNameGlobal());
 	}
 
 	public static boolean getResetChanges(String setup) {

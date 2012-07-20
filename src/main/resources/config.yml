@@ -73,14 +73,6 @@ global:
   # whether players can teleport
   can-teleport: false
   
-  # DEPRECATED - wll be removed in v0.6: use reset-changes, it's MUCH better
-  # world to reload on game end if world-reload is true. NOTE: must have a "template" stored in MyHungerGames/<worldname>_template
-  reload-world-name: Default_world
-    
-  # DEPRECATED - will be removed in v0.6: use reset-changes, it's MUCH better
-  # reload world on game end. Recommended that this be false and have setups override this
-  reload-world: false
-  
   # add chest and fill the first time a chest is opened
   auto-add: true
   
