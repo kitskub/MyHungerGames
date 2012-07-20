@@ -13,6 +13,7 @@ v0.6
 - /hga kill actually kills the player now
 - Added /hg back
 - Added the option to use spawn or not
+- Added an optional weight to chests that help designate what items get put there 0 is most, 1 is least NOTE: breaks chest saves
 
 v0.5.2
 - Possibly fixed config issues

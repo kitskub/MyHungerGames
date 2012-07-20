@@ -50,13 +50,14 @@ public class SessionListener implements Listener {
 				    ChatUtils.error(player, "Block is not a chest.");
 				    return;
 			    }
-		    if (game.addChest(clickedBlock.getLocation())) {
-			    ChatUtils.send(player, "Chest has been added to %s.", game.getName());
-			    session.clicked(clickedBlock);
-		    }
-		    else {
-			    ChatUtils.error(player, "Chest has already been added to game %s.",game.getName());
-		    }
+			    float weight = session.getData().get("weight") == null ? 1f : (Float) session.getData().get("weight");
+			    if (game.addChest(clickedBlock.getLocation(), weight)) {
+				    ChatUtils.send(player, "Chest has been added to %s.", game.getName());
+				    session.clicked(clickedBlock);
+			    }
+			    else {
+				    ChatUtils.error(player, "Chest has already been added to game %s.",game.getName());
+			    }
 		}
 		else {
 			ChatUtils.send(player, "You have added %d chests to the game %s.", session.getBlocks().size(), game.getName());
@@ -128,7 +129,7 @@ public class SessionListener implements Listener {
 		    }
 	    }
 	    else if (type == SessionType.FIXED_CHEST_ADDER) {
-		    if (game.addFixedChest(clickedBlock.getLocation(), session.getData().get("name"))) {
+		    if (game.addFixedChest(clickedBlock.getLocation(), session.getData().get("name").toString())) {
 			    sessions.remove(player.getName());
 			    ChatUtils.send(player, "Chest is now a fixed item chest.");
 		    }
@@ -154,7 +155,7 @@ public class SessionListener implements Listener {
 		sessions.put(player.getName(), new Session(type, game));
 	}
 	
-	public static void addSession(SessionType type, Player player, String game, String... data) {
+	public static void addSession(SessionType type, Player player, String game, Object... data) {
 		sessions.put(player.getName(),  new Session(type, game, data));
 	}
 
@@ -176,17 +177,17 @@ public class SessionListener implements Listener {
 		private final SessionType type;
 		private List<Block> blocks;
 		private final String game;
-		private final Map<String, String> data;
+		private final Map<Object, Object> data;
 
 		public Session(SessionType type, String game) {
 			this(type, game, "");
 		}
 		
-		public Session(SessionType type, String game, String... args) {
+		public Session(SessionType type, String game, Object... args) {
 			this.game = game;
 			this.type = type;
 			this.blocks = new ArrayList<Block>();
-			data = new HashMap<String, String>();
+			data = new HashMap<Object, Object>();
 			if (args.length % 2 == 1) return;
 			for (int i = 0; i < args.length; i += 2) {
 				data.put(args[i], args[i + 1]);
@@ -209,7 +210,7 @@ public class SessionListener implements Listener {
 			return type;
 		}
 
-		public Map<String, String> getData() {
+		public Map<Object, Object> getData() {
 			return data;
 		}
 	}

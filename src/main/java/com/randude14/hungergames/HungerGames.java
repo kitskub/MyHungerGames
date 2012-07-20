@@ -372,7 +372,7 @@ public class HungerGames extends JavaPlugin{
 		}
 	}
 	
-	public static void fillChest(Chest chest, List<String> itemsets) {
+	public static void fillChest(Chest chest, float weight, List<String> itemsets) {
 		if (ItemConfig.getGlobalChestLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 			return;
 		}
@@ -390,7 +390,7 @@ public class HungerGames extends JavaPlugin{
 			} while (chest.getInventory().getItem(index) != null);
 			
 			ItemStack item = items.get(rand.nextInt(items.size()));
-			if (itemMap.get(item) >= rand.nextFloat()) {
+			if (itemMap.get(item) >= rand.nextInt() * weight) {
 				chest.getInventory().setItem(index, item);
 			}
 

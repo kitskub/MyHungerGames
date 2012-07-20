@@ -32,9 +32,15 @@ public class AddChestCommand extends SubCommand{
 		ChatUtils.sendDoesNotExist(player, args[0]);
 		return true;
 	    }
-	    
-	    SessionListener.addSession(SessionType.CHEST_ADDER, player, args[0]);
 	    ChatUtils.send(player, ChatColor.GREEN, "Hit a chest to add it to %s.", game.getName());
+	    if (args.length == 2){
+		    try {
+			    float weight = Float.valueOf(args[1]);
+			    SessionListener.addSession(SessionType.CHEST_ADDER, player, args[0], "weight", weight);
+			    return true;
+		    } catch (NumberFormatException numberFormatException) {}
+	    }
+	    SessionListener.addSession(SessionType.CHEST_ADDER, player, args[0]);
 	    return true;
 	}
 	
