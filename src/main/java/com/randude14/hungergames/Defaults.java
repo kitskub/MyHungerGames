@@ -62,7 +62,8 @@ public class Defaults {
 	WEBSTATS_IP("0.0.0.0"),
 	DEATH_CANNON(1),
 	AUTO_JOIN_ALLOWED(true),
-	MAX_GAME_DURATION(0);
+	MAX_GAME_DURATION(0),
+	USE_SPAWN(true);
 	
 	
 	private Object value;
@@ -129,6 +130,7 @@ public class Defaults {
 	USER(new Permission("hungergame.user.*"), ALL),
 	USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null),
 	USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER),
+	USER_BACK(new Permission("hungergame.user.back"), USER),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 	USER_LIST(new Permission("hungergame.user.list"), USER),
@@ -187,6 +189,7 @@ public class Defaults {
 	ADMIN_KICK("ADMIN", "/%s kick <player>", "kick a player from a game", Perm.ADMIN_KICK),
 	ADMIN_KILL("ADMIN", "/%s kill <player>", "kills a player in a game ", Perm.ADMIN_KILL),
 	ADMIN_RESTOCK("ADMIN", "/%s restock <game name>", "restock all a game's chests", Perm.ADMIN_RESTOCK),
+	USER_BACK("USER", "/%s back", "returns a player to where they were before they joined", Perm.USER_BACK),
 	USER_JOIN("USER", "/%s join <game name>", "join a game", Perm.USER_JOIN),
 	USER_LEAVE("USER", "/%s leave", "leave current game temporarily (if enabled)", Perm.USER_LEAVE),
 	USER_LIST("USER", "/%s list", "list games", Perm.USER_LIST),

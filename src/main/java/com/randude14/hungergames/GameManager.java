@@ -30,6 +30,7 @@ public class GameManager{
 	private static final Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
 	private static final Set<String> subscribedPlayers = new HashSet<String>();
+	private static final Map<String, Location> playerBackLocations = new HashMap<String, Location>();
 	
 	public static boolean createGame(String name) {
 	    HungerGame game = new HungerGame(name);
@@ -240,6 +241,14 @@ public class GameManager{
 		subscribedPlayers.add(player.getName());
 	}
 	
+	public static void addBackLocation(Player player) {
+		playerBackLocations.put(player.getName(), player.getLocation());
+	}
+	
+	public static Location getAndRemoveBackLocation(Player player) {
+		return playerBackLocations.remove(player.getName());
+	}
+
 	private static class SponsorBeginPrompt extends NumericPrompt {
 		HungerGame game;
 		Player player;

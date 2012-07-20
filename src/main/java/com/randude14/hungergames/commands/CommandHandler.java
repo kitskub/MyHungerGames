@@ -43,6 +43,9 @@ public class CommandHandler implements CommandExecutor {
 			return;
 		}
 
+		else if ("back".equalsIgnoreCase(args[0])) {
+			command = new BackCommand();
+		}
 		else if ("list".equalsIgnoreCase(args[0])) {
 			command = new ListCommand();
 		}

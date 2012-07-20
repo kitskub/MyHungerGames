@@ -301,6 +301,10 @@ public class Config {
 	public static int getMaxGameDurationGlobal() {
 		return getGlobalInt("max-game-duration", MAX_GAME_DURATION.getInt());
 	}
+		
+	public static boolean getUseSpawnGlobal() {
+		return getGlobalBoolean("use-spawn", USE_SPAWN.getBoolean());
+	}
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -438,6 +442,10 @@ public class Config {
 
 	public static int getMaxGameDuration(String setup) {
 		return getInteger("max-game-duration", setup, getMaxGameDurationGlobal());
+	}
+		
+	public static boolean getUseSpawn(String setup) {
+		return getBoolean("use-spawn", setup, getUseSpawnGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

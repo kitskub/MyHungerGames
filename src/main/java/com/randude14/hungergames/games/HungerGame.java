@@ -723,6 +723,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		    allPlayers.add(player.getName());
 	    }
 	    GameManager.addSubscribedPlayer(player);
+	    GameManager.addBackLocation(player);
 	    player.teleport(loc);
 	    if(!Config.getRequireInvClear(setup)) InventorySave.saveAndClearInventory(player);
 	    if (!isRunning && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
@@ -845,21 +846,30 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	/**
-	 * Will be canceled if player is playing and teleporting is not allowed
+	 * Will be canceled if player is playing and teleporting is not allowed which should not ever happen
 	 * @param player
 	 */
 	public void teleportPlayerToSpawn(Player player) {
 		if (player == null) {
 			return;
 		}
-		if (spawn != null) {
-			player.teleport(spawn);
-			ChatUtils.send(player, "Teleporting you to %s's spawn.", name);
-		} else {
-			ChatUtils.error(player, "There was no spawn set for %s. Please contact an admin for help.", name);
+		if (Config.getUseSpawn(setup)) {
+			if (spawn != null) {
+				player.teleport(spawn);
+				return;
+			}
+			else {
+				ChatUtils.error(player, "There was no spawn set for %s. Teleporting to back location.", name);
+			}
+		}
+		Location loc = GameManager.getAndRemoveBackLocation(player);
+		if (loc != null) {
+			player.teleport(loc);
+		}
+		else {
+			ChatUtils.error(player, "For some reason, there was no back location. Please contact an admin for help.", name);
 			player.teleport(player.getWorld().getSpawnLocation());
 		}
-
 	}
 
 	/**

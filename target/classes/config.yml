@@ -136,6 +136,10 @@ global:
   # In seconds, the maximum amount of time a game can last
   # 0 or below does not limit time
   max-game-duration: 0
+  
+  # If this is false, players are automatically sent back to where they were before they joined when a game ends
+  # If this is true and no spawn is set, it defaults to the player's back location.
+  use-spawn: true
 
 # Setups ADD to global in any list
 setups:
