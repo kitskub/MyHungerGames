@@ -36,6 +36,7 @@ public class KillCommand extends SubCommand{
 		}
 		ChatUtils.broadcast(true, "%s has been killed by an admin.", player.getName());
 		game.killed(kill);
+		kill.setHealth(0);
 		return true;
 	}
 	

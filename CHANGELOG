@@ -10,6 +10,7 @@ v0.6
 - Removed reload-world as it was buggy and unneeded
 - Added max-game-time
 - Merge GameEndEvent and GameStopEvent
+- /hga kill actually kills the player now
 
 v0.5.2
 - Possibly fixed config issues
