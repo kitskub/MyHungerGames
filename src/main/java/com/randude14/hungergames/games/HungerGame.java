@@ -953,10 +953,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			event = new PlayerKillEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-
+		
 		if (killedStat.hasRunOutOfLives()) {
 			playerLeaving(killed, false);
 			checkForGameOver(false);
+			if (Config.getDeathCannon(setup) == 1 || Config.getDeathCannon(setup) == 2) playCannonBoom();
 		}
 		else {
 			if (Config.shouldRespawnAtSpawnPoint(setup)) {
@@ -968,6 +969,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				GameManager.addPlayerRespawn(killed, respawn);
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
+			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
 		}
 		HungerGames.callEvent(event);
 	}
@@ -1250,6 +1252,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return spawnPoints.size();
 	}
 
+	public void playCannonBoom() {
+		for (Player p : getRemainingPlayers()) {
+			p.getWorld().createExplosion(p.getLocation(), 0f, false);
+		}
+	}
+	
 	// sorts players by name ignoring case
 	private class PlayerComparator implements Comparator<Player> {
 

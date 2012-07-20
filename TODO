@@ -1,12 +1,12 @@
 HIGH:
 - Remove reset-world in v0.6
 - Tutorial
+- Timed everything
 
 MEDIUM:
 - Random events
 - WebStats - finish
 - leaderboards
-- Cannon boom on death
 - Permission to create sign listeners
 - Add chests to internal listening w/config option
 - Have a way for players to teleport back to where they were before the game

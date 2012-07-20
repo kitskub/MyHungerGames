@@ -297,6 +297,10 @@ public class Config {
 	public static int getSpectatorSponsorPeriodGlobal() {
 		return getGlobalInt("spectator-sponsor-period", SPECTATOR_SPONSOR_PERIOD.getInt());
 	}
+		
+	public static int getDeathCannonGlobal() {
+		return getGlobalInt("death-cannon", DEATH_CANNON.getInt());
+	}
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -430,6 +434,10 @@ public class Config {
 
 	public static int getSpectatorSponsorPeriod(String setup) {
 		return getInteger("spectator-sponsor-period", setup, getSpectatorSponsorPeriodGlobal());
+	}
+
+	public static int getDeathCannon(String setup) {
+		return getInteger("death-cannon", setup, getDeathCannonGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

@@ -131,6 +131,11 @@ global:
   # This is the amount of time, in seconds, before spectators can sponsor a random item for free. Restarts once reaches time.
   # This is rounded up to the nearest half-minute mark
   spectator-sponsor-period: 0
+  
+  # If 1, a cannon sound will be played every death
+  # If 2, a cannon sound will be played only on the last death
+  # Any other number will turn it off
+  death-cannon: 1
 
 # Setups ADD to global in any list
 setups:

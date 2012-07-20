@@ -3,6 +3,7 @@ v0.6
 - Signs now save between restarts
 - Signs can now listen for any game by leaving third line blank
 - Added auto-join feature
+- Added death cannon
 
 v0.5.2
 - Possibly fixed config issues
