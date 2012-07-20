@@ -61,7 +61,8 @@ public class Defaults {
 	SPECTATOR_SPONSOR_PERIOD(0),
 	WEBSTATS_IP("0.0.0.0"),
 	DEATH_CANNON(1),
-	AUTO_JOIN_ALLOWED(true);
+	AUTO_JOIN_ALLOWED(true),
+	MAX_GAME_DURATION(0);
 	
 	
 	private Object value;
@@ -104,7 +105,6 @@ public class Defaults {
 	ADMIN_CREATE_SIGN_GAMEEND(new Permission("hungergame.create.sign.gameend"), ADMIN_CREATE_SIGN),
 	ADMIN_CREATE_SIGN_GAMEPAUSE(new Permission("hungergame.create.sign.gamepause"), ADMIN_CREATE_SIGN),
 	ADMIN_CREATE_SIGN_GAMESTART(new Permission("hungergame.create.sign.gamestart"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_GAMESTOP(new Permission("hungergame.create.sign.gamestop"), ADMIN_CREATE_SIGN),
 	ADMIN_CREATE_SIGN_PLAYERJOIN(new Permission("hungergame.create.sign.playerjoin"), ADMIN_CREATE_SIGN),
 	ADMIN_CREATE_SIGN_PLAYERKICK(new Permission("hungergame.create.sign.playerkick"), ADMIN_CREATE_SIGN),
 	ADMIN_CREATE_SIGN_PLAYERKILL(new Permission("hungergame.create.sign.playerkill"), ADMIN_CREATE_SIGN),

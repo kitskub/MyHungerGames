@@ -4,7 +4,7 @@ import org.bukkit.event.HandlerList;
 
 import com.randude14.hungergames.games.HungerGame;
 
-// called when a Hunger Game stops
+// called when a Hunger Game is paused
 public class GamePauseEvent extends GameEvent  {
 	private static final HandlerList handlers = new HandlerList();
 	

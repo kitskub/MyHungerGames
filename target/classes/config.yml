@@ -132,6 +132,10 @@ global:
   # This is to check if the game allows players to auto-join
   # Only matters if auto-join is true
   auto-join-allowed: true
+  
+  # In seconds, the maximum amount of time a game can last
+  # 0 or below does not limit time
+  max-game-duration: 0
 
 # Setups ADD to global in any list
 setups:

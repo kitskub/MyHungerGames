@@ -297,6 +297,10 @@ public class Config {
 	public static boolean getAutoJoinAllowedGlobal() {
 		return getGlobalBoolean("auto-join-allowed", AUTO_JOIN_ALLOWED.getBoolean());
 	}
+		
+	public static int getMaxGameDurationGlobal() {
+		return getGlobalInt("max-game-duration", MAX_GAME_DURATION.getInt());
+	}
 	
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -430,6 +434,10 @@ public class Config {
 		
 	public static boolean getAutoJoinAllowed(String setup) {
 		return getBoolean("auto-join-allowed", setup, getAutoJoinAllowedGlobal());
+	}
+
+	public static int getMaxGameDuration(String setup) {
+		return getInteger("max-game-duration", setup, getMaxGameDurationGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

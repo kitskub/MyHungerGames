@@ -4,7 +4,6 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameEndEvent;
-import com.randude14.hungergames.api.event.GameStopEvent;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.LinkedList;
@@ -33,19 +32,10 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameEnd(GameEndEvent event) {
-		gameDone(event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGameStop(GameStopEvent event) {
-		gameDone(event.getGame());
-	}
-	
-	public void gameDone(HungerGame game) {
 		if (!enabled) return;
-		if (!Config.getAutoJoinAllowed(game.getSetup())) return;
+		if (!Config.getAutoJoinAllowed(event.getGame().getSetup())) return;
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
-		queuedGames.offer(game);
+		queuedGames.offer(event.getGame());
 	}
 	
 	public void run() {

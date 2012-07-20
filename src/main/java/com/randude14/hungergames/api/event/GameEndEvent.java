@@ -9,14 +9,19 @@ import com.randude14.hungergames.games.HungerGame;
 public class GameEndEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
 	private final Player winner;
+	private final boolean finished;
 	
 	public GameEndEvent(final HungerGame game, final Player player) {
 		super(game);
 		winner = player;
+		finished = true;
+		
 	}
-	
-	public GameEndEvent(final HungerGame game) {
-		this(game, null);
+
+	public GameEndEvent(HungerGame game) {
+		super(game);
+		this.finished = false;
+		this.winner = null;
 	}
 	
 	public Player getWinner() {

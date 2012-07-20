@@ -5,13 +5,9 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.Files;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.api.event.GameEndEvent;
-import com.randude14.hungergames.api.event.GameLoadEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
-import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
-import com.randude14.hungergames.api.event.GameStopEvent;
 import com.randude14.hungergames.api.event.PlayerJoinGameEvent;
 import com.randude14.hungergames.api.event.PlayerKickGameEvent;
 import com.randude14.hungergames.api.event.PlayerKillEvent;
@@ -221,11 +217,6 @@ public class InternalListener implements Runnable, Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGameStop(GameStopEvent event) {
-		callListeners(ListenerType.GAME_STOP, event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinGameEvent event) {
 		callListeners(ListenerType.PLAYER_JOIN, event.getGame());
 	}
@@ -254,7 +245,6 @@ public class InternalListener implements Runnable, Listener {
 		GAME_END("gameend", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEEND),
 		GAME_PAUSE("gamepause", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEPAUSE),
 		GAME_START("gamestart", Defaults.Perm.ADMIN_CREATE_SIGN_GAMESTART),
-		GAME_STOP("gamestop", Defaults.Perm.ADMIN_CREATE_SIGN_GAMESTOP),
 		PLAYER_JOIN("playerjoin", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERJOIN),
 		PLAYER_KICK("playerkick", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKICK),
 		PLAYER_KILL("playerkill", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKILL),

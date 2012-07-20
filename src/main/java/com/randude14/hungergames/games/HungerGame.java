@@ -360,7 +360,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		HungerGames.cancelTask(locTaskId);
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		if (!isFinished) {
-			GameStopEvent event = new GameStopEvent(this);
+			GameEndEvent event = new GameEndEvent(this);
 			HungerGames.callEvent(event);
 		}
 		clear();
@@ -878,7 +878,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			GameEndEvent event;
 			if (winner == null) {
 				ChatUtils.broadcast("Strangely, there was no winner left.", true);
-				event = new GameEndEvent(this);
+				event = new GameEndEvent(this, null);
 			} else {
 				ChatUtils.broadcast(true, "%s has won the game %s! Congratulations!", winner.getName(), name);
 				event = new GameEndEvent(this, winner);

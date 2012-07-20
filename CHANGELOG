@@ -8,6 +8,8 @@ v0.6
 - Added sign creation perms in the form of admin.create.sign for all or admin.create.sign.<name> for individual
 - Added auto-join-allowed config option and permission
 - Removed reload-world as it was buggy and unneeded
+- Added max-game-time
+- Merge GameEndEvent and GameStopEvent
 
 v0.5.2
 - Possibly fixed config issues
