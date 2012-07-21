@@ -17,12 +17,14 @@ public class PlayerStat {
 	private List<String> kills;
 	private boolean playing;
 	private boolean dead;
+	private long elapsedTimeInMillis;
 	
 	public PlayerStat(Player player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
 		this.playing = false;
+		elapsedTimeInMillis = 0;
 	}
 	
 	public void kill(String player) {
@@ -89,5 +91,13 @@ public class PlayerStat {
 
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public void addTime(long time) {
+		elapsedTimeInMillis += time;
+	}
+	
+	public long getTime() {
+		return elapsedTimeInMillis;
 	}
 }

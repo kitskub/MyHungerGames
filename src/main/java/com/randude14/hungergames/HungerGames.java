@@ -12,6 +12,7 @@ import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.HGPermission;
 import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.reset.ResetHandler;
+import com.randude14.hungergames.stats.TimeListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
@@ -159,6 +160,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new ChatListener(), instance);
 		pm.registerEvents(new TeleportListener(), instance);
 		pm.registerEvents(new TimedGameRunnable(), instance);
+		pm.registerEvents(new TimeListener(), instance);
 		if (Config.getAutoJoin()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	

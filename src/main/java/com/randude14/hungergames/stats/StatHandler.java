@@ -5,6 +5,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Logging;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,8 @@ public class StatHandler {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "update");
 		map.put("playerName", stat.getPlayer().getName());
-		map.put("lastLogin", new Date(System.currentTimeMillis()).toString()); // TODO better
+		map.put("lastLogin", new Date(System.currentTimeMillis()).toString()); // TODO do this better
+		map.put("totalTime", new Time(stat.getTime()).toString());
 		String wins;
 		if (stat.hasRunOutOfLives()) {
 			wins = "0";

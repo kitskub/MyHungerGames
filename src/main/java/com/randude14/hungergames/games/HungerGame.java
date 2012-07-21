@@ -348,7 +348,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				}
 			}
 			if (isFinished) HungerGames.rewardPlayer(player);
-			StatHandler.updateStat(stats.get(player.getName()));// TODO: this might be a little slow to do it this way. Thread?
+		}
+		for (String stat : stats.keySet()) {
+			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
 		}
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
@@ -660,7 +662,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    if (!playerEnteringPreCheck(player)) return false;
 	    if (isRunning && !Config.getAllowJoinWhileRunning(setup)) {
-		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
+		    ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
 		    return false;
 	    }
 	    if(isPaused) {
@@ -788,6 +790,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    else {
 		    stats.remove(player.getName());
+		    allPlayers.remove(player.getName());
 	    }
 	    playerLeaving(player, false);
 	    if (wasPlaying || !isRunning) {
