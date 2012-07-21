@@ -70,7 +70,7 @@ public class Defaults {
 	USE_MATCH_MATERIAL(true),
 	MAX_RANDOM_ITEMS(5),
 	SPECTATOR_SPONSOR_PERIOD(0),
-	WEBSTATS_IP("0.0.0.0"),
+	WEBSTATS_IP("http://myhungergames.fragzone.org/dbproxy.php"),
 	DEATH_CANNON(1),
 	AUTO_JOIN_ALLOWED(true),
 	MAX_GAME_DURATION(0),

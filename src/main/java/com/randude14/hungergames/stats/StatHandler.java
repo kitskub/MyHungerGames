@@ -26,7 +26,6 @@ public class StatHandler {
 		String urlString = Config.getWebStatsIP();
 		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("authId", "");
 		map.put("requestType", "update");
 		map.put("playerName", stat.getPlayer().getName());
 		map.put("lastLogin", new Date(System.currentTimeMillis()).toString()); // TODO better

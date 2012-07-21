@@ -10,7 +10,6 @@ MEDIUM:
 LOW:
 - economy config stuff
 - NPCs
-- /hga test
 - Enhance Spectating
 
 OPTIONAL:
@@ -25,3 +24,4 @@ UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
 - Add more listeners
 - More lang messages
+- /hga test
