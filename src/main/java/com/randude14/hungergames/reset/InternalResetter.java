@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -102,6 +103,9 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
+	    if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
+		    addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
+	    }
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

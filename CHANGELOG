@@ -15,6 +15,8 @@ v0.6
 - Added the option to use spawn or not
 - Added an optional weight to chests that help designate what items get put there 0 is most, 1 is least NOTE: breaks chest saves
 - Added a lang.yml with some messages
+- Web stats!
+- Potentially added the possibly for chests to reset
 
 v0.5.2
 - Possibly fixed config issues
