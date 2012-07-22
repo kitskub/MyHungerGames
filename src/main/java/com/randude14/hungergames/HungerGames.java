@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.commands.CommandHandler;
+import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.PlayerQueueHandler;
 import com.randude14.hungergames.games.TimedGameRunnable;
 import com.randude14.hungergames.listeners.*;
@@ -91,6 +92,9 @@ public class HungerGames extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
+		for (HungerGame game : GameManager.getGames()) {
+			game.stopGame(false);
+		}
 		GameManager.saveGames();
 		InternalListener.saveSigns();
 		Logging.info("Games saved.");

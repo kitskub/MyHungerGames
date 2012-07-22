@@ -48,6 +48,7 @@ public class Defaults {
 	RESPAWN_ON_DEATH(false),
 	DEFAULT_GAME("Test"),
 	LIVES(1),
+	CLEAR_INV(true),
 	REQUIRE_INV_CLEAR(false),
 	ALL_VOTE(false),
 	AUTO_VOTE(false),

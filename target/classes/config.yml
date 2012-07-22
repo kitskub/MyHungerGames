@@ -44,6 +44,9 @@ global:
   # whether players should clear their inventory before joining
   require-inv-clear: false
   
+  # Whether to save and clear a players inventory on join
+  clear-inv: true
+  
   # require everyone that has joined the game to vote before the game is auto-starterd
   # will not work when auto-vote is on
   all-vote: false
@@ -51,17 +54,11 @@ global:
   # when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
   auto-vote: false
   
-  # whether players can place blocks
-  can-place-block: false
-  
-  # whether players can break blocks
-  can-break-block: false
-
-  # whether players can interact with blocks (Chests, Enchant tables, ect...)
-  can-interact-block: false
-  
   # whether players can use commands. Does not disallow HungerGames commands.
   use-command: false
+  
+  # Commands that are the opposite of use-command ex. [time, weather]
+  special-commands: []
   
   # whether players can teleport
   can-teleport: false
@@ -78,6 +75,15 @@ global:
   # whether to force damage done to a player, regardless if another plugin has cancelled it or not
   # Can be used to stop plugins like Factions from cancelling player damage
   force-damage: false
+  
+  # whether players can place blocks
+  can-place-block: false
+  
+  # whether players can break blocks
+  can-break-block: false
+
+  # whether players can interact with blocks (Chests, Enchant tables, ect...)
+  can-interact-block: false
 
   # blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
   # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"

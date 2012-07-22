@@ -20,8 +20,9 @@ public class CommandListener implements Listener {
 		if(message.startsWith("/" + HungerGames.CMD_ADMIN) || message.startsWith("/" + HungerGames.CMD_USER)) return;
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session == null) return;
-		if(!Config.getUseCommand(session.getSetup())) {
-			ChatUtils.error(player, "Cannot use commands while in game %s.", session.getName());
+		message = message.split(" ")[0];
+		if(Config.getUseCommand(session.getSetup()) ^ Config.getSpecialCommands(session.getSetup()).contains("/" + message)) {
+			ChatUtils.error(player, "Cannot use that command while in game %s.", session.getName());
 			event.setCancelled(true);
 		}
 		

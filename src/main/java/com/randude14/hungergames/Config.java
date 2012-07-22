@@ -210,7 +210,11 @@ public class Config {
 		return getGlobalBoolean("spawnpoint-on-death", RESPAWN_ON_DEATH.getBoolean());
 	}
 	
-	public static boolean getRequireInvClear() {
+	public static boolean getClearInvGlobal() {
+		return getGlobalBoolean("clear-inv", CLEAR_INV.getBoolean());
+	}
+	
+	public static boolean getRequireInvClearGlobal() {
 		return getGlobalBoolean("require-inv-clear", REQUIRE_INV_CLEAR.getBoolean());
 	}
 	
@@ -240,6 +244,10 @@ public class Config {
 	
 	public static boolean getUseCommandGlobal() {
 		return getGlobalBoolean("use-command", USE_COMMAND.getBoolean());
+	}
+	
+	public static List<String> getSpecialCommandGlobal() {
+		return getGlobalStringList("special-commands", new ArrayList<String>());
 	}
 	
 	public static boolean getAutoAddGlobal() {
@@ -343,8 +351,12 @@ public class Config {
 		return getBoolean("spawnpoint-on-death", setup, shouldRespawnAtSpawnPointGlobal());
 	}
 	
+	public static boolean getClearInv(String setup) {
+		return getBoolean("clear-inv", setup, getClearInvGlobal());
+	}
+	
 	public static boolean getRequireInvClear(String setup) {
-		return getBoolean("require-inv-clear", setup, getRequireInvClear());
+		return getBoolean("require-inv-clear", setup, getRequireInvClearGlobal());
 	}
 	
 	public static boolean getAllVote(String setup) {
@@ -373,6 +385,10 @@ public class Config {
 
 	public static boolean getUseCommand(String setup) {
 		return getBoolean("use-command", setup, getUseCommandGlobal());
+	}
+
+	public static List<String> getSpecialCommands(String setup) {
+		return getStringList("special-commmands", setup, getSpecialCommandGlobal());
 	}
 
 	public static boolean getAutoAdd(String setup) {

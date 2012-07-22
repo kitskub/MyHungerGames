@@ -1,8 +1,6 @@
 HIGH:
 - Tutorial
 - Fix remove-items
-- Stop all games on disable
-- Clear-inv option
 
 MEDIUM:
 - Random events

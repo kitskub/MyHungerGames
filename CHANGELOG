@@ -22,6 +22,9 @@ v0.6
 - Set enabled now stops the game if disabling
 - Loading a game stops it if it is running and the load says it's disabled
 - Added a PlayerState enum NOTE: GameState and PlayerState are intertwined in the logic, so if it is off it will cause many bugs
+- Added special commands
+- Added a clear-inv option
+- Stop all games on plugin disable
 
 v0.5.2
 - Possibly fixed config issues

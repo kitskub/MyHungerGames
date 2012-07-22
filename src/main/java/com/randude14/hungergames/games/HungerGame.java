@@ -745,7 +745,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    GameManager.addSubscribedPlayer(player);
 	    GameManager.addBackLocation(player);
 	    player.teleport(loc);
-	    if(!Config.getRequireInvClear(setup)) InventorySave.saveAndClearInventory(player);
+	    if(!Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
 	    if (Config.getForceSurvival(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
