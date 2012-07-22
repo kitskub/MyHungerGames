@@ -3,6 +3,7 @@ package com.randude14.hungergames.stats;
 import com.randude14.hungergames.utils.ConnectionUtils;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
@@ -32,7 +33,7 @@ public class StatHandler {
 		map.put("lastLogin", new Date(System.currentTimeMillis()).toString()); // TODO do this better
 		map.put("totalTime", new Time(stat.getTime()).toString());
 		String wins;
-		if (stat.hasRunOutOfLives()) {
+		if (stat.getState() == PlayerState.DEAD) {
 			wins = "0";
 		}
 		else {

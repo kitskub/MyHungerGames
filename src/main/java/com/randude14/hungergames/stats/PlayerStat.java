@@ -15,15 +15,14 @@ public class PlayerStat {
 	private Player player;
 	private List<String> deaths;
 	private List<String> kills;
-	private boolean playing;
-	private boolean dead;
+	private PlayerState state;
 	private long elapsedTimeInMillis;
 	
 	public PlayerStat(Player player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
-		this.playing = false;
+		state = PlayerState.NOT_IN_GAME;
 		elapsedTimeInMillis = 0;
 	}
 	
@@ -33,12 +32,11 @@ public class PlayerStat {
 	
 	public void death(String player) {
 		deaths.add(player);
-		if (hasRunOutOfLives()) dead = true;
+		update();
 	}
 	
 	public void die() {
-		dead = true;
-		playing = false;
+		state = PlayerState.DEAD;
 	}
 	
 	public List<String> getKills() {
@@ -57,15 +55,13 @@ public class PlayerStat {
 		return deaths.size();
 	}
 	
-	public boolean hasRunOutOfLives() {
-		if (dead) return true;
+	private void update() {
+		if (state == PlayerState.DEAD) return;
 		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
 		if (lives == 0 || deaths.size() >= lives) {
-			dead = true;
-			return true;
+			die();
 		}
-		return false;
 	}
 	
 	public int getLivesLeft() {
@@ -74,19 +70,13 @@ public class PlayerStat {
 		if(lives == 0) return -1;
 		return lives - deaths.size();
 	}
-
-	/**
-	* @return true if player is currently "playing", disregarding lives
-	*/
-	public boolean isPlaying() {
-		return playing;
+	
+	public void setState(PlayerState state) {
+		this.state = state;
 	}
-
-	/**
-	* @param playing 
-	*/
-	public void setPlaying(boolean playing) {
-		this.playing = playing;
+	
+	public PlayerState getState() {
+		return state;
 	}
 
 	public Player getPlayer() {
@@ -99,5 +89,14 @@ public class PlayerStat {
 	
 	public long getTime() {
 		return elapsedTimeInMillis;
+	}
+	
+	public enum PlayerState {
+		NOT_IN_GAME,
+		PLAYING,
+		NOT_PLAYING,
+		GAME_PAUSED,
+		DEAD,
+		WAITING;
 	}
 }

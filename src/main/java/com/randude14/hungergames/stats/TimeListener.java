@@ -3,6 +3,7 @@ package com.randude14.hungergames.stats;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.HungerGame.GameState;
+import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
@@ -56,7 +57,7 @@ public class TimeListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKillEvent event) {
-		if (event.getGame().getPlayerStat(event.getKilled()).hasRunOutOfLives()) {
+		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerState.DEAD) {
 			playerStopped(event.getGame(), event.getKilled());
 		}
 	}

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.randude14.hungergames.games.HungerGame.GameState.*;
+import static com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
@@ -347,7 +348,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				if (p == null) continue;
 				playerEntering(p, true);
 				InventorySave.loadGameInventory(p);
-				playerEntering(p, true);
 			}
 		}
 		state = STOPPED;
@@ -468,7 +468,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			world.setFullTime(0L);
 			p.setHealth(20);
 			p.setFoodLevel(20);
-			stats.get(playerName).setPlaying(true);
+			stats.get(playerName).setState(PlayerStat.PlayerState.PLAYING);
 		}
 		state = RUNNING;
 		readyToPlay.clear();
@@ -530,6 +530,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		for(String playerName : playerLocs.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
+			stats.get(p.getName()).setState(PlayerState.PLAYING);
 			playerEntering(p, true);
 			InventorySave.loadGameInventory(p);
 			World world = p.getWorld();
@@ -567,6 +568,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		for(Player p : getRemainingPlayers()) {
 			if (p == null) continue;
+			stats.get(p.getName()).setState(PlayerState.GAME_PAUSED);
 			playerLocs.put(p.getName(), p.getLocation());
 			InventorySave.saveAndClearGameInventory(p);
 			playerLeaving(p, true);
@@ -646,19 +648,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			ChatUtils.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
-		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
-			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
+		if (stats.get(player.getName()).getState() == PlayerState.PLAYING){
+			ChatUtils.error(player, "You can't rejoin a game while you are in it.");
 			return false;
 		}
-		if (stats.get(player.getName()).isPlaying()){
-			ChatUtils.error(player, "You can't rejoin a game while you are in it.");
+		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).getState() != PlayerState.NOT_PLAYING) {
+			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 			return false;
 		}
 		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) return false;
 		if (!playerEntering(player, false)) return false;
-		stats.get(player.getName()).setPlaying(true);
+		stats.get(player.getName()).setState(PlayerState.PLAYING);
 		
 		String mess = Lang.getRejoinMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
@@ -694,9 +696,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
 	    if (state == RUNNING) {
-		    stats.get(player.getName()).setPlaying(true);
+		    stats.get(player.getName()).setState(PlayerState.PLAYING);
 	    }
 	    else {
+		    stats.get(player.getName()).setState(PlayerState.WAITING);
 		    if (Config.getAutoVote(setup)) addReadyPlayer(player);
 	    }
 	    return true;
@@ -734,10 +737,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if (!fromTemporary) {
 		    loc = getNextOpenSpawnPoint();
 		    spawnsTaken.put(player.getName(), loc);
+		    allPlayers.add(player.getName());
 	    }
 	    else {
 		    loc = spawnsTaken.get(player.getName());
-		    allPlayers.add(player.getName());
 	    }
 	    GameManager.addSubscribedPlayer(player);
 	    GameManager.addBackLocation(player);
@@ -768,7 +771,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 	
 	public synchronized boolean leave(Player player) {
-		if (state != RUNNING) return quit(player);
+		if (state != RUNNING && state != PAUSED) return quit(player);
 		
 		if (!isPlaying(player)) {
 			ChatUtils.error(player, "You are not playing the game %s.", name);
@@ -778,8 +781,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			stats.get(player.getName()).die();
 		}
 		else {
-			stats.get(player.getName()).setPlaying(false);
+			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
 		}
+		playerEntering(player, true);
+		InventorySave.loadGameInventory(player);
 		dropInventory(player);
 		playerLeaving(player, false);
 		teleportPlayerToSpawn(player);
@@ -797,7 +802,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
-	    boolean wasPlaying = stats.get(player.getName()).isPlaying();
+	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING;
 	    if (wasPlaying) {
 		    dropInventory(player);
 	    }
@@ -938,8 +943,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 */
 	public boolean contains(Player... players) {
 	    for (Player player : players) {
-		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).hasRunOutOfLives()) {
-		    return false;
+		if (!stats.containsKey(player.getName())) {
+			PlayerState pState = stats.get(player.getName()).getState();
+			if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.NOT_PLAYING || pState == PlayerState.DEAD) return false;
 		}
 	    }
 	    return true;
@@ -948,14 +954,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	/**
 	 * 
 	 * @param players players to check
-	 * @return true if players are in the game, have lives, and are playing
+	 * @return true if players are in the game, have lives, and are playing, regardless if game is paused
 	 */
 	public boolean isPlaying(Player... players) {
 	    for (Player player : players) {
-		if (state != RUNNING ||
-			!stats.containsKey(player.getName()) 
-			|| stats.get(player.getName()).hasRunOutOfLives() 
-			|| !stats.get(player.getName()).isPlaying()) {
+		if (state != RUNNING || !stats.containsKey(player.getName()) 
+			|| (stats.get(player.getName()).getState() != PlayerState.PLAYING) &&  stats.get(player.getName()).getState() != PlayerState.GAME_PAUSED){
 		    return false;
 		}
 	    }
@@ -963,7 +967,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public void killed(Player killer, Player killed) {
-		if (state != RUNNING || stats.get(killed.getName()).hasRunOutOfLives()) return;
+		if (state != RUNNING || stats.get(killed.getName()).getState() != PlayerState.PLAYING) return;
 
 		PlayerStat killedStat = stats.get(killed.getName());
 		PlayerKillEvent event;
@@ -980,7 +984,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			killedStat.death(PlayerStat.NODODY);
 		}
 		
-		if (killedStat.hasRunOutOfLives()) {
+		if (killedStat.getState() == PlayerState.DEAD) {
 			playerLeaving(killed, false);
 			checkForGameOver(false);
 			if (Config.getDeathCannon(setup) == 1 || Config.getDeathCannon(setup) == 2) playCannonBoom();
@@ -1015,7 +1019,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		Player player = Bukkit.getPlayer(playerName);
 		if (player == null) continue;
 		PlayerStat stat = stats.get(playerName);
-		if (!stat.hasRunOutOfLives() && stat.isPlaying()) {
+		if (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.GAME_PAUSED) {
 		    remaining.add(player);
 		}
 	    }
@@ -1058,11 +1062,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			Player p = stat.getPlayer();
 			if (p == null) continue;
 			String statName = "";
-			if (stat.hasRunOutOfLives()) {
+			if (stat.getState() == PlayerState.DEAD) {
 				statName = ChatColor.RED.toString() + p.getName() + ChatColor.GRAY.toString();
 				dead++;
 			}
-			else if (!stat.isPlaying()) {
+			else if (stat.getState() == PlayerState.NOT_PLAYING) {
 				statName = ChatColor.YELLOW.toString() + p.getName() + ChatColor.GRAY.toString();
 				dead++;
 			}
