@@ -41,3 +41,4 @@
 * Configurable arenas that can contain (but don't have to) worlds and/or cuboids
 * Sign listening to allow certain events to trigger Redstone
 * Optional metrics to appease the statistic gods
+* Weighted random chests

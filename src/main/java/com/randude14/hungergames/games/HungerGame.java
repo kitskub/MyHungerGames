@@ -688,7 +688,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	private synchronized boolean playerEnteringPreCheck(Player player) {
 	    if (!enabled) {
-			ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
+		    ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
 		    return false;
 	    }
 
@@ -765,8 +765,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			stats.get(player.getName()).setPlaying(false);
 		}
 		dropInventory(player);
-		teleportPlayerToSpawn(player);
 		playerLeaving(player, false);
+		teleportPlayerToSpawn(player);
 		checkForGameOver(false);
 
 		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
@@ -1255,10 +1255,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		for (String s : worlds) {
 			World w = Bukkit.getWorld(s);
 			if (w == null) continue;
+			Logging.debug("Checking world for items.");
+			int count = 0;
 			for (Entity e : w.getEntities()) {
+				count++;
 				if (!(e instanceof Item)) continue;
 				e.remove();
 			}
+			Logging.debug("Checked: ", count);
 		}
 		for (Cuboid c : cuboids) {
 			if (worlds.contains(c.getLower().getWorld().getName())) continue;

@@ -23,22 +23,24 @@ public class InventorySave {
 	}
 	
 	public static void saveAndClearInventory(Player player){
-	    savedInventories.put(player, new InventorySave(player));
-	    player.getInventory().clear();
+		savedInventories.put(player, new InventorySave(player));
+		player.getInventory().setArmorContents(new ItemStack[player.getInventory().getArmorContents().length]);
+		player.getInventory().clear();
 	}
 
 	public static void loadInventory(Player player){
-	    if(!savedInventories.containsKey(player)) return;
-	    savedInventories.remove(player).loadInventoryTo(player);
+		if(!savedInventories.containsKey(player)) return;
+		savedInventories.remove(player).loadInventoryTo(player);
 	}
 	
 	public static void saveAndClearGameInventory(Player player){
 		savedGameInventories.put(player, new InventorySave(player));
+		player.getInventory().setArmorContents(new ItemStack[player.getInventory().getArmorContents().length]);
 		player.getInventory().clear();
 	}
 
 	public static void loadGameInventory(Player player){
-	    if(!savedGameInventories.containsKey(player)) return;
-	    savedGameInventories.remove(player).loadInventoryTo(player);
+		if(!savedGameInventories.containsKey(player)) return;
+		savedGameInventories.remove(player).loadInventoryTo(player);
 	}
 }
