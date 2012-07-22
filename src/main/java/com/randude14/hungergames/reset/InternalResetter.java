@@ -2,6 +2,7 @@ package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.Cuboid;
 
@@ -40,7 +41,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
  *
  */
 public class InternalResetter extends Resetter implements Listener, Runnable{
-    private static final Map<HungerGame, Map<Block, BlockState>> changedBlocks = new HashMap<HungerGame, Map<Block, BlockState>>();
+    private static final Map<HungerGame, Map<Location, BlockState>> changedBlocks = new HashMap<HungerGame, Map<Location, BlockState>>();
     private static final Map<Block, BlockState> toCheck = Collections.synchronizedMap(new HashMap<Block, BlockState>());
 
     
@@ -57,10 +58,11 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     @Override
     public boolean resetChanges(HungerGame game) {
 	if(!changedBlocks.containsKey(game)) return true;
-	for(Block b : changedBlocks.get(game).keySet()) {
-		BlockState state = changedBlocks.get(game).get(b);
-		b.setTypeId(state.getTypeId());
-		b.setData(state.getRawData());
+	for(Location l : changedBlocks.get(game).keySet()) {
+		BlockState state = changedBlocks.get(game).get(l);
+		if (state instanceof Chest) Logging.debug("Resetting chest");
+		l.getBlock().setTypeId(state.getTypeId());
+		l.getBlock().setData(state.getRawData());
 	}
 	changedBlocks.get(game).clear();
 	return true;
@@ -96,14 +98,16 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     }
     
     private static synchronized void addBlockState(HungerGame game, Block block, BlockState state) {
-	    if (!changedBlocks.containsKey(game)) changedBlocks.put(game, new HashMap<Block, BlockState>());
-	    if (changedBlocks.get(game).containsKey(block)) return; // Don't want to erase the original block
-	    changedBlocks.get(game).put(block, state);
+	    if (!changedBlocks.containsKey(game)) changedBlocks.put(game, new HashMap<Location, BlockState>());
+	    if (changedBlocks.get(game).containsKey(block.getLocation())) return; // Don't want to erase the original block
+	    Logging.debug("Adding a chest to reset");
+	    changedBlocks.get(game).put(block.getLocation(), state);
     }
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 	    if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
+		    Logging.debug("Adding a chest to check");
 		    addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
 	    }
     }

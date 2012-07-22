@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
@@ -25,7 +26,7 @@ public class RemoveChestCommand extends SubCommand{
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
 		    return true;
 	    }
-	    
+	    game = GameManager.getGame(args[0]);
 	    if(game == null){
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return true;

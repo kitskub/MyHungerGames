@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>MyHungerGames</name>
-	<url>http://maven.apache.org</url>
+	<url>myhungergames.fragzone.org</url>
   
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,6 +22,7 @@
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
+				<version>1.0</version>
 				<executions>
 					<execution>
 						<id>set-properties</id>
@@ -59,6 +60,12 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>codehaus.org</id>
+			<url>http://snapshots.repository.codehaus.org</url>
+		</pluginRepository>
+	</pluginRepositories>
 	
 	<ciManagement>
 		<system>jenkins</system>

@@ -72,7 +72,10 @@ public class TimeListener implements Listener {
 	}
 	
 	private void playerStopped(HungerGame game, Player p) {
-		game.getPlayerStat(p).addTime(System.currentTimeMillis() - startTimes.get(p.getName()));
-		startTimes.remove(p.getName());
+		Long l = startTimes.get(p.getName());
+		if (l != null) {
+			game.getPlayerStat(p).addTime(System.currentTimeMillis() - l);
+			startTimes.remove(p.getName());
+		}
 	}
 }

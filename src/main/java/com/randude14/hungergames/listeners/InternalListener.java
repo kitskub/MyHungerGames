@@ -42,14 +42,22 @@ public class InternalListener implements Runnable, Listener {
 	public static void loadSigns() {
 		YamlConfiguration config = Files.SIGNS.getConfig();
 		for (ListenerType type : ListenerType.values()) {
-			if (!listeners.containsKey(type)) listeners.put(type, new HashMap<String, List<Location>>());
 			ConfigurationSection section = config.getConfigurationSection(type.name());
+			if (!allGameListeners.containsKey(type)) allGameListeners.put(type, new ArrayList<Location>());
+			List<String> sList = section.getStringList("gameLocs");
+			if (sList != null) {
+				for (String s : sList) {
+					allGameListeners.get(type).add(HungerGames.parseToLoc(s));
+				}
+			}
+			if (!listeners.containsKey(type)) listeners.put(type, new HashMap<String, List<Location>>());
 			if (section == null) continue;
 			for (String game : section.getKeys(false)) {
 				if (!listeners.get(type).containsKey(game)) listeners.get(type).put(game, new ArrayList<Location>());
 				ConfigurationSection gameSection = section.getConfigurationSection(game);
+				if (gameSection == null) continue;
 				List<Location> list = new ArrayList<Location>();
-				List<String> stringList = gameSection.getStringList("locs");
+				List<String> stringList = gameSection.getStringList("gameLocs");
 				for (String s : stringList) {
 					list.add(HungerGames.parseToLoc(s));
 				}
@@ -62,6 +70,11 @@ public class InternalListener implements Runnable, Listener {
 		YamlConfiguration config = Files.SIGNS.getConfig();
 		for (ListenerType type : ListenerType.values()) {
 			ConfigurationSection section = config.createSection(type.name());
+			List<String> allGamesList = new ArrayList<String>();
+			for (Location l : allGameListeners.get(type)) {
+				allGamesList.add(HungerGames.parseToString(l));
+			}
+			section.set("allGames", allGamesList);
 			for (String game : listeners.get(type).keySet()) {
 				ConfigurationSection gameSection = section.createSection(game);
 				List<Location> list = listeners.get(type).get(game);
@@ -69,7 +82,7 @@ public class InternalListener implements Runnable, Listener {
 				for (Location l : list) {
 					stringList.add(HungerGames.parseToString(l));
 				}
-				gameSection.set("locs", stringList);
+				gameSection.set("gameLocs", stringList);
 			}
 		}
 	}

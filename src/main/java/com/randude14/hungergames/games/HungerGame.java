@@ -584,14 +584,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
         
 	public void fillInventories() {
 	    Location prev = null;
-	    Logging.debug("Filling inventories. Chests size: %s fixedChests size: %s", chests.size(), fixedChests.size());
+	    // Logging.debug("Filling inventories. Chests size: %s fixedChests size: %s", chests.size(), fixedChests.size());
 	    for (Location loc : chests.keySet()) {
 		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
 			    //Logging.debug("Cancelling a fill because previous was a chest");
 			    continue;
 		    }
 		    if (!(loc.getBlock().getState() instanceof Chest)) {
-			    //Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because not a chest");
 			    continue;
 		    }
 		    prev = loc;
@@ -604,7 +604,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			    continue;
 		    }
 		    if (!(loc.getBlock().getState() instanceof Chest)) {
-			    //Logging.debug("Cancelling a fill because previous was a chest");
+			    //Logging.debug("Cancelling a fill because not a chest");
 			    continue;
 		    }
 		    prev = loc;
@@ -1091,10 +1091,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (chests.keySet().contains(loc) || fixedChests.containsKey(loc)) return false;
 		chests.put(loc, weight);
 		Block b = loc.getBlock();
-		if (b.getRelative(BlockFace.NORTH) instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
-		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
-		else if (b.getRelative(BlockFace.EAST) instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
-		else if (b.getRelative(BlockFace.WEST) instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) chests.put(b.getRelative(BlockFace.SOUTH).getLocation(), weight);
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) chests.put(b.getRelative(BlockFace.EAST).getLocation(), weight);
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) chests.put(b.getRelative(BlockFace.WEST).getLocation(), weight);
 		return true;
 	}
 
@@ -1105,10 +1105,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		removeChest(loc);
 		fixedChests.put(loc, fixedChest);
 		Block b = loc.getBlock();
-		if (b.getRelative(BlockFace.NORTH) instanceof Chest) fixedChests.put(b.getRelative(BlockFace.NORTH).getLocation(), fixedChest);
-		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) fixedChests.put(b.getRelative(BlockFace.NORTH).getLocation(), fixedChest);
-		else if (b.getRelative(BlockFace.EAST) instanceof Chest) fixedChests.put(b.getRelative(BlockFace.NORTH).getLocation(), fixedChest);
-		else if (b.getRelative(BlockFace.WEST) instanceof Chest) fixedChests.put(b.getRelative(BlockFace.NORTH).getLocation(), fixedChest);
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) fixedChests.put(b.getRelative(BlockFace.NORTH).getLocation(), fixedChest);
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) fixedChests.put(b.getRelative(BlockFace.SOUTH).getLocation(), fixedChest);
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) fixedChests.put(b.getRelative(BlockFace.EAST).getLocation(), fixedChest);
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) fixedChests.put(b.getRelative(BlockFace.WEST).getLocation(), fixedChest);
 		return true;
 	}
 
@@ -1129,20 +1129,20 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		if (!(loc.getBlock().getState() instanceof Chest)) return false;
 		fixedChests.remove(loc);
 		Block b = loc.getBlock();
-		if (b.getRelative(BlockFace.NORTH) instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.NORTH).getLocation());
-		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.NORTH).getLocation());
-		else if (b.getRelative(BlockFace.EAST) instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.NORTH).getLocation());
-		else if (b.getRelative(BlockFace.WEST) instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.NORTH).getLocation());
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.NORTH).getLocation());
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.SOUTH).getLocation());
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.EAST).getLocation());
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) fixedChests.remove(b.getRelative(BlockFace.WEST).getLocation());
 		return addChest(loc, 1f);
 	}
 
 	public boolean removeChest(Location loc) {
 		Block b = loc.getBlock();
 		Location ad = null;
-		if (b.getRelative(BlockFace.NORTH) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
-		else if (b.getRelative(BlockFace.SOUTH) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
-		else if (b.getRelative(BlockFace.EAST) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
-		else if (b.getRelative(BlockFace.WEST) instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.SOUTH).getLocation();
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) loc = b.getRelative(BlockFace.EAST).getLocation();
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) loc = b.getRelative(BlockFace.WEST).getLocation();
 		if (ad != null) {
 			chests.remove(ad);
 			fixedChests.remove(ad);

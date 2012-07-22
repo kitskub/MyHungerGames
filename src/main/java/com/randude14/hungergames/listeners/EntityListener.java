@@ -21,6 +21,7 @@ public class EntityListener implements Listener{
 		if (game != null) {
 			if (Config.getForceDamage(game.getSetup())) {
 				event.setCancelled(false);
+				return;
 			}
 		}
 		

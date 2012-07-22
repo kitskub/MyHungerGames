@@ -20,7 +20,6 @@ public class ReloadCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 
-		Files.loadAll();
 		HungerGames.reload();
 		ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
 		return true;

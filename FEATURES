@@ -1,0 +1,43 @@
+* Optional default game
+* Automatic update checking
+* Webstats
+* Full Automation (details below)
+* Multiple arenas with simultaneous games
+* Inheritable setups that allow per-game configurations that can be shared between games
+* Option for players to auto join the next available game
+* Option to use material names and/or ids with the ability to use custom blocks
+* Timed game start
+* Option to have games auto-start based on the number number of players that have voted
+* Option to have player auto-vote when joining a game
+* Optional number of lives
+* Optional to allow leaving a game temporarily
+* Option to allow winner of the game to keep items
+* Option to make players clear inventory or have the game save it
+* Option to make all players vote before auto-start
+* Configurable placeable blocks with both an opt-in and opt-out option
+* Configurable breakable blocks with both an opt-in and opt-out option
+* Configurable blocks that can be interacted with containing both an opt-in and opt-out option
+* Option to allow players in-game to use commands
+* Option to allow players in-game to be able to teleport
+* Option to auto-add chests into a game
+* Randomly filled chests
+* Chests that contain the same items every game
+* Option to force survival on players
+* Configurable option to freeze players on join
+* Option to force damage, even if it had been cancelled (to stop plugins like Factions)
+* World/Arena resetting on game end internally or by hook into Hawkeye or partial hook into LogBlock (limited by LogBlock)
+* Configurable player chat isolation in game
+* Option for only subscribers to hear announcements
+* Option to remove items on ground after game ends
+* Spectating
+* Sponsoring based on Vault economy
+* Configurable period that spectators get to sponsor an item for free
+* Configurable death cannon
+* Configurable timed games
+* Option to teleport players to where they were before join
+* Rewards that are given to the winner (both random and fixed)
+* Configurable language options
+* Ability for admins to start/stop/pause/resume games
+* Configurable arenas that can contain (but don't have to) worlds and/or cuboids
+* Sign listening to allow certain events to trigger Redstone
+* Optional metrics to appease the statistic gods

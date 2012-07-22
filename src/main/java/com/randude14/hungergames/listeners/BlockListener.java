@@ -77,7 +77,7 @@ public class BlockListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onchestBreak(BlockBreakEvent event) {
-		if (!(event.getBlock() instanceof Chest)) return;
+		if (!(event.getBlock().getState() instanceof Chest)) return;
 		for (HungerGame game : GameManager.getGames()) {
 			game.removeChest(event.getBlock().getLocation());
 		}
@@ -104,14 +104,15 @@ public class BlockListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteractMonitor(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		if (!(event.getClickedBlock() instanceof Chest)) return;
+		if (!(event.getClickedBlock().getState() instanceof Chest)) return;
 
                 Player player = event.getPlayer();
                 HungerGame game = GameManager.getPlayingSession(player);
                 if(game == null) return;
 		if(!Config.getAutoAdd(game.getSetup())) return;
-		Logging.log(Level.FINEST, "Inventory opened and checking for fill. Player: {0}", player.getName());
-                game.addAndFillChest((Chest) event.getClickedBlock());
+		
+		// Logging.log(Level.FINEST, "Inventory opened and checking for fill. Player: {0}", player.getName());
+                game.addAndFillChest((Chest) event.getClickedBlock().getState());
 	}
 
 	@EventHandler(ignoreCancelled = true)
