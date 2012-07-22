@@ -4,6 +4,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameEndEvent;
+import com.randude14.hungergames.games.HungerGame.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.LinkedList;
@@ -40,7 +41,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	
 	public void run() {
 		HungerGame game = queuedGames.poll();
-		if (game.isRunning() || game.isCounting() || game.isPaused() || !game.isEnabled()) return;
+		if (game.getState() != GameState.STOPPED) return;
 		for (int i = 0; i < Math.min(game.getSize(), queuedPlayers.size()); i++) {
 			Player p = Bukkit.getPlayer(queuedPlayers.poll());
 			if (p == null) continue;

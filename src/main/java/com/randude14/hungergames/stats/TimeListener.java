@@ -2,6 +2,7 @@ package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.games.HungerGame.GameState;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
@@ -9,6 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+/**
+ * Used for stats per-player
+ */
 public class TimeListener implements Listener {
 	private Map<String, Long> startTimes = new HashMap<String, Long>();
 
@@ -42,7 +46,7 @@ public class TimeListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinGameEvent event) {
-		if (event.getGame().isRunning()) playerStarted(event.getPlayer());
+		if (event.getGame().getState() == GameState.RUNNING) playerStarted(event.getPlayer());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

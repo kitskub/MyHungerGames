@@ -42,3 +42,4 @@
 * Sign listening to allow certain events to trigger Redstone
 * Optional metrics to appease the statistic gods
 * Weighted random chests
+* Optional grace period at beginning of game

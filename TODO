@@ -9,7 +9,7 @@ MEDIUM:
 - WebStats - finish
 - leaderboards
 - Add chests to internal listening w/config option
-- Special commands
+- Special-commands
 - Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
 
 LOW:
@@ -17,7 +17,7 @@ LOW:
 - NPCs
 - Enhance Spectating
 - /hg rules
-- Grace period
+- Timeout
 
 OPTIONAL:
 - Possible timed game events

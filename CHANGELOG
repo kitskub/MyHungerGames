@@ -17,6 +17,10 @@ v0.6
 - Added a lang.yml with some messages
 - Web stats!
 - Potentially added the possibly for chests to reset
+- Added an optional grace period
+- Added GameState enum
+- Set enabled now stops the game if disabling
+- Loading a game stops it if it is running and the load says it's disabled
 
 v0.5.2
 - Possibly fixed config issues

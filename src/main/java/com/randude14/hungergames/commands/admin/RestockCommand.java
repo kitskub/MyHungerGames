@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.games.HungerGame.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;
@@ -26,7 +27,7 @@ public class RestockCommand extends SubCommand{
 	    game = GameManager.getGame(args[0]);
 	    if (game == null) {
 	    }
-	    if (!game.isRunning()) {
+	    if (game.getState() != GameState.RUNNING) {
 		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
 		    return true;
 	    }

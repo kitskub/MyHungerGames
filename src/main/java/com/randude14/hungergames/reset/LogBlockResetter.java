@@ -18,17 +18,14 @@ import org.bukkit.entity.Player;
 
 public class LogBlockResetter extends Resetter{
     private LogBlock plugin;
-    private Map<HungerGame, Long> timeStarted;
 
     @Override
     public void init() {
-	timeStarted = new HashMap<HungerGame, Long>();
 	plugin = (LogBlock) Bukkit.getPluginManager().getPlugin("LogBlock");
     }
     
     @Override
     public void beginGame(HungerGame game) {
-	timeStarted.put(game, System.nanoTime());
     }
 
     @Override
@@ -36,8 +33,9 @@ public class LogBlockResetter extends Resetter{
 	QueryParams params = new QueryParams(plugin);
 	for (Player p : game.getAllPlayers()) params.setPlayer(p.getName());
 	params.bct = BlockChangeType.ALL;
-	params.since = (int) ((System.nanoTime() - timeStarted.get(game))/(60*1000));
-	timeStarted.remove(game);
+	long endTime = game.getEndTimes().get(game.getEndTimes().size() - 1);
+	long startTime = game.getInitialStartTime();
+	params.since = (int) ((endTime - startTime) / 1000*60);
 	params.needDate = true;
 	params.needType = true;
 	params.needData = true;

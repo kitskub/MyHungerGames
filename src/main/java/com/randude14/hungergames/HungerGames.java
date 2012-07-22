@@ -61,9 +61,9 @@ public class HungerGames extends JavaPlugin{
 	public void onEnable() {
 		instance = this;
 		registerCommands();
+		Files.loadAll();
 		rand = new Random(getName().hashCode());
 		manager = new GameManager();
-		Files.loadAll();
 		registerEvents();
 		updateConfig();
 		loadRegistry();

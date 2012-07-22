@@ -19,6 +19,12 @@ public class EntityListener implements Listener{
 		// Games
 		HungerGame game = GameManager.getSession(player);
 		if (game != null) {
+			double period = Config.getGracePeriod(game.getSetup());
+			long startTime = game.getInitialStartTime();
+			if (((System.currentTimeMillis() - startTime) / 1000) < period) {
+				event.setCancelled(true);
+				return;
+			}
 			if (Config.getForceDamage(game.getSetup())) {
 				event.setCancelled(false);
 				return;

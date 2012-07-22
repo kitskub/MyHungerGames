@@ -19,7 +19,6 @@ public class TimedGameRunnable implements Runnable, Listener{
 	private static Map<HungerGame, TimedGameRunnable> runnables = new HashMap<HungerGame, TimedGameRunnable>();
 	private HungerGame game;
 	private int taskId;
-	private long startTime;
 	private long timeLeft;
 	
 	private TimedGameRunnable setGame(HungerGame game) {
@@ -27,14 +26,14 @@ public class TimedGameRunnable implements Runnable, Listener{
 		return this;
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public static void onGameEnd(GameEndEvent event) {
-		TimedGameRunnable get = runnables.get(event.getGame());
-		if (get != null) {
-			get.stop();
-			runnables.put(event.getGame(), null);
-		}
-	}
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public static void onGameEnd(GameEndEvent event) {
+//		TimedGameRunnable get = runnables.get(event.getGame());
+//		if (get != null) {
+//			get.stop();
+//			runnables.put(event.getGame(), null);
+//		}
+//	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public static void onGamePause(GamePauseEvent event) {
@@ -60,16 +59,21 @@ public class TimedGameRunnable implements Runnable, Listener{
 	public void run() {
 		game.stopGame(false);
 		ChatUtils.broadcast(true, "Game %s has ended because it ran out of time!", game.getName());
+		stop();
 	}
 	
 	private void resume() {
-		if (timeLeft <= 0) Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), this, 5 * 20);
+		if (timeLeft <= 0) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), this, 5 * 20);
+			return;
+		}
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, timeLeft * 20);
-		startTime = System.currentTimeMillis();
 	}
 	
 	private void pause() {
-		long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+		long startTime = game.getStartTimes().get(game.getStartTimes().size() - 1);
+		long endTime = game.getEndTimes().get(game.getEndTimes().size() - 1);
+		long elapsed = (endTime - startTime) / 1000;
 		timeLeft -= elapsed;
 		Bukkit.getScheduler().cancelTask(taskId);
 	}
@@ -80,7 +84,6 @@ public class TimedGameRunnable implements Runnable, Listener{
 	}
 	
 	private void start() {
-		startTime = System.currentTimeMillis();
 		timeLeft = Config.getMaxGameDuration(game.getSetup()) * 1000;
 		if (timeLeft <= 0) return;
 		runnables.put(game, this);

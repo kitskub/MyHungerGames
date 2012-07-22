@@ -133,6 +133,10 @@ global:
   # If this is false, players are automatically sent back to where they were before they joined when a game ends
   # If this is true and no spawn is set, it defaults to the player's back location.
   use-spawn: true
+  
+  # This is time in seconds from the start of the game that players cannot be hurt
+  # Can have decimals
+  grace-period: 0
 
 # Setups ADD to global in any list
 setups:

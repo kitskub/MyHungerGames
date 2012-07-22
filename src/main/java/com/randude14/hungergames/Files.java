@@ -36,6 +36,7 @@ public enum Files {
 		File file = getFile();
 		try {
 			if (!file.exists()) {
+				Logging.debug("File %s does not exist. Creating.", path);
 				if (hasDefault) {
 					if (!file.exists()) HungerGames.getInstance().saveResource(path, false);
 				}

@@ -28,6 +28,10 @@ public class Config {
 		return Files.CONFIG.getConfig().getInt("global." + config, def);
 	}
 	
+	private static double getGlobalDouble(String config, double def) {
+		return Files.CONFIG.getConfig().getDouble("global." + config, def);
+	}
+	
 	private static List<String> getGlobalStringList(String config, List<String> def) {
 		if (Files.CONFIG.getConfig().contains("global." + config)) {
 			return Files.CONFIG.getConfig().getStringList("global." + config);
@@ -97,6 +101,27 @@ public class Config {
 	private static int getInteger(String config, String setup, int def) {
 		Integer i = getInteger(config, setup, new HashSet<String>());
 		return i == null ? def : i;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return Integer if found, null if not
+	 */
+	private static Double getDouble(String config, String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.CONFIG.getConfig().getDouble("setups." + setup + "." + config);
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			Double d = getDouble(config, parent, checked);
+			if (d != null) return d;
+		}
+		return null;
+	}
+	private static double getDouble(String config, String setup, double def) {
+		Double d = getDouble(config, setup, new HashSet<String>());
+		return d == null ? def : d;
 	}
 	
 	/** 
@@ -280,6 +305,10 @@ public class Config {
 	public static boolean getUseSpawnGlobal() {
 		return getGlobalBoolean("use-spawn", USE_SPAWN.getBoolean());
 	}
+		
+	public static double getGracePeriodGlobal() {
+		return getGlobalDouble("grace-period", GRACE_PERIOD.getDouble());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -396,6 +425,10 @@ public class Config {
 		
 	public static boolean getUseSpawn(String setup) {
 		return getBoolean("use-spawn", setup, getUseSpawnGlobal());
+	}
+
+	public static double getGracePeriod(String setup) {
+		return getDouble("grace-period", setup, getGracePeriodGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

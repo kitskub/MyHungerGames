@@ -5,6 +5,8 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.games.HungerGame.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;
@@ -44,7 +46,7 @@ public class SetEnabledCommand extends SubCommand{
 	    if (flag) {
 		    ChatUtils.send(player, "%s has been enabled.", game.getName());
 	    } else {
-		    ChatUtils.send(player, "%s has been disabled.", game.getName());
+		    ChatUtils.send(player, "%s has been disabled and stopped if it was running.", game.getName());
 	    }
 	    return true;
     }

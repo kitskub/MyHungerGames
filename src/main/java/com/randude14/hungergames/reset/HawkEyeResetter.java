@@ -28,7 +28,6 @@ import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
  *
  */
 public class HawkEyeResetter extends Resetter{
-	Map<HungerGame, Long> startTimes = new HashMap<HungerGame, Long>();
 	
 	@Override
 	public void init() {
@@ -36,7 +35,6 @@ public class HawkEyeResetter extends Resetter{
 
 	@Override
 	public void beginGame(HungerGame game) {
-		startTimes.put(game, System.currentTimeMillis());
 	}
     
 	@Override
@@ -48,7 +46,7 @@ public class HawkEyeResetter extends Resetter{
 		}
 		parser.players = gamePlayers;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		parser.dateFrom = sdf.format(new Date(startTimes.get(game)));
+		parser.dateFrom = sdf.format(new Date(game.getInitialStartTime()));
 		Set<String> worlds = new HashSet<String>();
 		for (World w : game.getWorlds()) {
 			worlds.add(w.getName());

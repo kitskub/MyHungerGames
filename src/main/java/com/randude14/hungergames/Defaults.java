@@ -74,7 +74,8 @@ public class Defaults {
 	DEATH_CANNON(1),
 	AUTO_JOIN_ALLOWED(true),
 	MAX_GAME_DURATION(0),
-	USE_SPAWN(true);
+	USE_SPAWN(true),
+	GRACE_PERIOD(0);
 	
 	
 	private Object value;
@@ -91,8 +92,8 @@ public class Defaults {
 	    return (Integer) value;
 	}
 	
-	public float getFloat(){
-	    return (Float) value;
+	public double getDouble(){
+	    return (Double) value;
 	}
 	
 	public String getString(){
