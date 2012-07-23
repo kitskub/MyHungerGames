@@ -26,15 +26,6 @@ public class TimedGameRunnable implements Runnable, Listener{
 		return this;
 	}
 
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public static void onGameEnd(GameEndEvent event) {
-//		TimedGameRunnable get = runnables.get(event.getGame());
-//		if (get != null) {
-//			get.stop();
-//			runnables.put(event.getGame(), null);
-//		}
-//	}
-
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public static void onGamePause(GamePauseEvent event) {
 		TimedGameRunnable get = runnables.get(event.getGame());

@@ -25,6 +25,7 @@ v0.6
 - Added special commands
 - Added a clear-inv option
 - Stop all games on plugin disable
+- Added timeout option
 
 v0.5.2
 - Possibly fixed config issues

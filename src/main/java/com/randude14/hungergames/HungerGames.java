@@ -154,6 +154,7 @@ public class HungerGames extends JavaPlugin{
 
 	private static void registerEvents() {
 		PluginManager pm = Bukkit.getPluginManager();
+		pm.registerEvents(new ActivityListener(), instance);
 		pm.registerEvents(new BlockListener(), instance);
 		pm.registerEvents(new CommandListener(), instance);
 		pm.registerEvents(new PlayerListener(), instance);

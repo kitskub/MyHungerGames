@@ -317,6 +317,10 @@ public class Config {
 	public static double getGracePeriodGlobal() {
 		return getGlobalDouble("grace-period", GRACE_PERIOD.getDouble());
 	}
+			
+	public static int getTimeoutGlobal() {
+		return getGlobalInt("timeout", TIMEOUT.getInt());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -445,6 +449,10 @@ public class Config {
 
 	public static double getGracePeriod(String setup) {
 		return getDouble("grace-period", setup, getGracePeriodGlobal());
+	}
+
+	public static int getTimeout(String setup) {
+		return getInteger("timeout", setup, getTimeoutGlobal());
 	}
 	
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

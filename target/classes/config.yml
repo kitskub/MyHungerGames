@@ -143,6 +143,11 @@ global:
   # This is time in seconds from the start of the game that players cannot be hurt
   # Can have decimals
   grace-period: 0
+  
+  # Time in seconds that players have to move or chat before they get kicked.
+  # Has a max variance of 10 seconds
+  # Value of 0 does not use a timeout
+  timeout: 300
 
 # Setups ADD to global in any list
 setups:

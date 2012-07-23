@@ -33,15 +33,8 @@ public class TimeListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameStart(GameStartEvent event) {
-		if (event.isResuming()) {
-			for (Player p : event.getGame().getRemainingPlayers()) {
-				playerStarted(p);
-			}
-		}
-		else {
-			for (Player p : event.getGame().getAllPlayers()) {
-				playerStarted(p);
-			}
+		for (Player p : event.getGame().getRemainingPlayers()) {
+			playerStarted(p);
 		}
 	}
 	

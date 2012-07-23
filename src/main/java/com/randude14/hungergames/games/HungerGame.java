@@ -1010,6 +1010,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	
 	/**
 	 * Gets the players that have lives and are playing
+	 * If game is not yet started remaining players are those that are waiting
 	 * 
 	 * @return the remaining players that have lives and are playing
 	 */
@@ -1019,7 +1020,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		Player player = Bukkit.getPlayer(playerName);
 		if (player == null) continue;
 		PlayerStat stat = stats.get(playerName);
-		if (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.GAME_PAUSED) {
+		if (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.GAME_PAUSED || stat.getState() == PlayerState.WAITING) {
 		    remaining.add(player);
 		}
 	    }

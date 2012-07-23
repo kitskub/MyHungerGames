@@ -43,3 +43,4 @@
 * Optional metrics to appease the statistic gods
 * Weighted random chests
 * Optional grace period at beginning of game
+* Optional timeout to kick people that don't move or chat
