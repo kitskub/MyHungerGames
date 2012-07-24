@@ -27,6 +27,7 @@ v0.6
 - Stop all games on plugin disable
 - Added timeout option
 - Minimum items in each random chest
+- Added /hga profile to help find bottlenecks in code
 
 v0.5.2
 - Possibly fixed config issues

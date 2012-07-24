@@ -3,6 +3,7 @@ package com.randude14.hungergames.reset;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.PerformanceMonitor;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.Cuboid;
 
@@ -57,6 +58,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     
     @Override
     public boolean resetChanges(HungerGame game) {
+	PerformanceMonitor.startActivity("resetChanges");
 	if(!changedBlocks.containsKey(game)) return true;
 	for(Location l : changedBlocks.get(game).keySet()) {
 		BlockState state = changedBlocks.get(game).get(l);
@@ -65,6 +67,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
 		l.getBlock().setData(state.getRawData());
 	}
 	changedBlocks.get(game).clear();
+	PerformanceMonitor.stopActivity("resetChanges");
 	return true;
     }
     

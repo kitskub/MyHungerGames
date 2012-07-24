@@ -44,3 +44,4 @@
 * Weighted random chests
 * Optional grace period at beginning of game
 * Optional timeout to kick people that don't move or chat
+* Profile command that saves a file for when the plugin acts slow and you demand action

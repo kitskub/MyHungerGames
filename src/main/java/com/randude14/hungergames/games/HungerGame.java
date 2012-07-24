@@ -339,6 +339,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	
 	public String stopGame(boolean isFinished) {
 		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
+		PerformanceMonitor.startActivity("stopGame(boolean)");
 
 		endTimes.add(System.currentTimeMillis());
 		if (countdown != null) countdown.cancel();
@@ -383,6 +384,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		clear();
 		ResetHandler.resetChanges(this);
+		PerformanceMonitor.stopActivity("stopGame(boolean)");
 		return null;
 	}
 	
@@ -439,9 +441,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return Null if game or countdown was successfully started. Otherwise, error message.
 	 */
 	public String startGame(int ticks, boolean includeCheck) {
+		PerformanceMonitor.startActivity("startGame(int, boolean)");
 		if (includeCheck) {
 			String result = startGamePreCheck();
-			if (result != null) return result;
+			if (result != null) {
+				PerformanceMonitor.stopActivity("startGame(int, boolean)");
+				return result;
+			}
 		}
 		
 		if (ticks > 0) {
@@ -454,6 +460,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		GameStartEvent event = new GameStartEvent(this);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
+			PerformanceMonitor.stopActivity("startGame(int, boolean)");
 			return "Start was cancelled.";
 		}
 		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
@@ -473,6 +480,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		state = RUNNING;
 		readyToPlay.clear();
 		ChatUtils.broadcast(true, "Starting %s. Go!!", name);
+		PerformanceMonitor.stopActivity("startGame(int, boolean)");
 		return null;
 	}
 	
@@ -1013,6 +1021,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return the remaining players that have lives and are playing
 	 */
 	public List<Player> getRemainingPlayers(){
+	    PerformanceMonitor.startActivity("getRemainingPlayers");
 	    List<Player> remaining = new ArrayList<Player>();
 	    for (String playerName : stats.keySet()) {
 		Player player = Bukkit.getPlayer(playerName);
@@ -1022,6 +1031,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		    remaining.add(player);
 		}
 	    }
+	    PerformanceMonitor.stopActivity("getRemainingPlayers");
 	    return remaining;
 	}
 

@@ -3,6 +3,7 @@ package com.randude14.hungergames.listeners;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.PerformanceMonitor;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
@@ -26,6 +27,7 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void run() {
+		PerformanceMonitor.startActivity("ActivityListener run()");
 		for (HungerGame game : times.keySet()) {
 			if (times.get(game) == null) times.put(game, new HashMap<String, Long>());
 			long maxTime = Config.getTimeout(game.getSetup()) * 1000;
@@ -40,6 +42,7 @@ public class ActivityListener implements Listener, Runnable {
 				}
 			}
 		}
+		PerformanceMonitor.stopActivity("ActivityListener run()");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

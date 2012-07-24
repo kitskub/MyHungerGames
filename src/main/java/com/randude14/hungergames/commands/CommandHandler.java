@@ -164,6 +164,9 @@ public class CommandHandler implements CommandExecutor {
 		else if("pause".equalsIgnoreCase(args[0])) {
 			command = new PauseCommand();
 		}
+		else if("profile".equalsIgnoreCase(args[0])) {
+			command = new ProfileCommand();
+		}
 		else if("resume".equalsIgnoreCase(args[0])) {
 			command = new ResumeCommand();
 		}
