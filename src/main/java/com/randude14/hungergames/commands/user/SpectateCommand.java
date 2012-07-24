@@ -42,11 +42,11 @@ public class SpectateCommand extends SubCommand{
 		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
 		    return true;
 	    }
-	    if (args.length == 2) {
+	    if (args.length < 2) {
 		    game.addSpectator(player, null);    
 	    }
 	    else {
-		    Player spectated = Bukkit.getPlayer(args[2]);
+		    Player spectated = Bukkit.getPlayer(args[1]);
 		    if (spectated == null) {
 			    game.addSpectator(player, null);
 		    }

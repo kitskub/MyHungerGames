@@ -76,7 +76,7 @@ public class Defaults {
 	AUTO_JOIN_ALLOWED(true),
 	MAX_GAME_DURATION(0),
 	USE_SPAWN(true),
-	GRACE_PERIOD(0),
+	GRACE_PERIOD(0d),
 	TIMEOUT(300);
 	
 	

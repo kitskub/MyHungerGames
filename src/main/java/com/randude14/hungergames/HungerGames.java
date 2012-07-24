@@ -390,6 +390,8 @@ public class HungerGames extends JavaPlugin{
 		int size = chest.getInventory().getSize();
 		final int maxItemSize = 100;
 		int numItems = items.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(items.size()))/Math.sqrt(maxItemSize));
+		int minItems = (int) Math.floor(numItems/2);
+		int itemsIn = 0;
 		for (int cntr = 0; cntr < numItems; cntr++) {
 			int index = 0;
 			do {
@@ -397,10 +399,23 @@ public class HungerGames extends JavaPlugin{
 			} while (chest.getInventory().getItem(index) != null);
 			
 			ItemStack item = items.get(rand.nextInt(items.size()));
-			if (itemMap.get(item) >= rand.nextInt() * weight) {
+			if (weight * itemMap.get(item) >= rand.nextFloat()) {
 				chest.getInventory().setItem(index, item);
+				itemsIn++;
 			}
 
+		}
+		while (itemsIn < minItems) { // minimum
+			int index = 0;
+			do {
+				index = rand.nextInt(chest.getInventory().getSize());
+			} while (chest.getInventory().getItem(index) != null);
+			
+			ItemStack item = items.get(rand.nextInt(items.size()));
+			if (weight * itemMap.get(item) >= rand.nextFloat()) {
+				chest.getInventory().setItem(index, item);
+				itemsIn++;
+			}
 		}
 	}
 

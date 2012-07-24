@@ -802,6 +802,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
+	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING;
 	    if (wasPlaying) {
 		    dropInventory(player);
@@ -819,7 +820,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    checkForGameOver(false);
 
-	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
 	    String mess = Lang.getQuitMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
@@ -943,10 +943,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 */
 	public boolean contains(Player... players) {
 	    for (Player player : players) {
-		if (!stats.containsKey(player.getName())) {
-			PlayerState pState = stats.get(player.getName()).getState();
-			if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.NOT_PLAYING || pState == PlayerState.DEAD) return false;
-		}
+		if (!stats.containsKey(player.getName())) return false;
+		PlayerState pState = stats.get(player.getName()).getState();
+		if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.NOT_PLAYING || pState == PlayerState.DEAD) return false;
 	    }
 	    return true;
 	}
@@ -983,7 +982,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			event = new PlayerKillEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		
+		HungerGames.callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			playerLeaving(killed, false);
 			checkForGameOver(false);
@@ -1001,7 +1000,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
 		}
-		HungerGames.callEvent(event);
 	}
 
 	public void killed(Player killed) {
@@ -1075,7 +1073,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				statName = ChatColor.GREEN.toString() + p.getName() + ChatColor.GRAY.toString();
 				living++;
 			}
-			mess += String.format("%s [%d/%d]", statName, stat.getLivesLeft(), stat.getKills());
+			mess += String.format("%s [%d/%d]", statName, stat.getLivesLeft(), stat.getKills().size());
 			if (players.size() >= cntr + 1) {
 				mess += ", ";
 			}

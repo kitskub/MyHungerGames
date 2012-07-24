@@ -11,20 +11,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemConfig {
-	private static YamlConfiguration itemConfig = Files.ITEMCONFIG.getConfig();
 	
 	public static boolean useMatchMaterial() {
-		return itemConfig.getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getBoolean());
+		return Files.ITEMCONFIG.getConfig().getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getBoolean());
 	}
 	
 	// Itemsets
 	public static List<String> getItemSets(){
-	    ConfigurationSection section = itemConfig.getConfigurationSection("itemsets");
+	    ConfigurationSection section = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets");
 	    if(section == null) return Collections.emptyList();
 	    List<String> list = new ArrayList<String>(section.getKeys(false));
 	    return (list == null) ? new ArrayList<String>() : list;
@@ -56,9 +54,9 @@ public class ItemConfig {
 	private static Map<ItemStack, Float> getChestLoot(String itemset, Set<String> checked) {
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readItemSectionWithChance(itemConfig.getConfigurationSection("itemsets." + itemset + ".chest-loot"), useMatchMaterial()));
+		chestLoot.putAll(readItemSectionWithChance(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot"), useMatchMaterial()));
 		checked.add(itemset);
-		for (String parent : itemConfig.getStringList("itemsets." + itemset + ".inherits")) {
+		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			chestLoot.putAll(getChestLoot(parent, checked));
 		}
 		return chestLoot;
@@ -72,9 +70,9 @@ public class ItemConfig {
 	private static Map<ItemStack, Double> getSponsorLoot(String itemset, Set<String> checked) {
 		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readItemSectionWithMoney(itemConfig.getConfigurationSection("itemsets." + itemset + ".sponsor-loot"), useMatchMaterial()));
+		chestLoot.putAll(readItemSectionWithMoney(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot"), useMatchMaterial()));
 		checked.add(itemset);
-		for (String parent : itemConfig.getStringList("itemsets." + itemset + ".inherits")) {
+		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			checked.add(parent);
 			chestLoot.putAll(getSponsorLoot(parent, checked));
 		}
@@ -94,10 +92,10 @@ public class ItemConfig {
 	public static void addChestLoot(String itemset, ItemStack item, float chance){
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
-		    itemSection = itemConfig.getConfigurationSection("global.chest-loot");
+		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
 	    }
 	    else {
-		    itemSection = itemConfig.getConfigurationSection("itemsets." + itemset + ".chest-loot");
+		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
@@ -115,10 +113,10 @@ public class ItemConfig {
 	public static void addSponsorLoot(String itemset, ItemStack item, double cost){
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
-		    itemSection = itemConfig.getConfigurationSection("global.chest-loot");
+		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
 	    }
 	    else {
-		    itemSection = itemConfig.getConfigurationSection("itemsets." + itemset + ".chest-loot");
+		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
@@ -133,7 +131,7 @@ public class ItemConfig {
 	
 	public static Map<ItemStack, Float> getGlobalChestLoot() {
 		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
-		ConfigurationSection itemSection = itemConfig.getConfigurationSection("global.chest-loot");
+		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
 		if(itemSection == null) return chestLoot;
 		
 		return readItemSectionWithChance(itemSection, useMatchMaterial());
@@ -141,7 +139,7 @@ public class ItemConfig {
 	
 	public static Map<ItemStack, Double> getGlobalSponsorLoot() {
 		Map<ItemStack, Double> sponsorLoot = new HashMap<ItemStack, Double>();
-		ConfigurationSection itemSection = itemConfig.getConfigurationSection("global.sponsor-loot");
+		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.sponsor-loot");
 		if(itemSection == null) return sponsorLoot;
 		
 		return readItemSectionWithMoney(itemSection, useMatchMaterial());
@@ -149,7 +147,7 @@ public class ItemConfig {
 
 
 	public static Set<String> getFixedChests() {
-		ConfigurationSection chestSection = itemConfig.getConfigurationSection("chests");
+		ConfigurationSection chestSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("chests");
 		if (chestSection == null) return new HashSet<String>();
 		return chestSection.getKeys(false);
 	}
@@ -157,9 +155,9 @@ public class ItemConfig {
 	private static List<ItemStack> getFixedChest(String chest, Set<String> checked) {
 		List<ItemStack> fixedChests = new ArrayList<ItemStack>();
 		if (checked.contains(chest)) return fixedChests;
-		fixedChests.addAll(readItemSection(itemConfig.getConfigurationSection("chests." + chest), useMatchMaterial()));
+		fixedChests.addAll(readItemSection(Files.ITEMCONFIG.getConfig().getConfigurationSection("chests." + chest), useMatchMaterial()));
 		checked.add(chest);
-		for (String parent : itemConfig.getStringList("chests." + chest + ".inherits")) {
+		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("chests." + chest + ".inherits")) {
 			fixedChests.addAll(getFixedChest(parent, checked));
 		}
 		return fixedChests;
@@ -170,17 +168,17 @@ public class ItemConfig {
 	}
 	
 	public static List<ItemStack> getStaticRewards() {
-		return readItemSection(itemConfig.getConfigurationSection("rewards.static"), useMatchMaterial());
+		return readItemSection(Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.static"), useMatchMaterial());
 			
 	}
 	
 	public static Map<ItemStack, Float> getRandomRewards() {
-		return readItemSectionWithChance(itemConfig.getConfigurationSection("rewards.random"), useMatchMaterial());
+		return readItemSectionWithChance(Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random"), useMatchMaterial());
 			
 	}
 	
 	public static void addStaticReward(ItemStack item) {
-		ConfigurationSection itemSection = itemConfig.getConfigurationSection("rewards.static");
+		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.static");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
 		builder.append(item.getData().getData());
@@ -194,7 +192,7 @@ public class ItemConfig {
 	}
 	
 	public static void addRandomReward(ItemStack item, float chance) {
-		ConfigurationSection itemSection = itemConfig.getConfigurationSection("rewards.random");
+		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
 		builder.append(item.getData().getData());
@@ -209,6 +207,6 @@ public class ItemConfig {
 	}
 	
 	public static int getMaxRandomItems() {
-		return itemConfig.getInt("rewards.max-random", Defaults.Config.MAX_RANDOM_ITEMS.getInt());
+		return Files.ITEMCONFIG.getConfig().getInt("rewards.max-random", Defaults.Config.MAX_RANDOM_ITEMS.getInt());
 	}
 }
