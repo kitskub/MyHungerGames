@@ -29,10 +29,14 @@ public class AddChestLootCommand extends SubCommand{
 			chance = Float.valueOf(args[0]);
 		}
 		catch (NumberFormatException e) {
-			ChatUtils.send(player, ChatColor.GREEN, "{0} is not a valid number", args[0]);
+			ChatUtils.error(player,"{0} is not a valid number", args[0]);
 		}
 		
 		if (args.length < 2) {
+			if (player.getItemInHand() == null) {
+				ChatUtils.error(player,"There is no item in hand. Perhaps you used the command wrong?");
+				return true;
+			}
 			ItemConfig.addChestLoot(null, player.getItemInHand(), chance);
 		}
 		else {

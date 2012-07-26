@@ -1,6 +1,7 @@
 package com.randude14.hungergames.register;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class Economy {
@@ -14,6 +15,8 @@ public class Economy {
 	}
 	
 	public static boolean isVaultInstalled() {
+		Plugin plugin = Bukkit.getPluginManager().getPlugin("Vault");
+		if (plugin == null || !plugin.isEnabled()) return false;
 		try {
 			Class.forName("net.milkbowl.vault.economy.Economy");
 			return true;

@@ -138,12 +138,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			for (String key : chestsSection.getKeys(false)) {
 				String[] parts = chestsSection.getString(key).split(",");
 				Location loc = null;
-				float weight = 0f;
+				float weight = 1f;
 				try {
 					loc = HungerGames.parseToLoc(parts[0]);
 					weight = Float.parseFloat(parts[1]);
 				}
 				catch (NumberFormatException e) {}
+				catch (IndexOutOfBoundsException e) {}
 				if (loc == null || loc.getWorld() == null) {
 					Logging.warning("failed to load location '%s'", parts[0]);
 					continue;
@@ -920,6 +921,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				event = new GameEndEvent(this, null);
 			} else {
 				ChatUtils.broadcast(true, Lang.getWin(setup).replace("<player>", winner.getName()).replace("<game>", name));
+				ChatUtils.send(winner, "Congratulations! You won!");// TODO message
 				event = new GameEndEvent(this, winner);
 			}
 			stopGame(true);

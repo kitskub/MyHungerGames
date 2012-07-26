@@ -44,13 +44,15 @@ public class InternalListener implements Runnable, Listener {
 		for (ListenerType type : ListenerType.values()) {
 			ConfigurationSection section = config.getConfigurationSection(type.name());
 			if (!allGameListeners.containsKey(type)) allGameListeners.put(type, new ArrayList<Location>());
+			if (!listeners.containsKey(type)) listeners.put(type, new HashMap<String, List<Location>>());
+			if (section == null) continue;
+
 			List<String> sList = section.getStringList("gameLocs");
 			if (sList != null) {
 				for (String s : sList) {
 					allGameListeners.get(type).add(HungerGames.parseToLoc(s));
 				}
 			}
-			if (!listeners.containsKey(type)) listeners.put(type, new HashMap<String, List<Location>>());
 			if (section == null) continue;
 			for (String game : section.getKeys(false)) {
 				if (!listeners.get(type).containsKey(game)) listeners.get(type).put(game, new ArrayList<Location>());
