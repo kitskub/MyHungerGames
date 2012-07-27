@@ -31,7 +31,7 @@ public class LogBlockResetter extends Resetter{
     @Override
     public boolean resetChanges(HungerGame game) {
 	QueryParams params = new QueryParams(plugin);
-	for (Player p : game.getAllPlayers()) params.setPlayer(p.getName());
+	for (String p : game.getAllPlayers()) params.setPlayer(p);
 	params.bct = BlockChangeType.ALL;
 	long endTime = game.getEndTimes().get(game.getEndTimes().size() - 1);
 	long startTime = game.getInitialStartTime();

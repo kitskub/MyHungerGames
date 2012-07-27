@@ -40,11 +40,7 @@ public class HawkEyeResetter extends Resetter{
 	@Override
 	public boolean resetChanges(HungerGame game) {
 		SearchParser parser = new SearchParser();
-		List<String> gamePlayers = new ArrayList<String>();
-		for (Player p : game.getAllPlayers()) {
-			gamePlayers.add(p.getName());
-		}
-		parser.players = gamePlayers;
+		parser.players = game.getAllPlayers();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		parser.dateFrom = sdf.format(new Date(game.getInitialStartTime()));
 		Set<String> worlds = new HashSet<String>();

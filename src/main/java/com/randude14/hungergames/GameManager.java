@@ -139,7 +139,7 @@ public class GameManager{
 		}
 		HungerGame game = getSession(player);
 		if (game == null) return;
-		game.quit(player);
+		game.leave(player);
 	}
 
 	public static void loadGames() {

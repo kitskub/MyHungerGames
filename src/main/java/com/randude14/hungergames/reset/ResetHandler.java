@@ -1,15 +1,7 @@
 package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.utils.FileUtils;
-import java.io.File;
-import java.util.logging.Level;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class ResetHandler{
     public static final String INTERNAL = "INTERNAL";

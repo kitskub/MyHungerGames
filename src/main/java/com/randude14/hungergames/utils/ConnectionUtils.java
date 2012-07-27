@@ -33,7 +33,6 @@ public class ConnectionUtils {
 			}
 			content += key + "=" + URLEncoder.encode(data.get(key), "UTF-8");
 		}
-		System.out.println(content);
 		out.writeBytes(content);
 		out.flush();
 		out.close();

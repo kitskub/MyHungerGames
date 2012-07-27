@@ -44,7 +44,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private final Map<String, Location> spawnsTaken;
 	private final Set<String> allPlayers;
 	private final List<Location> randomLocs;
-	private final Map<String, String> sponsors; // Just a list for info, <sponsor, sponsee>
+	private final Map<String, List<String>> sponsors; // Just a list for info, <sponsor, sponsee>
 	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
 	private final List<Long> startTimes;
 	private final List<Long> endTimes;
@@ -86,7 +86,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spawnsTaken = new HashMap<String, Location>();
 		allPlayers = new HashSet<String>();
 		spawnPoints = new ArrayList<Location>();
-		sponsors = new HashMap<String, String>();
+		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
 		//isRunning = isCounting = isPaused = false;
 		randomLocs = new ArrayList<Location>();
@@ -797,12 +797,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		dropInventory(player);
 		playerLeaving(player, false);
 		teleportPlayerToSpawn(player);
-		checkForGameOver(false);
-
-		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 		String mess = Lang.getLeaveMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(mess, true);
+		checkForGameOver(false);
+
+		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 		return true;
 	}
 	
@@ -827,11 +827,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if (wasPlaying || state != RUNNING) {
 		    teleportPlayerToSpawn(player);
 	    }
-	    checkForGameOver(false);
-
+	    
 	    String mess = Lang.getQuitMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
+	    checkForGameOver(false);
 	    return true;
 	}
 	
@@ -1204,13 +1204,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spawn = newSpawn;
 	}
 
-	public List<Player> getAllPlayers() {
-		List<Player> players = new ArrayList<Player>();
-		for (String s : allPlayers) {
-		    if (Bukkit.getPlayer(s) == null) continue;
-		    players.add(Bukkit.getPlayer(s));
-		}
-		return players;
+	public List<String> getAllPlayers() {
+		return new ArrayList<String>(allPlayers);
 	}
 	
 	public Location getSpawn() {
@@ -1245,12 +1240,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		cuboids.add(new Cuboid(one, two));
 	}
 
-	public Map<String, String> getSponsors() {
+	public Map<String, List<String>> getSponsors() {
 		return Collections.unmodifiableMap(sponsors);
 	}
 
 	public void addSponsor(String player, String playerToBeSponsored) {
-		sponsors.put(player, playerToBeSponsored);
+		if (sponsors.get(player) == null) sponsors.put(player, new ArrayList<String>());
+		sponsors.get(player).add(playerToBeSponsored);
 	}
 	
 	public Set<World> getWorlds() {
