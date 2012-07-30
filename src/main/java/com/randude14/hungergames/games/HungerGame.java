@@ -374,6 +374,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
+			if (spectator == null) continue;
 			removeSpectator(spectator);
 		}
 		spectatorSponsoringRunnable.cancel();
@@ -924,8 +925,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				ChatUtils.send(winner, "Congratulations! You won!");// TODO message
 				event = new GameEndEvent(this, winner);
 			}
-			stopGame(true);
 			HungerGames.callEvent(event);
+			stopGame(true);
 			return true;
 		}
 

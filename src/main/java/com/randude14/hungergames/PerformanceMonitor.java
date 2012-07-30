@@ -24,7 +24,7 @@ public class PerformanceMonitor {
 		finished.get(name).add((System.currentTimeMillis() - startTime)/1000);
 	}
 	
-	public void saveFile() {
+	public static void saveFile() {
 		if (!profile) return;
 		File profiledFile = new File(HungerGames.getInstance().getDataFolder(), "profile.log");
 		try {

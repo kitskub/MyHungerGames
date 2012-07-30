@@ -10,6 +10,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /*
 * Players
@@ -60,6 +66,10 @@ public class StatHandler {
 		
 		try {
 			ConnectionUtils.post(urlString, map);
+		} catch (ParserConfigurationException ex) {
+			Logging.debug("Error when updating games: " + ex.getMessage());
+		} catch (SAXException ex) {
+			Logging.debug("Error when updating games: " + ex.getMessage());
 		} catch (IllegalStateException ex) {
 			Logging.debug("Error when updating games: " + ex.getMessage());
 		} catch (IOException ex) {
@@ -87,6 +97,10 @@ public class StatHandler {
 		map.put("deaths", String.valueOf(stat.getNumKills()));
 		try {
 			ConnectionUtils.post(urlString, map);
+		} catch (ParserConfigurationException ex) {
+			Logging.debug("Error when updating stat: " + ex.getMessage());
+		} catch (SAXException ex) {
+			Logging.debug("Error when updating stat: " + ex.getMessage());
 		} catch (IllegalStateException ex) {
 			Logging.debug("Error when updating stat: " + ex.getMessage());
 		} catch (IOException ex) {
@@ -94,4 +108,119 @@ public class StatHandler {
 		}
 	}
 
+	public static SQLStat getStat(String s) {
+		String urlString = Config.getWebStatsIP();
+		if ("0.0.0.0".equals(urlString)) return null;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("requestType", "requestPlayer");
+		map.put("playerName", s);
+		Document doc;
+		try {
+			doc = ConnectionUtils.post(urlString, map);
+		} catch (ParserConfigurationException ex) {
+			Logging.debug("Error when getting stat: " + ex.getMessage());
+			return null;
+		} catch (SAXException ex) {
+			Logging.debug("Error when getting stat: " + ex.getMessage());
+			return null;
+		} catch (IllegalStateException ex) {
+			Logging.debug("Error when getting stat: " + ex.getMessage());
+			return null;
+		} catch (IOException ex) {
+			Logging.debug("Error when getting stat: " + ex.getMessage());
+			return null;
+		}
+		SQLStat stat = new SQLStat();
+		Element rootEle = doc.getDocumentElement();
+		NodeList globalElems = rootEle.getElementsByTagName("global");
+		if (globalElems.getLength() > 0) {
+			Node node = globalElems.item(0);
+			stat.deaths = getIntValue(node, "deaths");
+			stat.kills = getIntValue(node, "kills");
+			stat.lastLogin = getDateValue(node, "lastLogin");
+			stat.totalGames = getIntValue(node, "totalGames");
+			stat.totalTime = getTimeValue(node, "totalTime");
+			stat.wins = getIntValue(node, "wins");
+		}
+		
+		NodeList gamesElems = rootEle.getElementsByTagName("game");
+		for (int i = 0; i < gamesElems.getLength(); i++) {
+			Node node = gamesElems.item(i);
+			SQLStat.SQLGameStat gameStat = stat.new SQLGameStat();
+			gameStat.startTime = getDateValue(node, "startTime");
+			gameStat.totalDuration = getTimeValue(node, "totalDuration");
+			gameStat.totalPlayers = getIntValue(node, "totalPlayers");
+			gameStat.winner = getTextValue(node, "winner");
+			NodeList playersElems = ((Element) node).getElementsByTagName("player");
+			for (int j = 0; j < playersElems.getLength(); j++) {
+				gameStat.players.add(playersElems.item(j).getNodeValue());
+			}
+			NodeList sponsorsElems = ((Element) node).getElementsByTagName("sponsor");
+			for (int j = 0; j < playersElems.getLength(); j++) {
+				gameStat.players.add(sponsorsElems.item(j).getNodeValue());
+			}
+		}
+		return stat;
+	}
+	
+	private static String getTextValue(Node node, String tagName) {
+		String textVal = null;
+		Element ele = (Element) node;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
+
+		return textVal;
+	}
+	
+	private static Integer getIntValue(Node node, String tagName) {
+		String textVal = null;
+		Element ele = (Element) node;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
+
+		try {
+			return Integer.getInteger(textVal);
+		} catch (NumberFormatException numberFormatException) {
+			return null;
+		}
+	}
+	
+	private static Date getDateValue(Node node, String tagName) {
+		String textVal = null;
+		Element ele = (Element) node;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
+
+
+		try {
+			return Date.valueOf(textVal);
+		} catch (Exception exception) {
+			return null;
+		}
+	}
+	
+	private static Time getTimeValue(Node node, String tagName) {
+		String textVal = null;
+		Element ele = (Element) node;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
+
+		try {
+			return Time.valueOf(textVal);
+		} catch (Exception exception) {
+			return null;
+		}
+	}
 }

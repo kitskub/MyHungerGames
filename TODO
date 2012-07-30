@@ -11,6 +11,7 @@ MEDIUM:
 - Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
 - Deathmatch
 - Take-life-on-leave
+- Waiting state
 
 LOW:
 - economy config stuff
