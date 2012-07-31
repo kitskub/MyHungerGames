@@ -130,10 +130,11 @@ public class StatHandler {
 			Logging.debug("Error when getting stat: " + ex.getMessage());
 			return null;
 		}
-		SQLStat stat = new SQLStat();
+		SQLStat stat = null;
 		Element rootEle = doc.getDocumentElement();
 		NodeList globalElems = rootEle.getElementsByTagName("global");
 		if (globalElems.getLength() > 0) {
+			stat = new SQLStat();
 			Node node = globalElems.item(0);
 			stat.deaths = getIntValue(node, "deaths");
 			stat.kills = getIntValue(node, "kills");
@@ -142,7 +143,7 @@ public class StatHandler {
 			stat.totalTime = getTimeValue(node, "totalTime");
 			stat.wins = getIntValue(node, "wins");
 		}
-		
+		if (stat == null) return null;
 		NodeList gamesElems = rootEle.getElementsByTagName("game");
 		for (int i = 0; i < gamesElems.getLength(); i++) {
 			Node node = gamesElems.item(i);
