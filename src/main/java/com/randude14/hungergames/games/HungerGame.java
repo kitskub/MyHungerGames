@@ -285,10 +285,21 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		String mess = Lang.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
 		ChatUtils.broadcast(mess, true);
 		int minVote = Config.getMinVote(setup);
-		if ((readyToPlay.size() >= minVote && stats.size() >= Config.getMinPlayers(setup) && !Config.getAllVote(setup))
-		    || (readyToPlay.size() >= stats.size() && Config.getAllVote(setup) && !Config.getAutoVote(setup))) {
-			ChatUtils.broadcast(true, "Enough players have voted that they are ready. Starting game...", this.name);
-			startGame(false);
+		int minPlayers = Config.getMinPlayers(setup);
+		int startTimer = Config.getStartTimer(setup);
+		int ready = readyToPlay.size();
+		int joined = stats.size();
+		boolean allVote = Config.getAllVote(setup);
+		boolean autoVote = Config.getAutoVote(setup);
+		if (joined >= minPlayers) {
+			if ((ready >= minVote && !allVote) || (ready >= joined && allVote && !autoVote)) {
+				ChatUtils.broadcast(true, "Enough players have voted that they are ready. Starting game...", this.name);
+				startGame(false);
+			}
+			else if (startTimer > 0) {
+				ChatUtils.broadcast(true, "The minimum amount of players for this game has been reached. Countdown has begun...", this.name);
+				startGame(startTimer);
+			}
 		}
 		return true;
 	}
@@ -352,6 +363,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 				InventorySave.loadGameInventory(p);
 			}
 		}
+		StatHandler.updateGame(this);
 		state = STOPPED;
 		for (Player player : getRemainingPlayers()) {
 			ItemStack[] contents = player.getInventory().getContents();
@@ -398,16 +410,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @param includeCheck 
 	 * @return true if game or countdown was successfully started
 	 */
-	public boolean startGame(Player player, int ticks, boolean includeCheck) {
-		if (ticks <= 0) {
-			String result = startGame(0, includeCheck);
-			if (result != null) {
-				ChatUtils.error(player, result);
-				return false;
-			}
-		} else {
-			countdown = new GameCountdown(this, ticks, player);
-			state = COUNTING_FOR_START;
+	public boolean startGame(Player player, int ticks) {
+		String result = startGame(0);
+		if (result != null) {
+			ChatUtils.error(player, result);
+			return false;
 		}
 		return true;
 	}
@@ -420,8 +427,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return
 	 */
 	public boolean startGame(Player player, boolean immediate) {
-		if(!immediate) return startGame(player, Config.getDefaultTime(setup), true);
-		return startGame(player, 0, true);
+		if(!immediate) return startGame(player, Config.getDefaultTime(setup));
+		return startGame(player, 0);
 	}
 
 	/**
@@ -431,32 +438,35 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return
 	 */
 	public boolean startGame(boolean immediate) {
-		if(!immediate) return startGame(Config.getDefaultTime(setup), true) == null;
-		return startGame(0, true) == null;
+		if(!immediate) return startGame(Config.getDefaultTime(setup)) == null;
+		return startGame(0) == null;
 	}
 	
 	/**
 	 * Starts the game
 	 * 
 	 * @param ticks 
-	 * @param includeCheck 
 	 * @return Null if game or countdown was successfully started. Otherwise, error message.
 	 */
-	public String startGame(int ticks, boolean includeCheck) {
+	public String startGame(int ticks) {
 		PerformanceMonitor.startActivity("startGame(int, boolean)");
-		if (includeCheck) {
-			String result = startGamePreCheck();
-			if (result != null) {
-				PerformanceMonitor.stopActivity("startGame(int, boolean)");
-				return result;
+		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
+		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
+		if (countdown != null) {
+			if (ticks < countdown.getTimeLeft()) {
+				countdown.cancel();
+				countdown = null;
+			}
+			else {
+				return Lang.getAlreadyCountingDown(setup).replace("<game>", name);
 			}
 		}
-		
 		if (ticks > 0) {
 			countdown = new GameCountdown(this, ticks);
 			state = COUNTING_FOR_START;
 			return null;
 		}
+		if (stats.size() < Config.getMinPlayers(setup) || stats.size() < 2) return String.format("There are not enough players in %s", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this);
@@ -483,14 +493,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		readyToPlay.clear();
 		ChatUtils.broadcast(true, "Starting %s. Go!!", name);
 		PerformanceMonitor.stopActivity("startGame(int, boolean)");
-		return null;
-	}
-	
-	private String startGamePreCheck() {
-		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
-		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
-		if (stats.size() < Config.getMinPlayers(setup) || stats.size() < 2) return String.format("There are not enough players in %s", name);
-		if (state == COUNTING_FOR_RESUME || state == COUNTING_FOR_START) return Lang.getAlreadyCountingDown(setup).replace("<game>", name);
 		return null;
 	}
 
@@ -792,6 +794,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		else {
 			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
+			stats.get(player.getName()).death(PlayerStat.NODODY);
 		}
 		playerEntering(player, true);
 		InventorySave.loadGameInventory(player);

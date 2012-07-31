@@ -321,6 +321,14 @@ public class Config {
 	public static int getTimeoutGlobal() {
 		return getGlobalInt("timeout", TIMEOUT.getInt());
 	}
+		
+	public static boolean getTakeLifeOnLeaveGlobal() {
+		return getGlobalBoolean("take-life-on-leave", TAKE_LIFE_ON_LEAVE.getBoolean());
+	}
+
+	public static int getStartTimerGlobal() {
+		return getGlobalInt("start-timer", START_TIMER.getInt());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -454,7 +462,15 @@ public class Config {
 	public static int getTimeout(String setup) {
 		return getInteger("timeout", setup, getTimeoutGlobal());
 	}
-	
+		
+	public static boolean getTakeLifeOnLeave(String setup) {
+		return getBoolean("take-life-on-leave", setup, getTakeLifeOnLeaveGlobal());
+	}
+
+	public static int getStartTimer(String setup) {
+		return getInteger("start-timer", setup, getStartTimerGlobal());
+	}
+
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : getStringList("special-blocks-place", setup, getSpecialBlocksPlaceGlobal())){

@@ -28,6 +28,8 @@ v0.6
 - Added timeout option
 - Minimum items in each random chest
 - Added /hga profile to help find bottlenecks in code
+- Added take-life-on-leave
+- Added start-timer
 
 v0.5.2
 - Possibly fixed config issues

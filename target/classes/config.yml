@@ -148,7 +148,14 @@ global:
   # Has a max variance of 10 seconds
   # Value of 0 does not use a timeout
   timeout: 300
-
+  
+  # If true, when a player leaves a game (not quits), a life will be deducted
+  take-life-on-leave: true
+  
+  # Amount of time in seconds after min-players has been achieved does a game start
+  # 0 is off
+  start-timer: 0
+  
 # Setups ADD to global in any list
 setups:
 #  test1:

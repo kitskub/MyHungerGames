@@ -77,7 +77,9 @@ public class Defaults {
 	MAX_GAME_DURATION(0),
 	USE_SPAWN(true),
 	GRACE_PERIOD(0d),
-	TIMEOUT(300);
+	TIMEOUT(300),
+	TAKE_LIFE_ON_LEAVE(true),
+	START_TIMER(0);
 	
 	
 	private Object value;
