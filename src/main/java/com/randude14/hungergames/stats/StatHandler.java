@@ -94,7 +94,7 @@ public class StatHandler {
 		}
 		map.put("wins", wins);
 		map.put("kills", String.valueOf(stat.getNumKills()));
-		map.put("deaths", String.valueOf(stat.getNumKills()));
+		map.put("deaths", String.valueOf(stat.getNumDeaths()));
 		try {
 			ConnectionUtils.post(urlString, map);
 		} catch (ParserConfigurationException ex) {
