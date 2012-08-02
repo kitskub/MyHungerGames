@@ -8,6 +8,7 @@ import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -83,7 +84,7 @@ public class StatHandler {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updatePlayers");
 		map.put("playerName", stat.getPlayer().getName());
-		map.put("lastLogin", new Date(System.currentTimeMillis()).toString()); // TODO do this better
+		map.put("lastLogin", new Timestamp(System.currentTimeMillis()).toString());
 		map.put("totalTime", new Time(stat.getTime()).toString());
 		String wins;
 		if (stat.getState() == PlayerState.DEAD) {

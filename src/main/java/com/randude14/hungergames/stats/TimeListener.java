@@ -4,6 +4,7 @@ import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.HungerGame.GameState;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
@@ -66,13 +67,13 @@ public class TimeListener implements Listener {
 	}
 	
 	private void playerStarted(Player p) {
-		startTimes.put(p.getName(), System.currentTimeMillis());
+		startTimes.put(p.getName(), new Date().getTime());
 	}
 	
 	private void playerStopped(HungerGame game, Player p) {
 		Long l = startTimes.get(p.getName());
 		if (l != null) {
-			game.getPlayerStat(p).addTime(System.currentTimeMillis() - l);
+			game.getPlayerStat(p).addTime(new Date().getTime() - l);
 			startTimes.remove(p.getName());
 		}
 	}
