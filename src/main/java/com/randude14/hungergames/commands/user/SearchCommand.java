@@ -28,6 +28,7 @@ public class SearchCommand extends SubCommand {
 		}
 		ChatUtils.send(player, ChatUtils.getHeadLiner());
 		ChatUtils.send(player, "Player stat for: %s", args[0]);
+		ChatUtils.send(player, "%s has a global rank of %s",args[0], stat.rank);
 		ChatUtils.send(player, "%s has played %s games for a total of %s", args[0], stat.totalGames, stat.totalTime);
 		ChatUtils.send(player, "%s has had %s wins, %s deaths, and %s kills", args[0], stat.wins, stat.deaths, stat.kills);
 		return true;

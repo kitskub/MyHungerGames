@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLStat {
+	public Integer rank;
 	public Date lastLogin;
 	public Integer totalGames;
 	public Time totalTime;

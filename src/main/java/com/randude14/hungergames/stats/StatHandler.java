@@ -136,6 +136,7 @@ public class StatHandler {
 		if (globalElems.getLength() > 0) {
 			stat = new SQLStat();
 			Node node = globalElems.item(0);
+			stat.rank = getIntValue(node, "rank");
 			stat.deaths = getIntValue(node, "deaths");
 			stat.kills = getIntValue(node, "kills");
 			stat.lastLogin = getDateValue(node, "lastLogin");

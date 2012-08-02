@@ -103,14 +103,12 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     private static synchronized void addBlockState(HungerGame game, Block block, BlockState state) {
 	    if (!changedBlocks.containsKey(game)) changedBlocks.put(game, new HashMap<Location, BlockState>());
 	    if (changedBlocks.get(game).containsKey(block.getLocation())) return; // Don't want to erase the original block
-	    Logging.debug("Adding a chest to reset");
 	    changedBlocks.get(game).put(block.getLocation(), state);
     }
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 	    if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
-		    Logging.debug("Adding a chest to check");
 		    addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
 	    }
     }
