@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,9 +72,6 @@ public class StatHandler {
 		} catch (ParserConfigurationException ex) {
 			Logging.debug("Error when updating games: " + ex.getMessage());
 		} catch (SAXException ex) {
-			Logging.debug("Error when updating games: " + ex.getMessage());
-		} catch (IllegalStateException ex) {
-			Logging.debug("Error when updating games: " + ex.getMessage());
 		} catch (IOException ex) {
 			Logging.debug("Error when updating games: " + ex.getMessage());
 		}
@@ -84,7 +83,8 @@ public class StatHandler {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updatePlayers");
 		map.put("playerName", stat.getPlayer().getName());
-		map.put("lastLogin", new Timestamp(System.currentTimeMillis()).toString());
+		String loginString = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Timestamp(System.currentTimeMillis()));			
+		map.put("lastLogin", loginString);
 		map.put("totalTime", new Time(stat.getTime()).toString());
 		String wins;
 		if (stat.getState() == PlayerState.DEAD) {
@@ -101,9 +101,6 @@ public class StatHandler {
 		} catch (ParserConfigurationException ex) {
 			Logging.debug("Error when updating stat: " + ex.getMessage());
 		} catch (SAXException ex) {
-			Logging.debug("Error when updating stat: " + ex.getMessage());
-		} catch (IllegalStateException ex) {
-			Logging.debug("Error when updating stat: " + ex.getMessage());
 		} catch (IOException ex) {
 			Logging.debug("Error when updating stat: " + ex.getMessage());
 		}
@@ -122,9 +119,6 @@ public class StatHandler {
 			Logging.debug("Error when getting stat: " + ex.getMessage());
 			return null;
 		} catch (SAXException ex) {
-			Logging.debug("Error when getting stat: " + ex.getMessage());
-			return null;
-		} catch (IllegalStateException ex) {
 			Logging.debug("Error when getting stat: " + ex.getMessage());
 			return null;
 		} catch (IOException ex) {

@@ -227,10 +227,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			chestsSection.set("chest" + cntr, HungerGames.parseToString(loc) + "," + chests.get(loc));
 		}
 		
-		Logging.debug("FixedChest size when saving: %s", fixedChests.size());
 		cntr = 1;
 		for (Location loc : fixedChests.keySet()) {
-			Logging.debug("Saving a fixedchest with index %s", cntr + 1);
 			fixedChestsSection.set("fixedchest" + cntr, HungerGames.parseToString(loc) + "," + fixedChests.get(loc));
 			cntr++;
 		}

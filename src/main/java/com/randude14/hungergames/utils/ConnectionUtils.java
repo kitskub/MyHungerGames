@@ -8,6 +8,8 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
@@ -15,31 +17,40 @@ import org.xml.sax.SAXException;
 
 public class ConnectionUtils {
 
-	public static Document post(String url, Map<String, String> data) throws IllegalStateException, IOException, ParserConfigurationException, SAXException {
+	public static Document post(String url, Map<String, String> data) throws IOException, ParserConfigurationException, SAXException {
 		URL siteUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) siteUrl.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setDoOutput(true);
-		conn.setDoInput(true);
-		
-		DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-		
-		Set<String> keys = data.keySet();
-		Iterator<String> keyIter = keys.iterator();
-		String content = "";
-		for(int i=0; keyIter.hasNext(); i++) {
-			String key = keyIter.next();
-			if(i!=0) {
-				content += "&";
+		try {
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			
+			DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+			
+			Set<String> keys = data.keySet();
+			Iterator<String> keyIter = keys.iterator();
+			String content = "";
+			for (int i = 0; keyIter.hasNext(); i++) {
+				String key = keyIter.next();
+				if (i != 0) {
+					content += "&";
+				}
+				content += key + "=" + URLEncoder.encode(data.get(key), "UTF-8");
 			}
-			content += key + "=" + URLEncoder.encode(data.get(key), "UTF-8");
+			out.writeBytes(content);
+			out.flush();
+			out.close();
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(conn.getInputStream());
+			return document;
+		} catch (IOException iOException) {
+			throw iOException;
+		} catch (ParserConfigurationException parserConfigurationException) {
+			throw parserConfigurationException;
+		} catch (SAXException sAXException) {
+			throw sAXException;
+		} finally {
+			conn.getInputStream().close();
 		}
-		out.writeBytes(content);
-		out.flush();
-		out.close();
-		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(conn.getInputStream());
-		conn.getInputStream().close();
-		return document;
 	}
 	
 }
