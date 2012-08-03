@@ -21,6 +21,7 @@ public class BackCommand extends SubCommand{
 		
 		if (GameManager.getSession(player) != null) {
 			ChatUtils.send(player, "You cannot use that command while you are in-game.");
+			return true;
 		}
 		Location loc = GameManager.getAndRemoveBackLocation(player);
 		if (loc != null) {

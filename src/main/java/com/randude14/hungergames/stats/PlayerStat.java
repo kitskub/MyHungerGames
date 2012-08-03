@@ -21,7 +21,7 @@ public class PlayerStat {
 		PlayerStat stat = new PlayerStat(game, player);
 		if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<HungerGame, PlayerStat>());
 		stats.get(player.getName()).put(game, stat);
-		return null;
+		return stat;
 	}
 
 	public static HungerGame getGame(Player player) {

@@ -49,7 +49,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     @Override
     public void init() {
 	    Bukkit.getPluginManager().registerEvents(this, HungerGames.getInstance());
-	    HungerGames.scheduleTask(this, 0, 5);
+	    HungerGames.scheduleTask(this, 0, 20);
     }
     
     @Override
@@ -86,6 +86,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     
     public void run() {
 	synchronized(toCheck) {
+		Logging.debug("About to check blocks: " + toCheck.keySet().size()); 
 		for (Block b : toCheck.keySet()) {
 			HungerGame game = insideGame(b);
 			if (game != null) {

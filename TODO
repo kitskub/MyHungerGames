@@ -3,6 +3,7 @@ HIGH:
 - Fix remove-items
 - Better item adding
 - FIX MAJOR MEMORY LEAK
+- force clear command
 
 MEDIUM:
 - Random events

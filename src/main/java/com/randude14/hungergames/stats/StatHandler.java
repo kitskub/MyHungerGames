@@ -83,8 +83,6 @@ public class StatHandler {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updatePlayers");
 		map.put("playerName", stat.getPlayer().getName());
-		String loginString = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(new Timestamp(System.currentTimeMillis()));			
-		map.put("lastLogin", loginString);
 		map.put("totalTime", new Time(stat.getTime()).toString());
 		String wins;
 		if (stat.getState() == PlayerState.DEAD) {

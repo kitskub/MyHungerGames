@@ -17,9 +17,9 @@ public class GameStartEvent extends GameEvent implements Cancellable  {
 		this.isResuming = isResuming;
 	}
 	
-    public GameStartEvent(final HungerGame game) {
-    	this(game, false);
-    }
+	public GameStartEvent(final HungerGame game) {
+		this(game, false);
+	}
 	
 	public boolean isResuming() {
 		return isResuming;

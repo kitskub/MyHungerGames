@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class GameCountdown implements Runnable {
@@ -60,7 +61,7 @@ public class GameCountdown implements Runnable {
 
 	public void run() {
 		if (countdown <= 1) {
-			HungerGames.cancelTask(taskId);
+			Bukkit.getServer().getScheduler().cancelTask(taskId);
 			game.setDoneCounting();
 			if (isResuming) {
 				game.resumeGame(starter, 0);

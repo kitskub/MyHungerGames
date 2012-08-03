@@ -2,6 +2,7 @@ package com.randude14.hungergames.games;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
@@ -43,7 +44,15 @@ public class TimedGameRunnable implements Runnable, Listener{
 			TimedGameRunnable get = runnables.get(event.getGame());
 			if (get != null) {
 				get.resume();
-			}	
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public static void onGameEnd(GameEndEvent event) {
+		TimedGameRunnable get = runnables.get(event.getGame());
+		if (get != null) {
+			get.stop();
 		}
 	}
 
@@ -54,11 +63,12 @@ public class TimedGameRunnable implements Runnable, Listener{
 	}
 	
 	private void resume() {
+		runnables.put(game, this);
 		if (timeLeft <= 0) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), this, 5 * 20);
 			return;
 		}
-		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, timeLeft * 20);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), this, timeLeft * 20);
 	}
 	
 	private void pause() {
@@ -78,6 +88,7 @@ public class TimedGameRunnable implements Runnable, Listener{
 		timeLeft = Config.getMaxGameDuration(game.getSetup()) * 1000;
 		if (timeLeft <= 0) return;
 		runnables.put(game, this);
+		Logging.debug("Scheduled TimedGameRunnable for "  + timeLeft * 20);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), this, timeLeft * 20);
 	}
 
