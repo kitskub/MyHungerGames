@@ -701,7 +701,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
-	    stats.put(player.getName(), new PlayerStat(player));
+	    stats.put(player.getName(), PlayerStat.create(this, player));
 	    String mess = Lang.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
@@ -957,7 +957,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    for (Player player : players) {
 		if (!stats.containsKey(player.getName())) return false;
 		PlayerState pState = stats.get(player.getName()).getState();
-		if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.NOT_PLAYING || pState == PlayerState.DEAD) return false;
+		if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.DEAD) return false;
 	    }
 	    return true;
 	}
@@ -965,12 +965,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	/**
 	 * 
 	 * @param players players to check
-	 * @return true if players are in the game, have lives, and are playing, regardless if game is paused
+	 * @return true if players are in the game, have lives, and are playing
 	 */
 	public boolean isPlaying(Player... players) {
 	    for (Player player : players) {
 		if (state != RUNNING || !stats.containsKey(player.getName()) 
-			|| (stats.get(player.getName()).getState() != PlayerState.PLAYING) &&  stats.get(player.getName()).getState() != PlayerState.GAME_PAUSED){
+			|| stats.get(player.getName()).getState() != PlayerState.PLAYING ){
 		    return false;
 		}
 	    }

@@ -1,6 +1,7 @@
 package com.randude14.hungergames;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.ArrayList;
@@ -83,16 +84,7 @@ public class GameManager{
 	 * @return the game a player is in
 	 */
 	public static HungerGame getSession(Player player) {
-		PerformanceMonitor.startActivity("getSession");
-		for (HungerGame game : games) {
-			if (game.contains(player)) {
-				PerformanceMonitor.stopActivity("getSession");
-				return game;
-			}
-
-		}
-		PerformanceMonitor.stopActivity("getSession");
-		return null;
+		return PlayerStat.getGame(player);
 	}
 
 	/**
@@ -102,16 +94,7 @@ public class GameManager{
 	 * @return the game a player is in
 	 */
 	public static HungerGame getPlayingSession(Player player) {
-		PerformanceMonitor.startActivity("getPlayingSession");
-		for (HungerGame game : games) {
-			if (game.isPlaying(player)) {
-				PerformanceMonitor.stopActivity("getPlayingSession");
-				return game;
-			}
-
-		}
-		PerformanceMonitor.stopActivity("getPlayingSession");
-		return null;
+		return PlayerStat.getPlayingGame(player);
 	}
 
 	public static boolean doesNameExist(String name) {

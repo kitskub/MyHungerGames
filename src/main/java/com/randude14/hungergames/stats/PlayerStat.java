@@ -3,25 +3,52 @@ package com.randude14.hungergames.stats;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.games.HungerGame;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import java.util.List;
+import java.util.*;
 
 import org.bukkit.entity.Player;
 
 public class PlayerStat {
+	public static Map<String, Map<HungerGame, PlayerStat>> stats = new HashMap<String, Map<HungerGame, PlayerStat>>();
 	public static final String NODODY = "NOBODY";
 	private Player player;
+	private HungerGame game;
 	private List<String> deaths;
 	private List<String> kills;
 	private PlayerState state;
 	private long elapsedTimeInMillis;
 	
-	public PlayerStat(Player player) {
+	public static PlayerStat create(HungerGame game, Player player) {
+		PlayerStat stat = new PlayerStat(game, player);
+		if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<HungerGame, PlayerStat>());
+		stats.get(player.getName()).put(game, stat);
+		return null;
+	}
+
+	public static HungerGame getGame(Player player) {
+		if (stats.get(player.getName()) != null) {
+			for (HungerGame gameGotten : stats.get(player.getName()).keySet()) {
+				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
+				if (stat != null && stat.getState() != PlayerState.DEAD && stat.getState() != PlayerState.NOT_IN_GAME) return gameGotten;
+			}
+		}
+		return null;
+	}
+	
+	public static HungerGame getPlayingGame(Player player) {
+		if (stats.get(player.getName()) != null) {
+			for (HungerGame gameGotten : stats.get(player.getName()).keySet()) {
+				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
+				if (stat != null && stat.getState() == PlayerState.PLAYING) return gameGotten;
+			}
+		}
+		return null;
+	}
+
+	private PlayerStat(HungerGame game, Player player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
+		this.game = game;
 		state = PlayerState.NOT_IN_GAME;
 		elapsedTimeInMillis = 0;
 	}

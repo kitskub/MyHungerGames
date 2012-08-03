@@ -56,7 +56,7 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void update(Player p) {
-		HungerGame game = GameManager.getSession(p);
+		HungerGame game = GameManager.getPlayingSession(p);
 		if (game == null) return;
 		if (!times.containsKey(game)) times.put(game, new HashMap<String, Long>());
 		times.get(game).put(p.getName(), System.currentTimeMillis());
