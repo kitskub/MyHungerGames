@@ -98,7 +98,7 @@ global:
   special-blocks-interact: []
 
   # Reset block changes after a game ends
-  reset-changes: false
+  reset-changes: true
 
   # If resetting should be internal only. RECOMMENDED, especially for those who use LogBlock
   # GLOBAL ONLY

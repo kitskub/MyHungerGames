@@ -9,7 +9,9 @@ import com.randude14.hungergames.utils.Cuboid;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -42,14 +44,14 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
  *
  */
 public class InternalResetter extends Resetter implements Listener, Runnable{
-    private static final Map<HungerGame, Map<Location, BlockState>> changedBlocks = new HashMap<HungerGame, Map<Location, BlockState>>();
-    private static final Map<Block, BlockState> toCheck = Collections.synchronizedMap(new HashMap<Block, BlockState>());
+    private static final Map<HungerGame, Map<Location, BlockState>> changedBlocks = new ConcurrentHashMap<HungerGame, Map<Location, BlockState>>();
+    private static final Map<Block, BlockState> toCheck = new ConcurrentHashMap<Block, BlockState>();
 
     
     @Override
     public void init() {
 	    Bukkit.getPluginManager().registerEvents(this, HungerGames.getInstance());
-	    HungerGames.scheduleTask(this, 0, 20);
+	    Bukkit.getScheduler().scheduleAsyncRepeatingTask(HungerGames.getInstance(), this, 0, 20);
     }
     
     @Override
@@ -74,9 +76,8 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     private static HungerGame insideGame(Block block) {
 	    Location loc = block.getLocation();
 	    for (HungerGame game : GameManager.getGames()) {
+		    if (game.getWorlds().size() <= 0 && game.getCuboids().size() <= 0) return null;
 		    if (game.getWorlds().contains(block.getWorld())) return game;
-	    }
-	    for (HungerGame game : GameManager.getGames()) {
 		    for (Cuboid c : game.getCuboids()) {
 			    if (c.isLocationWithin(loc)) return game;
 		    }
@@ -86,19 +87,21 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     
     public void run() {
 	synchronized(toCheck) {
-		Logging.debug("About to check blocks: " + toCheck.keySet().size()); 
-		for (Block b : toCheck.keySet()) {
+		for (Iterator<Block> it = toCheck.keySet().iterator(); it.hasNext();) {
+			Block b = it.next();
 			HungerGame game = insideGame(b);
 			if (game != null) {
 				addBlockState(game, b, toCheck.get(b));
-				toCheck.remove(b);
 			}
-		    }
+			it.remove();
+		}
 	}
     }
 
-    private static synchronized void addToCheck(Block block, BlockState state) {
-	    toCheck.put(block, state);
+    private static void addToCheck(Block block, BlockState state) {
+	    synchronized(toCheck) {
+		toCheck.put(block, state);
+	    }
     }
     
     private static synchronized void addBlockState(HungerGame game, Block block, BlockState state) {
@@ -110,7 +113,9 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 	    if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
-		    addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
+		    HungerGame session = GameManager.getPlayingSession(event.getPlayer());
+		    if(session == null) return;
+		    addBlockState(session, event.getClickedBlock(), event.getClickedBlock().getState());
 	    }
     }
     

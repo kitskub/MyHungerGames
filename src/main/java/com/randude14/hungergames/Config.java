@@ -255,7 +255,7 @@ public class Config {
 	}
 		
 	public static boolean getResetChangesGlobal() {
-		return getGlobalBoolean("reset-changes", RELOAD_WORLD.getBoolean());
+		return getGlobalBoolean("reset-changes", RESET_CHANGES.getBoolean());
 	}
 		
 	public static boolean getForceSurvivalGlobal() {

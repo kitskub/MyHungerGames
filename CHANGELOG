@@ -30,6 +30,7 @@ v0.6
 - Added /hga profile to help find bottlenecks in code
 - Added take-life-on-leave
 - Added start-timer
+- Games can be started with 2 players again, but broadcasts a warning message.
 
 v0.5.2
 - Possibly fixed config issues

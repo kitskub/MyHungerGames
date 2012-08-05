@@ -42,7 +42,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	// Per game
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
-	private final Set<String> allPlayers;
 	private final List<Location> randomLocs;
 	private final Map<String, List<String>> sponsors; // Just a list for info, <sponsor, sponsee>
 	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
@@ -84,7 +83,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public HungerGame(final String name, final String setup) {
 		stats = new TreeMap<String, PlayerStat>();
 		spawnsTaken = new HashMap<String, Location>();
-		allPlayers = new HashSet<String>();
 		spawnPoints = new ArrayList<Location>();
 		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
@@ -381,7 +379,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		for (String stat : stats.keySet()) {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
+			PlayerStat.clearGamesForPlayer(stat, this);
 		}
+
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
 			if (spectator == null) continue;
@@ -447,7 +447,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return Null if game or countdown was successfully started. Otherwise, error message.
 	 */
 	public String startGame(int ticks) {
-		PerformanceMonitor.startActivity("startGame(int, boolean)");
+		PerformanceMonitor.startActivity("startGame(int)");
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
 		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
 		if (countdown != null) {
@@ -464,13 +464,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			state = COUNTING_FOR_START;
 			return null;
 		}
-		if (stats.size() < Config.getMinPlayers(setup) || stats.size() < 2) return String.format("There are not enough players in %s", name);
+		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
+		if (stats.size() < 2) ChatUtils.broadcast(true, "%s is being with only one player. This has a high potential to lead to errors.", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
-			PerformanceMonitor.stopActivity("startGame(int, boolean)");
+			PerformanceMonitor.stopActivity("startGame(int)");
 			return "Start was cancelled.";
 		}
 		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
@@ -747,7 +748,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    if (!fromTemporary) {
 		    loc = getNextOpenSpawnPoint();
 		    spawnsTaken.put(player.getName(), loc);
-		    allPlayers.add(player.getName());
 	    }
 	    else {
 		    loc = spawnsTaken.get(player.getName());
@@ -755,7 +755,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    GameManager.addSubscribedPlayer(player);
 	    GameManager.addBackLocation(player);
 	    player.teleport(loc);
-	    if(!Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
+	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
 	    if (Config.getForceSurvival(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
@@ -823,7 +823,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    else {
 		    stats.remove(player.getName());
-		    allPlayers.remove(player.getName());
+		    PlayerStat.clearGamesForPlayer(player.getName(), this);
 	    }
 	    playerLeaving(player, false);
 	    if (wasPlaying || state != RUNNING) {
@@ -863,7 +863,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private void clear() {
 		stats.clear();
 		spawnsTaken.clear();
-		allPlayers.clear();
 		state = STOPPED;
 		spectators.clear();
 		sponsors.clear();
@@ -1207,7 +1206,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public List<String> getAllPlayers() {
-		return new ArrayList<String>(allPlayers);
+		return new ArrayList<String>(stats.keySet());
 	}
 	
 	public Location getSpawn() {
@@ -1252,6 +1251,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 	
 	public Set<World> getWorlds() {
+		if (worlds.size() <= 0) return Collections.emptySet();
 		Set<World> list = new HashSet<World>();
 		for (String s : worlds) {
 			if (Bukkit.getWorld(s) == null) continue;

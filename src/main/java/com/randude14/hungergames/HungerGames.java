@@ -82,7 +82,8 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	private void callTasks() {
-	    HungerGames.scheduleTask(new Runnable() {
+	    Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
+		new Runnable() {
 		public void run() {
 		    if (!latestVersionCheck())
 			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), getDescription().getVersion());

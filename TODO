@@ -4,6 +4,7 @@ HIGH:
 - Better item adding
 - FIX MAJOR MEMORY LEAK
 - force clear command
+- Fix reload
 
 MEDIUM:
 - Random events
@@ -18,6 +19,7 @@ LOW:
 - NPCs
 - Enhance Spectating
 - /hg rules
+- Log command
 
 OPTIONAL:
 - Possible timed game events

@@ -84,7 +84,6 @@ public class PlayerStat {
 	
 	private void update() {
 		if (state == PlayerState.DEAD) return;
-		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
 		if (lives == 0 || deaths.size() >= lives) {
 			die();
@@ -92,7 +91,6 @@ public class PlayerStat {
 	}
 	
 	public int getLivesLeft() {
-		HungerGame game = GameManager.getGame(player.getName());
 		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
 		if(lives == 0) return -1;
 		return lives - deaths.size();
@@ -118,6 +116,10 @@ public class PlayerStat {
 		return elapsedTimeInMillis;
 	}
 	
+	public static void clearGamesForPlayer(String player, HungerGame game) {
+		stats.get(player).remove(game);
+	}
+
 	public enum PlayerState {
 		NOT_IN_GAME,
 		PLAYING,

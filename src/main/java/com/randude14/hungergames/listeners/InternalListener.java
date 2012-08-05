@@ -137,10 +137,11 @@ public class InternalListener implements Runnable, Listener {
 	}
 
 	public void run() {
+		if (queues.size() <= 0) return;
 		List<OffQueue> toRemove = new ArrayList<OffQueue>();
 		for (OffQueue queue : queues) {
 			if (queue.removeTick()) {
-				Logging.debug("Removing sign from queue");
+				// Logging.debug("Removing sign from queue");
 				for (SignData sign : queue.signs) {
 					Block b = sign.loc.getBlock();
 					b.setType(Material.AIR);
