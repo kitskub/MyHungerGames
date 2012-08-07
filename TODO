@@ -2,16 +2,14 @@ HIGH:
 - Tutorial
 - Fix remove-items
 - Better item adding
-- FIX MAJOR MEMORY LEAK
-- force clear command
+- "Force clear" command
 - Fix reload
+- Fix startTime
 
 MEDIUM:
 - Random events
 - WebStats - finish
 - leaderboards
-- Add chests to internal listening w/config option
-- Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
 - Deathmatch
 
 LOW:
@@ -27,6 +25,8 @@ OPTIONAL:
 - Better messages on death
 - Maybe add some way for worlds to reset while games are not running
 - Map gen
+- Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
+
 
 UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
