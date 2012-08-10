@@ -82,6 +82,7 @@ public class ConfigUtils {
 	}
 	
 	private static ItemStack getItemStack(ConfigurationSection section, boolean useMatchMaterial) {
+	    if (section == null) return null;
 	    int stackSize = section.getInt("stack-size", 1);
 	    ItemStack item = getItemStack(section.getName(), stackSize, useMatchMaterial);
 	    if(item == null) return null;

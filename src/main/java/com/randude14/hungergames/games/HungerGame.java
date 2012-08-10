@@ -22,15 +22,10 @@ import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.BlockFace;
@@ -300,7 +295,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return true;
 	}
 
-	public void addSpectator(Player player, Player spectated) {
+	public boolean addSpectator(Player player, Player spectated) {
+		if (state != RUNNING) {
+			ChatUtils.error(player, Lang.getNotRunning(setup).replace("<game>", name));
+			return false;
+		}
 		spectators.put(player.getName(), player.getLocation());
 		if (Config.getSpectatorSponsorPeriod(setup) != 0) {
 			 spectatorSponsoringRunnable.addSpectator(player);
@@ -316,6 +315,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		for (Player p : getRemainingPlayers()) {
 			p.hidePlayer(player);
 		}
+		return true;
 	}
 
 	public boolean isSpectating(Player player) {
@@ -360,7 +360,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			}
 		}
 		StatHandler.updateGame(this);
-		state = STOPPED;
 		for (Player player : getRemainingPlayers()) {
 			ItemStack[] contents = player.getInventory().getContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
@@ -390,6 +389,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spectatorSponsoringRunnable.cancel();
 		HungerGames.cancelTask(locTaskId);
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
+		state = STOPPED;
 		if (!isFinished) {
 			GameEndEvent event = new GameEndEvent(this);
 			HungerGames.callEvent(event);
@@ -465,7 +465,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 			return null;
 		}
 		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
-		if (stats.size() < 2) ChatUtils.broadcast(true, "%s is being with only one player. This has a high potential to lead to errors.", name);
+		if (stats.size() < 2) ChatUtils.broadcast(true, "%s is being started with only one player. This has a high potential to lead to errors.", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this);
@@ -1038,7 +1038,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    return remaining;
 	}
 
-	public PlayerStat getPlayerStat(Player player) {
+	public PlayerStat getPlayerStat(OfflinePlayer player) {
 		return stats.get(player.getName());
 	}
 	

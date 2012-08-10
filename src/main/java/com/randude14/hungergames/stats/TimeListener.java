@@ -7,6 +7,7 @@ import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -70,7 +71,7 @@ public class TimeListener implements Listener {
 		startTimes.put(p.getName(), new Date().getTime());
 	}
 	
-	private void playerStopped(HungerGame game, Player p) {
+	private void playerStopped(HungerGame game, OfflinePlayer p) {
 		Long l = startTimes.get(p.getName());
 		if (l != null) {
 			game.getPlayerStat(p).addTime(new Date().getTime() - l);

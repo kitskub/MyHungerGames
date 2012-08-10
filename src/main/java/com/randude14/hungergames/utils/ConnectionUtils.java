@@ -2,9 +2,11 @@ package com.randude14.hungergames.utils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownServiceException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +42,11 @@ public class ConnectionUtils {
 			out.writeBytes(content);
 			out.flush();
 			out.close();
+			try {
+				InputStream in = conn.getInputStream();
+			} catch (UnknownServiceException unknownServiceException) {
+				return null;
+			}
 			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(conn.getInputStream());
 			return document;
 		} catch (IOException iOException) {

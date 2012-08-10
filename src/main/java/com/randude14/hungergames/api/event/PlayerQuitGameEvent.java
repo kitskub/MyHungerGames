@@ -2,20 +2,21 @@ package com.randude14.hungergames.api.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.OfflinePlayer;
 
 import com.randude14.hungergames.games.HungerGame;
 
 // called when a player quits a game
 public class PlayerQuitGameEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
-	private final Player player;
+	private final OfflinePlayer player;
 	
 	public PlayerQuitGameEvent(final HungerGame game, final Player player) {
 		super(game);
 		this.player = player;
 	}
 
-	public Player getPlayer() {
+	public OfflinePlayer getPlayer() {
 		return player;
 	}
 

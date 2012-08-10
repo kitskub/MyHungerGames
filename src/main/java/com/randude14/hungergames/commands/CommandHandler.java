@@ -73,6 +73,9 @@ public class CommandHandler implements CommandExecutor {
 		else if ("stat".equalsIgnoreCase(args[0])) {
 			command = new StatCommand();
 		}
+		else if ("search".equalsIgnoreCase(args[0])) {
+			command = new SearchCommand();
+		}
 		else if ("subscribe".equalsIgnoreCase(args[0])) {
 			command = new SubscribeCommand();
 		}
