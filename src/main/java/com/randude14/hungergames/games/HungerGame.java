@@ -31,6 +31,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 	
 public class HungerGame implements Comparable<HungerGame>, Runnable{
@@ -754,7 +756,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	    }
 	    GameManager.addSubscribedPlayer(player);
 	    GameManager.addBackLocation(player);
-	    player.teleport(loc);
+	    player.teleport(loc, TeleportCause.PLUGIN);
 	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
 	    if (Config.getForceSurvival(setup)) {

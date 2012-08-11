@@ -161,6 +161,9 @@ public class CommandHandler implements CommandExecutor {
 			}
 			args = (String[]) ArrayUtils.removeElement(args, args[1]); // Need to remove that extra arg
 		}
+		else if ("creategame".equalsIgnoreCase(args[0])) {
+			command = new AddGameCommand();
+		}
 		else if ("restock".equalsIgnoreCase(args[0])) {
 			command = new RestockCommand();
 		}

@@ -1,3 +1,8 @@
+v0.7
+- Bug fixes
+- Added some command shortcuts: "/hga creategame" instead of "/hga add game"
+- User commands can now use default game instead specifying one
+
 v0.6
 - bug fixes
 - Signs now save between restarts

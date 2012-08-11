@@ -1,5 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Lang;
@@ -20,7 +21,12 @@ public class StatCommand extends SubCommand{
 	@Override
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
-
+		
+		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+		if (name == null) {
+			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
+			return true;
+		}
 		if (args.length < 1) {
 			ChatUtils.send(player, command.getUsage(), cmd.getLabel());
 			return true;

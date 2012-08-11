@@ -213,11 +213,11 @@ public class Defaults {
 	USER_LIST("USER", "/%s list", "list games", Perm.USER_LIST),
 	USER_REJOIN("USER", "/%s rejoin", "rejoin your current game", Perm.USER_REJOIN),
 	USER_SEARCH("USER", "/%s search [player]", "searchess for a player's stat and prints out the info", Perm.USER_SEARCH),
-	USER_SPECTATE("USER", "/%s spectate <game name> <player>", "sets player to flying to spectate a game or cancels a spectation", Perm.USER_SPECTATE),
+	USER_SPECTATE("USER", "/%s spectate [<game name> [player]]", "sets player to flying to spectate a game or cancels a spectation", Perm.USER_SPECTATE),
 	USER_SPONSOR("USER", "/%s sponsor <player>", "sponsor a player an item", Perm.USER_SPONSOR),
 	USER_SUBSCRIBE("USER", "/%s subscribe", "subscribe", Perm.USER_SUBSCRIBE),
 	USER_VOTE("USER", "/%s vote", "cast your vote that you are ready to play", Perm.USER_VOTE),
-	USER_STAT("USER", "/%s stat <game name>", "list stats for a game", Perm.USER_STAT),
+	USER_STAT("USER", "/%s stat [game name]", "list stats for a game", Perm.USER_STAT),
 	USER_QUIT("USER", "/%s quit", "quits the current game indefinitely", Perm.USER_QUIT);
 	
 	private String type;

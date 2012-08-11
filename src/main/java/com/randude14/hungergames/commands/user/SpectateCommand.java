@@ -1,10 +1,10 @@
 package com.randude14.hungergames.commands.user;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
-import com.randude14.hungergames.games.HungerGame.GameState;
 
 import com.randude14.hungergames.utils.ChatUtils;
 import org.bukkit.Bukkit;
@@ -27,6 +27,11 @@ public class SpectateCommand extends SubCommand{
 	    if (GameManager.getGame(GameManager.getSpectating(player)) != null) {
 		    GameManager.getGame(GameManager.getSpectating(player)).removeSpectator(player);
 		    GameManager.removeSpectator(player);
+		    return true;
+	    }
+	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+	    if (name == null) {
+		    ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 		    return true;
 	    }
 	    if (args.length < 1) {
