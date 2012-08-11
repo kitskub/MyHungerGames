@@ -118,6 +118,7 @@ public class CommandHandler implements CommandExecutor {
 			else if (args[1].equalsIgnoreCase("chestloot")) command = new AddChestLootCommand();
 			else if (args[1].equalsIgnoreCase("game")) command = new AddGameCommand();
 			else if (args[1].equalsIgnoreCase("itemset")) command = new AddItemSetCommand();
+			else if (args[1].equalsIgnoreCase("joinsign")) command = new AddJoinSignCommand();
 			else if (args[1].equalsIgnoreCase("sponsorloot")) command = new AddSponsorLootCommand();
 			else if (args[1].equalsIgnoreCase("world")) command = new AddWorldCommand();
 			else {

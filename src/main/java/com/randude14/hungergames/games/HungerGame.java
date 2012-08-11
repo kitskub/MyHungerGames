@@ -31,7 +31,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 	
@@ -45,9 +44,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private final List<Long> startTimes;
 	private final List<Long> endTimes;
 	private long initialStartTime;
-	//private boolean isRunning;
-	//private boolean isCounting;
-	//private boolean isPaused;
 
 	// Persistent
 	private final Map<Location, Float> chests;
@@ -58,7 +54,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	private final List<String> itemsets;
 	private final Set<String> worlds;
 	private final Set<Cuboid> cuboids;
-	//private boolean enabled;
 	private Location spawn;
 	private GameState state;
 
@@ -83,7 +78,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spawnPoints = new ArrayList<Location>();
 		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
-		//isRunning = isCounting = isPaused = false;
 		randomLocs = new ArrayList<Location>();
 		startTimes = new ArrayList<Long>();
 		endTimes = new ArrayList<Long>();
@@ -96,7 +90,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		itemsets = new ArrayList<String>();
 		worlds = new HashSet<String>();
 		cuboids = new HashSet<Cuboid>();
-		//enabled = true;
 		spawn = null;
 		state = GameState.STOPPED;
 
@@ -258,6 +251,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public boolean addReadyPlayer(Player player) {
+		if (state == DELETED) {
+			ChatUtils.error(player, "That game does not exist anymore.");
+			return false;
+		}
 		if (readyToPlay.contains(player.getName())) {
 			ChatUtils.error(player, "You have already cast your vote that you are ready to play.");
 			return false;
@@ -348,6 +345,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 	
 	public String stopGame(boolean isFinished) {
+		if (state == DELETED) return "That game does not exist anymore.";
 		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
 		PerformanceMonitor.startActivity("stopGame(boolean)");
 
@@ -390,7 +388,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		spectatorSponsoringRunnable.cancel();
 		HungerGames.cancelTask(locTaskId);
-		if (Config.getRemoveItems(setup)) removeItemsOnGround();
+		if (Config.getRemoveItems(setup)) {
+			Logging.debug("About to remove items from ground");
+			removeItemsOnGround();
+		}
 		state = STOPPED;
 		if (!isFinished) {
 			GameEndEvent event = new GameEndEvent(this);
@@ -449,7 +450,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return Null if game or countdown was successfully started. Otherwise, error message.
 	 */
 	public String startGame(int ticks) {
-		PerformanceMonitor.startActivity("startGame(int)");
+		if (state == DELETED) return "Game no longer exists.";
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
 		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
 		if (countdown != null) {
@@ -473,7 +474,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		GameStartEvent event = new GameStartEvent(this);
 		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
-			PerformanceMonitor.stopActivity("startGame(int)");
 			return "Start was cancelled.";
 		}
 		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
@@ -493,7 +493,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		state = RUNNING;
 		readyToPlay.clear();
 		ChatUtils.broadcast(true, "Starting %s. Go!!", name);
-		PerformanceMonitor.stopActivity("startGame(int, boolean)");
 		return null;
 	}
 
@@ -528,6 +527,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return Null if game or countdown was not successfully started. Otherwise, error message.
 	 */
 	public String resumeGame(int ticks) {
+		if (state == DELETED) return "That game does not exist anymore.";
 		if(state != PAUSED && state != ABOUT_TO_START) return "Cannot resume a game that has not been paused.";
 		if (ticks > 0) {
 			countdown = new GameCountdown(this, ticks, true);
@@ -571,6 +571,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return null if successful, message if not
 	 */
 	public String pauseGame() {
+		if (state == DELETED) return "That game does not exist anymore.";
 		if(state == PAUSED) return "Cannot pause a game that has been paused.";
 		
 		state = PAUSED;
@@ -719,6 +720,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	private synchronized boolean playerEnteringPreCheck(Player player) {
+	    if (state == DELETED) {
+		    ChatUtils.error(player, "That game does not exist anymore.");
+		    return false;
+	    }
 	    if (state == DISABLED) {
 		    ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
 		    return false;
@@ -875,6 +880,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spectatorFlying.clear();
 		spectatorFlightAllowed.clear();
 		playerGameModes.clear();
+		if (countdown != null) countdown.cancel(); 
 		countdown = null;
 	}
 
@@ -955,6 +961,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	 * @return
 	 */
 	public boolean contains(Player... players) {
+	    if (state == DELETED) return false;
 	    for (Player player : players) {
 		if (!stats.containsKey(player.getName())) return false;
 		PlayerState pState = stats.get(player.getName()).getState();
@@ -979,7 +986,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public void killed(Player killer, Player killed) {
-		if (state != RUNNING || stats.get(killed.getName()).getState() != PlayerState.PLAYING) return;
+		if (state == DELETED || state != RUNNING || stats.get(killed.getName()).getState() != PlayerState.PLAYING) return;
 
 		PlayerStat killedStat = stats.get(killed.getName());
 		PlayerKillEvent event;
@@ -1144,7 +1151,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public boolean removeSpawnPoint(Location loc) {
-		if (loc == null) return true;
+		if (loc == null) return false;
 		Iterator<Location> iterator = spawnPoints.iterator();
 		Location l = null;
 		while (iterator.hasNext()) {
@@ -1175,6 +1182,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 
 	public void setEnabled(boolean flag) {
+		if (state == DELETED) return;
 		if (!flag && state != STOPPED && state != DISABLED) stopGame(false);
 		if (!flag) state = DISABLED;
 		if (flag && state == DISABLED) state = STOPPED;
@@ -1244,6 +1252,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	}
 	
 	public void removeItemsOnGround() {
+		Logging.debug("Aboout the check items on the ground for %s worlds.", worlds.size());
 		for (String s : worlds) {
 			World w = Bukkit.getWorld(s);
 			if (w == null) continue;
@@ -1291,9 +1300,22 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 	public GameState getState() {
 		return state;
 	}
+
+	public void delete() {
+		state = DELETED;
+		chests.clear();
+		fixedChests.clear();
+		setup = null;
+		itemsets.clear();
+		worlds.clear();
+		cuboids.clear();
+		spawn = null;
+		clear();
+	}
 	
 	public enum GameState {
 		DISABLED,
+		DELETED,
 		STOPPED,
 		RUNNING,
 		PAUSED,

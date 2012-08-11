@@ -146,6 +146,15 @@ public class SessionListener implements Listener {
 			    ChatUtils.error(player, "That is not a chest!");    
 		    }
 	    }
+	    else if (type == SessionType.JOIN_SIGN_ADDER) {
+		    if (LobbyListener.addJoinSign(clickedBlock.getLocation(), session.getData().get("game").toString())) {
+			    sessions.remove(player.getName());
+			    ChatUtils.send(player, "Join sign has been added successfully.");
+		    }
+		    else {
+			    ChatUtils.error(player, "Error when adding join sign!");    
+		    }
+	    }
 	    else {
 		    //Logging.debug("Failed to get sessionlistener.");
 	    }
@@ -170,7 +179,8 @@ public class SessionListener implements Listener {
 		SPAWN_REMOVER,
 		CHEST_ADDER,
 		CHEST_REMOVER,
-		CUBOID_ADDER;
+		CUBOID_ADDER,
+		JOIN_SIGN_ADDER;
 	}
 	
 	private static class Session {

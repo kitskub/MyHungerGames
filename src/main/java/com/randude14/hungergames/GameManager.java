@@ -55,6 +55,7 @@ public class GameManager{
 	    HungerGame game = getGame(name);
 	    if(game == null) return false;
 	    boolean attempt = games.remove(game);
+	    game.delete();
 	    if(attempt){
 		saveGames();
 	    }

@@ -3,7 +3,7 @@ HIGH:
 - Fix remove-items
 - Better item adding
 - "Force clear" command
-- Fix reload
+- Fix reload - also make safe
 - Fix startTime
 
 MEDIUM:
@@ -32,4 +32,3 @@ UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
 - Add more listeners
 - More lang messages
-- /hga test

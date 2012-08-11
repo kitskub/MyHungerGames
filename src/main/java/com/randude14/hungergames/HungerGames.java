@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,7 +95,7 @@ public class HungerGames extends JavaPlugin{
 			game.stopGame(false);
 		}
 		GameManager.saveGames();
-		InternalListener.saveSigns();
+		SignListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
 		PerformanceMonitor.saveFile();
@@ -161,7 +159,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new CommandListener(), instance);
 		pm.registerEvents(new PlayerListener(), instance);
 		pm.registerEvents(new EntityListener(), instance);
-		pm.registerEvents(new InternalListener(), instance);
+		pm.registerEvents(new SignListener(), instance);
 		pm.registerEvents(new InventoryListener(), instance);
 		pm.registerEvents(new SessionListener(), instance);
 		pm.registerEvents(new ChatListener(), instance);
@@ -198,7 +196,7 @@ public class HungerGames extends JavaPlugin{
 	public static void reload() {
 		Files.loadAll();
 		GameManager.loadGames();
-		InternalListener.loadSigns();
+		SignListener.loadSigns();
 		loadRegistry();
 	}
 
@@ -316,8 +314,13 @@ public class HungerGames extends JavaPlugin{
 
 	public static String parseToString(Location loc) {
 		if (loc == null) return "";
-		return String.format("%.2f %.2f %.2f %.2f %.2f %s", loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), 
-			loc.getPitch(), loc.getWorld().getName());
+		DecimalFormat df = new DecimalFormat();
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		symbols.setGroupingSeparator(',');
+		df.setDecimalFormatSymbols(symbols);
+		return String.format("%.2f %.2f %.2f %.2f %.2f %s", df.format(loc.getX()), df.format(loc.getX()), df.format(loc.getY()), df.format(loc.getZ()), df.format(loc.getYaw()), 
+			df.format(loc.getPitch()), df.format(loc.getWorld().getName()));
 	}
 
 	public static Location parseToLoc(String str) throws NumberFormatException{

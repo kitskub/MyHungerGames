@@ -27,14 +27,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-public class InternalListener implements Runnable, Listener {
+public class SignListener implements Runnable, Listener {
 
 	private static final Map<ListenerType, Map<String, List<Location>>> listeners = Collections.synchronizedMap(new EnumMap<ListenerType, Map<String, List<Location>>>(ListenerType.class));
 	private static final Map<ListenerType, List<Location>> allGameListeners = Collections.synchronizedMap(new EnumMap<ListenerType, List<Location>>(ListenerType.class));
 	private static List<OffQueue> queues = new ArrayList<OffQueue>();
 	private static int taskId = 0;
 	
-	public InternalListener() {
+	public SignListener() {
 		taskId = HungerGames.scheduleTask(this, 0, 1);
 		loadSigns();
 	}

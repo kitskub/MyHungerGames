@@ -47,7 +47,7 @@ public class BlockListener implements Listener {
 		Logging.debug(event.getLine(0));
 		if(!event.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
 		String[] lines = event.getLines();
-		InternalListener.ListenerType type = InternalListener.ListenerType.byId(lines[1]);
+		SignListener.ListenerType type = SignListener.ListenerType.byId(lines[1]);
 		if (type == null) return;
 		HungerGame game = null;
 		if (lines[2] != null && !lines[2].equals("")) {
@@ -67,7 +67,7 @@ public class BlockListener implements Listener {
 			return;
 		}
 
-		if (InternalListener.addSign(type, game, sign)) {
+		if (SignListener.addSign(type, game, sign)) {
 			ChatUtils.send(event.getPlayer(), "Sign was created successfully.");
 		}
 		else {

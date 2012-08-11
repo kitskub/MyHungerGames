@@ -43,13 +43,19 @@ public class Cuboid {
 	}
 	
 	public String parseToString() {
-		return HungerGames.parseToString(lower) + " " + HungerGames.parseToString(upper);
+		return HungerGames.parseToString(lower) + ":" + HungerGames.parseToString(upper);
 	}
 	
 	public static Cuboid parseFromString(String string) {
-		String[] parts = string.split(" ");
-		Location lower = HungerGames.parseToLoc(parts[0]);
-		Location upper = HungerGames.parseToLoc(parts[0]);
-		return new Cuboid(lower, upper, true);
+		try {
+			String[] parts = string.split(":");
+			Location lower = HungerGames.parseToLoc(parts[0]);
+			Location upper = HungerGames.parseToLoc(parts[1]);
+			return new Cuboid(lower, upper, true);
+		} catch (NumberFormatException numberFormatException) {
+			return null;
+		} catch (IndexOutOfBoundsException ex) {
+			return null;
+		}
 	}
 }
