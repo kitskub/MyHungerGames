@@ -2,6 +2,7 @@ v0.7
 - Bug fixes
 - Added some command shortcuts: "/hga creategame" instead of "/hga add game"
 - User commands can now use default game instead specifying one
+- Made admin commands that are not part of setting up able to use the default game
 
 v0.6
 - bug fixes

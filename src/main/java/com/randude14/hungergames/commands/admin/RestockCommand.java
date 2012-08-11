@@ -1,5 +1,6 @@
 package com.randude14.hungergames.commands.admin;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Lang;
@@ -20,12 +21,17 @@ public class RestockCommand extends SubCommand{
 	@Override
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 	    Player player = (Player) cs;
-	    if (args.length < 1) {
-		    ChatUtils.send(player, command.getUsage(), cmd.getLabel());
+	    
+	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+	    if (name == null) {
+		    ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 		    return true;
 	    }
-	    game = GameManager.getGame(args[0]);
+
+	    game = GameManager.getGame(name);
 	    if (game == null) {
+		    ChatUtils.error(player, "%s does not exist.", name);
+		    return true;
 	    }
 	    if (game.getState() != GameState.RUNNING) {
 		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));

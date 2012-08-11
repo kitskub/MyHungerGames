@@ -21,14 +21,14 @@ public class StartCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 
-		if (args.length < 1) {
+		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+		if (name == null) {
 			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 			return true;
 		}
-
-		game = GameManager.getGame(args[0]);
+		game = GameManager.getGame(name);
 		if (game == null) {
-			ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
+			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return true;
 		}
 

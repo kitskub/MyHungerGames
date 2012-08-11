@@ -34,13 +34,9 @@ public class SpectateCommand extends SubCommand{
 		    ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 		    return true;
 	    }
-	    if (args.length < 1) {
-		    ChatUtils.send(player, command.getUsage(), cmd.getLabel());
-		    return true;
-	    }
-	    game = GameManager.getGame(args[0]);
+	    game = GameManager.getGame(name);
 	    if (game == null) {
-		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
+		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 		    return true;
 	    }
 	    boolean success;
