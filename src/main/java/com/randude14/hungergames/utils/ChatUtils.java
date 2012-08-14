@@ -21,7 +21,7 @@ public class ChatUtils {
 
 	public static void broadcast(ChatColor color, String message, boolean subscribedOnly) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.isPlayerSubscribed(player)) continue;
+			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.INSTANCE.isPlayerSubscribed(player)) continue;
 			player.sendMessage(color + getPrefix() + message);
 		}
 
@@ -43,7 +43,7 @@ public class ChatUtils {
 
 	public static void broadcastRaw(String message, ChatColor color, boolean subscribedOnly) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.isPlayerSubscribed(player)) continue;
+			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.INSTANCE.isPlayerSubscribed(player)) continue;
 			player.sendMessage(color + message);
 		}
 

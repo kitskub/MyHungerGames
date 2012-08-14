@@ -19,7 +19,7 @@ public class EntityListener implements Listener{
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		// Games
-		HungerGame game = GameManager.getSession(player);
+		HungerGame game = GameManager.INSTANCE.getSession(player);
 		if (game != null) {
 			if (Config.getForceDamage(game.getSetup())) {
 				event.setCancelled(false);
@@ -29,7 +29,7 @@ public class EntityListener implements Listener{
 		
 		// Spectators
 		if (event.isCancelled()) return;
-		String name = GameManager.getSpectating(player);
+		String name = GameManager.INSTANCE.getSpectating(player);
 		if (name != null) {
 			event.setCancelled(true);
 		}
@@ -40,7 +40,7 @@ public class EntityListener implements Listener{
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		// Games
-		HungerGame game = GameManager.getSession(player);
+		HungerGame game = GameManager.INSTANCE.getSession(player);
 		if (game != null) {
 			double period = Config.getGracePeriod(game.getSetup());
 			long startTime = game.getInitialStartTime();

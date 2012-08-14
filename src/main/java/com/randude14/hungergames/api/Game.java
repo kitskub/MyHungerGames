@@ -181,8 +181,6 @@ public interface Game {
 	public void addCuboid(Location one, Location two);
 
 	public Map<String, List<String>> getSponsors();
-
-	public void addSponsor(String player, String playerToBeSponsored);
 	
 	public Set<World> getWorlds();
 	

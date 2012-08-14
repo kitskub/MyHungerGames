@@ -59,7 +59,7 @@ public class LobbyListener implements Listener, Runnable {
 	
 	public static boolean addInfoWall(Location one, Location two, BlockFace clickedFace, String str) {
 		if (one.getWorld() != two.getWorld()) return false;
-		HungerGame game = GameManager.getGame(str);
+		HungerGame game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		World w = one.getWorld();
 		int oneX = one.getBlockX();
@@ -133,7 +133,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		HungerGame game = GameManager.getGame(str);
+		HungerGame game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		joinSigns.put(location, game);
 		Sign sign = (Sign) block.getState();
@@ -150,7 +150,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		HungerGame game = GameManager.getGame(str);
+		HungerGame game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		gameSigns.put(location, game);
 		updateGameSigns();
@@ -242,7 +242,7 @@ public class LobbyListener implements Listener, Runnable {
 			for (String key : joinSection.getKeys(false)) {
 				ConfigurationSection section = joinSection.getConfigurationSection(key);
 				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
-				HungerGame game = GameManager.getGame(section.getString("game", ""));
+				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				joinSigns.put(loc, game);
 			}
@@ -252,7 +252,7 @@ public class LobbyListener implements Listener, Runnable {
 			for (String key : gameSection.getKeys(false)) {
 				ConfigurationSection section = gameSection.getConfigurationSection(key);
 				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
-				HungerGame game = GameManager.getGame(section.getString("game", ""));
+				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				gameSigns.put(loc, game);
 			}
@@ -261,7 +261,7 @@ public class LobbyListener implements Listener, Runnable {
 			infoWalls.clear();
 			for (String key : infoSection.getKeys(false)) {
 				ConfigurationSection section = infoSection.getConfigurationSection(key);
-				HungerGame game = GameManager.getGame(section.getString("game", ""));
+				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				List<String> strings = section.getStringList("signs");
 				List<Location> locs = new ArrayList<Location>();
 				for (String s : strings) {

@@ -31,7 +31,7 @@ public class SetFixedChestCommand extends SubCommand{
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
 		    return true;
 	    }
-	    game = GameManager.getGame(args[0]);
+	    game = GameManager.INSTANCE.getGame(args[0]);
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return true;

@@ -24,7 +24,7 @@ public class ListCommand extends SubCommand{
 		Player player = (Player) cs;
 
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		Collection<HungerGame> games = GameManager.getGames();
+		Collection<HungerGame> games = GameManager.INSTANCE.getGames();
 		if (games.isEmpty()) {
 			ChatUtils.error(player, "No games have been created yet.");
 			return true;

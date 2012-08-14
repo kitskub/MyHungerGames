@@ -28,7 +28,7 @@ public class RestockCommand extends SubCommand{
 		    return true;
 	    }
 
-	    game = GameManager.getGame(name);
+	    game = GameManager.INSTANCE.getGame(name);
 	    if (game == null) {
 		    ChatUtils.error(player, "%s does not exist.", name);
 		    return true;

@@ -36,11 +36,11 @@ public abstract class SubCommand {
 	
 	public boolean save() {
 		if(game != null) {
-		    GameManager.saveGame(game);
+		    GameManager.INSTANCE.saveGame(game);
 		    return true;
 		}
 		else{
-		    GameManager.saveGames();
+		    GameManager.INSTANCE.saveGames();
 		    return false;
 		}
 	}

@@ -24,9 +24,9 @@ public class SpectateCommand extends SubCommand{
 	@Override
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 	    Player player = (Player) cs;
-	    if (GameManager.getGame(GameManager.getSpectating(player)) != null) {
-		    GameManager.getGame(GameManager.getSpectating(player)).removeSpectator(player);
-		    GameManager.removeSpectator(player);
+	    if (GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)) != null) {
+		    GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)).removeSpectator(player);
+		    GameManager.INSTANCE.removeSpectator(player);
 		    return true;
 	    }
 	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
@@ -34,7 +34,7 @@ public class SpectateCommand extends SubCommand{
 		    ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
 		    return true;
 	    }
-	    game = GameManager.getGame(name);
+	    game = GameManager.INSTANCE.getGame(name);
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 		    return true;
@@ -52,7 +52,7 @@ public class SpectateCommand extends SubCommand{
 			    success = game.addSpectator(player, spectated);
 		    }
 	    }
-	    if (success) GameManager.addSpectator(player, game.getName());
+	    if (success) GameManager.INSTANCE.addSpectator(player, game.getName());
 	    return true;
 	}
     

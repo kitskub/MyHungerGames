@@ -27,7 +27,7 @@ public class JoinCommand extends SubCommand{
 			return true;
 		}
 
-		game = GameManager.getGame(name);
+		game = GameManager.INSTANCE.getGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return true;

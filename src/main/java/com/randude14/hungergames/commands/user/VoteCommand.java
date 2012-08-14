@@ -20,7 +20,7 @@ public class VoteCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 
-		game = GameManager.getSession(player);
+		game = GameManager.INSTANCE.getSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" 
 				+ Commands.USER_JOIN.getUsage() + "'", HungerGames.CMD_USER);

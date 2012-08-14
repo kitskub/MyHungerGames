@@ -19,9 +19,9 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerChat(PlayerChatEvent event) {
-		HungerGame chatterGame = GameManager.getSession(event.getPlayer());
+		HungerGame chatterGame = GameManager.INSTANCE.getSession(event.getPlayer());
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
-			HungerGame receipientGame = GameManager.getSession(event.getPlayer());
+			HungerGame receipientGame = GameManager.INSTANCE.getSession(event.getPlayer());
 			if (receipientGame != null && Config.getIsolatePlayerChat(receipientGame.getSetup())) {
 				if (chatterGame != null) {
 					if (chatterGame.compareTo(receipientGame) == 0 

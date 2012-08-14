@@ -30,11 +30,11 @@ public class SponsorCommand extends SubCommand{
 			ChatUtils.error(player, "%s is not online.", args[0]);
 			return true;
 		}
-		if (GameManager.getPlayingSession(p) == null) {
+		if (GameManager.INSTANCE.getPlayingSession(p) == null) {
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 			return true;
 		}
-		GameManager.addSponsor(player, p);
+		GameManager.INSTANCE.addSponsor(player, p);
 		return true;
 	}
     

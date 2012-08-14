@@ -32,7 +32,7 @@ public class KickCommand extends SubCommand{
 		    ChatUtils.error(player, "%s is not online.", args[0]);
 		    return true;
 		}
-		game = GameManager.getSession(kick);
+		game = GameManager.INSTANCE.getSession(kick);
 		if (game == null) {
 		    ChatUtils.error(player, "%s is currently not in a game.", kick.getName());
 		    return true;

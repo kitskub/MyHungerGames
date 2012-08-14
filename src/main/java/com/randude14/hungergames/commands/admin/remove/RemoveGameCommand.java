@@ -32,7 +32,7 @@ public class RemoveGameCommand extends SubCommand{
 		    return true;
 	    }
 	    
-	    GameManager.removeGame(args[0]);
+	    GameManager.INSTANCE.removeGame(args[0]);
 	    HungerGames.callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[0]);
 	    return true;

@@ -19,11 +19,11 @@ public class BackCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 		
-		if (GameManager.getSession(player) != null) {
+		if (GameManager.INSTANCE.getSession(player) != null) {
 			ChatUtils.send(player, "You cannot use that command while you are in-game.");
 			return true;
 		}
-		Location loc = GameManager.getAndRemoveBackLocation(player);
+		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
 		if (loc != null) {
 			ChatUtils.send(player, "Teleporting you to your back location.");
 			player.teleport(loc);

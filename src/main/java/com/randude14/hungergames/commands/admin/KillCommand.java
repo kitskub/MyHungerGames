@@ -29,7 +29,7 @@ public class KillCommand extends SubCommand{
 		    ChatUtils.error(player, "%s is not online.", args[0]);
 		    return true;
 		}
-		game = GameManager.getSession(kill);
+		game = GameManager.INSTANCE.getSession(kill);
 		if (game == null) {
 		    ChatUtils.error(player, "%s is currently not in a game.", kill.getName());
 		    return true;

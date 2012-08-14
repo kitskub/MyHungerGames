@@ -19,7 +19,7 @@ public class LeaveCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 
-		game = GameManager.getPlayingSession(player);
+		game = GameManager.INSTANCE.getPlayingSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not playing a game.");
 			return true;

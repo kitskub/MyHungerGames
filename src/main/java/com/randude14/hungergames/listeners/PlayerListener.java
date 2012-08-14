@@ -24,11 +24,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameOfKilled = GameManager.getPlayingSession(killed);
+		HungerGame gameOfKilled = GameManager.INSTANCE.getPlayingSession(killed);
 		if (gameOfKilled == null) return;
 		Player killer = killed.getKiller();
 		if (killer != null) {
-			HungerGame gameOfKiller = GameManager.getPlayingSession(killer);
+			HungerGame gameOfKiller = GameManager.INSTANCE.getPlayingSession(killer);
 			if (gameOfKiller == null) return;
 			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
 				gameOfKiller.killed(killer, killed);
@@ -41,20 +41,20 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerRespawn(PlayerRespawnEvent event) {
-	    Location respawn = GameManager.getRespawnLocation(event.getPlayer());
+	    Location respawn = GameManager.INSTANCE.getRespawnLocation(event.getPlayer());
 	    if (respawn == null) return;
 	    event.setRespawnLocation(respawn);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerQuit(PlayerQuitEvent event) {
-		GameManager.playerLeftServer(event.getPlayer());
+		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
 		HungerGames.playerLeftServer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerKick(PlayerKickEvent event) {
-		GameManager.playerLeftServer(event.getPlayer());
+		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
 		HungerGames.playerLeftServer(event.getPlayer());
 	}
 	
@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
 	public void playerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		Location frozenLoc = GameManager.getFrozenLocation(player);
+		Location frozenLoc = GameManager.INSTANCE.getFrozenLocation(player);
 		if (frozenLoc == null) {
 			return;
 		}

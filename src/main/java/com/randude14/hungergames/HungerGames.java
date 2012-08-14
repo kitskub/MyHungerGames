@@ -68,9 +68,9 @@ public class HungerGames extends JavaPlugin{
 		loadRegistry();
 		loadResetter();
 		callTasks();
-		GameManager.loadGames();
+		GameManager.INSTANCE.loadGames();
 		LobbyListener.load();
-		Logging.info("%s games loaded.", GameManager.getGames().size());
+		Logging.info("%s games loaded.", GameManager.INSTANCE.getGames().size());
 		try {
 		    Metrics metrics = new Metrics();
 		    metrics.beginMeasuringPlugin(this);
@@ -92,10 +92,10 @@ public class HungerGames extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
-		for (HungerGame game : GameManager.getGames()) {
+		for (HungerGame game : GameManager.INSTANCE.getGames()) {
 			game.stopGame(false);
 		}
-		GameManager.saveGames();
+		GameManager.INSTANCE.saveGames();
 		SignListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
@@ -196,7 +196,7 @@ public class HungerGames extends JavaPlugin{
 	
 	public static void reload() {
 		Files.loadAll();
-		GameManager.loadGames();
+		GameManager.INSTANCE.loadGames();
 		SignListener.loadSigns();
 		loadRegistry();
 	}

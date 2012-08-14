@@ -580,7 +580,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		for (String playerName : stats.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
-			GameManager.unfreezePlayer(p);
+			GameManager.INSTANCE.unfreezePlayer(p);
 		}
 
 	}
@@ -661,7 +661,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	@Override
 	public synchronized boolean join(Player player) {
-	    if (GameManager.getSession(player) != null) {
+	    if (GameManager.INSTANCE.getSession(player) != null) {
 		    ChatUtils.error(player, "You are already in a game. Leave that game before joining another.");
 		    return false;
 	    }
@@ -737,11 +737,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    else {
 		    loc = spawnsTaken.get(player.getName());
 	    }
-	    GameManager.addSubscribedPlayer(player);
-	    GameManager.addBackLocation(player);
+	    GameManager.INSTANCE.addSubscribedPlayer(player);
+	    GameManager.INSTANCE.addBackLocation(player);
 	    player.teleport(loc, TeleportCause.PLUGIN);
 	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
-	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.freezePlayer(player);
+	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.INSTANCE.freezePlayer(player);
 	    if (Config.getForceSurvival(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
@@ -839,7 +839,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    if (spectator == null) continue;
 		    player.showPlayer(spectator);
 		}
-		GameManager.unfreezePlayer(player);
+		GameManager.INSTANCE.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
@@ -879,7 +879,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				ChatUtils.error(player, "There was no spawn set for %s. Teleporting to back location.", name);
 			}
 		}
-		Location loc = GameManager.getAndRemoveBackLocation(player);
+		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
 		if (loc != null) {
 			player.teleport(loc);
 		}
@@ -979,11 +979,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		else {
 			if (Config.shouldRespawnAtSpawnPoint(setup)) {
 				Location respawn = spawnsTaken.get(killed.getName());
-				GameManager.addPlayerRespawn(killed, respawn);
+				GameManager.INSTANCE.addPlayerRespawn(killed, respawn);
 			}
 			else {
 				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
-				GameManager.addPlayerRespawn(killed, respawn);
+				GameManager.INSTANCE.addPlayerRespawn(killed, respawn);
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
@@ -1219,7 +1219,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return Collections.unmodifiableMap(sponsors);
 	}
 
-	@Override
 	public void addSponsor(String player, String playerToBeSponsored) {
 		if (sponsors.get(player) == null) sponsors.put(player, new ArrayList<String>());
 		sponsors.get(player).add(playerToBeSponsored);

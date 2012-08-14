@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
 		Player player = event.getPlayer();
 		String message = event.getMessage();
 		if(message.startsWith("/" + HungerGames.CMD_ADMIN) || message.startsWith("/" + HungerGames.CMD_USER)) return;
-		HungerGame session = GameManager.getPlayingSession(player);
+		HungerGame session = GameManager.INSTANCE.getPlayingSession(player);
 		if(session == null) return;
 		message = message.split(" ")[0];
 		if(Config.getUseCommand(session.getSetup()) ^ Config.getSpecialCommands(session.getSetup()).contains("/" + message)) {

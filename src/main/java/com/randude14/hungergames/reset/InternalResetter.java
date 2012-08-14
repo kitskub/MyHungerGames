@@ -71,7 +71,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     
     private static HungerGame insideGame(Block block) {
 	    Location loc = block.getLocation();
-	    for (HungerGame game : GameManager.getGames()) {
+	    for (HungerGame game : GameManager.INSTANCE.getGames()) {
 		    if (game.getWorlds().size() <= 0 && game.getCuboids().size() <= 0) return null;
 		    if (game.getWorlds().contains(block.getWorld())) return game;
 		    for (Cuboid c : game.getCuboids()) {
@@ -109,7 +109,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 	    if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
-		    HungerGame session = GameManager.getPlayingSession(event.getPlayer());
+		    HungerGame session = GameManager.INSTANCE.getPlayingSession(event.getPlayer());
 		    if(session == null) return;
 		    addBlockState(session, event.getClickedBlock(), event.getClickedBlock().getState());
 	    }
@@ -124,14 +124,14 @@ public class InternalResetter extends Resetter implements Listener, Runnable{
         
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-	    HungerGame session = GameManager.getPlayingSession(event.getPlayer());
+	    HungerGame session = GameManager.INSTANCE.getPlayingSession(event.getPlayer());
 	    if(session == null) return;
 	    addBlockState(session, event.getBlock(), event.getBlockReplacedState());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-	    HungerGame session = GameManager.getPlayingSession(event.getPlayer());
+	    HungerGame session = GameManager.INSTANCE.getPlayingSession(event.getPlayer());
 	    if(session == null) return;
 	    addBlockState(session, event.getBlock(), event.getBlock().getState());
     }

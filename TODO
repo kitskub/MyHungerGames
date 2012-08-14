@@ -22,6 +22,7 @@ LOW:
 - /hg rules
 - Log command
 - Have lobby check for conflicting signs
+- Make spectating started from a single entry point in API
 
 OPTIONAL:
 - Possible timed game events

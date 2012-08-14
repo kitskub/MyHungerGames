@@ -18,12 +18,12 @@ public class SubscribeCommand extends SubCommand{
 	public boolean handle(CommandSender cs, Command cmd, String[] args) {
 		Player player = (Player) cs;
 
-		if (GameManager.isPlayerSubscribed(player)) {
-			GameManager.removedSubscribedPlayer(player);
+		if (GameManager.INSTANCE.isPlayerSubscribed(player)) {
+			GameManager.INSTANCE.removedSubscribedPlayer(player);
 			ChatUtils.send(player, "You have been unsubscribed from MyHungerGames messages.");
 		}
 		else {
-			GameManager.addSubscribedPlayer(player);
+			GameManager.INSTANCE.addSubscribedPlayer(player);
 			ChatUtils.send(player, "You have been subscribed to MyHungerGames messages.");
 		}
 		return true;

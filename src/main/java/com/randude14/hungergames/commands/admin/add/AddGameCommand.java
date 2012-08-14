@@ -24,21 +24,21 @@ public class AddGameCommand extends SubCommand{
 		    ChatUtils.helpCommand(player, command.getUsage(), HungerGames.CMD_ADMIN);
 		    return true;
 	    }
-	    game = GameManager.getGame(args[0]);
+	    game = GameManager.INSTANCE.getGame(args[0]);
 
 	    if (game != null) {
 		    ChatUtils.error(player, "%s already exists.", args[0]);
 		    return true;
 	    }
 	    if(args.length == 1){
-		    GameManager.createGame(args[0]);
+		    GameManager.INSTANCE.createGame(args[0]);
 	    }
 	    else{
-		    GameManager.createGame(args[0], args[1]);
+		    GameManager.INSTANCE.createGame(args[0], args[1]);
 	    }
-	    GameCreateEvent event = new GameCreateEvent(GameManager.getGame(args[0]));
+	    GameCreateEvent event = new GameCreateEvent(GameManager.INSTANCE.getGame(args[0]));
 	    if(event.isCancelled()) {
-	    	GameManager.removeGame(args[0]);
+	    	GameManager.INSTANCE.removeGame(args[0]);
 	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[0]);
 	    }
 	    else {
