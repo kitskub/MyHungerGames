@@ -2,7 +2,7 @@ package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.games.HungerGame.GameState;
+import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.util.Date;
 import java.util.HashMap;

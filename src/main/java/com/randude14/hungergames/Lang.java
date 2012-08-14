@@ -1,6 +1,7 @@
 package com.randude14.hungergames;
 
 import static com.randude14.hungergames.Defaults.Lang.*;
+
 import java.util.HashSet;
 import java.util.Set;
 

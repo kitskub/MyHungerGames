@@ -3,7 +3,6 @@ package com.randude14.hungergames.listeners;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.PerformanceMonitor;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
@@ -16,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class ActivityListener implements Listener, Runnable {
@@ -27,7 +26,6 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void run() {
-		PerformanceMonitor.startActivity("ActivityListener run()");
 		for (HungerGame game : times.keySet()) {
 			if (times.get(game) == null) times.put(game, new HashMap<String, Long>());
 			long maxTime = Config.getTimeout(game.getSetup()) * 1000;
@@ -42,7 +40,6 @@ public class ActivityListener implements Listener, Runnable {
 				}
 			}
 		}
-		PerformanceMonitor.stopActivity("ActivityListener run()");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -51,7 +48,7 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void playerChat(PlayerChatEvent event) {
+	public void playerChat(AsyncPlayerChatEvent event) {
 		update(event.getPlayer());
 	}
 	

@@ -4,9 +4,10 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
+
 import java.util.HashSet;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +28,7 @@ public class ChatListener implements Listener {
 						&& event.getPlayer().getLocation().getWorld() == p.getLocation().getWorld()) {
 						float distanceRequired = Config.getChatDistance(receipientGame.getSetup());
 						if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) >= distanceRequired) {
-							if (HungerGames.checkPermission(event.getPlayer(), Perm.ADMIN_STOP)) {
+							if (HungerGames.checkPermission(event.getPlayer(), Perm.ADMIN_CHAT)) {
 								if (event.getMessage().startsWith("hg ")) {
 									event.setMessage(event.getMessage().substring(3));
 									return;

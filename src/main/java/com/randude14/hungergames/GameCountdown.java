@@ -1,10 +1,10 @@
 package com.randude14.hungergames;
 
-import org.bukkit.ChatColor;
-
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class GameCountdown implements Runnable {

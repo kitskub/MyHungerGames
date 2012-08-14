@@ -5,8 +5,6 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.SubCommand;
-import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.games.HungerGame.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.Command;

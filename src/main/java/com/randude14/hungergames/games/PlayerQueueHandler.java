@@ -4,7 +4,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameEndEvent;
-import com.randude14.hungergames.games.HungerGame.GameState;
+import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.LinkedList;

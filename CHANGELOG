@@ -10,6 +10,9 @@ v0.7
 - Added joinsign, gamesign, and infowall
 - Chests can now always be interacted with
 - Changed grace-period so it only affects damage by other entities
+- Removed performance monitor as it is unneeded and didn't work
+- Made a Game interface for the API
+- Added a chat perm
 
 
 v0.6

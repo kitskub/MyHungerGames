@@ -99,7 +99,6 @@ public class HungerGames extends JavaPlugin{
 		SignListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
-		PerformanceMonitor.saveFile();
 		Logging.info("Disabled.");
 	}
 

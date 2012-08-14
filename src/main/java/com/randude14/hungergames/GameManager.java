@@ -1,6 +1,11 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
+import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.Files;
+import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.ItemConfig;
+
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -25,7 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 
-public class GameManager{
+public class GameManager {
 	private static final HungerGames plugin = HungerGames.getInstance();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
@@ -129,7 +134,6 @@ public class GameManager{
 	}
 
 	public static void loadGames() {
-		PerformanceMonitor.startActivity("loadGames");
 		ConfigurationSection gamesSection = Files.GAMES.getConfig().getConfigurationSection("games");
 		if (gamesSection == null) {
 			return;
@@ -141,15 +145,12 @@ public class GameManager{
 			game.loadFrom(gameSection);
 			games.add(game);
 		}
-		PerformanceMonitor.stopActivity("loadGames");
 	}
 
 	public static void saveGames() {
-		PerformanceMonitor.startActivity("saveGames");
 		for (HungerGame game : games) {
 		    saveGame(game);
 		}
-		PerformanceMonitor.stopActivity("saveGames");
 	}
 	
 	public static void reloadGame(HungerGame game){
