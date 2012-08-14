@@ -12,10 +12,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddJoinSignCommand extends SubCommand {
+public class AddGameSignCommand extends SubCommand {
 
-	public AddJoinSignCommand() {
-		super(Commands.ADMIN_ADD_JOIN_SIGN);
+	public AddGameSignCommand() {
+		super(Commands.ADMIN_ADD_GAME_SIGN);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class AddJoinSignCommand extends SubCommand {
 			return true;
 		}
 
-		SessionListener.addSession(SessionListener.SessionType.JOIN_SIGN_ADDER, player, game.getName(), "game", game.getName());
-		ChatUtils.send(player, ChatColor.GREEN, "Left-click the sign to add it as a join sign.");
+		SessionListener.addSession(SessionListener.SessionType.GAME_SIGN_ADDER, player, game.getName(), "game", game.getName());
+		ChatUtils.send(player, ChatColor.GREEN, "Left-click the sign to add it as a game sign.");
 		return true;
 	}
 

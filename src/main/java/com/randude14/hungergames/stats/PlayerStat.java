@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.bukkit.entity.Player;
 
-public class PlayerStat {
+public class PlayerStat implements Comparable<PlayerStat> {
 	public static Map<String, Map<HungerGame, PlayerStat>> stats = new HashMap<String, Map<HungerGame, PlayerStat>>();
 	public static final String NODODY = "NOBODY";
 	private Player player;
@@ -120,6 +120,14 @@ public class PlayerStat {
 		stats.get(player).remove(game);
 	}
 
+	public int compareTo(PlayerStat o) {
+		double ratio = kills.size() / (deaths.size() + 1);
+		double otherRatio = o.kills.size() / (o.deaths.size() + 1);
+		if (ratio == otherRatio) return 0;
+		else if (ratio > otherRatio) return 1;
+		return -1;
+	}
+
 	public enum PlayerState {
 		NOT_IN_GAME,
 		PLAYING,
@@ -127,5 +135,13 @@ public class PlayerStat {
 		GAME_PAUSED,
 		DEAD,
 		WAITING;
+	}
+	
+	public static class StatComparator implements Comparator<PlayerStat> {
+
+		public int compare(PlayerStat o1, PlayerStat o2) {
+			return o1.compareTo(o2);
+		}
+		
 	}
 }

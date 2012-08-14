@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import com.google.common.base.Strings;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -67,6 +68,7 @@ public class GameManager{
 	}
 
 	public static HungerGame getGame(String name) {
+		if (Strings.nullToEmpty(name).equals("")) return null;
 		for (HungerGame game : games) {
 			if (game.getName().equalsIgnoreCase(name)) {
 				return game;
@@ -123,7 +125,7 @@ public class GameManager{
 		}
 		HungerGame game = getSession(player);
 		if (game == null) return;
-		game.leave(player);
+		game.leave(player, true);
 	}
 
 	public static void loadGames() {

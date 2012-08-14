@@ -361,6 +361,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		}
 		StatHandler.updateGame(this);
 		for (Player player : getRemainingPlayers()) {
+			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
 			ItemStack[] contents = player.getInventory().getContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
 			for (ItemStack i : contents) {
@@ -389,7 +390,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		spectatorSponsoringRunnable.cancel();
 		HungerGames.cancelTask(locTaskId);
 		if (Config.getRemoveItems(setup)) {
-			Logging.debug("About to remove items from ground");
 			removeItemsOnGround();
 		}
 		state = STOPPED;
@@ -787,13 +787,15 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		return loc;
 	}
 	
-	public synchronized boolean leave(Player player) {
-		if (state != RUNNING && state != PAUSED) return quit(player);
+	public synchronized boolean leave(Player player, boolean callEvent) {
+		if (state != RUNNING && state != PAUSED) return quit(player, true);
 		
 		if (!isPlaying(player)) {
 			ChatUtils.error(player, "You are not playing the game %s.", name);
 			return false;
 		}
+
+		if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
 		if (!Config.getAllowRejoin(setup)) {
 			stats.get(player.getName()).die();
 		}
@@ -811,16 +813,15 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 		ChatUtils.broadcast(mess, true);
 		checkForGameOver(false);
 
-		HungerGames.callEvent(new PlayerLeaveGameEvent(this, player));
 		return true;
 	}
 	
-	public synchronized boolean quit(Player player) {
+	public synchronized boolean quit(Player player, boolean callEvent) {
 	    if (!contains(player)) {
 		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
-	    HungerGames.callEvent(new PlayerQuitGameEvent(this, player));
+	    if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.QUIT));
 	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING;
 	    if (wasPlaying) {
 		    dropInventory(player);
@@ -1164,7 +1165,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 						if (Bukkit.getPlayer(playerName) == null) continue;
 						ChatUtils.error(Bukkit.getPlayer(playerName),
 							"Your spawn point has been recently removed. Try rejoining by typing '/hg rejoin %s'", name);
-						leave(Bukkit.getPlayer(playerName));
+						leave(Bukkit.getPlayer(playerName), true);
 					}
 				}
 				return true;
@@ -1194,6 +1195,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable{
 
 	public List<String> getAllPlayers() {
 		return new ArrayList<String>(stats.keySet());
+	}
+
+	public List<PlayerStat> getStats() {
+		return new ArrayList<PlayerStat>(stats.values());
 	}
 	
 	public Location getSpawn() {

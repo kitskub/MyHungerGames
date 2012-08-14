@@ -9,6 +9,7 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.utils.ChatUtils;
 
 public class TeleportListener implements Listener {
 	
@@ -18,6 +19,7 @@ public class TeleportListener implements Listener {
 		HungerGame session = GameManager.getPlayingSession(player);
 		if (session == null) return;
 		if (!Config.getCanTeleport(session.getSetup())) {
+			ChatUtils.error(player, "You cannot teleport while in-game!");
 			//Logging.debug("Cancelling a teleport.");
 			event.setCancelled(true);
 		}

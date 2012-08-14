@@ -25,7 +25,7 @@ public class LeaveCommand extends SubCommand{
 			return true;
 		}
 
-		game.leave(player);
+		game.leave(player, true);
 		return true;
 	}
 }

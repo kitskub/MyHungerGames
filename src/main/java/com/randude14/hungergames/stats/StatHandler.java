@@ -112,7 +112,7 @@ public class StatHandler {
 		map.put("playerName", s);
 		Document doc;
 		try {
-			doc = ConnectionUtils.post(urlString, map);
+			doc = ConnectionUtils.postWithRequest(urlString, map);
 		} catch (ParserConfigurationException ex) {
 			Logging.debug("Error when getting stat: " + ex.getMessage());
 			return null;

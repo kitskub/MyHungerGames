@@ -46,11 +46,6 @@ public class TimeListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKick(PlayerKickGameEvent event) {
-		playerStopped(event.getGame(), event.getPlayer());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKillEvent event) {
 		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerState.DEAD) {
 			playerStopped(event.getGame(), event.getKilled());
@@ -59,11 +54,6 @@ public class TimeListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		playerStopped(event.getGame(), event.getPlayer());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerQuit(PlayerQuitGameEvent event) {
 		playerStopped(event.getGame(), event.getPlayer());
 	}
 	

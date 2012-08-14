@@ -9,6 +9,7 @@ import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.logging.Level;
+import org.bukkit.Material;
 
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -117,12 +118,13 @@ public class BlockListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.getPlayingSession(player);
 		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
-			if(!Config.getCanInteractBlock(setup, event.getClickedBlock())) {
+			if(!Config.getCanInteractBlock(setup, event.getClickedBlock()) && !event.getClickedBlock().getType().equals(Material.CHEST)) {
 				ChatUtils.error(player, "You cannot interact with this block while in game %s.", session.getName());
 				event.setCancelled(true);
 				return;

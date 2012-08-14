@@ -9,10 +9,8 @@ import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
 import com.randude14.hungergames.api.event.PlayerJoinGameEvent;
-import com.randude14.hungergames.api.event.PlayerKickGameEvent;
 import com.randude14.hungergames.api.event.PlayerKillEvent;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
-import com.randude14.hungergames.api.event.PlayerQuitGameEvent;
 import com.randude14.hungergames.games.HungerGame;
 
 import java.util.*;
@@ -239,23 +237,21 @@ public class SignListener implements Runnable, Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKick(PlayerKickGameEvent event) {
-		callListeners(ListenerType.PLAYER_KICK, event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKillEvent event) {
 		callListeners(ListenerType.PLAYER_KILL, event.getGame());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		callListeners(ListenerType.PLAYER_LEAVE, event.getGame());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerQuit(PlayerQuitGameEvent event) {
-		callListeners(ListenerType.PLAYER_QUIT, event.getGame());
+		if (event.getType().equals(PlayerLeaveGameEvent.Type.LEAVE)) {
+			callListeners(ListenerType.PLAYER_LEAVE, event.getGame());
+		}
+		else if (event.getType().equals(PlayerLeaveGameEvent.Type.QUIT)) {
+			callListeners(ListenerType.PLAYER_QUIT, event.getGame());
+		}
+		else if (event.getType().equals(PlayerLeaveGameEvent.Type.KICK)) {
+			callListeners(ListenerType.PLAYER_KICK, event.getGame());
+		}
 	}
 	
 	public enum ListenerType {

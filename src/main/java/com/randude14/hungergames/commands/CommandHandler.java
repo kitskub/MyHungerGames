@@ -107,7 +107,10 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_CHEST_LOOT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_GAME_SIGN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_INFO_WALL.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_JOIN_SIGN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPONSOR_LOOT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_WORLD.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				return;
@@ -117,8 +120,10 @@ public class CommandHandler implements CommandExecutor {
 			else if (args[1].equalsIgnoreCase("chest")) command = new AddChestCommand();
 			else if (args[1].equalsIgnoreCase("chestloot")) command = new AddChestLootCommand();
 			else if (args[1].equalsIgnoreCase("game")) command = new AddGameCommand();
+			else if (args[1].equalsIgnoreCase("infowall")) command = new AddInfoWallCommand();
 			else if (args[1].equalsIgnoreCase("itemset")) command = new AddItemSetCommand();
 			else if (args[1].equalsIgnoreCase("joinsign")) command = new AddJoinSignCommand();
+			else if (args[1].equalsIgnoreCase("gamesign")) command = new AddGameSignCommand();
 			else if (args[1].equalsIgnoreCase("sponsorloot")) command = new AddSponsorLootCommand();
 			else if (args[1].equalsIgnoreCase("world")) command = new AddWorldCommand();
 			else {
@@ -134,12 +139,14 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_CHEST.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_GAME.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_REMOVE_SIGN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				return;
 			}
 			if (args[1].equalsIgnoreCase("spawnpoint")) command = new RemoveSpawnPointCommand();
 			else if (args[1].equalsIgnoreCase("chest")) command = new RemoveChestCommand();
 			else if (args[1].equalsIgnoreCase("game")) command = new RemoveGameCommand();
 			else if (args[1].equalsIgnoreCase("itemset")) command = new RemoveItemSetCommand();
+			else if (args[1].equalsIgnoreCase("sign")) command = new RemoveSignCommand();
 			else {
 				ChatUtils.error(player, "Command not recognized.");
 				return;

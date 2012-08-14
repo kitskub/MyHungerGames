@@ -14,7 +14,8 @@ public enum Files {
 	GAMES("games.yml", FileType.YML, false),
 	LANG("lang.yml", FileType.YML, true),
 	LOG("myhungergames.log", FileType.LOG, false),
-	SIGNS("signs.yml", FileType.YML, false);
+	SIGNS("signs.yml", FileType.YML, false),
+	LOBBY_SIGNS("lobbysigns.yml", FileType.YML, false);
 
 	private String path;
 	private FileType type;

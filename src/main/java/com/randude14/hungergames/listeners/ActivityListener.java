@@ -36,7 +36,7 @@ public class ActivityListener implements Listener, Runnable {
 				if ((System.currentTimeMillis() - times.get(game).get(s)) >= maxTime) {
 					Player p = Bukkit.getPlayer(s);
 					if (p != null) {
-						game.leave(p);	
+						game.leave(p, true);	
 					}
 					times.get(game).remove(p.getName());
 				}
@@ -89,11 +89,6 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKick(PlayerKickGameEvent event) {
-		times.get(event.getGame()).remove(event.getPlayer().getName());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKillEvent event) {
 		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerStat.PlayerState.DEAD) {
 			times.get(event.getGame()).remove(event.getKilled().getName());
@@ -102,11 +97,6 @@ public class ActivityListener implements Listener, Runnable {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		times.get(event.getGame()).remove(event.getPlayer().getName());
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerQuit(PlayerQuitGameEvent event) {
 		times.get(event.getGame()).remove(event.getPlayer().getName());
 	}
 }

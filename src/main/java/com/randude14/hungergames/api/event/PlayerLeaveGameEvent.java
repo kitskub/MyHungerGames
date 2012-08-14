@@ -11,10 +11,12 @@ import com.randude14.hungergames.games.HungerGame;
 public class PlayerLeaveGameEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
 	private final OfflinePlayer player;
+	private Type type;
 	
-	public PlayerLeaveGameEvent(final HungerGame game, final Player player) {
+	public PlayerLeaveGameEvent(final HungerGame game, final Player player, Type type) {
 		super(game);
 		this.player = player;
+		this.type = type;
 	}
 
 	public OfflinePlayer getPlayer() {
@@ -30,4 +32,13 @@ public class PlayerLeaveGameEvent extends GameEvent {
 		return handlers;
 	}
 
+	public Type getType() {
+		return type;
+	}
+
+	public static enum Type {
+		LEAVE,
+		QUIT,
+		KICK;
+	}
 }

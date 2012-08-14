@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class SessionListener implements Listener {
 	private static final Map<String, Session> sessions = new HashMap<String, Session>(); // <player, session>>
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void playerClickedBlock(PlayerInteractEvent event) {
 	    Player player = event.getPlayer();
 	    Action action = event.getAction();
@@ -36,12 +36,20 @@ public class SessionListener implements Listener {
 		    session = sessions.get(player.getName());
 		    type = session.getType();
 		    game = session.getGame();
-		    if (game == null) {
-			    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
-			    return;
-		    }
 	    }
 	    else {
+		    return;
+	    }
+	    event.setCancelled(true); // Because if not sign interacting would be handled on monitor TODO: better?
+
+	    if (game == null) {
+		    if (type == SessionType.SIGN_REMOVER) {
+			    LobbyListener.removeSign(clickedBlock.getLocation());
+			    ChatUtils.send(player, "Sign has been removed.");
+			    sessions.remove(player.getName());
+			    return;
+		    }
+		    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
 		    return;
 	    }
 	    if (type == SessionType.CHEST_ADDER) {
@@ -88,8 +96,8 @@ public class SessionListener implements Listener {
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.addSpawnPoint(loc)) {
-				    ChatUtils.send(player, "Spawn point has been added to %s.", game.getName());
 				    session.clicked(clickedBlock);
+				    ChatUtils.send(player, "Spawn point %s has been added to %s.", session.getBlocks().size(), game.getName());
 			    }
 			    else {
 				    ChatUtils.error(player, "%s already has this spawn point.", game.getName());
@@ -105,8 +113,8 @@ public class SessionListener implements Listener {
 		    loc.add(.5, 1, .5);
 		    if (action == Action.LEFT_CLICK_BLOCK) {
 			    if (game.removeSpawnPoint(loc)) {
-				    ChatUtils.send(player, "Spawn point has been removed from %s.", game.getName());
 				    session.clicked(clickedBlock);
+				    ChatUtils.send(player, "Spawn point %s has been removed from %s.", session.getBlocks().size(), game.getName());
 			    }
 			    else {
 				    ChatUtils.error(player, "%s does not contain this spawn point.", game.getName());
@@ -143,7 +151,7 @@ public class SessionListener implements Listener {
 			    ChatUtils.send(player, "Chest is no longer a fixed item chest.");
 		    }
 		    else {
-			    ChatUtils.error(player, "That is not a chest!");    
+			    ChatUtils.error(player, "That is not a chest! Try again!");    
 		    }
 	    }
 	    else if (type == SessionType.JOIN_SIGN_ADDER) {
@@ -153,6 +161,37 @@ public class SessionListener implements Listener {
 		    }
 		    else {
 			    ChatUtils.error(player, "Error when adding join sign!");    
+		    }
+	    }
+	    else if (type == SessionType.GAME_SIGN_ADDER) {
+		    if (LobbyListener.addGameSign(clickedBlock.getLocation(), session.getData().get("game").toString())) {
+			    sessions.remove(player.getName());
+			    ChatUtils.send(player, "Game sign has been added successfully.");
+		    }
+		    else {
+			    ChatUtils.error(player, "Error when adding game sign! Try again!");    
+		    }
+	    }
+	    else if (type == SessionType.INFO_WALL_ADDER) {
+		    if (session.getBlocks().size() < 1) {
+			    session.clicked(clickedBlock);
+			    ChatUtils.send(player, "First corner set.");
+		    }
+		    else {
+			    ChatUtils.send(player, "Second corner and info wall set.");
+			    LobbyListener.addInfoWall(session.getBlocks().get(0).getLocation(), clickedBlock.getLocation(), event.getBlockFace(), session.getData().get("game").toString());
+			    sessions.remove(player.getName());
+		    }
+	    }
+	    else if (type == SessionType.INFO_WALL_ADDER) {
+		    if (session.getBlocks().size() < 1) {
+			    session.clicked(clickedBlock);
+			    ChatUtils.send(player, "First corner set.");
+		    }
+		    else {
+			    ChatUtils.send(player, "Second corner and info wall set.");
+			    LobbyListener.addInfoWall(session.getBlocks().get(0).getLocation(), clickedBlock.getLocation(), event.getBlockFace(), session.getData().get("game").toString());
+			    sessions.remove(player.getName());
 		    }
 	    }
 	    else {
@@ -180,7 +219,10 @@ public class SessionListener implements Listener {
 		CHEST_ADDER,
 		CHEST_REMOVER,
 		CUBOID_ADDER,
-		JOIN_SIGN_ADDER;
+		JOIN_SIGN_ADDER,
+		GAME_SIGN_ADDER,
+		INFO_WALL_ADDER,
+		SIGN_REMOVER;
 	}
 	
 	private static class Session {

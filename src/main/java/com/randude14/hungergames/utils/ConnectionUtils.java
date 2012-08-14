@@ -19,7 +19,37 @@ import org.xml.sax.SAXException;
 
 public class ConnectionUtils {
 
-	public static Document post(String url, Map<String, String> data) throws IOException, ParserConfigurationException, SAXException {
+	public static void post(String url, Map<String, String> data) throws IOException, ParserConfigurationException, SAXException {
+		URL siteUrl = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) siteUrl.openConnection();
+		try {
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setDoInput(false);
+			
+			DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+			
+			Set<String> keys = data.keySet();
+			Iterator<String> keyIter = keys.iterator();
+			String content = "";
+			for (int i = 0; keyIter.hasNext(); i++) {
+				String key = keyIter.next();
+				if (i != 0) {
+					content += "&";
+				}
+				content += key + "=" + URLEncoder.encode(data.get(key), "UTF-8");
+			}
+			out.writeBytes(content);
+			out.flush();
+			out.close();
+		} catch (IOException iOException) {
+			throw iOException;
+		} finally {
+			conn.getInputStream().close();
+		}
+	}
+
+	public static Document postWithRequest(String url, Map<String, String> data) throws IOException, ParserConfigurationException, SAXException {
 		URL siteUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) siteUrl.openConnection();
 		try {
@@ -42,12 +72,13 @@ public class ConnectionUtils {
 			out.writeBytes(content);
 			out.flush();
 			out.close();
+			InputStream in;
 			try {
-				InputStream in = conn.getInputStream();
+				in = conn.getInputStream();
 			} catch (UnknownServiceException unknownServiceException) {
 				return null;
 			}
-			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(conn.getInputStream());
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
 			return document;
 		} catch (IOException iOException) {
 			throw iOException;

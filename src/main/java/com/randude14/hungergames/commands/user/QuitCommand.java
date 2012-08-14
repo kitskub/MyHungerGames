@@ -25,7 +25,7 @@ public class QuitCommand extends SubCommand{
 			return true;
 		}
 
-		game.quit(player);
+		game.quit(player, true);
 		return true;
 	}
     

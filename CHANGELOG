@@ -4,6 +4,13 @@ v0.7
 - User commands can now use default game instead specifying one
 - Made admin commands that are not part of setting up able to use the default game
 - Fixed number stuff
+- Fixed remove-items
+- Fixed players not getting tped out of the game on /hga stop
+- Merged PlayerQuitEvent, PlayerLeaveEvent, and PlayerKickEvent into PlayerLeaveEvent with Type
+- Added joinsign, gamesign, and infowall
+- Chests can now always be interacted with
+- Changed grace-period so it only affects damage by other entities
+
 
 v0.6
 - bug fixes

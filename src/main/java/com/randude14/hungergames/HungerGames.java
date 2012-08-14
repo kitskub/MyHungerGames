@@ -69,6 +69,7 @@ public class HungerGames extends JavaPlugin{
 		loadResetter();
 		callTasks();
 		GameManager.loadGames();
+		LobbyListener.load();
 		Logging.info("%s games loaded.", GameManager.getGames().size());
 		try {
 		    Metrics metrics = new Metrics();
@@ -166,6 +167,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TeleportListener(), instance);
 		pm.registerEvents(new TimedGameRunnable(), instance);
 		pm.registerEvents(new TimeListener(), instance);
+		pm.registerEvents(new LobbyListener(), instance);
 		if (Config.getAutoJoin()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
@@ -319,8 +321,8 @@ public class HungerGames extends JavaPlugin{
 		symbols.setDecimalSeparator('.');
 		symbols.setGroupingSeparator(',');
 		df.setDecimalFormatSymbols(symbols);
-		return String.format("%.2f %.2f %.2f %.2f %.2f %s", df.format(loc.getX()), df.format(loc.getX()), df.format(loc.getY()), df.format(loc.getZ()), df.format(loc.getYaw()), 
-			df.format(loc.getPitch()), df.format(loc.getWorld().getName()));
+		return String.format("%s %s %s %s %s %s", df.format((Number) loc.getX()), df.format((Number) loc.getY()), df.format((Number) loc.getZ()), df.format((Number) loc.getYaw()), 
+			df.format((Number) loc.getPitch()), loc.getWorld().getName());
 	}
 
 	public static Location parseToLoc(String str) throws NumberFormatException{
@@ -335,19 +337,28 @@ public class HungerGames extends JavaPlugin{
 		float yaw = Float.parseFloat(strs[3]);
 		float pitch = Float.parseFloat(strs[4]);
 		World world = Bukkit.getServer().getWorld(strs[5]);
+		if (world == null) return null;
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 	
 	public static String formatTime(int time) {
-		String format = "";
+
+		List<String> strs = new ArrayList<String>();
 		if(time > 3600) {
-			format += String.format("%d hour(s), ", (time / 3600) % 24);
+			strs.add(String.format("%d hour(s)", (time / 3600) % 24));
 		}
 		if(time > 60) {
-			format += String.format("%d minute(s), ", (time / 60) % 60);
+			strs.add(String.format("%d minute(s)", (time / 60) % 60));
 		}
-		format += String.format("%d second(s), ", time % 60);
-		return format;
+		strs.add(String.format("%d second(s)", time % 60));
+		StringBuilder buff = new StringBuilder();
+		String sep = "";
+		for (String str : strs) {
+			buff.append(sep);
+			buff.append(str);
+			sep = ", ";
+		}
+		return buff.toString();
 	}
 
 	public static void playerLeftServer(Player player) {

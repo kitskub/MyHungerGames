@@ -1,10 +1,9 @@
 package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Defaults.Commands;
-import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.api.event.PlayerKickGameEvent;
+import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
 import com.randude14.hungergames.commands.SubCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -39,8 +38,8 @@ public class KickCommand extends SubCommand{
 		    return true;
 		}
 		ChatUtils.broadcast(true, "%s has been kicked from the game %s.", player.getName(), game.getName());
-		HungerGames.callEvent(new PlayerKickGameEvent(game, kick));
-		game.leave(kick);
+		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
+		game.leave(kick, false);
 		return true;
 	}
     

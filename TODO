@@ -1,16 +1,18 @@
 HIGH:
 - Tutorial
-- Fix remove-items
 - Better item adding
 - "Force clear" command
 - Fix reload - also make safe
 - Fix startTime
+- Fix config getting reset
+- Add some /hga remove stuff
 
 MEDIUM:
 - Random events
 - WebStats - finish
 - leaderboards
 - Deathmatch
+- Change command handling to have each command register itself, rather than adding a new line each time
 
 LOW:
 - economy config stuff
@@ -18,6 +20,7 @@ LOW:
 - Enhance Spectating
 - /hg rules
 - Log command
+- Have lobby check for conflicting signs
 
 OPTIONAL:
 - Possible timed game events
