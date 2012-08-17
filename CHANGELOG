@@ -13,8 +13,8 @@ v0.7
 - Removed performance monitor as it is unneeded and didn't work
 - Made a Game interface and GameManager abstract class for the API
 - Added a chat perm
-
-
+- Added stop-targetting
+- Made deaths be cancelled instead of waiting for respawn
 v0.6
 - bug fixes
 - Signs now save between restarts

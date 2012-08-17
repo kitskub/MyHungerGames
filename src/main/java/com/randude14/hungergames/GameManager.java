@@ -103,18 +103,6 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	public boolean doesNameExist(String name) {
 		return getGame(name) != null;
 	}
-	
-	public void addPlayerRespawn(Player player, Location respawn) {
-		if(respawn == null) return;
-		respawnLocation.put(player, respawn);
-	}
-	
-	public Location getRespawnLocation(Player player) {
-	    if(respawnLocation.containsKey(player)){
-		return respawnLocation.remove(player);
-	    }
-	    return null;
-	}
 
 	public void playerLeftServer(Player player) {
 		if (spectators.containsKey(player.getName())) {

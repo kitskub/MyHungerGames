@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -21,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerListener implements Listener {
 
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
@@ -31,19 +31,12 @@ public class PlayerListener implements Listener {
 			HungerGame gameOfKiller = GameManager.INSTANCE.getPlayingSession(killer);
 			if (gameOfKiller == null) return;
 			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
-				gameOfKiller.killed(killer, killed);
+				gameOfKiller.killed(killer, killed, event);
 			}
 		}
 		else {
-			gameOfKilled.killed(killed);
+			gameOfKilled.killed(null, killed, event);
 		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void playerRespawn(PlayerRespawnEvent event) {
-	    Location respawn = GameManager.INSTANCE.getRespawnLocation(event.getPlayer());
-	    if (respawn == null) return;
-	    event.setRespawnLocation(respawn);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

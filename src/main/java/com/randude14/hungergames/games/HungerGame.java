@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 	
@@ -224,7 +225,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		section.set("itemsets", itemsets);
 		if (!worlds.isEmpty()) {
-			section.set("worlds", worlds);
+			section.set("worlds", new ArrayList<String>(worlds));
 		}
 		List<String> cuboidStringList = new ArrayList<String>();
 		for (Cuboid c : cuboids) {
@@ -740,12 +741,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    GameManager.INSTANCE.addSubscribedPlayer(player);
 	    GameManager.INSTANCE.addBackLocation(player);
 	    player.teleport(loc, TeleportCause.PLUGIN);
-	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.INSTANCE.freezePlayer(player);
 	    if (Config.getForceSurvival(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
 	    }
+	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
@@ -831,9 +832,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	 * @param player
 	 */
 	private synchronized void playerLeaving(Player player, boolean temporary) {
-		if (playerGameModes.containsKey(player.getName())) {
-			player.setGameMode(playerGameModes.remove(player.getName()));
-		}
 		for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
@@ -841,6 +839,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		GameManager.INSTANCE.unfreezePlayer(player);
 		InventorySave.loadInventory(player);
+		if (playerGameModes.containsKey(player.getName())) {
+			player.setGameMode(playerGameModes.remove(player.getName()));
+		}
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
 			PlayerQueueHandler.addPlayer(player);
@@ -952,10 +953,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    return true;
 	}
 
-	@Override
-	public void killed(Player killer, Player killed) {
+	
+	public void killed(final Player killer, final Player killed, PlayerDeathEvent deathEvent) {
 		if (state == DELETED || state != RUNNING || stats.get(killed.getName()).getState() != PlayerState.PLAYING) return;
 
+		deathEvent.setDeathMessage(null);
+		killed.setHealth(20);
+		killed.setFoodLevel(20);
 		PlayerStat killedStat = stats.get(killed.getName());
 		PlayerKillEvent event;
 		if (killer != null) {
@@ -973,28 +977,38 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		HungerGames.callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			playerLeaving(killed, false);
+			final ItemStack[] armor = killed.getInventory().getArmorContents();
+			final ItemStack[] inventory = killed.getInventory().getContents();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					killed.getInventory().setArmorContents(armor);
+					killed.getInventory().setContents(inventory);
+				}
+
+			});
+			for (ItemStack i : deathEvent.getDrops()) {
+				killed.getWorld().dropItemNaturally(killed.getLocation(), i);
+			}
+			deathEvent.getDrops().clear();
+			teleportPlayerToSpawn(killed);
 			checkForGameOver(false);
 			if (Config.getDeathCannon(setup) == 1 || Config.getDeathCannon(setup) == 2) playCannonBoom();
 		}
 		else {
 			if (Config.shouldRespawnAtSpawnPoint(setup)) {
 				Location respawn = spawnsTaken.get(killed.getName());
-				GameManager.INSTANCE.addPlayerRespawn(killed, respawn);
+				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			else {
 				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
-				GameManager.INSTANCE.addPlayerRespawn(killed, respawn);
+				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
 		}
 	}
 
-	@Override
-	public void killed(Player killed) {
-		killed(null, killed);
-	}
-	
 	@Override
 	public List<Player> getRemainingPlayers() {
 	    List<Player> remaining = new ArrayList<Player>();

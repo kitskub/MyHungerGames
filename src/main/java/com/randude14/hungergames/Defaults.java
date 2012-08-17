@@ -78,7 +78,8 @@ public class Defaults {
 	GRACE_PERIOD(0d),
 	TIMEOUT(300),
 	TAKE_LIFE_ON_LEAVE(true),
-	START_TIMER(0);
+	START_TIMER(0),
+	STOP_TARGETTING(true);
 	
 	
 	private Object value;

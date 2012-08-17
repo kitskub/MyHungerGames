@@ -122,11 +122,7 @@ public interface Game {
 	 * @return true if players are in the game, have lives, and are playing
 	 */
 	public boolean isPlaying(Player... players);
-	
-	public void killed(Player killer, Player killed);
-	
-	public void killed(Player killed);
-	
+
 	/**
 	 * Gets the players that have lives and are playing
 	 * If game is not yet started remaining players are those that are waiting

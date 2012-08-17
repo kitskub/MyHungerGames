@@ -329,6 +329,10 @@ public class Config {
 	public static int getStartTimerGlobal() {
 		return getGlobalInt("start-timer", START_TIMER.getInt());
 	}
+		
+	public static boolean getStopTargettingGlobal() {
+		return getGlobalBoolean("stop-targetting", STOP_TARGETTING.getBoolean());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -469,6 +473,10 @@ public class Config {
 
 	public static int getStartTimer(String setup) {
 		return getInteger("start-timer", setup, getStartTimerGlobal());
+	}
+
+	public static boolean getStopTargetting(String setup) {
+		return getBoolean("stop-targetting", setup, getStopTargettingGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
