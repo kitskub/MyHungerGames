@@ -49,13 +49,6 @@ public enum Files {
 				Logging.debug("Loading: " + path);
 				yamlConfig = new YamlConfiguration();
 				yamlConfig.load(file);
-				if (hasDefault) {
-					InputStream defConfigStream = HungerGames.getInstance().getResource(path);
-					if (defConfigStream != null) {
-						YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-						yamlConfig.setDefaults(defConfig);
-					}
-				}
 			}
 			else if (type == FileType.LOG) {
 			}
