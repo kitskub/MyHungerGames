@@ -144,7 +144,7 @@ public class Lang {
 	}
 	
 	public static String getNotRunning(String setup) {
-		return getString("not-running", setup, getGlobalNotEnabled());
+		return getString("not-running", setup, getGlobalNotRunning());
 	}
 	
 	public static String getRunning(String setup) {

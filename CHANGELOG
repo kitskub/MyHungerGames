@@ -15,6 +15,7 @@ v0.7
 - Added a chat perm
 - Added stop-targetting
 - Made deaths be cancelled instead of waiting for respawn
+
 v0.6
 - bug fixes
 - Signs now save between restarts
