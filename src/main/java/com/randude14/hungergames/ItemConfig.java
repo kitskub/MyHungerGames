@@ -93,9 +93,15 @@ public class ItemConfig {
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
 		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
+		    if (itemSection == null) {
+			    itemSection = Files.ITEMCONFIG.getConfig().createSection("global.chest-loot");
+		    }
 	    }
 	    else {
 		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
+		    if (itemSection == null) {
+			    itemSection = Files.ITEMCONFIG.getConfig().createSection("itemsets." + itemset + ".chest-loot");
+		    }
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());

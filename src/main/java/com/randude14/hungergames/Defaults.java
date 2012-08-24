@@ -187,7 +187,7 @@ public class Defaults {
 	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", Perm.ADMIN_HELP),
 	ADMIN_ADD_CUBOID("ADMIN", "/%s add cuboid <game name>", "add a cuboid", Perm.ADMIN_ADD_CUBOID),
 	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name> <weight>", "add a chest with optional weight", Perm.ADMIN_ADD_CHEST),
-	ADMIN_ADD_CHEST_LOOT("ADMIN", "/%s add chestloot  <chance> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_CHEST_LOOT),
+	ADMIN_ADD_CHEST_LOOT("ADMIN", "/%s add chestloot <chance> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_CHEST_LOOT),
 	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
 	ADMIN_ADD_GAME_SIGN("ADMIN", "/%s add gamesign <game name>", "add a game sign", Perm.ADMIN_ADD_GAME_SIGN),
 	ADMIN_ADD_INFO_WALL("ADMIN", "/%s add infowall <game name>", "add an infowall", Perm.ADMIN_ADD_INFO_WALL),

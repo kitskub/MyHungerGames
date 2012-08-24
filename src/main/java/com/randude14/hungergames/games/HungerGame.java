@@ -668,7 +668,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    if (stats.containsKey(player.getName())) {
 		    ChatUtils.error(player, Lang.getInGame(setup).replace("<game>", name));
-		    ChatUtils.error(player, "You are already in this game.");
 		    return false;
 	    }
 	    if (!playerEnteringPreCheck(player)) return false;
@@ -1170,7 +1169,16 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public void setEnabled(boolean flag) {
 		if (state == DELETED) return;
 		if (!flag && state != STOPPED && state != DISABLED) stopGame(false);
-		if (!flag) state = DISABLED;
+		if (!flag) {
+			state = DISABLED;
+			for (String s : stats.keySet()) {
+				Player p = Bukkit.getPlayer(s);
+				if (p == null) continue;
+				playerLeaving(p, false);
+				teleportPlayerToSpawn(p);
+			}
+			clear();
+		}
 		if (flag && state == DISABLED) state = STOPPED;
 	}
 

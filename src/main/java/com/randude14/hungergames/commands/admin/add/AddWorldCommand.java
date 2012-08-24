@@ -48,9 +48,9 @@ public class AddWorldCommand extends SubCommand{
 		    }
 		    else {
 			    game.addWorld(player.getWorld());
-			    ChatUtils.send(player, "World added!");
 		    }
 	    }
-	return true;
+	    ChatUtils.send(player, "World added!");
+	    return true;
     }
 }

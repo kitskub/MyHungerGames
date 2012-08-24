@@ -111,6 +111,7 @@ public class CommandHandler implements CommandExecutor {
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_INFO_WALL.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_ITEMSET.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_JOIN_SIGN.getUsageAndInfo(), HungerGames.CMD_ADMIN);
+				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_REWARD.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_SPONSOR_LOOT.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				ChatUtils.helpCommand(player, Commands.ADMIN_ADD_WORLD.getUsageAndInfo(), HungerGames.CMD_ADMIN);
 				return;
@@ -124,6 +125,7 @@ public class CommandHandler implements CommandExecutor {
 			else if (args[1].equalsIgnoreCase("itemset")) command = new AddItemSetCommand();
 			else if (args[1].equalsIgnoreCase("joinsign")) command = new AddJoinSignCommand();
 			else if (args[1].equalsIgnoreCase("gamesign")) command = new AddGameSignCommand();
+			else if (args[1].equalsIgnoreCase("reward")) command = new AddRewardCommand();
 			else if (args[1].equalsIgnoreCase("sponsorloot")) command = new AddSponsorLootCommand();
 			else if (args[1].equalsIgnoreCase("world")) command = new AddWorldCommand();
 			else {

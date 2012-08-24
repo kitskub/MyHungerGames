@@ -38,7 +38,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		if (stats.get(player.getName()) != null) {
 			for (HungerGame gameGotten : stats.get(player.getName()).keySet()) {
 				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
-				if (stat != null && stat.getState() == PlayerState.PLAYING) return gameGotten;
+				if (stat != null && (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.WAITING)) return gameGotten;
 			}
 		}
 		return null;

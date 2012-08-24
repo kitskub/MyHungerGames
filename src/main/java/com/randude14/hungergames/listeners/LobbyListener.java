@@ -339,9 +339,6 @@ public class LobbyListener implements Listener, Runnable {
 				Sign nextSign = signIt.next();
 				if (statIt.hasNext()) {
 					PlayerStat nextStat = statIt.next();
-					if (!nextStat.getState().equals(PlayerState.PLAYING) && !nextStat.getState().equals(PlayerState.WAITING) && !nextStat.getState().equals(PlayerState.GAME_PAUSED)) {
-						continue;
-					}
 					nextSign.setLine(0, nextStat.getPlayer().getName());
 					nextSign.setLine(1, "Kills:" + nextStat.getKills().size());
 					nextSign.setLine(2, "Deaths:" + nextStat.getDesths().size());

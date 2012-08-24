@@ -30,6 +30,7 @@ public class AddItemSetCommand extends SubCommand {
 		    return true;
 	    }
 	    game.addItemSet(args[1]);
+	    ChatUtils.send(player, "Itemset created!");
 	    return true;
 	}
 	
