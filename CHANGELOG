@@ -15,6 +15,7 @@ v0.7
 - Added a chat perm
 - Added stop-targetting
 - Made deaths be cancelled instead of waiting for respawn
+- Added blacklisted chests - chest that don't get auto-added
 
 v0.6
 - bug fixes

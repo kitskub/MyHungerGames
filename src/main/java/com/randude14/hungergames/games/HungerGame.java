@@ -51,6 +51,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	// Persistent
 	private final Map<Location, Float> chests;
 	private final Map<Location, String> fixedChests;
+	private final List<Location> blacklistedChests;
 	private final List<Location> spawnPoints;
 	private final String name;
 	private String setup;
@@ -78,7 +79,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public HungerGame(final String name, final String setup) {
 		stats = new TreeMap<String, PlayerStat>();
 		spawnsTaken = new HashMap<String, Location>();
-		spawnPoints = new ArrayList<Location>();
 		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
 		randomLocs = new ArrayList<Location>();
@@ -88,6 +88,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		
 		chests = new HashMap<Location, Float>();
 		fixedChests = new HashMap<Location, String>();
+		blacklistedChests = new ArrayList<Location>();
+		spawnPoints = new ArrayList<Location>();
 		this.name = name;
 		this.setup = null;
 		itemsets = new ArrayList<String>();
@@ -589,7 +591,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public void addAndFillChest(Chest chest) {
 		if (fixedChests.containsKey(chest.getLocation())) return;
-		if(!chests.keySet().contains(chest.getLocation())) {
+		if(!chests.keySet().contains(chest.getLocation()) && !blacklistedChests.contains(chest.getLocation())) {
 			//Logging.debug("Inventory Location was not in randomInvs.");
 			HungerGames.fillChest(chest, 0, itemsets);
 			addChest(chest.getLocation(), 1f);
@@ -1068,6 +1070,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public boolean addChest(Location loc, float weight) {
 		if (chests.keySet().contains(loc) || fixedChests.containsKey(loc)) return false;
+		blacklistedChests.remove(loc);
 		chests.put(loc, weight);
 		Block b = loc.getBlock();
 		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) chests.put(b.getRelative(BlockFace.NORTH).getLocation(), weight);
@@ -1081,6 +1084,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public boolean addFixedChest(Location loc, String fixedChest) {
 		if (loc == null || fixedChest == null || fixedChest.equalsIgnoreCase("")) return false;
 		if (fixedChests.keySet().contains(loc)) return false;
+		blacklistedChests.remove(loc);
 		if (!(loc.getBlock().getState() instanceof Chest)) return false;
 		removeChest(loc);
 		fixedChests.put(loc, fixedChest);
@@ -1127,10 +1131,15 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) loc = b.getRelative(BlockFace.EAST).getLocation();
 		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) loc = b.getRelative(BlockFace.WEST).getLocation();
 		if (ad != null) {
-			chests.remove(ad);
-			fixedChests.remove(ad);
+			if (chests.remove(ad) == null & fixedChests.remove(ad) == null) {
+				blacklistedChests.add(ad);
+			}
 		}
-		return chests.remove(loc) != null || fixedChests.remove(loc) != null;
+		if (chests.remove(loc) == null & fixedChests.remove(loc) == null) {
+			blacklistedChests.add(loc);
+			return false;
+		}
+		return true;
 	}
 
 	@Override

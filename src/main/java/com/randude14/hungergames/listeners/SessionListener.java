@@ -83,7 +83,7 @@ public class SessionListener implements Listener {
 			    session.clicked(clickedBlock);
 		    }
 		    else {
-			ChatUtils.error(player, "%s does not contain this chest.", game.getName());
+			    ChatUtils.send(player, "Chest has been blacklisted from %s.", game.getName());
 		    }
 		}
 		else {

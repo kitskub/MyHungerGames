@@ -28,7 +28,7 @@ public class AddRewardCommand extends SubCommand{
 				chance = Float.valueOf(args[0]);
 			}
 			catch (NumberFormatException e) {
-				ChatUtils.send(player, ChatColor.GREEN, "{0} is not a valid number", args[0]);
+				ChatUtils.send(player, ChatColor.GREEN, "{0} is not a valid number. Defaulting to 0", args[0]);
 			}
 			ItemConfig.addRandomReward(player.getItemInHand(), chance);
 		}

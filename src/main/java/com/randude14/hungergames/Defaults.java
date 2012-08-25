@@ -199,7 +199,7 @@ public class Defaults {
 	ADMIN_ADD_WORLD("ADMIN", "/%s add world <game name> [world]", "adds the world specified or you are currently in to the game", Perm.ADMIN_ADD_WORLD),
 	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", Perm.ADMIN_HELP),
 	ADMIN_REMOVE_SPAWNPOINT("ADMIN", "/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
-	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest", Perm.ADMIN_REMOVE_CHEST),
+	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest if it added to the game or blacklists it if it isn't", Perm.ADMIN_REMOVE_CHEST),
 	ADMIN_REMOVE_GAME("ADMIN", "/%s remove game <game name>", "remove a game", Perm.ADMIN_REMOVE_GAME),
 	ADMIN_REMOVE_ITEMSET("ADMIN", "/%s remove itemset <game name> <itemset name>", "remove a game", Perm.ADMIN_REMOVE_ITEMSET),
 	ADMIN_REMOVE_SIGN("ADMIN", "/%s remove sign", "remove a sign or an info wall that contains the sign", Perm.ADMIN_REMOVE_SIGN),
