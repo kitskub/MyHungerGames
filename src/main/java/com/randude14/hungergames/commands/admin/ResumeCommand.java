@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.Command;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public class ResumeCommand extends Command {
 
 	public ResumeCommand() {
-		super(Commands.ADMIN_RESUME, "resume", ADMIN_COMMAND);
+		super(Perm.ADMIN_RESUME, "resume", ADMIN_COMMAND);
 	}
 
 	@Override

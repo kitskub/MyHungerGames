@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.admin;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class KickCommand extends Command {
 
 	public KickCommand() {
-		super(Commands.ADMIN_KICK, "kick", ADMIN_COMMAND);
+		super(Perm.ADMIN_KICK, "kick", ADMIN_COMMAND);
 	}
 	
 	

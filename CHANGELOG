@@ -16,6 +16,7 @@ v0.7
 - Added stop-targetting
 - Made deaths be cancelled instead of waiting for respawn
 - Added blacklisted chests - chest that don't get auto-added
+- New command system
 
 v0.6
 - bug fixes

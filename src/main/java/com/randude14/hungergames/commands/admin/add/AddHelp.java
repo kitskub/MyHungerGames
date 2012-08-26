@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.admin.add;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 public class AddHelp extends Command {
 
 	public AddHelp() {
-		super(Commands.ADMIN_ADD_HELP, "add", ADMIN_COMMAND);
+		super(Perm.ADMIN_ADD_HELP, "add", ADMIN_COMMAND);
 	}
 
 	@Override

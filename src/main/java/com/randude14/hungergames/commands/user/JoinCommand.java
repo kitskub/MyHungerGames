@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class JoinCommand extends Command {
 
 	public JoinCommand() {
-		super(Commands.USER_JOIN, "join", ADMIN_COMMAND);
+		super(Perm.USER_JOIN, "join", USER_COMMAND);
 	}
 
 	@Override

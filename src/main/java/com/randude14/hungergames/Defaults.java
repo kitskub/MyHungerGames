@@ -120,6 +120,7 @@ public class Defaults {
 	ADMIN_ADD_CHEST_LOOT(new Permission("hungergame.add.chestloot"), ADMIN),
 	ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),
 	ADMIN_ADD_GAME_SIGN(new Permission("hungergame.add.game"), ADMIN),
+	ADMIN_ADD_HELP(new Permission("hungergame.add.help"), ADMIN),
 	ADMIN_ADD_INFO_WALL(new Permission("hungergame.add.infowall"), ADMIN),
 	ADMIN_ADD_ITEMSET(new Permission("hungergame.add.itemset"), ADMIN),
 	ADMIN_ADD_JOIN_SIGN(new Permission("hungergame.add.joinsign"), ADMIN),
@@ -140,10 +141,12 @@ public class Defaults {
 	ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
 	ADMIN_REMOVE_CHEST(new Permission("hungergame.remove.chest"), ADMIN),
 	ADMIN_REMOVE_GAME(new Permission("hungergame.remove.game"), ADMIN),
+	ADMIN_REMOVE_HELP(new Permission("hungergame.remove.help"), ADMIN),
 	ADMIN_REMOVE_ITEMSET(new Permission("hungergame.remove.itemset"), ADMIN),
 	ADMIN_REMOVE_SIGN(new Permission("hungergame.remove.sign"), ADMIN),
 	ADMIN_SET_ENABLED(new Permission("hungergame.set.enabled"), ADMIN),
 	ADMIN_SET_FIXED_CHEST(new Permission("hungergame.set.fixedchest"), ADMIN),
+	ADMIN_SET_HELP(new Permission("hungergame.set.help"), ADMIN),
 	ADMIN_SET_SPAWN(new Permission("hungergame.set.spawn"), ADMIN),
 	ADMIN_STOP(new Permission("hungergame.game.stop"), ADMIN),
 	ADMIN_START(new Permission("hungergame.game.start"), ADMIN),
@@ -190,65 +193,61 @@ public class Defaults {
     
     public enum Commands {	
 	    
-	ADMIN_ADD_HELP(new AddHelp(), Perm.ADMIN_HELP),
-	ADMIN_ADD_CUBOID(new AddCuboidCommand(), Perm.ADMIN_ADD_CUBOID),
-	ADMIN_ADD_CHEST(new AddChestCommand(), Perm.ADMIN_ADD_CHEST),
-	ADMIN_ADD_CHEST_LOOT(new AddChestLootCommand(), Perm.ADMIN_ADD_CHEST_LOOT),
-	ADMIN_ADD_GAME(new AddGameCommand(), Perm.ADMIN_ADD_GAME),
-	ADMIN_ADD_GAME_SIGN(new AddGameSignCommand(), Perm.ADMIN_ADD_GAME_SIGN),
-	ADMIN_ADD_INFO_WALL(new AddInfoWallCommand(), Perm.ADMIN_ADD_INFO_WALL),
-	ADMIN_ADD_ITEMSET(new AddItemSetCommand(), Perm.ADMIN_ADD_ITEMSET),
-	ADMIN_ADD_JOIN_SIGN(new AddJoinSignCommand(), Perm.ADMIN_ADD_JOIN_SIGN),
-	ADMIN_ADD_REWARD(new AddRewardCommand(), Perm.ADMIN_ADD_REWARD),
-	ADMIN_ADD_SPAWNPOINT(new AddSpawnPointCommand(), Perm.ADMIN_ADD_SPAWNPOINT),
-	ADMIN_ADD_SPONSOR_LOOT(new AddSponsorLootCommand(), Perm.ADMIN_ADD_SPONSOR_LOOT),
-	ADMIN_ADD_WORLD(new AddWorldCommand(), Perm.ADMIN_ADD_WORLD),
-	ADMIN_REMOVE_HELP(new RemoveHelp(), Perm.ADMIN_HELP),
-	ADMIN_REMOVE_CHEST(new RemoveChestCommand(), Perm.ADMIN_REMOVE_CHEST),
-	ADMIN_REMOVE_GAME(new RemoveGameCommand(), Perm.ADMIN_REMOVE_GAME),
-	ADMIN_REMOVE_ITEMSET(new RemoveItemSetCommand(), Perm.ADMIN_REMOVE_ITEMSET),
-	ADMIN_REMOVE_SIGN(new RemoveSignCommand(), Perm.ADMIN_REMOVE_SIGN),
-	ADMIN_REMOVE_SPAWNPOINT(new RemoveSpawnPointCommand(), Perm.ADMIN_REMOVE_SPAWNPOINT),
-	ADMIN_SET_HELP(new SetHelp(), Perm.ADMIN_HELP),
-	ADMIN_SET_ENABLED(new SetEnabledCommand(), Perm.ADMIN_SET_ENABLED),
-	ADMIN_SET_FIXED_CHEST(new SetFixedChestCommand(), Perm.ADMIN_SET_FIXED_CHEST),
-	ADMIN_SET_SPAWN(new SetSpawnCommand(), Perm.ADMIN_SET_SPAWN),
-	ADMIN_START(new StartCommand(), Perm.ADMIN_START),
-	ADMIN_STOP(new StopCommand(), Perm.ADMIN_STOP),
-	ADMIN_PAUSE(new PauseCommand(), Perm.ADMIN_PAUSE),
-	ADMIN_RESUME(new ResumeCommand(), Perm.ADMIN_RESUME),
-	ADMIN_RELOAD(new ReloadCommand(), Perm.ADMIN_RELOAD),
-	ADMIN_KICK(new KickCommand(), Perm.ADMIN_KICK),
-	ADMIN_KILL(new KillCommand(), Perm.ADMIN_KILL),
-	ADMIN_RESTOCK(new RestockCommand(), Perm.ADMIN_RESTOCK),
-	USER_BACK(new BackCommand(), Perm.USER_BACK),
-	USER_JOIN(new JoinCommand(), Perm.USER_JOIN),
-	USER_LEAVE(new LeaveCommand(), Perm.USER_LEAVE),
-	USER_LIST(new ListCommand(), Perm.USER_LIST),
-	USER_QUIT(new QuitCommand(), Perm.USER_QUIT),
-	USER_REJOIN(new RejoinCommand(), Perm.USER_REJOIN),
-	USER_SEARCH(new SearchCommand(), Perm.USER_SEARCH),
-	USER_SPECTATE(new SpectateCommand(), Perm.USER_SPECTATE),
-	USER_SPONSOR(new SponsorCommand(), Perm.USER_SPONSOR),
-	USER_STAT(new StatCommand(), Perm.USER_STAT),
-	USER_SUBSCRIBE(new SubscribeCommand(), Perm.USER_SUBSCRIBE),
-	USER_VOTE(new VoteCommand(), Perm.USER_VOTE);
+	ADMIN_ADD_HELP(new AddHelp()),
+	ADMIN_ADD_CUBOID(new AddCuboidCommand()),
+	ADMIN_ADD_CHEST(new AddChestCommand()),
+	ADMIN_ADD_CHEST_LOOT(new AddChestLootCommand()),
+	ADMIN_ADD_GAME(new AddGameCommand()),
+	ADMIN_ADD_GAME_SIGN(new AddGameSignCommand()),
+	ADMIN_ADD_INFO_WALL(new AddInfoWallCommand()),
+	ADMIN_ADD_ITEMSET(new AddItemSetCommand()),
+	ADMIN_ADD_JOIN_SIGN(new AddJoinSignCommand()),
+	ADMIN_ADD_REWARD(new AddRewardCommand()),
+	ADMIN_ADD_SPAWNPOINT(new AddSpawnPointCommand()),
+	ADMIN_ADD_SPONSOR_LOOT(new AddSponsorLootCommand()),
+	ADMIN_ADD_WORLD(new AddWorldCommand()),
+	ADMIN_REMOVE_HELP(new RemoveHelp()),
+	ADMIN_REMOVE_CHEST(new RemoveChestCommand()),
+	ADMIN_REMOVE_GAME(new RemoveGameCommand()),
+	ADMIN_REMOVE_ITEMSET(new RemoveItemSetCommand()),
+	ADMIN_REMOVE_SIGN(new RemoveSignCommand()),
+	ADMIN_REMOVE_SPAWNPOINT(new RemoveSpawnPointCommand()),
+	ADMIN_SET_HELP(new SetHelp()),
+	ADMIN_SET_ENABLED(new SetEnabledCommand()),
+	ADMIN_SET_FIXED_CHEST(new SetFixedChestCommand()),
+	ADMIN_SET_SPAWN(new SetSpawnCommand()),
+	ADMIN_START(new StartCommand()),
+	ADMIN_STOP(new StopCommand()),
+	ADMIN_PAUSE(new PauseCommand()),
+	ADMIN_RESUME(new ResumeCommand()),
+	ADMIN_RELOAD(new ReloadCommand()),
+	ADMIN_KICK(new KickCommand()),
+	ADMIN_KILL(new KillCommand()),
+	ADMIN_RESTOCK(new RestockCommand()),
+	USER_BACK(new BackCommand()),
+	USER_JOIN(new JoinCommand()),
+	USER_LEAVE(new LeaveCommand()),
+	USER_LIST(new ListCommand()),
+	USER_QUIT(new QuitCommand()),
+	USER_REJOIN(new RejoinCommand()),
+	USER_SEARCH(new SearchCommand()),
+	USER_SPECTATE(new SpectateCommand()),
+	USER_SPONSOR(new SponsorCommand()),
+	USER_STAT(new StatCommand()),
+	USER_SUBSCRIBE(new SubscribeCommand()),
+	USER_VOTE(new VoteCommand());
 	
 	private Command command;
-	private Perm perm;
 	
-	private Commands(Command command, Perm perm) {
+	private Commands(Command command) {
 		this.command = command;
-		this.perm = perm;
 	}
 	
 	public 	com.randude14.hungergames.commands.Command getCommand() {
 		return command;
 	}
 	
-	public Perm getPerm() {
-		return perm;
-	}
+	public static void init() {} // Just so the class gets loaded
     }
 
 }

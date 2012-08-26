@@ -1,8 +1,9 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
-
 import com.randude14.hungergames.Defaults.Commands;
+
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.PlayerQueueHandler;
@@ -105,12 +106,13 @@ public class HungerGames extends JavaPlugin{
 	private static void registerCommands() {
 		instance.getCommand(CMD_USER).setExecutor(CommandHandler.INSTANCE);
 		instance.getCommand(CMD_ADMIN).setExecutor(CommandHandler.INSTANCE);
-		for (Commands c : Commands.values()) {
-			Permission permission = c.getPerm().getPermission();
-			if (c.getPerm().getParent() != null) {
-				permission.addParent(c.getPerm().getParent().getPermission(), true);
+		for (Perm p : Perm.values()) {
+			Permission permission = p.getPermission();
+			if (p.getParent() != null) {
+				permission.addParent(p.getParent().getPermission(), true);
 			}
 		}
+		Commands.init();
 	}
 	
 	private static void loadRegistry() {

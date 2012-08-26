@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 public class RemoveSignCommand extends Command {
 
 	public RemoveSignCommand() {
-		super(Commands.ADMIN_REMOVE_SIGN, Commands.ADMIN_REMOVE_HELP.getCommand(), "sign");
+		super(Perm.ADMIN_REMOVE_SIGN, Commands.ADMIN_REMOVE_HELP.getCommand(), "sign");
 	}
 
 	@Override

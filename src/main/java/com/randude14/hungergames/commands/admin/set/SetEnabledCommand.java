@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.set;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 public class SetEnabledCommand extends Command {
 
     public SetEnabledCommand() {
-	    super(Commands.ADMIN_SET_ENABLED, Commands.ADMIN_SET_HELP.getCommand(), "enabled");
+	    super(Perm.ADMIN_SET_ENABLED, Commands.ADMIN_SET_HELP.getCommand(), "enabled");
     }
 
     @Override

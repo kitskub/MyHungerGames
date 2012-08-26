@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.admin;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.Command;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public class KillCommand extends Command {
 
 	public KillCommand() {
-		super(Commands.ADMIN_KILL, "kill", USER_COMMAND);
+		super(Perm.ADMIN_KILL, "kill", USER_COMMAND);
 	}
 
 	@Override

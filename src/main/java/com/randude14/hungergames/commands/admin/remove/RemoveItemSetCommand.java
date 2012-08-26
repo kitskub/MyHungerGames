@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.Command;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 public class RemoveItemSetCommand extends Command {
 
 	public RemoveItemSetCommand() {
-		super(Commands.ADMIN_REMOVE_ITEMSET, Commands.ADMIN_REMOVE_HELP.getCommand(), "itemset");
+		super(Perm.ADMIN_REMOVE_ITEMSET, Commands.ADMIN_REMOVE_HELP.getCommand(), "itemset");
 	}
 
 	@Override

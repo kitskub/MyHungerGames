@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.admin.remove;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 public class RemoveHelp extends Command {
 
 	public RemoveHelp() {
-		super(Commands.ADMIN_REMOVE_HELP, "remove", ADMIN_COMMAND);
+		super(Perm.ADMIN_REMOVE_HELP, "remove", ADMIN_COMMAND);
 	}
 
 	@Override

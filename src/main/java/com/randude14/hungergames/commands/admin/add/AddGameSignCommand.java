@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.add;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -15,7 +16,7 @@ import org.bukkit.entity.Player;
 public class AddGameSignCommand extends Command {
 
 	public AddGameSignCommand() {
-		super(Commands.ADMIN_ADD_GAME_SIGN, Commands.ADMIN_ADD_HELP.getCommand(), "gamesign");
+		super(Perm.ADMIN_ADD_GAME_SIGN, Commands.ADMIN_ADD_HELP.getCommand(), "gamesign");
 	}
 
 	@Override

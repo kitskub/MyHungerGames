@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.add;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 public class AddSpawnPointCommand extends Command {
 
 	public AddSpawnPointCommand() {
-		super(Commands.ADMIN_ADD_SPAWNPOINT, Commands.ADMIN_ADD_HELP.getCommand(), "spawnpoint");
+		super(Perm.ADMIN_ADD_SPAWNPOINT, Commands.ADMIN_ADD_HELP.getCommand(), "spawnpoint");
 	}
 
 	@Override

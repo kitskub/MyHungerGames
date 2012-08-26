@@ -1,11 +1,15 @@
 package com.randude14.hungergames.commands;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
+
 import org.bukkit.command.CommandSender;
 
 
@@ -15,22 +19,22 @@ import org.bukkit.command.CommandSender;
  */
 public abstract class Command extends org.bukkit.command.Command {
 	protected HungerGame game = null;
-	protected final Commands command;
+	protected final Perm perm;
 	protected final List<Command> subCommands;
 	
 	public static final String ADMIN_COMMAND = "ADMIN";
 	public static final String USER_COMMAND = "USER";
 	
-	public Command(Commands command, Command parent, String name) {
+	public Command(Perm perm, Command parent, String name) {
 		super(name);
-		this.command = command;
+		this.perm = perm;
 		this.subCommands = new ArrayList<Command>();
 		parent.registerSubCommand(this);
 	}	
 	
-	public Command(Commands command, String name, String type) {
+	public Command(Perm perm, String name, String type) {
 		super(name);
-		this.command = command;
+		this.perm = perm;
 		this.subCommands = new ArrayList<Command>();
 		if (type.equalsIgnoreCase(ADMIN_COMMAND)) {
 			CommandHandler.registerAdminCommand(this);
@@ -51,13 +55,10 @@ public abstract class Command extends org.bukkit.command.Command {
 	 */
 	public boolean execute(CommandSender cs, String label, String[] args) {
 		if (args.length >= 1) {
-			for (Command com : subCommands) {
-				if (args[0].equalsIgnoreCase(com.getName())) {
-					
-				}
-			}
+			Command com = searchSubCommands(args[0]);
+			if (com != null) return com.execute(cs, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
-		if (!HungerGames.checkPermission(cs, command.getPerm())) return true;
+		if (!HungerGames.checkPermission(cs, perm)) return true;
 		return handle(cs, label, args);
 	}
 

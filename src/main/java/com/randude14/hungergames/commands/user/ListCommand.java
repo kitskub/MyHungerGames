@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.games.HungerGame;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class ListCommand extends Command {
 
 	public ListCommand() {
-		super(Commands.USER_LIST, "list", ADMIN_COMMAND);
+		super(Perm.USER_LIST, "list", ADMIN_COMMAND);
 	}
 
 	@Override

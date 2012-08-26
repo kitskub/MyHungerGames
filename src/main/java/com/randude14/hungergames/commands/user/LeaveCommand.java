@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class LeaveCommand extends Command {
 
 	public LeaveCommand() {
-		super(Commands.USER_LEAVE, "leave", USER_COMMAND);
+		super(Perm.USER_LEAVE, "leave", USER_COMMAND);
 	}
 
 	@Override

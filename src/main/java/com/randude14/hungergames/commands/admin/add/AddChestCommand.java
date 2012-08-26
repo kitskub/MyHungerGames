@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.add;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 public class AddChestCommand extends Command {
 
 	public AddChestCommand() {
-		super(Commands.ADMIN_ADD_CHEST, Commands.ADMIN_ADD_HELP.getCommand(), "chest");
+		super(Perm.ADMIN_ADD_CHEST, Commands.ADMIN_ADD_HELP.getCommand(), "chest");
 	}
 
 	@Override

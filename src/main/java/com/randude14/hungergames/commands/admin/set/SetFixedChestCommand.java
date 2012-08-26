@@ -1,7 +1,8 @@
 package com.randude14.hungergames.commands.admin.set;
 
-import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.ItemConfig;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 public class SetFixedChestCommand extends Command {
 
     public SetFixedChestCommand() {
-	    super(Commands.ADMIN_SET_FIXED_CHEST, Commands.ADMIN_SET_HELP.getCommand(), "fixedchest");
+	    super(Perm.ADMIN_SET_FIXED_CHEST, Commands.ADMIN_SET_HELP.getCommand(), "fixedchest");
     }
 
     @Override

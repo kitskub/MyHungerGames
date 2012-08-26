@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class SpectateCommand extends Command {
 
 	public SpectateCommand() {
-		super(Commands.USER_SPECTATE, "spectate", USER_COMMAND);
+		super(Perm.USER_SPECTATE, "spectate", USER_COMMAND);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.stats.SQLStat;
 import com.randude14.hungergames.stats.StatHandler;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class SearchCommand extends Command {
 
 	public SearchCommand() {
-		super(Commands.USER_SEARCH, "search", USER_COMMAND);
+		super(Perm.USER_SEARCH, "search", USER_COMMAND);
 	}
 
 	@Override

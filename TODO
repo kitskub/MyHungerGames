@@ -24,6 +24,7 @@ LOW:
 - Have lobby check for conflicting signs
 - Make spectating started from a single entry point in API
 - /hg kit
+- Compass tracks players
 
 OPTIONAL:
 - Possible timed game events

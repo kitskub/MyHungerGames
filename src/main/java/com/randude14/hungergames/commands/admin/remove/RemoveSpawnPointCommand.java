@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 public class RemoveSpawnPointCommand extends Command {
 
 	public RemoveSpawnPointCommand() {
-		super(Commands.ADMIN_REMOVE_SPAWNPOINT, Commands.ADMIN_REMOVE_HELP.getCommand(), "spawnpoint");
+		super(Perm.ADMIN_REMOVE_SPAWNPOINT, Commands.ADMIN_REMOVE_HELP.getCommand(), "spawnpoint");
 	}
 
 	@Override

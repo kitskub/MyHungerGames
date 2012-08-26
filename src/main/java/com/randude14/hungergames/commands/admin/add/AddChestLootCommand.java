@@ -1,7 +1,8 @@
 package com.randude14.hungergames.commands.admin.add;
 
-import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
+import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 public class AddChestLootCommand extends Command {
 
 	public AddChestLootCommand() {
-		super(Commands.ADMIN_ADD_CHEST_LOOT, Commands.ADMIN_ADD_HELP.getCommand(), "chestloot");
+		super(Perm.ADMIN_ADD_CHEST_LOOT, Commands.ADMIN_ADD_HELP.getCommand(), "chestloot");
 	}
 
 	@Override

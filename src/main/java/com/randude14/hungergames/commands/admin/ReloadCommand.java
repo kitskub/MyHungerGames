@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.admin;
 
-import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class ReloadCommand extends Command {
 
 	public ReloadCommand() {
-		super(Commands.ADMIN_RELOAD, "reload", ADMIN_COMMAND);
+		super(Perm.ADMIN_RELOAD, "reload", ADMIN_COMMAND);
 	}
 
 	@Override

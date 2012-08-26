@@ -1,6 +1,7 @@
 package com.randude14.hungergames.commands.admin.add;
 
 import com.randude14.hungergames.Defaults.Commands;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 public class AddRewardCommand extends Command {
 
 	public AddRewardCommand() {
-		super(Commands.ADMIN_ADD_REWARD, Commands.ADMIN_ADD_HELP.getCommand(), "reward");
+		super(Perm.ADMIN_ADD_REWARD, Commands.ADMIN_ADD_HELP.getCommand(), "reward");
 	}
 
 	@Override
