@@ -2,29 +2,27 @@ package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Commands;
-import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ResumeCommand extends SubCommand{
+public class ResumeCommand extends Command {
 
 	public ResumeCommand() {
-		super(Commands.ADMIN_RESUME);
+		super(Commands.ADMIN_RESUME, "resume", ADMIN_COMMAND);
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 			return true;
 		}	
 
@@ -55,6 +53,16 @@ public class ResumeCommand extends SubCommand{
 
 		}
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "resume a game";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s resume [game name]";
 	}
     
 }

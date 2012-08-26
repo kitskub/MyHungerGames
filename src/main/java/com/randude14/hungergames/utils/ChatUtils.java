@@ -7,10 +7,12 @@ import com.randude14.hungergames.HungerGames;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class ChatUtils {
 
+	// TODO convert to CommandSender
 	public static String getPrefix() {
 		return String.format("[%s] - ", HungerGames.getInstance().getName());
 	}
@@ -60,8 +62,8 @@ public class ChatUtils {
 	}
 
 
-	public static void send(Player player, ChatColor color, String mess) {
-		player.sendMessage(color + mess);
+	public static void send(CommandSender cs, ChatColor color, String mess) {
+		cs.sendMessage(color + mess);
 	}
 	
 	public static void send(Player player, ChatColor color, String format, Object... args) {
@@ -77,16 +79,16 @@ public class ChatUtils {
 	}
 	
 
-	public static void help(Player player, String mess) {
-		send(player, ChatColor.GOLD, mess);
+	public static void help(CommandSender cs, String mess) {
+		send(cs, ChatColor.GOLD, mess);
 	}
 	
 	public static void help(Player player, String format, Object... args) {
 		help(player, String.format(format, args));
 	}
 	
-	public static void helpCommand(Player player, String format, Object... args) {
-		help(player, String.format("- " + format, args));
+	public static void helpCommand(CommandSender cs, String format, Object... args) {
+		help(cs, String.format("- " + format, args));
 	}
 	
 	

@@ -4,26 +4,27 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class KickCommand extends SubCommand{
+public class KickCommand extends Command {
 
 	public KickCommand() {
-		super(Commands.ADMIN_KICK);
+		super(Commands.ADMIN_KICK, "kick", ADMIN_COMMAND);
 	}
+	
+	
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 			return true;
 		}
 
@@ -41,6 +42,16 @@ public class KickCommand extends SubCommand{
 		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
 		game.leave(kick, false);
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "kick a player from a game";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s kick <player>";
 	}
     
 }

@@ -2,25 +2,25 @@ package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class KillCommand extends SubCommand{
+public class KillCommand extends Command {
 
 	public KillCommand() {
-		super(Commands.ADMIN_KILL);
+		super(Commands.ADMIN_KILL, "kill", USER_COMMAND);
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, command.getUsage(), cmd.getLabel());
+			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 			return true;
 		}
 
@@ -37,6 +37,16 @@ public class KillCommand extends SubCommand{
 		ChatUtils.broadcast(true, "%s has been killed by an admin.", kill.getName());
 		kill.setHealth(0);
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "kills a player in a game";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s kill <player>";
 	}
 	
 }

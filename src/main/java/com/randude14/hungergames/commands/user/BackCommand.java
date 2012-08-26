@@ -2,21 +2,21 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
+
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BackCommand extends SubCommand{
+public class BackCommand extends Command {
 
 	public BackCommand() {
-		super(Commands.USER_BACK);
+		super(Commands.USER_BACK, "back", USER_COMMAND);
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 		
 		if (GameManager.INSTANCE.getSession(player) != null) {
@@ -32,6 +32,16 @@ public class BackCommand extends SubCommand{
 			ChatUtils.error(player, "For some reason, there was no back location set. Did you already teleport back?");
 		}
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "returns a player to where they were before they joined";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s back";
 	}
 	
 }

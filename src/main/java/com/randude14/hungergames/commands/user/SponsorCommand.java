@@ -2,26 +2,26 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SponsorCommand extends SubCommand{
+public class SponsorCommand extends Command {
 
 	public SponsorCommand() {
-		super(Commands.USER_SPONSOR);
+		super(Commands.USER_SPONSOR, "sponsor", USER_COMMAND);
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.send(player, command.getUsage(), cmd.getLabel());
+			ChatUtils.send(player, getUsage(), HungerGames.CMD_USER);
 			return true;
 		}
 
@@ -36,6 +36,16 @@ public class SponsorCommand extends SubCommand{
 		}
 		GameManager.INSTANCE.addSponsor(player, p);
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "sponsor a player an item";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s sponsor <player>";
 	}
     
 }

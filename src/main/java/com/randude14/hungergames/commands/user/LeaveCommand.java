@@ -2,21 +2,20 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.commands.SubCommand;
+import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LeaveCommand extends SubCommand{
+public class LeaveCommand extends Command {
 
 	public LeaveCommand() {
-		super(Commands.USER_LEAVE);
+		super(Commands.USER_LEAVE, "leave", USER_COMMAND);
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, Command cmd, String[] args) {
+	public boolean handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		game = GameManager.INSTANCE.getPlayingSession(player);
@@ -27,5 +26,15 @@ public class LeaveCommand extends SubCommand{
 
 		game.leave(player, true);
 		return true;
+	}
+
+	@Override
+	public String getInfo() {
+		return "leave current game temporarily (if enabled)";
+	}
+
+	@Override
+	public String getUsage() {
+		return "/%s leave";
 	}
 }

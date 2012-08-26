@@ -1,5 +1,11 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.admin.add.*;
+import com.randude14.hungergames.commands.admin.*;
+import com.randude14.hungergames.commands.admin.remove.*;
+import com.randude14.hungergames.commands.admin.set.*;
+import com.randude14.hungergames.commands.user.*;
 import org.bukkit.permissions.Permission;
 
 public class Defaults {
@@ -184,83 +190,64 @@ public class Defaults {
     
     public enum Commands {	
 	    
-	ADMIN_ADD_HELP("ADMIN", "/%s add ?", "type for more help", Perm.ADMIN_HELP),
-	ADMIN_ADD_CUBOID("ADMIN", "/%s add cuboid <game name>", "add a cuboid", Perm.ADMIN_ADD_CUBOID),
-	ADMIN_ADD_CHEST("ADMIN", "/%s add chest <game name> <weight>", "add a chest with optional weight", Perm.ADMIN_ADD_CHEST),
-	ADMIN_ADD_CHEST_LOOT("ADMIN", "/%s add chestloot <chance> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_CHEST_LOOT),
-	ADMIN_ADD_GAME("ADMIN", "/%s add game <game name> [setup]", "add a game", Perm.ADMIN_ADD_GAME),
-	ADMIN_ADD_GAME_SIGN("ADMIN", "/%s add gamesign <game name>", "add a game sign", Perm.ADMIN_ADD_GAME_SIGN),
-	ADMIN_ADD_INFO_WALL("ADMIN", "/%s add infowall <game name>", "add an infowall", Perm.ADMIN_ADD_INFO_WALL),
-	ADMIN_ADD_ITEMSET("ADMIN", "/%s add itemset <game name> <itemset name>", "add an itemset", Perm.ADMIN_ADD_ITEMSET),
-	ADMIN_ADD_JOIN_SIGN("ADMIN", "/%s add joinsign <game name>", "add a join sign", Perm.ADMIN_ADD_JOIN_SIGN),
-	ADMIN_ADD_REWARD("ADMIN", "/%s add reward [chance]", "add current item in hand to static rewards or as a random if chance is specified", Perm.ADMIN_ADD_REWARD),
-	ADMIN_ADD_SPAWNPOINT("ADMIN", "/%s add spawnpoint <game name>", "add a spawnpoint", Perm.ADMIN_ADD_SPAWNPOINT),
-	ADMIN_ADD_SPONSOR_LOOT("ADMIN", "/%s add sponsorloot <money> [itemset]", "adds the itemstack in hand to the specified itemset or global if no itemset is specified", Perm.ADMIN_ADD_SPONSOR_LOOT),
-	ADMIN_ADD_WORLD("ADMIN", "/%s add world <game name> [world]", "adds the world specified or you are currently in to the game", Perm.ADMIN_ADD_WORLD),
-	ADMIN_REMOVE_HELP("ADMIN", "/%s remove ?", "type for more help", Perm.ADMIN_HELP),
-	ADMIN_REMOVE_SPAWNPOINT("ADMIN", "/%s remove spawnpoint <game name>", "remove a spawnpoint", Perm.ADMIN_REMOVE_SPAWNPOINT),
-	ADMIN_REMOVE_CHEST("ADMIN", "/%s remove chest <game name>", "remove a chest if it added to the game or blacklists it if it isn't", Perm.ADMIN_REMOVE_CHEST),
-	ADMIN_REMOVE_GAME("ADMIN", "/%s remove game <game name>", "remove a game", Perm.ADMIN_REMOVE_GAME),
-	ADMIN_REMOVE_ITEMSET("ADMIN", "/%s remove itemset <game name> <itemset name>", "remove a game", Perm.ADMIN_REMOVE_ITEMSET),
-	ADMIN_REMOVE_SIGN("ADMIN", "/%s remove sign", "remove a sign or an info wall that contains the sign", Perm.ADMIN_REMOVE_SIGN),
-	ADMIN_SET_HELP("ADMIN", "/%s set ?", "type for more help", Perm.ADMIN_HELP),
-	ADMIN_SET_ENABLED("ADMIN", "/%s set enabled <game name> <true/false>", "enable or disable a game", Perm.ADMIN_SET_ENABLED),
-	ADMIN_SET_FIXED_CHEST("ADMIN", "/%s set fixedchest <game name> <name|false>", "Sets a chest to a specific fixed chest itemset or removes it from being a fixed chest if name is false", Perm.ADMIN_SET_FIXED_CHEST),
-	ADMIN_SET_SPAWN("ADMIN", "/%s set spawn <game name>", "set the spawnpoint for a game", Perm.ADMIN_SET_SPAWN),
-	ADMIN_START("ADMIN", "/%s start [<game name> [seconds]]", "manually start a game", Perm.ADMIN_START),
-	ADMIN_STOP("ADMIN", "/%s stop [game name]", "manually stop a game", Perm.ADMIN_STOP),
-	ADMIN_PAUSE("ADMIN", "/%s pause [game name]", "pause a game", Perm.ADMIN_PAUSE),
-	ADMIN_RESUME("ADMIN", "/%s resume [game name]", "resume a game", Perm.ADMIN_RESUME),
-	ADMIN_RELOAD("ADMIN", "/%s reload", "reload MyHungerGames", Perm.ADMIN_RELOAD),
-	ADMIN_KICK("ADMIN", "/%s kick <player>", "kick a player from a game", Perm.ADMIN_KICK),
-	ADMIN_KILL("ADMIN", "/%s kill <player>", "kills a player in a game ", Perm.ADMIN_KILL),
-	ADMIN_RESTOCK("ADMIN", "/%s restock [game name]", "restock all a game's chests", Perm.ADMIN_RESTOCK),
-	USER_BACK("USER", "/%s back", "returns a player to where they were before they joined", Perm.USER_BACK),
-	USER_JOIN("USER", "/%s join [game name]", "join a game", Perm.USER_JOIN),
-	USER_LEAVE("USER", "/%s leave", "leave current game temporarily (if enabled)", Perm.USER_LEAVE),
-	USER_LIST("USER", "/%s list", "list games", Perm.USER_LIST),
-	USER_REJOIN("USER", "/%s rejoin", "rejoin your current game", Perm.USER_REJOIN),
-	USER_SEARCH("USER", "/%s search [player]", "searchess for a player's stat and prints out the info", Perm.USER_SEARCH),
-	USER_SPECTATE("USER", "/%s spectate [<game name> [player]]", "sets player to flying to spectate a game or cancels a spectation", Perm.USER_SPECTATE),
-	USER_SPONSOR("USER", "/%s sponsor <player>", "sponsor a player an item", Perm.USER_SPONSOR),
-	USER_SUBSCRIBE("USER", "/%s subscribe", "subscribe", Perm.USER_SUBSCRIBE),
-	USER_VOTE("USER", "/%s vote", "cast your vote that you are ready to play", Perm.USER_VOTE),
-	USER_STAT("USER", "/%s stat [game name]", "list stats for a game", Perm.USER_STAT),
-	USER_QUIT("USER", "/%s quit", "quits the current game indefinitely", Perm.USER_QUIT);
+	ADMIN_ADD_HELP(new AddHelp(), Perm.ADMIN_HELP),
+	ADMIN_ADD_CUBOID(new AddCuboidCommand(), Perm.ADMIN_ADD_CUBOID),
+	ADMIN_ADD_CHEST(new AddChestCommand(), Perm.ADMIN_ADD_CHEST),
+	ADMIN_ADD_CHEST_LOOT(new AddChestLootCommand(), Perm.ADMIN_ADD_CHEST_LOOT),
+	ADMIN_ADD_GAME(new AddGameCommand(), Perm.ADMIN_ADD_GAME),
+	ADMIN_ADD_GAME_SIGN(new AddGameSignCommand(), Perm.ADMIN_ADD_GAME_SIGN),
+	ADMIN_ADD_INFO_WALL(new AddInfoWallCommand(), Perm.ADMIN_ADD_INFO_WALL),
+	ADMIN_ADD_ITEMSET(new AddItemSetCommand(), Perm.ADMIN_ADD_ITEMSET),
+	ADMIN_ADD_JOIN_SIGN(new AddJoinSignCommand(), Perm.ADMIN_ADD_JOIN_SIGN),
+	ADMIN_ADD_REWARD(new AddRewardCommand(), Perm.ADMIN_ADD_REWARD),
+	ADMIN_ADD_SPAWNPOINT(new AddSpawnPointCommand(), Perm.ADMIN_ADD_SPAWNPOINT),
+	ADMIN_ADD_SPONSOR_LOOT(new AddSponsorLootCommand(), Perm.ADMIN_ADD_SPONSOR_LOOT),
+	ADMIN_ADD_WORLD(new AddWorldCommand(), Perm.ADMIN_ADD_WORLD),
+	ADMIN_REMOVE_HELP(new RemoveHelp(), Perm.ADMIN_HELP),
+	ADMIN_REMOVE_CHEST(new RemoveChestCommand(), Perm.ADMIN_REMOVE_CHEST),
+	ADMIN_REMOVE_GAME(new RemoveGameCommand(), Perm.ADMIN_REMOVE_GAME),
+	ADMIN_REMOVE_ITEMSET(new RemoveItemSetCommand(), Perm.ADMIN_REMOVE_ITEMSET),
+	ADMIN_REMOVE_SIGN(new RemoveSignCommand(), Perm.ADMIN_REMOVE_SIGN),
+	ADMIN_REMOVE_SPAWNPOINT(new RemoveSpawnPointCommand(), Perm.ADMIN_REMOVE_SPAWNPOINT),
+	ADMIN_SET_HELP(new SetHelp(), Perm.ADMIN_HELP),
+	ADMIN_SET_ENABLED(new SetEnabledCommand(), Perm.ADMIN_SET_ENABLED),
+	ADMIN_SET_FIXED_CHEST(new SetFixedChestCommand(), Perm.ADMIN_SET_FIXED_CHEST),
+	ADMIN_SET_SPAWN(new SetSpawnCommand(), Perm.ADMIN_SET_SPAWN),
+	ADMIN_START(new StartCommand(), Perm.ADMIN_START),
+	ADMIN_STOP(new StopCommand(), Perm.ADMIN_STOP),
+	ADMIN_PAUSE(new PauseCommand(), Perm.ADMIN_PAUSE),
+	ADMIN_RESUME(new ResumeCommand(), Perm.ADMIN_RESUME),
+	ADMIN_RELOAD(new ReloadCommand(), Perm.ADMIN_RELOAD),
+	ADMIN_KICK(new KickCommand(), Perm.ADMIN_KICK),
+	ADMIN_KILL(new KillCommand(), Perm.ADMIN_KILL),
+	ADMIN_RESTOCK(new RestockCommand(), Perm.ADMIN_RESTOCK),
+	USER_BACK(new BackCommand(), Perm.USER_BACK),
+	USER_JOIN(new JoinCommand(), Perm.USER_JOIN),
+	USER_LEAVE(new LeaveCommand(), Perm.USER_LEAVE),
+	USER_LIST(new ListCommand(), Perm.USER_LIST),
+	USER_QUIT(new QuitCommand(), Perm.USER_QUIT),
+	USER_REJOIN(new RejoinCommand(), Perm.USER_REJOIN),
+	USER_SEARCH(new SearchCommand(), Perm.USER_SEARCH),
+	USER_SPECTATE(new SpectateCommand(), Perm.USER_SPECTATE),
+	USER_SPONSOR(new SponsorCommand(), Perm.USER_SPONSOR),
+	USER_STAT(new StatCommand(), Perm.USER_STAT),
+	USER_SUBSCRIBE(new SubscribeCommand(), Perm.USER_SUBSCRIBE),
+	USER_VOTE(new VoteCommand(), Perm.USER_VOTE);
 	
-	private String type;
-	private String usage;
-	private String info;
+	private Command command;
 	private Perm perm;
 	
-	public static final String ADMIN_COMMAND = "ADMIN";
-	public static final String USER_COMMAND = "USER";
-	
-	private Commands(String type, String usage, String info, Perm perm) {
-		this.type = type;
-		this.usage = usage;
-		this.info = info;
+	private Commands(Command command, Perm perm) {
+		this.command = command;
 		this.perm = perm;
 	}
 	
-	public String getType() {
-		return type;
+	public 	com.randude14.hungergames.commands.Command getCommand() {
+		return command;
 	}
 	
 	public Perm getPerm() {
 		return perm;
-	}
-	
-	public String getUsage(){
-	    return usage;
-	}
-	
-	public String getInfo(){
-	    return info;
-	}
-	
-	public String getUsageAndInfo(){
-	    return usage + " - " + info;
 	}
     }
 
