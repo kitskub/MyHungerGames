@@ -44,8 +44,7 @@ public class EntityListener implements Listener{
 
 		// Spectators
 		if (event.isCancelled()) return;
-		String name = GameManager.INSTANCE.getSpectating(player);
-		if (name != null) {
+		if (GameManager.INSTANCE.getSpectating(player) != null) {
 			event.setCancelled(true);
 		}
 	}

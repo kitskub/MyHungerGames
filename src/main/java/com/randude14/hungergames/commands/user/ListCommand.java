@@ -19,20 +19,20 @@ public class ListCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		Collection<HungerGame> games = GameManager.INSTANCE.getGames();
 		if (games.isEmpty()) {
 			ChatUtils.error(player, "No games have been created yet.");
-			return true;
+			return;
 		}
 
 		for (HungerGame g : games) {
 			ChatUtils.send(player, ChatColor.GOLD, "- " + g.getInfo());
 		}
-		return true;
+		return;
 	}
 
 	@Override

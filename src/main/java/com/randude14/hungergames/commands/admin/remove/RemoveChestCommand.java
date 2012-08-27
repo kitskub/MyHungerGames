@@ -21,21 +21,21 @@ public class RemoveChestCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 	    Player player = (Player) cs;
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    if(game == null){
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 
 	    SessionListener.addSession(SessionType.CHEST_REMOVER, player, args[0]);
 	    ChatUtils.send(player, ChatColor.GREEN, "Hit a chest to remove it from %s.", game.getName());
-	    return true;
+	    return;
 	}
 
 	@Override

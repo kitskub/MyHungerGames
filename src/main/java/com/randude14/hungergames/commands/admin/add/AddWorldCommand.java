@@ -20,18 +20,18 @@ public class AddWorldCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
 		if(args.length < 1){
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 		game = GameManager.INSTANCE.getGame(args[0]);
 
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-			return true;
+			return;
 		}
 		if (args.length == 1) {
 			game.addWorld(player.getWorld());
@@ -40,14 +40,14 @@ public class AddWorldCommand extends Command {
 			World world = Bukkit.getWorld(args[1]);
 			if (world == null) {
 				ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[1]));
-				return true;
+				return;
 			}
 			else {
 				game.addWorld(player.getWorld());
 			}
 		}
 		ChatUtils.send(player, "World added!");
-		return true;
+		return;
 	}
 
 	@Override

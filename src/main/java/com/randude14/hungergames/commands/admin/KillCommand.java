@@ -17,26 +17,26 @@ public class KillCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 		if (args.length < 1) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 
 		Player kill = Bukkit.getServer().getPlayer(args[0]);
 		if (kill == null) {
 		    ChatUtils.error(player, "%s is not online.", args[0]);
-		    return true;
+		    return;
 		}
 		game = GameManager.INSTANCE.getSession(kill);
 		if (game == null) {
 		    ChatUtils.error(player, "%s is currently not in a game.", kill.getName());
-		    return true;
+		    return;
 		}
 		ChatUtils.broadcast(true, "%s has been killed by an admin.", kill.getName());
 		kill.setHealth(0);
-		return true;
+		return;
 	}
 
 	@Override

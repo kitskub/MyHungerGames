@@ -54,7 +54,6 @@ public class HungerGames extends JavaPlugin{
 	private static HungerGames instance;
 	private static HGPermission perm;
 	private static Economy econ;
-	private static GameManager manager;
 	private static Random rand;
 	
 	@Override
@@ -63,7 +62,6 @@ public class HungerGames extends JavaPlugin{
 		registerCommands();
 		Files.loadAll();
 		rand = new Random(getName().hashCode());
-		manager = new GameManager();
 		registerEvents();
 		updateConfig();
 		loadRegistry();
@@ -246,10 +244,6 @@ public class HungerGames extends JavaPlugin{
 
 	public static Random getRandom() {
 		return rand;
-	}
-
-	public static GameManager getGameManager() {
-		return manager;
 	}
 
 	public static int scheduleTask(Runnable runnable, long initial, long delay) {

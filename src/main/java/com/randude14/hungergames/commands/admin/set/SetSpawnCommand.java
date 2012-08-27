@@ -19,22 +19,22 @@ public class SetSpawnCommand extends Command {
     }
 
     @Override
-    public boolean handle(CommandSender cs, String cmd, String[] args) {
+    public void handle(CommandSender cs, String cmd, String[] args) {
 	    Player player = (Player) cs;
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 	    
 	    Location loc = player.getLocation();
 	    game.setSpawn(loc);
 	    ChatUtils.send(player, "Spawn has been set for %s.", game.getName());
-	    return true;
+	    return;
     }
 
 	@Override

@@ -18,23 +18,23 @@ public class JoinCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
-			return true;
+			return;
 		}
 
 		game = GameManager.INSTANCE.getGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
-			return true;
+			return;
 		}
 
 		game.join(player);
-		return true;
+		return;
 	}
 
 	@Override

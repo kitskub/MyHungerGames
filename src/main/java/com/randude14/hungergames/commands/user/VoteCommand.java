@@ -17,17 +17,17 @@ public class VoteCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		game = GameManager.INSTANCE.getSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" + Commands.USER_JOIN.getCommand().getUsage() + "'", HungerGames.CMD_USER);
-			return true;
+			return;
 		}
 		game.addReadyPlayer(player);
 		ChatUtils.send(player, "You have voted that you are ready.");
-		return true;
+		return;
 	}
 
 	@Override

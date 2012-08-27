@@ -15,17 +15,17 @@ public class QuitCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		game = GameManager.INSTANCE.getSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not in a game.");
-			return true;
+			return;
 		}
 
 		game.quit(player, true);
-		return true;
+		return;
 	}
 
 	@Override

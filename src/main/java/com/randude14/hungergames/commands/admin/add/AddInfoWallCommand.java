@@ -20,22 +20,22 @@ public class AddInfoWallCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 	    Player player = (Player) cs;
 	    if(args.length < 1){
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 	    
 	    ChatUtils.send(player, "Click the two corners add an infowall.");
 	    SessionListener.addSession(SessionType.INFO_WALL_ADDER, player, game.getName(), "game", game.getName());
-	    return true;
+	    return;
 	}
 
 	@Override

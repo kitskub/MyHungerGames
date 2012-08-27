@@ -20,28 +20,28 @@ public class KickCommand extends Command {
 	
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 
 		Player kick = Bukkit.getServer().getPlayer(args[0]);
 		if (kick == null) {
 		    ChatUtils.error(player, "%s is not online.", args[0]);
-		    return true;
+		    return;
 		}
 		game = GameManager.INSTANCE.getSession(kick);
 		if (game == null) {
 		    ChatUtils.error(player, "%s is currently not in a game.", kick.getName());
-		    return true;
+		    return;
 		}
 		ChatUtils.broadcast(true, "%s has been kicked from the game %s.", player.getName(), game.getName());
 		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
 		game.leave(kick, false);
-		return true;
+		return;
 	}
 
 	@Override

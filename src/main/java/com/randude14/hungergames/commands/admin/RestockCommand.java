@@ -19,26 +19,26 @@ public class RestockCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 	    Player player = (Player) cs;
 	    
 	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 	    if (name == null) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 
 	    game = GameManager.INSTANCE.getGame(name);
 	    if (game == null) {
 		    ChatUtils.error(player, "%s does not exist.", name);
-		    return true;
+		    return;
 	    }
 	    if (game.getState() != GameState.RUNNING) {
 		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
-		    return true;
+		    return;
 	    }
 	    game.fillInventories();
-	    return true;
+	    return;
 	}
 
 	@Override

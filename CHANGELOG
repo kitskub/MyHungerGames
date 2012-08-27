@@ -17,6 +17,8 @@ v0.7
 - Made deaths be cancelled instead of waiting for respawn
 - Added blacklisted chests - chest that don't get auto-added
 - New command system
+- Added a forceclear command
+- /hga reload is now a little bit smarter (I may do away with this as it might cause problems)
 
 v0.6
 - bug fixes

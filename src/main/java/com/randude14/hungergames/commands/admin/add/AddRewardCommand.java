@@ -17,7 +17,7 @@ public class AddRewardCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;	    
 
 		if (args.length < 1) {
@@ -34,7 +34,7 @@ public class AddRewardCommand extends Command {
 			ItemConfig.addRandomReward(player.getItemInHand(), chance);
 		}
 		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to rewards");
-		return true;
+		return;
 	}
 
 	@Override

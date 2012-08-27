@@ -1,22 +1,13 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
-import com.randude14.hungergames.Defaults;
-import com.randude14.hungergames.Files;
-import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.ItemConfig;
+import com.randude14.hungergames.api.Game;
 
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -35,7 +26,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	public static final GameManager INSTANCE = new GameManager();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
-	private static final Map<String, String> spectators = new HashMap<String, String>(); // <player, game>
+	private static final Map<String, HungerGame> spectators = new HashMap<String, HungerGame>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
 	private static final Set<String> subscribedPlayers = new HashSet<String>();
 	private static final Map<String, Location> playerBackLocations = new HashMap<String, Location>();
@@ -106,7 +97,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 
 	public void playerLeftServer(Player player) {
 		if (spectators.containsKey(player.getName())) {
-			HungerGame spectated = getGame(spectators.remove(player.getName()));
+			HungerGame spectated = spectators.remove(player.getName());
 			if (spectated == null) return;
 			spectated.removeSpectator(player);
 			return;
@@ -121,11 +112,22 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 		if (gamesSection == null) {
 			return;
 		}
-		games.clear();
+		List<String> checked = new ArrayList<String>();
+		for (Iterator<HungerGame> it = games.iterator(); it.hasNext();) {
+			HungerGame game = it.next();
+			checked.add(game.getName());
+			if (gamesSection.contains(game.getName())) {
+				game.loadFrom(gamesSection.getConfigurationSection(game.getName()));
+			}
+			else {
+				game.delete();
+				it.remove();
+			}
+		}
 		for (String name : gamesSection.getKeys(false)) {
-			ConfigurationSection gameSection = gamesSection.getConfigurationSection(name);
+			if (checked.contains(name)) continue;
 			HungerGame game = new HungerGame(name);
-			game.loadFrom(gameSection);
+			game.loadFrom(gamesSection.getConfigurationSection(name));
 			games.add(game);
 		}
 	}
@@ -175,19 +177,29 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	    return true;
 	}
 
-	public void addSpectator(Player player, String gameName) {
-		spectators.put(player.getName(), gameName);
+	@Override
+	public boolean addSpectator(Player player, Game game, Player spectated) {
+		if (spectators.containsKey(player.getName())) return false;
+		spectators.put(player.getName(), (HungerGame) game);
+		((HungerGame) game).addSpectator(player, spectated);
+		return true;
 	}
 	
 	@Override
-	public String getSpectating(Player player) {
+	public HungerGame getSpectating(Player player) {
 	    if (player == null) return null;    
 	    if (!spectators.containsKey(player.getName())) return null;
 	    return spectators.get(player.getName());
 	}
 	
-	public String removeSpectator(Player player) {
-		return spectators.remove(player.getName());
+	@Override
+	public boolean removeSpectator(Player player) {
+		HungerGame game = spectators.remove(player.getName());
+		if (game != null) {
+			game.removeSpectator(player);
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

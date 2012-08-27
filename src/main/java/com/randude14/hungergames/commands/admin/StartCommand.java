@@ -18,18 +18,18 @@ public class StartCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 		game = GameManager.INSTANCE.getGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
-			return true;
+			return;
 		}
 
 		int seconds;
@@ -39,7 +39,7 @@ public class StartCommand extends Command {
 				seconds = Integer.parseInt(args[1]);
 			} catch (Exception ex) {
 				ChatUtils.error(player, "'%s' is not an integer.", args[1]);
-				return true;
+				return;
 			}
 		}
 
@@ -49,7 +49,6 @@ public class StartCommand extends Command {
 		if (!game.startGame(player, seconds)) {
 			ChatUtils.error(player, "Failed to start %s.", game.getName());
 		}
-		return true;
 	}
 
 	@Override

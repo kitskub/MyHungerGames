@@ -18,12 +18,12 @@ public class AddSponsorLootCommand extends Command {
 	}
 	
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 		float chance = Float.valueOf(args[0]);
 		if (args.length < 2) {
@@ -33,7 +33,7 @@ public class AddSponsorLootCommand extends Command {
 			ItemConfig.addSponsorLoot(args[1], player.getItemInHand(), chance);
 		}
 		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to sponsor loot", game.getName());
-		return true;
+		return;
 	}
 
 	@Override

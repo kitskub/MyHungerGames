@@ -16,11 +16,11 @@ public class SearchCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 		if (args.length < 1) {
 			ChatUtils.error(player, "Must have a player to search for!");
-			return true;
+			return;
 		}
 		SQLStat stat = StatHandler.getStat(args[0]);
 		if (stat == null) {
@@ -31,7 +31,7 @@ public class SearchCommand extends Command {
 		ChatUtils.send(player, "%s has a global rank of %s",args[0], stat.rank);
 		ChatUtils.send(player, "%s has played %s games for a total of %s", args[0], stat.totalGames, stat.totalTime);
 		ChatUtils.send(player, "%s has had %s wins, %s deaths, and %s kills", args[0], stat.wins, stat.deaths, stat.kills);
-		return true;
+		return;
 	}
 
 	@Override

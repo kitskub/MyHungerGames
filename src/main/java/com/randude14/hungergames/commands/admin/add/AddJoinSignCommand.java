@@ -20,23 +20,23 @@ public class AddJoinSignCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
 			ChatUtils.send(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 		game = GameManager.INSTANCE.getGame(args[0]);
 
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-			return true;
+			return;
 		}
 
 		SessionListener.addSession(SessionListener.SessionType.JOIN_SIGN_ADDER, player, game.getName(), "game", game.getName());
 		ChatUtils.send(player, ChatColor.GREEN, "Left-click the sign to add it as a join sign.");
-		return true;
+		return;
 	}
 
 	@Override

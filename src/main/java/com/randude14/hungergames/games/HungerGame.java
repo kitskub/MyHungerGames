@@ -108,6 +108,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	public void loadFrom(ConfigurationSection section) {
+		spawnPoints.clear();
+		chests.clear();
+		fixedChests.clear();
+		itemsets.clear();
+		worlds.clear();
+		cuboids.clear();
 		if (section.contains("spawn-points")) {
 			ConfigurationSection spawnPointsSection = section.getConfigurationSection("spawn-points");
 			for (String key : spawnPointsSection.getKeys(false)) {
@@ -177,12 +183,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
                 
                 if(section.isList("itemsets")) {
-			itemsets.clear();
 			itemsets.addAll(section.getStringList("itemsets"));
                 }
 		
                 if(section.isList("worlds")) {
-			worlds.clear();
 			worlds.addAll(section.getStringList("worlds"));
                 }
 		if (section.isList("cuboids")) {
@@ -190,7 +194,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			for (String s : section.getStringList("cuboids")) {
 				cuboidList.add(Cuboid.parseFromString(s));
 			}
-			cuboids.clear();
 			cuboids.addAll(cuboidList);
 		}
 		setEnabled(section.getBoolean("enabled", true));
@@ -314,8 +317,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		player.teleport(loc);
 		spectatorFlying.put(player.getName(), player.isFlying());
 		spectatorFlightAllowed.put(player.getName(), player.getAllowFlight());
-		player.setFlying(true);
 		player.setAllowFlight(true);
+		player.setFlying(true);
 		for (Player p : getRemainingPlayers()) {
 			p.hidePlayer(player);
 		}
@@ -328,17 +331,17 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	public void removeSpectator(Player player) {
+		if (!spectators.containsKey(player.getName())) {
+			ChatUtils.error(player, "You are not spectating that game.");
+			return;
+		}
 		spectatorSponsoringRunnable.removeSpectator(player);
-		player.teleport(spectators.remove(player.getName()));
 		player.setFlying(spectatorFlying.get(player.getName()));
 		player.setAllowFlight(spectatorFlightAllowed.get(player.getName()));
+		player.teleport(spectators.remove(player.getName()));
 		for (Player p : getRemainingPlayers()) {
 			p.showPlayer(player);
 		}
-	}
-
-	public void getSpectatorLocation(Player player) {
-		spectators.get(player.getName());
 	}
 	
 	@Override
@@ -474,6 +477,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			stats.get(playerName).setState(PlayerStat.PlayerState.PLAYING);
 		}
 		state = RUNNING;
+		run(); // Add at least one randomLoc
 		readyToPlay.clear();
 		ChatUtils.broadcast(true, "Starting %s. Go!!", name);
 		return null;
@@ -850,8 +854,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	// Complete clear just to be sure
-	private void clear() {
+	public void clear() {
+		stopGame(true);
 		stats.clear();
+		releasePlayers();
 		spawnsTaken.clear();
 		state = STOPPED;
 		spectators.clear();
@@ -1329,6 +1335,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	public void delete() {
+		clear();
 		state = DELETED;
 		chests.clear();
 		fixedChests.clear();
@@ -1337,7 +1344,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		worlds.clear();
 		cuboids.clear();
 		spawn = null;
-		clear();
 	}
 
 	// sorts players by name ignoring case

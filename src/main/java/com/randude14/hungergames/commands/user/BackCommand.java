@@ -16,12 +16,12 @@ public class BackCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 		
 		if (GameManager.INSTANCE.getSession(player) != null) {
 			ChatUtils.send(player, "You cannot use that command while you are in-game.");
-			return true;
+			return;
 		}
 		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
 		if (loc != null) {
@@ -31,7 +31,7 @@ public class BackCommand extends Command {
 		else {
 			ChatUtils.error(player, "For some reason, there was no back location set. Did you already teleport back?");
 		}
-		return true;
+		return;
 	}
 
 	@Override

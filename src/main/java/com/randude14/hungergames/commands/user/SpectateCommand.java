@@ -19,38 +19,34 @@ public class SpectateCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
-	    Player player = (Player) cs;
-	    if (GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)) != null) {
-		    GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)).removeSpectator(player);
-		    GameManager.INSTANCE.removeSpectator(player);
-		    return true;
-	    }
-	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
-	    if (name == null) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
-		    return true;
-	    }
-	    game = GameManager.INSTANCE.getGame(name);
-	    if (game == null) {
-		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
-		    return true;
-	    }
-	    boolean success;
-	    if (args.length < 2) {
-		    success = game.addSpectator(player, null);    
-	    }
-	    else {
-		    Player spectated = Bukkit.getPlayer(args[1]);
-		    if (spectated == null) {
-			    success = game.addSpectator(player, null);
-		    }
-		    else {
-			    success = game.addSpectator(player, spectated);
-		    }
-	    }
-	    if (success) GameManager.INSTANCE.addSpectator(player, game.getName());
-	    return true;
+	public void handle(CommandSender cs, String label, String[] args) {
+		Player player = (Player) cs;
+		if (GameManager.INSTANCE.removeSpectator(player)) return;
+		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+		if (name == null) {
+			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
+			return;
+		}
+		game = GameManager.INSTANCE.getGame(name);
+		if (game == null) {
+			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
+			return;
+		}
+		boolean success;
+		Player spectated;
+		if (args.length < 2 || (spectated = Bukkit.getPlayer(args[1])) == null) {
+			success = GameManager.INSTANCE.addSpectator(player, game, null);
+		}
+		else {
+			success = GameManager.INSTANCE.addSpectator(player, game, spectated);
+		}
+		
+		if (success) {
+			ChatUtils.send(player, "You are now spectating %s", name);
+		}
+		else {
+			ChatUtils.error(player, "You are already spectating a game.");
+		}
 	}
 
 	@Override

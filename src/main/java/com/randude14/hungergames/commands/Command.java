@@ -44,7 +44,7 @@ public abstract class Command extends org.bukkit.command.Command {
 		}
 	}	
 	
-	public abstract boolean handle(CommandSender cs, String label, String[] args);
+	public abstract void handle(CommandSender cs, String label, String[] args);
 
 	/**
 	 * Checks permission then calls the handle
@@ -59,7 +59,8 @@ public abstract class Command extends org.bukkit.command.Command {
 			if (com != null) return com.execute(cs, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
 		if (!HungerGames.checkPermission(cs, perm)) return true;
-		return handle(cs, label, args);
+		handle(cs, label, args);
+		return true;
 	}
 
 	public abstract String getInfo();

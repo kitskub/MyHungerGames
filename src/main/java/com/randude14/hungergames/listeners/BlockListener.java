@@ -37,7 +37,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)) != null) { // TODO configurable
+		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
 			ChatUtils.error(player, "You cannot place this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
 		}
@@ -96,7 +96,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)) != null) { // TODO configurable
+		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
 			ChatUtils.error(player, "You cannot break this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
 		}
@@ -130,7 +130,7 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getGame(GameManager.INSTANCE.getSpectating(player)) != null) { // TODO configurable
+		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
 			ChatUtils.error(player, "You cannot interact with this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
 		}

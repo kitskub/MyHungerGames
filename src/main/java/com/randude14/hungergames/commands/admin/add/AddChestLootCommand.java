@@ -18,12 +18,12 @@ public class AddChestLootCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-			return true;
+			return;
 		}
 		float chance = 0;
 		try {
@@ -36,7 +36,7 @@ public class AddChestLootCommand extends Command {
 		if (args.length < 2) {
 			if (player.getItemInHand() == null) {
 				ChatUtils.error(player,"There is no item in hand. Perhaps you used the command wrong?");
-				return true;
+				return;
 			}
 			ItemConfig.addChestLoot(null, player.getItemInHand(), chance);
 		}
@@ -44,7 +44,7 @@ public class AddChestLootCommand extends Command {
 			ItemConfig.addChestLoot(args[1], player.getItemInHand(), chance);
 		}
 		ChatUtils.send(player, ChatColor.GREEN, "Item in hand added to chest loot");
-		return true;
+		return;
 	}
 
 	@Override

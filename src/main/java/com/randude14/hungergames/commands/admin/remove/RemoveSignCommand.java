@@ -17,11 +17,11 @@ public class RemoveSignCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 		SessionListener.addSession(SessionListener.SessionType.SIGN_REMOVER, player, "");
 		ChatUtils.send(player, ChatColor.GREEN, "Hit a sign to remove it. If you do not hit a sign, nothing will happen.");
-		return true;
+		return;
 	}
 
 	@Override

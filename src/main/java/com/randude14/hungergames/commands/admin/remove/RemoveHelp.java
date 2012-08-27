@@ -15,15 +15,11 @@ public class RemoveHelp extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
-		if (args.length >= 1) {
-			Command com = searchSubCommands(args[0]);
-			if (com != null) return com.execute(cs, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
-		}
+	public void handle(CommandSender cs, String label, String[] args) {
 		for (Command c : subCommands) {
 			ChatUtils.helpCommand(cs, c.getUsageAndInfo(), "hga");
 		}
-		return true;
+		return;
 	}
 
 	@Override

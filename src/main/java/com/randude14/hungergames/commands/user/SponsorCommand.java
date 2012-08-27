@@ -17,25 +17,25 @@ public class SponsorCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
 			ChatUtils.send(player, getUsage(), HungerGames.CMD_USER);
-			return true;
+			return;
 		}
 
 		Player p = Bukkit.getServer().getPlayer(args[0]);
 		if (p == null) {
 			ChatUtils.error(player, "%s is not online.", args[0]);
-			return true;
+			return;
 		}
 		if (GameManager.INSTANCE.getPlayingSession(p) == null) {
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
-			return true;
+			return;
 		}
 		GameManager.INSTANCE.addSponsor(player, p);
-		return true;
+		return;
 	}
 
 	@Override

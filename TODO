@@ -1,8 +1,6 @@
 HIGH:
 - Tutorial
 - Better item adding
-- "Force clear" command
-- Fix reload - also make safe
 - Fix startTime
 - Fix config getting reset
 - Add some /hga remove stuff
@@ -18,11 +16,9 @@ MEDIUM:
 LOW:
 - economy config stuff
 - NPCs
-- Enhance Spectating
 - /hg rules
 - Log command
 - Have lobby check for conflicting signs
-- Make spectating started from a single entry point in API
 - /hg kit
 - Compass tracks players
 
@@ -39,3 +35,4 @@ UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
 - Add more listeners
 - More lang messages
+- Enhance Spectating

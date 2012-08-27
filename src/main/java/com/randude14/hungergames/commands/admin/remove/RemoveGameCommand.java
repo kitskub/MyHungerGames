@@ -20,22 +20,22 @@ public class RemoveGameCommand extends Command{
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 	    Player player = (Player) cs;	    
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    if(game == null){
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 	    
 	    GameManager.INSTANCE.removeGame(args[0]);
 	    HungerGames.callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[0]);
-	    return true;
+	    return;
 	}
 
 	@Override

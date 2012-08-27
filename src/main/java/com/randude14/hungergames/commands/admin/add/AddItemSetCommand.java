@@ -18,21 +18,21 @@ public class AddItemSetCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {	    
+	public void handle(CommandSender cs, String label, String[] args) {	    
 	    Player player = (Player) cs;
 	    if(args.length < 2){
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 	    game.addItemSet(args[1]);
 	    ChatUtils.send(player, "Itemset created!");
-	    return true;
+	    return;
 	}
 
 	@Override

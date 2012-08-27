@@ -21,31 +21,31 @@ public class SetFixedChestCommand extends Command {
     }
 
     @Override
-    public boolean handle(CommandSender cs, String cmd, String[] args) {
+    public void handle(CommandSender cs, String cmd, String[] args) {
 	    Player player = (Player) cs;
 	    if (args.length < 2) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
-		    return true;
+		    return;
 	    }
 	    
 	    String name = args[1];
 	    if (name.equalsIgnoreCase("false")) {
 		    SessionListener.addSession(SessionType.FIXED_CHEST_REMOVER, player, game.getName());
 		    ChatUtils.send(player, "Click chest to remove it from being a fixed item chest.");
-		    return true;
+		    return;
 	    }
 	    if (!ItemConfig.getFixedChests().contains(name)) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
-		    return true;
+		    return;
 	    }
 	    SessionListener.addSession(SessionType.FIXED_CHEST_ADDER, player, game.getName(), "name", name);
 	    ChatUtils.send(player, "Click chest to add it as a fixed item chest.");
-	    return true;
+	    return;
     }
 
 	@Override

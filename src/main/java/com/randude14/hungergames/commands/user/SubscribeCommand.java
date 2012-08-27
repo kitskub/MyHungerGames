@@ -15,7 +15,7 @@ public class SubscribeCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String cmd, String[] args) {
+	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
 		if (GameManager.INSTANCE.isPlayerSubscribed(player)) {
@@ -26,7 +26,7 @@ public class SubscribeCommand extends Command {
 			GameManager.INSTANCE.addSubscribedPlayer(player);
 			ChatUtils.send(player, "You have been subscribed to MyHungerGames messages.");
 		}
-		return true;
+		return;
 	}
 
 	@Override

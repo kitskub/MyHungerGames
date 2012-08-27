@@ -19,17 +19,17 @@ public class AddGameCommand extends Command {
 	}
 
 	@Override
-	public boolean handle(CommandSender cs, String label, String[] args) {
+	public void handle(CommandSender cs, String label, String[] args) {
 	    Player player = (Player) cs;
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
-		    return true;
+		    return;
 	    }
 	    game = GameManager.INSTANCE.getGame(args[0]);
 
 	    if (game != null) {
 		    ChatUtils.error(player, "%s already exists.", args[0]);
-		    return true;
+		    return;
 	    }
 	    if(args.length == 1){
 		    GameManager.INSTANCE.createGame(args[0]);
@@ -46,7 +46,7 @@ public class AddGameCommand extends Command {
 	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
 	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
 	    }
-	    return true;
+	    return;
 	}
 
 	@Override
