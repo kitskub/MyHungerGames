@@ -869,6 +869,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
+		readyToPlay.remove(player.getName());
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
 			PlayerQueueHandler.addPlayer(player);
