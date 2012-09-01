@@ -92,7 +92,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	private static void addToCheck(Block block, BlockState state) {
 		synchronized(toCheck) {
-		toCheck.put(block, state);
+			toCheck.put(block, state);
 		}
 	}
 
@@ -106,9 +106,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
-			HungerGame session = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer());
-			if(session == null) return;
-			addBlockState(session, event.getClickedBlock(), event.getClickedBlock().getState());
+			addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
 		}
 	}
 
@@ -121,16 +119,12 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer());
-		if(session == null) return;
-		addBlockState(session, event.getBlock(), event.getBlockReplacedState());
+		addToCheck(event.getBlock(), event.getBlock().getState());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer());
-		if(session == null) return;
-		addBlockState(session, event.getBlock(), event.getBlock().getState());
+		addToCheck(event.getBlock(), event.getBlock().getState());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
