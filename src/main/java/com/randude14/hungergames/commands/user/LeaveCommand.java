@@ -18,7 +18,7 @@ public class LeaveCommand extends Command {
 	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
-		game = GameManager.INSTANCE.getPlayingSession(player);
+		game = GameManager.INSTANCE.getRawPlayingSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not playing a game.");
 			return;

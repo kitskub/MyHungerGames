@@ -301,6 +301,26 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		return true;
 	}
+	
+	public void clearWaitingPlayers() {
+		for (Iterator<String> it = stats.keySet().iterator(); it.hasNext();) {
+			String stat = it.next();
+			if (!stats.get(stat).getState().equals(PlayerState.WAITING)) continue;
+			stats.get(stat).setState(PlayerState.NOT_IN_GAME);
+			Player player = Bukkit.getPlayer(stat);
+			ItemStack[] contents = player.getInventory().getContents();
+			List<ItemStack> list = new ArrayList<ItemStack>();
+			for (ItemStack i : contents) {
+				if (i != null) list.add(i);
+			}
+			contents = list.toArray(new ItemStack[list.size()]);
+			playerLeaving(player, false);
+			for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
+			teleportPlayerToSpawn(player);
+			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
+			it.remove();
+		}
+	}
 
 	public boolean addSpectator(Player player, Player spectated) {
 		if (state != RUNNING) {
@@ -347,7 +367,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public boolean stopGame(Player player, boolean isFinished) {
 		String result = stopGame(isFinished);
-		if (result != null) {
+		if (result != null && player != null) {
 			ChatUtils.error(player, result);
 			return false;
 		}
@@ -357,6 +377,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public String stopGame(boolean isFinished) {
 		if (state == DELETED) return "That game does not exist anymore.";
+		clearWaitingPlayers();
 		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
 
 		endTimes.add(System.currentTimeMillis());
@@ -371,7 +392,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		StatHandler.updateGame(this);
 		for (Player player : getRemainingPlayers()) {
-			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
+			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = player.getInventory().getContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
 			for (ItemStack i : contents) {
@@ -379,17 +400,20 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			}
 			contents = list.toArray(new ItemStack[list.size()]);
 			playerLeaving(player, false);
-			teleportPlayerToSpawn(player);
 			if (isFinished && Config.getWinnerKeepsItems(setup)) {
 				for (ItemStack i : player.getInventory().addItem(contents).values()) {
 					player.getLocation().getWorld().dropItem(player.getLocation(), i);
 				}
 			}
+			else {
+				for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
+			}
+			teleportPlayerToSpawn(player);
 			if (isFinished) HungerGames.rewardPlayer(player);
 		}
 		for (String stat : stats.keySet()) {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
-			PlayerStat.clearGamesForPlayer(stat, this);
+			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
 		}
 
 		for (String spectatorName : spectators.keySet()) {
@@ -399,9 +423,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		spectatorSponsoringRunnable.cancel();
 		HungerGames.cancelTask(locTaskId);
-		if (Config.getRemoveItems(setup)) {
-			removeItemsOnGround();
-		}
+		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		state = STOPPED;
 		if (!isFinished) {
 			GameEndEvent event = new GameEndEvent(this);
@@ -689,7 +711,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
-	    stats.put(player.getName(), PlayerStat.create(this, player));
+	    stats.put(player.getName(), GameManager.INSTANCE.createStat(this, player));
 	    String mess = Lang.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(mess, true);
@@ -808,7 +830,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    return false;
 	    }
 	    if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.QUIT));
-	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING;
+	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING || stats.get(player.getName()).getState() == PlayerState.WAITING;
 	    if (wasPlaying) {
 		    dropInventory(player);
 	    }
@@ -817,7 +839,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    else {
 		    stats.remove(player.getName());
-		    PlayerStat.clearGamesForPlayer(player.getName(), this);
+		    GameManager.INSTANCE.clearGamesForPlayer(player.getName(), this);
 	    }
 	    playerLeaving(player, false);
 	    if (wasPlaying || state != RUNNING) {
@@ -856,10 +878,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	// Complete clear just to be sure
 	public void clear() {
 		stopGame(true);
-		stats.clear();
 		releasePlayers();
+		stats.clear();
 		spawnsTaken.clear();
-		state = STOPPED;
 		spectators.clear();
 		sponsors.clear();
 		randomLocs.clear();
@@ -1185,7 +1206,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (state == DELETED) return;
 		if (!flag && state != STOPPED && state != DISABLED) stopGame(false);
 		if (!flag) {
-			state = DISABLED;
+			state = DISABLED; // TODO do this better
 			for (String s : stats.keySet()) {
 				Player p = Bukkit.getPlayer(s);
 				if (p == null) continue;
@@ -1193,6 +1214,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				teleportPlayerToSpawn(p);
 			}
 			clear();
+			state = DISABLED;
 		}
 		if (flag && state == DISABLED) state = STOPPED;
 	}
@@ -1345,6 +1367,27 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		cuboids.clear();
 		spawn = null;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final HungerGame other = (HungerGame) obj;
+		return this.compareTo(other) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 59 * hash + (this.name != null ? this.name.toLowerCase().hashCode() : 0);
+		return hash;
+	}
+	
+	
 
 	// sorts players by name ignoring case
 	private class PlayerComparator implements Comparator<Player> {

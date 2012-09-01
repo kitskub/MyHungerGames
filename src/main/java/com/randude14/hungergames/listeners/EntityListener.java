@@ -23,7 +23,7 @@ public class EntityListener implements Listener{
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		// Games
-		HungerGame killedGame = GameManager.INSTANCE.getSession(player);
+		HungerGame killedGame = GameManager.INSTANCE.getRawSession(player);
 		if (killedGame != null) {
 			if (Config.getForceDamage(killedGame.getSetup())) {
 				event.setCancelled(false);
@@ -54,7 +54,7 @@ public class EntityListener implements Listener{
 		if (!(event.getTarget() instanceof Player)) return;
 		Player player = (Player) event.getTarget();
 		// Games
-		HungerGame game = GameManager.INSTANCE.getSession(player);
+		HungerGame game = GameManager.INSTANCE.getRawSession(player);
 		if (game != null) {
 			if (game.getState() == GameState.STOPPED) {
 				if (!Config.getStopTargetting(game.getSetup())) return;

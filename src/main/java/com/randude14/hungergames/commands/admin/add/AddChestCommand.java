@@ -28,7 +28,7 @@ public class AddChestCommand extends Command {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
-	    game = GameManager.INSTANCE.getGame(args[0]);
+	    game = GameManager.INSTANCE.getRawGame(args[0]);
 	    
 	    if (game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));

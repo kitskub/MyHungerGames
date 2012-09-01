@@ -18,13 +18,12 @@ public class RejoinCommand extends Command {
 	public void handle(CommandSender cs, String cmd, String[] args) {
 		Player player = (Player) cs;
 
-		game = GameManager.INSTANCE.getSession(player);
+		game = GameManager.INSTANCE.getRawSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not in a game.");
 			return;
 		}
 		game.rejoin(player);
-		return;
 	}
 
 	@Override

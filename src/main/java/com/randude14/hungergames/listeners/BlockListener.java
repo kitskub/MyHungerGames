@@ -28,7 +28,7 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getPlayingSession(player);
+		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
 			if(!Config.getCanPlaceBlock(setup, event.getBlock())) {
@@ -52,7 +52,7 @@ public class BlockListener implements Listener {
 		if (type == null) return;
 		HungerGame game = null;
 		if (lines[2] != null && !lines[2].equals("")) {
-			game = GameManager.INSTANCE.getGame(lines[2]);
+			game = GameManager.INSTANCE.getRawGame(lines[2]);
 			if (game == null) {
 				event.setLine(1, "");
 				event.setLine(2, "BAD GAME NAME!");
@@ -79,7 +79,7 @@ public class BlockListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onchestBreak(BlockBreakEvent event) {
 		if (!(event.getBlock().getState() instanceof Chest)) return;
-		for (HungerGame game : GameManager.INSTANCE.getGames()) {
+		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
 			game.removeChest(event.getBlock().getLocation());
 		}
 	}
@@ -87,7 +87,7 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getPlayingSession(player);
+		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
 			String setup = session.getSetup();
 			if(!Config.getCanBreakBlock(setup, event.getBlock())) {
@@ -108,7 +108,7 @@ public class BlockListener implements Listener {
 		if (!(event.getClickedBlock().getState() instanceof Chest)) return;
 
                 Player player = event.getPlayer();
-                HungerGame game = GameManager.INSTANCE.getPlayingSession(player);
+                HungerGame game = GameManager.INSTANCE.getRawPlayingSession(player);
                 if(game == null) return;
 		if(!Config.getAutoAdd(game.getSetup())) return;
 		
@@ -120,7 +120,7 @@ public class BlockListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getPlayingSession(player);
+		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();

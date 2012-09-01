@@ -26,7 +26,7 @@ public class StartCommand extends Command {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
-		game = GameManager.INSTANCE.getGame(name);
+		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return;

@@ -19,6 +19,7 @@ import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Random;
 import java.net.URL;
 import java.text.*;
+import java.util.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -69,7 +71,7 @@ public class HungerGames extends JavaPlugin{
 		callTasks();
 		GameManager.INSTANCE.loadGames();
 		LobbyListener.load();
-		Logging.info("%s games loaded.", GameManager.INSTANCE.getGames().size());
+		Logging.info("%s games loaded.", GameManager.INSTANCE.getRawGames().size());
 		try {
 		    Metrics metrics = new Metrics();
 		    metrics.beginMeasuringPlugin(this);
@@ -91,7 +93,7 @@ public class HungerGames extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
-		for (HungerGame game : GameManager.INSTANCE.getGames()) {
+		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
 			game.stopGame(false);
 		}
 		GameManager.INSTANCE.saveGames();

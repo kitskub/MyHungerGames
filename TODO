@@ -1,8 +1,6 @@
 HIGH:
 - Tutorial
 - Better item adding
-- Fix startTime
-- Fix config getting reset
 - Add some /hga remove stuff
 
 MEDIUM:
@@ -36,3 +34,4 @@ UNCONFIRMED:
 - Add more listeners
 - More lang messages
 - Enhance Spectating
+- Fix startTime

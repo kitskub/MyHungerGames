@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 
 public class PlayerListener implements Listener {
@@ -24,11 +25,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameOfKilled = GameManager.INSTANCE.getPlayingSession(killed);
+		HungerGame gameOfKilled = GameManager.INSTANCE.getRawPlayingSession(killed);
 		if (gameOfKilled == null) return;
 		Player killer = killed.getKiller();
 		if (killer != null) {
-			HungerGame gameOfKiller = GameManager.INSTANCE.getPlayingSession(killer);
+			HungerGame gameOfKiller = GameManager.INSTANCE.getRawPlayingSession(killer);
 			if (gameOfKiller == null) return;
 			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
 				gameOfKiller.killed(killer, killed, event);
@@ -64,7 +65,7 @@ public class PlayerListener implements Listener {
 		int fx = frozenLoc.getBlockX();
 		int fz = frozenLoc.getBlockZ();
 		if ((px != fx) || (pz != fz)) {
-			player.teleport(frozenLoc);
+			player.teleport(frozenLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
 		}
 	}
 

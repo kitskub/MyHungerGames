@@ -16,9 +16,9 @@ public class TeleportListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getPlayingSession(player);
+		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if (session == null) return;
-		if (!Config.getCanTeleport(session.getSetup())) {
+		if (!event.getCause().equals(PlayerTeleportEvent.TeleportCause.PLUGIN) && !Config.getCanTeleport(session.getSetup())) {
 			ChatUtils.error(player, "You cannot teleport while in-game!");
 			//Logging.debug("Cancelling a teleport.");
 			event.setCancelled(true);

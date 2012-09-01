@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 public class ListCommand extends Command {
 
 	public ListCommand() {
-		super(Perm.USER_LIST, "list", ADMIN_COMMAND);
+		super(Perm.USER_LIST, "list", USER_COMMAND);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ListCommand extends Command {
 		Player player = (Player) cs;
 
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		Collection<HungerGame> games = GameManager.INSTANCE.getGames();
+		Collection<HungerGame> games = GameManager.INSTANCE.getRawGames();
 		if (games.isEmpty()) {
 			ChatUtils.error(player, "No games have been created yet.");
 			return;

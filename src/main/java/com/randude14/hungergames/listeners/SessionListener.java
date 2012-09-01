@@ -247,7 +247,7 @@ public class SessionListener implements Listener {
 		}
 
 		public HungerGame getGame() {
-			return GameManager.INSTANCE.getGame(game);
+			return GameManager.INSTANCE.getRawGame(game);
 		}
 
 		public void clicked(Block block) {

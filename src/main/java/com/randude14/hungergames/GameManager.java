@@ -6,7 +6,9 @@ import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.EquatableWeakReference;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import org.bukkit.ChatColor;
@@ -24,9 +26,10 @@ import org.bukkit.inventory.ItemStack;
 public class GameManager extends com.randude14.hungergames.api.GameManager {
 	private static final HungerGames plugin = HungerGames.getInstance();
 	public static final GameManager INSTANCE = new GameManager();
+	private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
-	private static final Map<String, HungerGame> spectators = new HashMap<String, HungerGame>(); // <player, game>
+	private static final Map<String, EquatableWeakReference<HungerGame>> spectators = new HashMap<String, EquatableWeakReference<HungerGame>>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
 	private static final Set<String> subscribedPlayers = new HashSet<String>();
 	private static final Map<String, Location> playerBackLocations = new HashMap<String, Location>();
@@ -53,23 +56,58 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	
 	@Override
 	public boolean removeGame(String name) {
-	    HungerGame game = getGame(name);
-	    if(game == null) return false;
-	    boolean attempt = games.remove(game);
-	    game.delete();
-	    if(attempt){
-		saveGames();
-	    }
-	    return attempt;
+		HungerGame game = null;
+		if (Strings.nullToEmpty(name).equals("")) return false;
+		for (HungerGame g : games) {
+			if (g.getName().equalsIgnoreCase(name)) {
+				game = g;
+			}
+
+		}
+		if(game == null) return false;
+		boolean attempt = games.remove(game);
+		game.delete();
+		if(attempt){
+			saveGames();
+		}
+		return attempt;
+	}
+		
+	public PlayerStat createStat(HungerGame game, Player player) {
+		PlayerStat stat = new PlayerStat(game, player);
+		if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<EquatableWeakReference<HungerGame>, PlayerStat>());
+		stats.get(player.getName()).put(new EquatableWeakReference<HungerGame>(game), stat);
+		return stat;
+	}
+	
+	public void clearGamesForPlayer(String player, HungerGame game) {
+		stats.get(player).remove(new EquatableWeakReference<HungerGame>(game));
 	}
 
 	@Override
-	public List<HungerGame> getGames() {
+	public List<HungerGame> getRawGames() {
 		return new ArrayList<HungerGame>(games);
 	}
 
+	
 	@Override
-	public HungerGame getGame(String name) {
+	public List<EquatableWeakReference<HungerGame>> getGames() {
+		List<EquatableWeakReference<HungerGame>> list = new ArrayList<EquatableWeakReference<HungerGame>>();
+		for (HungerGame game : games ) {
+			list.add(new EquatableWeakReference<HungerGame>(game));
+		}
+		return list;
+	}
+
+	@Override
+	public EquatableWeakReference<HungerGame> getGame(String name) {
+		HungerGame game = getRawGame(name);
+		if (game != null) return new EquatableWeakReference<HungerGame>(game);
+		return null;
+	}
+
+	@Override
+	public HungerGame getRawGame(String name) {
 		if (Strings.nullToEmpty(name).equals("")) return null;
 		for (HungerGame game : games) {
 			if (game.getName().equalsIgnoreCase(name)) {
@@ -79,32 +117,58 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 		}
 		return null;
 	}
+	
+	
 
 	@Override
-	public HungerGame getSession(Player player) {
-		return PlayerStat.getGame(player);
+	public WeakReference<HungerGame> getSession(Player player) {
+		if (stats.get(player.getName()) != null) {
+			for (EquatableWeakReference<HungerGame> gameGotten : stats.get(player.getName()).keySet()) {
+				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
+				if (stat != null && stat.getState() != PlayerStat.PlayerState.DEAD && stat.getState() != PlayerStat.PlayerState.NOT_IN_GAME) return gameGotten;
+			}
+		}
+		return null; 
 	}
 
 	@Override
-	public HungerGame getPlayingSession(Player player) {
-		return PlayerStat.getPlayingGame(player);
+	public HungerGame getRawSession(Player player) {
+		WeakReference<HungerGame> session = getSession(player);
+		return session == null ? null : session.get();
+	}
+
+	@Override
+	public WeakReference<HungerGame> getPlayingSession(Player player) {
+		if (stats.get(player.getName()) != null) {
+			for (EquatableWeakReference<HungerGame> gameGotten : stats.get(player.getName()).keySet()) {
+				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
+				if (stat != null && (stat.getState() == PlayerStat.PlayerState.PLAYING || stat.getState() == PlayerStat.PlayerState.WAITING)) return gameGotten;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public HungerGame getRawPlayingSession(Player player) {
+		WeakReference<HungerGame> session = getPlayingSession(player);
+		return session == null ? null : session.get();
 	}
 
 	@Override
 	public boolean doesNameExist(String name) {
-		return getGame(name) != null;
+		return getRawGame(name) != null;
 	}
 
 	public void playerLeftServer(Player player) {
 		if (spectators.containsKey(player.getName())) {
-			HungerGame spectated = spectators.remove(player.getName());
-			if (spectated == null) return;
-			spectated.removeSpectator(player);
+			WeakReference<HungerGame> spectated = spectators.remove(player.getName());
+			if (spectated.get() == null || spectated == null) return;
+			spectated.get().removeSpectator(player);
 			return;
 		}
-		HungerGame game = getSession(player);
-		if (game == null) return;
-		game.leave(player, true);
+		WeakReference<HungerGame> game = getSession(player);
+		if (game == null || game.get() == null) return;
+		game.get().leave(player, true);
 	}
 
 	public void loadGames() {
@@ -162,8 +226,8 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	
 	@Override
 	public boolean addSponsor(Player player, Player playerToBeSponsored) {
-	    HungerGame game = getPlayingSession(playerToBeSponsored);
-	    if (game == null) {
+	    WeakReference<HungerGame> game = getPlayingSession(playerToBeSponsored);
+	    if (game == null || game.get() == null) {
 		    ChatUtils.error(player, player.getName() + " is not playing in a game.");
 		    return false;
 	    }
@@ -173,20 +237,20 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	    convo.withTimeout(120);
 	    convo.thatExcludesNonPlayersWithMessage("Players only!");
 	    convo.buildConversation(player).begin();
-	    game.addSponsor(player.getName(), playerToBeSponsored.getName());
+	    game.get().addSponsor(player.getName(), playerToBeSponsored.getName());
 	    return true;
 	}
 
 	@Override
 	public boolean addSpectator(Player player, Game game, Player spectated) {
 		if (spectators.containsKey(player.getName())) return false;
-		spectators.put(player.getName(), (HungerGame) game);
+		spectators.put(player.getName(), new EquatableWeakReference<HungerGame>((HungerGame) game));
 		((HungerGame) game).addSpectator(player, spectated);
 		return true;
 	}
 	
 	@Override
-	public HungerGame getSpectating(Player player) {
+	public EquatableWeakReference<HungerGame> getSpectating(Player player) {
 	    if (player == null) return null;    
 	    if (!spectators.containsKey(player.getName())) return null;
 	    return spectators.get(player.getName());
@@ -194,9 +258,9 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	
 	@Override
 	public boolean removeSpectator(Player player) {
-		HungerGame game = spectators.remove(player.getName());
-		if (game != null) {
-			game.removeSpectator(player);
+		WeakReference<HungerGame> game = spectators.remove(player.getName());
+		if (game != null && game.get() != null) {
+			game.get().removeSpectator(player);
 			return true;
 		}
 		return false;
@@ -249,19 +313,23 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	}
 
 	private static class SponsorBeginPrompt extends NumericPrompt {
-		HungerGame game;
+		WeakReference<HungerGame> game;
 		Player player;
 		Player beingSponsored;
 		Map<ItemStack, Double> itemMap = null;
 		
-		public SponsorBeginPrompt(HungerGame game, Player player, Player playerToBeSponsored) {
+		public SponsorBeginPrompt(WeakReference<HungerGame> game, Player player, Player playerToBeSponsored) {
 			this.game = game;
 			this.player = player;
 			this.beingSponsored = playerToBeSponsored;
 		}
 		
 		public String getPromptText(ConversationContext cc) {
-			List<String> itemsets = game.getItemSets();
+			if (game.get() == null) {
+				cc.setSessionData("cancelled", true);
+				return "This game no longer exists. Reply to exit.";
+			}
+			List<String> itemsets = game.get().getItemSets();
 			if (ItemConfig.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 				cc.setSessionData("cancelled", true);
 				return "No items are available to sponsor. Reply to exit.";
@@ -315,7 +383,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 
 		@Override
 		protected Prompt acceptValidatedInput(ConversationContext cc, Number number) {
-			if (cc.getSessionData(cc) != null && (Boolean) cc.getSessionData(cc) == true) {
+			if (cc.getSessionData("cancelled") != null && (Boolean) cc.getSessionData("cancelled") == true) {
 				return END_OF_CONVERSATION;
 			}
 			

@@ -1,5 +1,6 @@
 package com.randude14.hungergames.commands.admin;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -19,13 +20,16 @@ public class ForceClearCommand extends Command {
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
-
-		String name = args[0];
+		if (args.length < 1) {
+			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			return;
+		}
+		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
-		game = GameManager.INSTANCE.getGame(name);
+		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return;

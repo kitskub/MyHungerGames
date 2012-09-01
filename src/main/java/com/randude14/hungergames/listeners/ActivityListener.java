@@ -6,9 +6,13 @@ import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
+import com.randude14.hungergames.utils.EquatableWeakReference;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,24 +23,30 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class ActivityListener implements Listener, Runnable {
-	private Map<HungerGame, Map<String, Long>> times = new HashMap<HungerGame, Map<String, Long>>();
+	private Map<EquatableWeakReference<HungerGame>, Map<String, Long>> times = new HashMap<EquatableWeakReference<HungerGame>, Map<String, Long>>();
 
 	public ActivityListener() {
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGames.getInstance(), this, 10*20, 10*20);
 	}
 	
 	public void run() {
-		for (HungerGame game : times.keySet()) {
-			if (times.get(game) == null) times.put(game, new HashMap<String, Long>());
+		for (Iterator<EquatableWeakReference<HungerGame>> it = times.keySet().iterator(); it.hasNext();) {
+			EquatableWeakReference<HungerGame> ref = it.next();
+			if (ref.get() == null) {
+				it.remove();
+				continue;
+			}
+			HungerGame game = ref.get();
+			if (times.get(ref) == null) times.put(ref, new HashMap<String, Long>());
 			long maxTime = Config.getTimeout(game.getSetup()) * 1000;
 			if (maxTime <= 0) continue;
-			for (String s : times.get(game).keySet()) {
-				if ((System.currentTimeMillis() - times.get(game).get(s)) >= maxTime) {
+			for (String s : times.get(ref).keySet()) {
+				if ((System.currentTimeMillis() - times.get(ref).get(s)) >= maxTime) {
 					Player p = Bukkit.getPlayer(s);
 					if (p != null) {
 						game.leave(p, true);	
 					}
-					times.get(game).remove(p.getName());
+					times.get(ref).remove(p.getName());
 				}
 			}
 		}
@@ -53,47 +63,50 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void update(Player p) {
-		HungerGame game = GameManager.INSTANCE.getPlayingSession(p);
+		WeakReference<HungerGame> game = GameManager.INSTANCE.getPlayingSession(p);
 		if (game == null) return;
-		if (!times.containsKey(game)) times.put(game, new HashMap<String, Long>());
-		times.get(game).put(p.getName(), System.currentTimeMillis());
+		EquatableWeakReference<HungerGame> eGame = new EquatableWeakReference<HungerGame>(game);
+		if (!times.containsKey(eGame)) times.put(eGame, new HashMap<String, Long>());
+		times.get(eGame).put(p.getName(), System.currentTimeMillis());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameEnd(GameEndEvent event) {
-		times.remove(event.getGame());
+		times.remove(new EquatableWeakReference<HungerGame>(event.getGame()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGamePause(GamePauseEvent event) {
-		times.remove(event.getGame());
+		times.remove(new EquatableWeakReference<HungerGame>(event.getGame()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameStart(GameStartEvent event) {
-		if (!times.containsKey(event.getGame())) times.put(event.getGame(), new HashMap<String, Long>());
+		EquatableWeakReference<HungerGame> eGame = new EquatableWeakReference<HungerGame>(event.getGame());
+		if (!times.containsKey(eGame)) times.put(eGame, new HashMap<String, Long>());
 		for (Player p : event.getGame().getRemainingPlayers()) {
-			times.get(event.getGame()).put(p.getName(), System.currentTimeMillis());
+			times.get(eGame).put(p.getName(), System.currentTimeMillis());
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinGameEvent event) {
-		if (!times.containsKey(event.getGame())) times.put(event.getGame(), new HashMap<String, Long>());
+		EquatableWeakReference<HungerGame> eGame = new EquatableWeakReference<HungerGame>(event.getGame());
+		if (!times.containsKey(eGame)) times.put(eGame, new HashMap<String, Long>());
 		if (event.getGame().getState() == HungerGame.GameState.RUNNING) {
-			times.get(event.getGame()).put(event.getPlayer().getName(), System.currentTimeMillis());
+			times.get(eGame).put(event.getPlayer().getName(), System.currentTimeMillis());
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKillEvent event) {
 		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerStat.PlayerState.DEAD) {
-			times.get(event.getGame()).remove(event.getKilled().getName());
+			times.get(new EquatableWeakReference<HungerGame>(event.getGame())).remove(event.getKilled().getName());
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		times.get(event.getGame()).remove(event.getPlayer().getName());
+		times.get(new EquatableWeakReference<HungerGame>(event.getGame())).remove(event.getPlayer().getName());
 	}
 }

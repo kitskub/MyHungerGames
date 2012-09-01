@@ -25,7 +25,7 @@ public class AddGameCommand extends Command {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
-	    game = GameManager.INSTANCE.getGame(args[0]);
+	    game = GameManager.INSTANCE.getRawGame(args[0]);
 
 	    if (game != null) {
 		    ChatUtils.error(player, "%s already exists.", args[0]);
@@ -37,7 +37,7 @@ public class AddGameCommand extends Command {
 	    else{
 		    GameManager.INSTANCE.createGame(args[0], args[1]);
 	    }
-	    GameCreateEvent event = new GameCreateEvent(GameManager.INSTANCE.getGame(args[0]));
+	    GameCreateEvent event = new GameCreateEvent(GameManager.INSTANCE.getRawGame(args[0]));
 	    if(event.isCancelled()) {
 	    	GameManager.INSTANCE.removeGame(args[0]);
 	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[0]);

@@ -28,7 +28,7 @@ public class StatCommand extends Command {
 			return;
 		}
 
-		game = GameManager.INSTANCE.getGame(name);
+		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return;

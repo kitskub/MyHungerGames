@@ -26,7 +26,7 @@ public class StopCommand extends Command {
 			return;
 		}
 		
-		game = GameManager.INSTANCE.getGame(name);
+		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
 		    ChatUtils.error(player, "%s does not exist.", name);
 		    return;

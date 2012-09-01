@@ -29,7 +29,7 @@ public class RemoveSpawnPointCommand extends Command {
 		    return;
 	    }
 	    
-	    game = GameManager.INSTANCE.getGame(args[0]);
+	    game = GameManager.INSTANCE.getRawGame(args[0]);
 	    if(game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return;

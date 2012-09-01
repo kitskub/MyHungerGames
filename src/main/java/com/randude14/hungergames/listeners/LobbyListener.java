@@ -5,9 +5,12 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
-import com.randude14.hungergames.stats.PlayerStat.PlayerState;
+import com.randude14.hungergames.utils.EquatableWeakReference;
+
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,8 +28,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class LobbyListener implements Listener, Runnable {
-	private static Map<Location, HungerGame> joinSigns = new HashMap<Location, HungerGame>();
-	private static Map<Location, HungerGame> gameSigns = new HashMap<Location, HungerGame>();
+	private static Map<Location, WeakReference<HungerGame>> joinSigns = new HashMap<Location, WeakReference<HungerGame>>();
+	private static Map<Location, WeakReference<HungerGame>> gameSigns = new HashMap<Location, WeakReference<HungerGame>>();
 	private static List<InfoWall> infoWalls = new ArrayList<InfoWall>();
 	private static int currentCheckPeriod = 0, maxCheckPeriod = 5;
 	
@@ -59,7 +62,7 @@ public class LobbyListener implements Listener, Runnable {
 	
 	public static boolean addInfoWall(Location one, Location two, BlockFace clickedFace, String str) {
 		if (one.getWorld() != two.getWorld()) return false;
-		HungerGame game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		World w = one.getWorld();
 		int oneX = one.getBlockX();
@@ -133,7 +136,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		HungerGame game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		joinSigns.put(location, game);
 		Sign sign = (Sign) block.getState();
@@ -150,7 +153,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		HungerGame game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
 		if (game == null) return false;
 		gameSigns.put(location, game);
 		updateGameSigns();
@@ -161,9 +164,11 @@ public class LobbyListener implements Listener, Runnable {
 	@EventHandler(priority= EventPriority.MONITOR, ignoreCancelled=true)
 	public static void playerClickedBlock(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
-		HungerGame game = joinSigns.get(event.getClickedBlock().getLocation());
-		if (game == null) return;
-		game.join(event.getPlayer());
+		WeakReference<HungerGame> game = joinSigns.get(event.getClickedBlock().getLocation());
+		if (game == null || game.get() == null) {
+			joinSigns.remove(event.getClickedBlock().getLocation());
+		}
+		game.get().join(event.getPlayer());
 	}
 	
 	@EventHandler(priority= EventPriority.MONITOR, ignoreCancelled=true)
@@ -175,8 +180,11 @@ public class LobbyListener implements Listener, Runnable {
 		currentCheckPeriod++;
 		if (currentCheckPeriod >= maxCheckPeriod) {
 			for (Location l : joinSigns.keySet()) {
-				HungerGame game = joinSigns.get(l);
-				if (game != null && game.getState() == HungerGame.GameState.DELETED) {
+				WeakReference<HungerGame> game = joinSigns.get(l);
+				if (game == null || game.get() == null) {
+					joinSigns.remove(l);
+				}
+				if (game.get().getState() == HungerGame.GameState.DELETED) {
 					joinSigns.remove(l);
 				}
 			}
@@ -202,26 +210,35 @@ public class LobbyListener implements Listener, Runnable {
 		ConfigurationSection infoSection = config.createSection("info-walls");
 
 		int count = 0;
-		for (Iterator<Entry<Location, HungerGame>> it = joinSigns.entrySet().iterator(); it.hasNext();) {
+		for (Iterator<Entry<Location, WeakReference<HungerGame>>> it = joinSigns.entrySet().iterator(); it.hasNext();) {
+			Entry<Location, WeakReference<HungerGame>> entry = it.next();
+			if (entry.getValue().get() == null) {
+				it.remove();
+				continue;
+			}
 			count++;
-			Entry<Location, HungerGame> entry = it.next();
 			ConfigurationSection section = joinSection.createSection(String.valueOf(count));
 			section.set("location", HungerGames.parseToString(entry.getKey()));
-			section.set("game", entry.getValue().getName());
+			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
-		for (Iterator<Entry<Location, HungerGame>> it = gameSigns.entrySet().iterator(); it.hasNext();) {
+		for (Iterator<Entry<Location, WeakReference<HungerGame>>> it = gameSigns.entrySet().iterator(); it.hasNext();) {
+			Entry<Location, WeakReference<HungerGame>> entry = it.next();
+			if (entry.getValue().get() == null) {
+				it.remove();
+				continue;
+			}
 			count++;
-			Entry<Location, HungerGame> entry = it.next();
 			ConfigurationSection section = gameSection.createSection(String.valueOf(count));
 			section.set("location", HungerGames.parseToString(entry.getKey()));
-			section.set("game", entry.getValue().getName());
+			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
 		for (InfoWall w : infoWalls) {
+			if (w.game.get() == null) continue;
 			count++;
 			ConfigurationSection section = infoSection.createSection(String.valueOf(count));
-			section.set("game", w.game.getName());
+			section.set("game", w.game.get().getName());
 			List<String> strings = new ArrayList<String>();
 			for (Location l : w.signs) {
 				strings.add(HungerGames.parseToString(l));
@@ -242,7 +259,7 @@ public class LobbyListener implements Listener, Runnable {
 			for (String key : joinSection.getKeys(false)) {
 				ConfigurationSection section = joinSection.getConfigurationSection(key);
 				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
-				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				joinSigns.put(loc, game);
 			}
@@ -252,7 +269,7 @@ public class LobbyListener implements Listener, Runnable {
 			for (String key : gameSection.getKeys(false)) {
 				ConfigurationSection section = gameSection.getConfigurationSection(key);
 				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
-				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				gameSigns.put(loc, game);
 			}
@@ -261,7 +278,7 @@ public class LobbyListener implements Listener, Runnable {
 			infoWalls.clear();
 			for (String key : infoSection.getKeys(false)) {
 				ConfigurationSection section = infoSection.getConfigurationSection(key);
-				HungerGame game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				List<String> strings = section.getStringList("signs");
 				List<Location> locs = new ArrayList<Location>();
 				for (String s : strings) {
@@ -276,51 +293,55 @@ public class LobbyListener implements Listener, Runnable {
 	public static void updateGameSigns() {
 		for (Iterator<Location> it = gameSigns.keySet().iterator(); it.hasNext();) {
 			Location l = it.next();
-			HungerGame game = gameSigns.get(l);
-			if (game != null) {
-				BlockState b = l.getBlock().getState();
-				if (game.getState() == HungerGame.GameState.DELETED || !(b instanceof Sign)) {
-					it.remove();
-					continue;
-				}
-				
-				Sign sign = (Sign) b;
-				sign.setLine(0, (game.getState() != HungerGame.GameState.DISABLED ? ChatColor.GREEN : ChatColor.RED) + game.getName());
-
-				if (game.getState() == HungerGame.GameState.DISABLED) {
-					sign.setLine(1, "");
-					sign.setLine(2, "");
-					sign.setLine(3, "");
-				}
-				else if (game.getState() == HungerGame.GameState.PAUSED) {
-					sign.setLine(1, "Paused");
-					sign.setLine(2, "In-game:" + game.getRemainingPlayers().size());
-				}
-				else if (game.getState() == HungerGame.GameState.STOPPED) {
-					sign.setLine(1, "Stopped");
-					sign.setLine(2, "Ready:" + game.getRemainingPlayers().size());
-					sign.setLine(3, "Available:" + (game.getSize() - game.getRemainingPlayers().size()));
-				}
-				else if (game.getState() == HungerGame.GameState.RUNNING || game.getState() == HungerGame.GameState.COUNTING_FOR_RESUME || game.getState() == HungerGame.GameState.COUNTING_FOR_START) {
-					sign.setLine(1, "Running");
-					sign.setLine(2, "Remaining:" + game.getRemainingPlayers().size());
-				}
-				sign.update();
+			WeakReference<HungerGame> gameRef = gameSigns.get(l);
+			if (gameRef == null || gameRef.get() == null) {
+				it.remove();
+				continue;
 			}
+			HungerGame game = gameRef.get();
+			BlockState b = l.getBlock().getState();
+			if (game.getState() == HungerGame.GameState.DELETED || !(b instanceof Sign)) {
+				it.remove();
+				continue;
+			}
+
+			Sign sign = (Sign) b;
+			sign.setLine(0, (game.getState() != HungerGame.GameState.DISABLED ? ChatColor.GREEN : ChatColor.RED) + game.getName());
+
+			if (game.getState() == HungerGame.GameState.DISABLED) {
+				sign.setLine(1, ChatColor.RED + "Disabled");
+				sign.setLine(2, "");
+				sign.setLine(3, "");
+			}
+			else if (game.getState() == HungerGame.GameState.PAUSED) {
+				sign.setLine(1, "Paused");
+				sign.setLine(2, "In-game:" + game.getRemainingPlayers().size());
+			}
+			else if (game.getState() == HungerGame.GameState.STOPPED) {
+				sign.setLine(1, "Stopped");
+				sign.setLine(2, "Ready:" + game.getRemainingPlayers().size());
+				sign.setLine(3, "Available:" + (game.getSize() - game.getRemainingPlayers().size()));
+			}
+			else if (game.getState() == HungerGame.GameState.RUNNING || game.getState() == HungerGame.GameState.COUNTING_FOR_RESUME || game.getState() == HungerGame.GameState.COUNTING_FOR_START) {
+				sign.setLine(1, "Running");
+				sign.setLine(2, "Remaining:" + game.getRemainingPlayers().size());
+			}
+			sign.update();
 		}
 	}
 
 
 	private static final class InfoWall {
 		private final List<Location> signs;
-		private final HungerGame game;
+		private final EquatableWeakReference<HungerGame> game;
 
-		public InfoWall(HungerGame game, List<Location> list) {
+		public InfoWall(EquatableWeakReference<HungerGame> game, List<Location> list) {
 			this.signs = list;
 			this.game = game;
 			update();
 		}
 		public void update() {
+			if (game.get() == null) return;
 			List<Sign> signList = new ArrayList<Sign>();
 			for (Iterator<Location> it = signs.iterator(); it.hasNext();) {
 				Location l = it.next();
@@ -332,7 +353,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			Iterator<Sign> signIt = signList.iterator();
 			TreeSet<PlayerStat> stats = new TreeSet<PlayerStat>(new PlayerStat.StatComparator());
-			stats.addAll(game.getStats());
+			stats.addAll(game.get().getStats());
 			Iterator<PlayerStat> statIt = stats.iterator();
 			
 			while(signIt.hasNext()) {

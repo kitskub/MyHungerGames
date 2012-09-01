@@ -6,7 +6,9 @@ import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.EquatableWeakReference;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,7 +20,7 @@ import org.bukkit.event.Listener;
 
 public class PlayerQueueHandler implements Listener, Runnable {
 	private static final Queue<String> queuedPlayers = new LinkedList<String>();
-	private static final Queue<HungerGame> queuedGames = new LinkedList<HungerGame>();
+	private static final Queue<WeakReference<HungerGame>> queuedGames = new LinkedList<WeakReference<HungerGame>>();
 	private static boolean enabled = false;
 
 	public PlayerQueueHandler() {
@@ -36,17 +38,18 @@ public class PlayerQueueHandler implements Listener, Runnable {
 		if (!enabled) return;
 		if (!Config.getAutoJoinAllowed(event.getGame().getSetup())) return;
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
-		queuedGames.offer(event.getGame());
+		queuedGames.offer(new EquatableWeakReference<HungerGame>(event.getGame()));
 	}
 	
 	public void run() {
-		HungerGame game = queuedGames.poll();
-		if (game.getState() != GameState.STOPPED) return;
-		for (int i = 0; i < Math.min(game.getSize(), queuedPlayers.size()); i++) {
+		WeakReference<HungerGame> game = null;
+		while ((game = queuedGames.poll()) != null && game.get() == null) {}
+		if (game.get().getState() != GameState.STOPPED) return;
+		for (int i = 0; i < Math.min(game.get().getSize(), queuedPlayers.size()); i++) {
 			Player p = Bukkit.getPlayer(queuedPlayers.poll());
 			if (p == null) continue;
-			ChatUtils.send(p, "You have been selected to join the game %s", game.getName());
-			game.join(p);
+			ChatUtils.send(p, "You have been selected to join the game %s", game.get().getName());
+			game.get().join(p);
 		}
 	}
 

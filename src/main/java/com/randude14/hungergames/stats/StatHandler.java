@@ -39,7 +39,7 @@ public class StatHandler {
 		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updateGames");
-		map.put("startTime", String.valueOf(game.getInitialStartTime()));
+		map.put("startTime", String.valueOf(game.getInitialStartTime()/1000l));
 
 		map.put("totalPlayers", String.valueOf(game.getAllPlayers().size()));
 		if (game.getRemainingPlayers().size() != 1) {

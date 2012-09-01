@@ -1,14 +1,13 @@
 package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.games.HungerGame;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import org.bukkit.entity.Player;
 
 public class PlayerStat implements Comparable<PlayerStat> {
-	public static Map<String, Map<HungerGame, PlayerStat>> stats = new HashMap<String, Map<HungerGame, PlayerStat>>();
 	public static final String NODODY = "NOBODY";
 	private Player player;
 	private HungerGame game;
@@ -16,35 +15,8 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	private List<String> kills;
 	private PlayerState state;
 	private long elapsedTimeInMillis;
-	
-	public static PlayerStat create(HungerGame game, Player player) {
-		PlayerStat stat = new PlayerStat(game, player);
-		if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<HungerGame, PlayerStat>());
-		stats.get(player.getName()).put(game, stat);
-		return stat;
-	}
 
-	public static HungerGame getGame(Player player) {
-		if (stats.get(player.getName()) != null) {
-			for (HungerGame gameGotten : stats.get(player.getName()).keySet()) {
-				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
-				if (stat != null && stat.getState() != PlayerState.DEAD && stat.getState() != PlayerState.NOT_IN_GAME) return gameGotten;
-			}
-		}
-		return null;
-	}
-	
-	public static HungerGame getPlayingGame(Player player) {
-		if (stats.get(player.getName()) != null) {
-			for (HungerGame gameGotten : stats.get(player.getName()).keySet()) {
-				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
-				if (stat != null && (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.WAITING)) return gameGotten;
-			}
-		}
-		return null;
-	}
-
-	private PlayerStat(HungerGame game, Player player) {
+	public PlayerStat(HungerGame game, Player player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
@@ -114,10 +86,6 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	
 	public long getTime() {
 		return elapsedTimeInMillis;
-	}
-	
-	public static void clearGamesForPlayer(String player, HungerGame game) {
-		stats.get(player).remove(game);
 	}
 
 	public int compareTo(PlayerStat o) {
