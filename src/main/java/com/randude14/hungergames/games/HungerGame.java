@@ -323,6 +323,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	public boolean addSpectator(Player player, Player spectated) {
+		if (GameManager.INSTANCE.getSpectating(player) != null) {
+			ChatUtils.error(player, "You cannot spectate while in a game.");
+			return false;
+		}
 		if (state != RUNNING) {
 			ChatUtils.error(player, Lang.getNotRunning(setup).replace("<game>", name));
 			return false;
@@ -774,7 +778,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
 	    }
-	    if(Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
+	    if (Config.getHidePlayers(setup)) player.setSneaking(true);
+	    if (Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
@@ -870,6 +875,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
+		if (Config.getHidePlayers(setup)) player.setSneaking(false);
 		readyToPlay.remove(player.getName());
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());

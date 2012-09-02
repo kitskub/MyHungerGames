@@ -333,6 +333,10 @@ public class Config {
 	public static boolean getStopTargettingGlobal() {
 		return getGlobalBoolean("stop-targetting", STOP_TARGETTING.getBoolean());
 	}
+		
+	public static boolean getHidePlayersGlobal() {
+		return getGlobalBoolean("hide-players", HIDE_PLAYERS.getBoolean());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -477,6 +481,10 @@ public class Config {
 
 	public static boolean getStopTargetting(String setup) {
 		return getBoolean("stop-targetting", setup, getStopTargettingGlobal());
+	}
+
+	public static boolean getHidePlayers(String setup) {
+		return getBoolean("hide-players", setup, getHidePlayersGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

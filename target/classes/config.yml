@@ -159,6 +159,9 @@ global:
   # If this is true, mobs will not target players while they are waiting for a game to start
   stop-targetting: true
   
+  # Whether to hide players' nametag by faking a sneak
+  hide-players: true
+  
 # Setups ADD to global in any list
 setups:
 #  test1:

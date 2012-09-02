@@ -1,5 +1,6 @@
 package com.randude14.hungergames.listeners;
 
+import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
@@ -17,6 +18,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 
 public class PlayerListener implements Listener {
@@ -72,5 +74,13 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerJoin(PlayerJoinEvent event) {
 		PlayerQueueHandler.addPlayer(event.getPlayer());
+	}
+	
+	@EventHandler(priority= EventPriority.MONITOR)
+	public void playerSneak(PlayerToggleSneakEvent event) {
+		HungerGame game;
+		if ((game = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer())) == null) return;
+		if (!Config.getHidePlayers(game.getSetup())) return;
+		event.setCancelled(true);
 	}
 }

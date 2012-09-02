@@ -85,7 +85,8 @@ public class Defaults {
 	TIMEOUT(300),
 	TAKE_LIFE_ON_LEAVE(true),
 	START_TIMER(0),
-	STOP_TARGETTING(true);
+	STOP_TARGETTING(true),
+	HIDE_PLAYERS(true);
 	
 	
 	private Object value;
