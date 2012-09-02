@@ -318,7 +318,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
 			teleportPlayerToSpawn(player);
 			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
-			it.remove();
+			stats.remove(stat);
 		}
 	}
 
@@ -342,6 +342,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		for (Player p : getRemainingPlayers()) {
 			p.hidePlayer(player);
 		}
+		ChatUtils.send(player, "You are now spectating %s", name);
 		return true;
 	}
 
@@ -379,7 +380,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (state == DELETED) return "That game does not exist anymore.";
 		clearWaitingPlayers();
 		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
-
+		
 		endTimes.add(System.currentTimeMillis());
 		if (countdown != null) countdown.cancel();
 		if (state == PAUSED) { // Needed for inventory stuff
@@ -415,7 +416,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
 			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
 		}
-
+		stats.clear();
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
 			if (spectator == null) continue;
@@ -878,7 +879,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	// Complete clear just to be sure
 	public void clear() {
-		stopGame(true);
 		releasePlayers();
 		stats.clear();
 		spawnsTaken.clear();
@@ -1205,8 +1205,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public void setEnabled(boolean flag) {
 		if (state == DELETED) return;
-		if (!flag && state != STOPPED && state != DISABLED) stopGame(false);
 		if (!flag) {
+			if (!flag) stopGame(false);
 			state = DISABLED; // TODO do this better
 			for (String s : stats.keySet()) {
 				Player p = Bukkit.getPlayer(s);

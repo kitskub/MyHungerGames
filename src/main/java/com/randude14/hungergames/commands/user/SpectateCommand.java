@@ -32,20 +32,16 @@ public class SpectateCommand extends Command {
 			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
 			return;
 		}
-		boolean success;
 		Player spectated;
-		if (args.length < 2 || (spectated = Bukkit.getPlayer(args[1])) == null) {
-			success = GameManager.INSTANCE.addSpectator(player, game, null);
-		}
-		else {
-			success = GameManager.INSTANCE.addSpectator(player, game, spectated);
-		}
-		
-		if (success) {
-			ChatUtils.send(player, "You are now spectating %s", name);
-		}
-		else {
+		if (GameManager.INSTANCE.getSpectating(player) != null) {
 			ChatUtils.error(player, "You are already spectating a game.");
+			return;
+		}
+		if (args.length < 2 || (spectated = Bukkit.getPlayer(args[1])) == null) {
+			GameManager.INSTANCE.addSpectator(player, game, null);
+		}
+		else {
+			GameManager.INSTANCE.addSpectator(player, game, spectated);
 		}
 	}
 

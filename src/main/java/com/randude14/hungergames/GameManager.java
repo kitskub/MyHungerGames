@@ -244,8 +244,8 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	@Override
 	public boolean addSpectator(Player player, Game game, Player spectated) {
 		if (spectators.containsKey(player.getName())) return false;
+		if (!((HungerGame) game).addSpectator(player, spectated)) return false;
 		spectators.put(player.getName(), new EquatableWeakReference<HungerGame>((HungerGame) game));
-		((HungerGame) game).addSpectator(player, spectated);
 		return true;
 	}
 	

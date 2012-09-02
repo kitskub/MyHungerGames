@@ -164,9 +164,11 @@ public class LobbyListener implements Listener, Runnable {
 	@EventHandler(priority= EventPriority.MONITOR, ignoreCancelled=true)
 	public static void playerClickedBlock(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
+		if (!joinSigns.containsKey(event.getClickedBlock().getLocation())) return;
 		WeakReference<HungerGame> game = joinSigns.get(event.getClickedBlock().getLocation());
 		if (game == null || game.get() == null) {
 			joinSigns.remove(event.getClickedBlock().getLocation());
+			return;
 		}
 		game.get().join(event.getPlayer());
 	}

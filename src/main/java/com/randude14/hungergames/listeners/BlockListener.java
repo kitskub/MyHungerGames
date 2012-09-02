@@ -6,6 +6,8 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.stats.PlayerStat;
+import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.logging.Level;
@@ -30,6 +32,10 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
+			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+				event.setCancelled(true);
+				return;
+			}
 			String setup = session.getSetup();
 			if(!Config.getCanPlaceBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
@@ -89,6 +95,10 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
+			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+				event.setCancelled(true);
+				return;
+			}
 			String setup = session.getSetup();
 			if(!Config.getCanBreakBlock(setup, event.getBlock())) {
 				ChatUtils.error(player, "You cannot break this block while in game %s.", session.getName());
@@ -122,6 +132,10 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session != null) {
+			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+				event.setCancelled(true);
+				return;
+			}
 			if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 			String setup = session.getSetup();
 			if(!Config.getCanInteractBlock(setup, event.getClickedBlock()) && !event.getClickedBlock().getType().equals(Material.CHEST)) {

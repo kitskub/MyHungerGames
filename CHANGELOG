@@ -19,6 +19,7 @@ v0.7
 - New command system
 - Added a forceclear command
 - /hga reload is now a little bit smarter (I may do away with this as it might cause problems)
+- Now uses weakreferences to help prevent memory leaks
 
 v0.6
 - bug fixes
