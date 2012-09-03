@@ -2,7 +2,7 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
@@ -26,7 +26,7 @@ public class ActivityListener implements Listener, Runnable {
 	private Map<EquatableWeakReference<HungerGame>, Map<String, Long>> times = new HashMap<EquatableWeakReference<HungerGame>, Map<String, Long>>();
 
 	public ActivityListener() {
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGames.getInstance(), this, 10*20, 10*20);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGamesBukkit.getInstance(), this, 10*20, 10*20);
 	}
 	
 	public void run() {

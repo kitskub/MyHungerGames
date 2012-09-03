@@ -1,98 +1,63 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
-import com.randude14.hungergames.Defaults.Commands;
 
-import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.games.PlayerQueueHandler;
-import com.randude14.hungergames.games.TimedGameRunnable;
 import com.randude14.hungergames.listeners.*;
-import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
 import com.randude14.hungergames.register.HGPermission;
-import com.randude14.hungergames.register.VaultPermission;
-import com.randude14.hungergames.reset.ResetHandler;
-import com.randude14.hungergames.stats.TimeListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.net.URL;
-import java.text.*;
-import java.util.*;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Chest;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
-public class HungerGames extends JavaPlugin{
+public class HungerGames {
 	public static final String CMD_ADMIN = "hga", CMD_USER = "hg";
-	private static HungerGames instance;
+	public static final String name = "MyHungerGames";
+	private static HungerGamesPlugin instance;
 	private static HGPermission perm;
 	private static Economy econ;
 	private static Random rand;
-	
-	@Override
-	public void onEnable() {
-		instance = this;
-		registerCommands();
+
+	public static void enable(HungerGamesPlugin instance) {
+		HungerGames.instance = instance;
+		instance.registerCommands();
 		Files.loadAll();
-		rand = new Random(getName().hashCode());
-		registerEvents();
-		updateConfig();
-		loadRegistry();
-		loadResetter();
+		rand = new Random(name.hashCode());
+		instance.registerEvents();
+		instance.updateConfig();
+		instance.loadRegistry();
+		instance.loadResetter();
 		callTasks();
 		GameManager.INSTANCE.loadGames();
 		LobbyListener.load();
 		Logging.info("%s games loaded.", GameManager.INSTANCE.getRawGames().size());
-		try {
-		    Metrics metrics = new Metrics();
-		    metrics.beginMeasuringPlugin(this);
-		} catch (IOException e) {
-		// Fail silently
-		}
+		instance.loadMetrics();
 		Logging.info("Enabled.");
 	}
 
-	private void callTasks() {
-	    Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
-		new Runnable() {
+	private static void callTasks() {
+	    HungerGames.instance.getServerInterface().scheduleAsyncRepeatingTask(new Runnable() {
 		public void run() {
 		    if (!latestVersionCheck())
-			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), getDescription().getVersion());
+			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), HungerGames.instance.getVersion());
 		}
 	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
 
-	@Override
-	public void onDisable() {
+	public static void disable() {
 		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
 			game.stopGame(false);
 		}
@@ -102,108 +67,16 @@ public class HungerGames extends JavaPlugin{
 		Files.saveAll();
 		Logging.info("Disabled.");
 	}
-
-	private static void registerCommands() {
-		instance.getCommand(CMD_USER).setExecutor(CommandHandler.INSTANCE);
-		instance.getCommand(CMD_ADMIN).setExecutor(CommandHandler.INSTANCE);
-		for (Perm p : Perm.values()) {
-			Permission permission = p.getPermission();
-			if (p.getParent() != null) {
-				permission.addParent(p.getParent().getPermission(), true);
-			}
-		}
-		Commands.init();
-	}
-	
-	private static void loadRegistry() {
-	    if (!VaultPermission.isVaultInstalled()) {
-		Logging.info("Vault is not installed, defaulting to Bukkit perms.");
-		perm = new BukkitPermission();
-		return;
-	    } else {
-		perm = new VaultPermission();
-	    }
-
-	    if (!Economy.isVaultInstalled()) {
-		Logging.warning("Vault is not installed, economy use disabled.");
-		econ = null;
-	    } else {
-		econ = new Economy();
-	    }
-	}
-	
-	private static void loadResetter() {
-	    if (Config.getForceInternalGlobal()) {
-		    Logging.info("Forcing internal resetter.");
-		    ResetHandler.setRessetter(ResetHandler.INTERNAL);
-		    return;
-	    }
-	    if (Bukkit.getPluginManager().getPlugin("HawkEye") != null && Bukkit.getPluginManager().getPlugin("HawkEye").isEnabled()) {
-		    Logging.info("Hawkeye is installed, using for resetter.");
-		    ResetHandler.setRessetter(ResetHandler.HAWKEYE);
-		    return;
-	    } else if (Bukkit.getPluginManager().getPlugin("LogBlock") != null && Bukkit.getPluginManager().getPlugin("LogBlock").isEnabled()){
-		    Logging.info("LogBlock is installed, using for resetter.");
-		    ResetHandler.setRessetter(ResetHandler.LOGBLOCK);
-		    return;
-	    } else {
-		    Logging.info("No logging plugins installed, using internal resetter.");
-		    ResetHandler.setRessetter(ResetHandler.INTERNAL);
-		    return;
-	    }
-	}
-
-	private static void registerEvents() {
-		PluginManager pm = Bukkit.getPluginManager();
-		pm.registerEvents(new ActivityListener(), instance);
-		pm.registerEvents(new BlockListener(), instance);
-		pm.registerEvents(new CommandListener(), instance);
-		pm.registerEvents(new PlayerListener(), instance);
-		pm.registerEvents(new EntityListener(), instance);
-		pm.registerEvents(new SignListener(), instance);
-		pm.registerEvents(new InventoryListener(), instance);
-		pm.registerEvents(new SessionListener(), instance);
-		pm.registerEvents(new ChatListener(), instance);
-		pm.registerEvents(new TeleportListener(), instance);
-		pm.registerEvents(new TimedGameRunnable(), instance);
-		pm.registerEvents(new TimeListener(), instance);
-		pm.registerEvents(new LobbyListener(), instance);
-		if (Config.getAutoJoin()) pm.registerEvents(new PlayerQueueHandler(), instance);
-	}
-	
-	private static void updateConfig() {
-		if (Files.CONFIG.getConfig().contains("global.chest-loot")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("global.chest-loot." + key);
-				Files.ITEMCONFIG.getConfig().set("global.chest-loot." + key, value);
-				Files.CONFIG.getConfig().set("global.chest-loot." + key, null);
-			}
-		}
-		if (Files.CONFIG.getConfig().contains("global.sponsor-loot")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("global.sponsor-loot." + key);
-				Files.ITEMCONFIG.getConfig().set("global.sponsor-loot." + key, value);
-				Files.CONFIG.getConfig().set("global.sponsor-loot." + key, null);
-			}
-		}
-		if (Files.CONFIG.getConfig().contains("itemsets")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("itemsets." + key);
-				Files.ITEMCONFIG.getConfig().set("itemsets." + key, value);
-				Files.CONFIG.getConfig().set("itemsets." + key, null);
-			}
-		}
-	}
 	
 	public static void reload() {
 		Files.loadAll();
 		GameManager.INSTANCE.loadGames();
 		SignListener.loadSigns();
-		loadRegistry();
+		instance.loadRegistry();
 	}
 
 	public static boolean hasPermission(CommandSender cs, Defaults.Perm perm) {
-		return HungerGames.perm.hasPermission(cs, perm);
+		return perm.hasPermission(cs, perm);
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
@@ -256,7 +129,7 @@ public class HungerGames extends JavaPlugin{
 		Bukkit.getServer().getScheduler().cancelTask(taskID);
 	}
 
-	public boolean latestVersionCheck(){
+	public static boolean latestVersionCheck(){
 		String datePub = null;
 		long timeMod = 0;
 		try {
@@ -276,7 +149,7 @@ public class HungerGames extends JavaPlugin{
 		}
 		DateFormat pubDate = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
 		try {
-			File jarFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			File jarFile = new File(HungerGames.instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 			timeMod = jarFile.lastModified();
 		} catch (URISyntaxException e1) {
 		}
@@ -287,7 +160,7 @@ public class HungerGames extends JavaPlugin{
 		}
 	}
 	
-	public String latestVersion() {
+	public static String latestVersion() {
 		try {
 			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
@@ -303,7 +176,7 @@ public class HungerGames extends JavaPlugin{
 			}
 		} catch (Exception ex) {
 		}
-		return getDescription().getVersion();
+		return HungerGames.instance.getVersion();
 	}
 
 	public static void callEvent(Event event) {
@@ -440,15 +313,16 @@ public class HungerGames extends JavaPlugin{
 		}
 	}
 	
-	public static HungerGames getInstance() {
+	public static HungerGamesPlugin getInstance() {
 		return instance;
 	}
 
 	public static boolean checkPermission(CommandSender cs, Defaults.Perm perm) {
-		if (!HungerGames.hasPermission(cs, perm)) {
+		if (!HungerGamesBukkit.hasPermission(cs, perm)) {
 			cs.sendMessage(ChatColor.RED + Lang.getNoPerm());
 			return false;
 		}
 		return true;
 	}
+
 }

@@ -2,7 +2,7 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -21,7 +21,7 @@ public class SponsorCommand extends Command {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.send(player, getUsage(), HungerGames.CMD_USER);
+			ChatUtils.send(player, getUsage(), HungerGamesBukkit.CMD_USER);
 			return;
 		}
 

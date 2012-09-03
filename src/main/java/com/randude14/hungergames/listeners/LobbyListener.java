@@ -2,7 +2,7 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Files;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.EquatableWeakReference;
@@ -34,7 +34,7 @@ public class LobbyListener implements Listener, Runnable {
 	private static int currentCheckPeriod = 0, maxCheckPeriod = 5;
 	
 	public LobbyListener() {
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGames.getInstance(), this, 0, 40);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGamesBukkit.getInstance(), this, 0, 40);
 	}
 	
 	public static void removeSign(Location loc) {
@@ -220,7 +220,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			count++;
 			ConfigurationSection section = joinSection.createSection(String.valueOf(count));
-			section.set("location", HungerGames.parseToString(entry.getKey()));
+			section.set("location", HungerGamesBukkit.parseToString(entry.getKey()));
 			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
@@ -232,7 +232,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			count++;
 			ConfigurationSection section = gameSection.createSection(String.valueOf(count));
-			section.set("location", HungerGames.parseToString(entry.getKey()));
+			section.set("location", HungerGamesBukkit.parseToString(entry.getKey()));
 			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
@@ -243,7 +243,7 @@ public class LobbyListener implements Listener, Runnable {
 			section.set("game", w.game.get().getName());
 			List<String> strings = new ArrayList<String>();
 			for (Location l : w.signs) {
-				strings.add(HungerGames.parseToString(l));
+				strings.add(HungerGamesBukkit.parseToString(l));
 			}
 			section.set("signs", strings);
 		}
@@ -260,7 +260,7 @@ public class LobbyListener implements Listener, Runnable {
 			joinSigns.clear();
 			for (String key : joinSection.getKeys(false)) {
 				ConfigurationSection section = joinSection.getConfigurationSection(key);
-				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
+				Location loc = HungerGamesBukkit.parseToLoc(section.getString("location", ""));
 				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				joinSigns.put(loc, game);
@@ -270,7 +270,7 @@ public class LobbyListener implements Listener, Runnable {
 			gameSigns.clear();
 			for (String key : gameSection.getKeys(false)) {
 				ConfigurationSection section = gameSection.getConfigurationSection(key);
-				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
+				Location loc = HungerGamesBukkit.parseToLoc(section.getString("location", ""));
 				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				gameSigns.put(loc, game);
@@ -284,7 +284,7 @@ public class LobbyListener implements Listener, Runnable {
 				List<String> strings = section.getStringList("signs");
 				List<Location> locs = new ArrayList<Location>();
 				for (String s : strings) {
-					locs.add(HungerGames.parseToLoc(s));
+					locs.add(HungerGamesBukkit.parseToLoc(s));
 				}
 				InfoWall w = new InfoWall(game, locs);
 				infoWalls.add(w);

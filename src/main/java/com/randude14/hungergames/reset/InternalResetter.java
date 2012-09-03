@@ -1,7 +1,7 @@
 package com.randude14.hungergames.reset;
 
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.Cuboid;
@@ -43,8 +43,8 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	@Override
 	public void init() {
-		Bukkit.getPluginManager().registerEvents(this, HungerGames.getInstance());
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(HungerGames.getInstance(), this, 0, 20);
+		Bukkit.getPluginManager().registerEvents(this, HungerGamesBukkit.getInstance());
+		Bukkit.getScheduler().scheduleAsyncRepeatingTask(HungerGamesBukkit.getInstance(), this, 0, 20);
 	}
 
 	@Override

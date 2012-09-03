@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands.admin.add;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.api.event.GameCreateEvent;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -22,7 +22,7 @@ public class AddGameCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {
 	    Player player = (Player) cs;
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getUsage(), HungerGamesBukkit.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -44,7 +44,7 @@ public class AddGameCommand extends Command {
 	    }
 	    else {
 	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
-	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
+	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", HungerGamesBukkit.CMD_ADMIN);
 	    }
 	    return;
 	}

@@ -2,7 +2,8 @@ package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
+import com.randude14.hungergames.core.Player;
 import com.randude14.hungergames.games.HungerGame;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public abstract class Command extends org.bukkit.command.Command {
 		}
 	}	
 	
-	public abstract void handle(CommandSender cs, String label, String[] args);
+	public abstract void handle(Player player, String label, String[] args);
 
 	/**
 	 * Checks permission then calls the handle
@@ -58,8 +59,8 @@ public abstract class Command extends org.bukkit.command.Command {
 			Command com = searchSubCommands(args[0]);
 			if (com != null) return com.execute(cs, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
 		}
-		if (!HungerGames.checkPermission(cs, perm)) return true;
-		handle(cs, label, args);
+		if (!HungerGamesBukkit.checkPermission(cs, perm)) return true;
+		handle(Player.fromCommandSender(cs), label, args);
 		return true;
 	}
 

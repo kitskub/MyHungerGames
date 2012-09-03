@@ -17,15 +17,15 @@ public class GameCountdown implements Runnable {
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
-		taskId = HungerGames.scheduleTask(this, 20L, 20L);
+		taskId = HungerGamesBukkit.scheduleTask(this, 20L, 20L);
 		this.isResuming = isResuming;
 		if(isResuming) {
 			ChatUtils.broadcast(true, "Resuming %s in %s...",
-					game.getName(), HungerGames.formatTime(countdown));
+					game.getName(), HungerGamesBukkit.formatTime(countdown));
 		}
 		else {
 			ChatUtils.broadcast(true, "Starting %s in %s...",
-					game.getName(), HungerGames.formatTime(countdown));
+					game.getName(), HungerGamesBukkit.formatTime(countdown));
 		}
 
 	}
@@ -52,7 +52,7 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public void cancel() {
-		HungerGames.cancelTask(taskId);
+		HungerGamesBukkit.cancelTask(taskId);
 	}
 
 	public int getTimeLeft() {
@@ -75,7 +75,7 @@ public class GameCountdown implements Runnable {
 		ChatColor color = ChatColor.GREEN;
 		if(countdown <= 5) color = ChatColor.GOLD;
 		if(countdown <= 3) color = ChatColor.RED;
-		ChatUtils.broadcastRaw(true, color, "%s...", HungerGames.formatTime(countdown));
+		ChatUtils.broadcastRaw(true, color, "%s...", HungerGamesBukkit.formatTime(countdown));
 	}
 
 }

@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands.admin.add;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.listeners.SessionListener;
@@ -24,7 +24,7 @@ public class AddSpawnPointCommand extends Command {
 	public void handle(CommandSender cs, String cmd, String[] args) {
 	    Player player = (Player) cs;	    
 	    if (args.length < 1) {
-		    ChatUtils.send(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.send(player, getUsage(), HungerGamesBukkit.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);

@@ -30,7 +30,7 @@ public class Logging {
 
 	static {
 		try {
-			HungerGames instance = HungerGames.getInstance();
+			HungerGamesBukkit instance = HungerGamesBukkit.getInstance();
 			instance.getDataFolder().mkdirs();
 			File file = Files.LOG.getFile();
 			FileHandler handler = new FileHandler(file.getPath(), true);
@@ -45,7 +45,7 @@ public class Logging {
 	}
 
 	public static String getLogPrefix() {
-		return String.format("[%s] %s - ", HungerGames.getInstance().getName(), HungerGames.getInstance().getDescription().getVersion());
+		return String.format("[%s] %s - ", HungerGamesBukkit.getInstance().getName(), HungerGamesBukkit.getInstance().getDescription().getVersion());
 	}
 
 	public static void info(String format, Object... args) {
@@ -98,7 +98,7 @@ public class Logging {
 		}
 
 		public Server getServer() {
-			return HungerGames.getInstance().getServer();
+			return HungerGamesBukkit.getInstance().getServer();
 		}
 
 		public String getName() {
@@ -122,19 +122,19 @@ public class Logging {
 		}
 
 		public PermissionAttachment addAttachment(Plugin plugin, String string, boolean bln) {
-			return new PermissionAttachment(HungerGames.getInstance(), this);
+			return new PermissionAttachment(HungerGamesBukkit.getInstance(), this);
 		}
 
 		public PermissionAttachment addAttachment(Plugin plugin) {
-			return new PermissionAttachment(HungerGames.getInstance(), this);
+			return new PermissionAttachment(HungerGamesBukkit.getInstance(), this);
 		}
 
 		public PermissionAttachment addAttachment(Plugin plugin, String string, boolean bln, int i) {
-			return new PermissionAttachment(HungerGames.getInstance(), this);
+			return new PermissionAttachment(HungerGamesBukkit.getInstance(), this);
 		}
 
 		public PermissionAttachment addAttachment(Plugin plugin, int i) {
-			return new PermissionAttachment(HungerGames.getInstance(), this);
+			return new PermissionAttachment(HungerGamesBukkit.getInstance(), this);
 		}
 
 		public void removeAttachment(PermissionAttachment pa) {

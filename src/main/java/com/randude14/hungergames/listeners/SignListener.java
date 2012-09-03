@@ -3,7 +3,7 @@ package com.randude14.hungergames.listeners;
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.Files;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
@@ -33,7 +33,7 @@ public class SignListener implements Runnable, Listener {
 	private static int taskId = 0;
 	
 	public SignListener() {
-		taskId = HungerGames.scheduleTask(this, 0, 1);
+		taskId = HungerGamesBukkit.scheduleTask(this, 0, 1);
 		loadSigns();
 	}
 	
@@ -48,7 +48,7 @@ public class SignListener implements Runnable, Listener {
 			List<String> sList = section.getStringList("gameLocs");
 			if (sList != null) {
 				for (String s : sList) {
-					allGameListeners.get(type).add(HungerGames.parseToLoc(s));
+					allGameListeners.get(type).add(HungerGamesBukkit.parseToLoc(s));
 				}
 			}
 			if (section == null) continue;
@@ -59,7 +59,7 @@ public class SignListener implements Runnable, Listener {
 				List<Location> list = new ArrayList<Location>();
 				List<String> stringList = gameSection.getStringList("gameLocs");
 				for (String s : stringList) {
-					list.add(HungerGames.parseToLoc(s));
+					list.add(HungerGamesBukkit.parseToLoc(s));
 				}
 				listeners.get(type).get(game).addAll(list);
 			}
@@ -72,7 +72,7 @@ public class SignListener implements Runnable, Listener {
 			ConfigurationSection section = config.createSection(type.name());
 			List<String> allGamesList = new ArrayList<String>();
 			for (Location l : allGameListeners.get(type)) {
-				allGamesList.add(HungerGames.parseToString(l));
+				allGamesList.add(HungerGamesBukkit.parseToString(l));
 			}
 			section.set("allGames", allGamesList);
 			for (String game : listeners.get(type).keySet()) {
@@ -80,7 +80,7 @@ public class SignListener implements Runnable, Listener {
 				List<Location> list = listeners.get(type).get(game);
 				List<String> stringList = new ArrayList<String>();
 				for (Location l : list) {
-					stringList.add(HungerGames.parseToString(l));
+					stringList.add(HungerGamesBukkit.parseToString(l));
 				}
 				gameSection.set("gameLocs", stringList);
 			}

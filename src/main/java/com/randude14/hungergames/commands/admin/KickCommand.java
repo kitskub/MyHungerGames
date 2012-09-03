@@ -2,7 +2,7 @@ package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -24,7 +24,7 @@ public class KickCommand extends Command {
 		Player player = (Player) cs;
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(player, getUsage(), HungerGamesBukkit.CMD_ADMIN);
 			return;
 		}
 
@@ -39,7 +39,7 @@ public class KickCommand extends Command {
 		    return;
 		}
 		ChatUtils.broadcast(true, "%s has been kicked from the game %s.", player.getName(), game.getName());
-		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
+		HungerGamesBukkit.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
 		game.leave(kick, false);
 		return;
 	}

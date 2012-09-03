@@ -2,7 +2,7 @@ package com.randude14.hungergames.games;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -29,7 +29,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 
 	public static void addPlayer(Player player) {
 		if (!enabled) return;
-		if (!HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_JOIN_ALLOWED)) return;
+		if (!HungerGamesBukkit.hasPermission(player, Defaults.Perm.USER_AUTO_JOIN_ALLOWED)) return;
 		queuedPlayers.offer(player.getName());
 	}
 	
@@ -37,7 +37,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	public void onGameEnd(GameEndEvent event) {
 		if (!enabled) return;
 		if (!Config.getAutoJoinAllowed(event.getGame().getSetup())) return;
-		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGamesBukkit.getInstance(), this, 20 * 10);
 		queuedGames.offer(new EquatableWeakReference<HungerGame>(event.getGame()));
 	}
 	

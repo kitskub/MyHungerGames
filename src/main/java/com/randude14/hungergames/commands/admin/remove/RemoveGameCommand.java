@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands.admin.remove;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.commands.Command;
@@ -23,7 +23,7 @@ public class RemoveGameCommand extends Command{
 	public void handle(CommandSender cs, String cmd, String[] args) {
 	    Player player = (Player) cs;	    
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getUsage(), HungerGamesBukkit.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -33,7 +33,7 @@ public class RemoveGameCommand extends Command{
 	    }
 	    
 	    GameManager.INSTANCE.removeGame(args[0]);
-	    HungerGames.callEvent(new GameRemoveEvent(game));
+	    HungerGamesBukkit.callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[0]);
 	    return;
 	}

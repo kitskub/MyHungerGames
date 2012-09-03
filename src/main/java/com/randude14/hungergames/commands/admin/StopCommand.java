@@ -3,7 +3,7 @@ package com.randude14.hungergames.commands.admin;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -22,7 +22,7 @@ public class StopCommand extends Command {
 		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(player, getUsage(), HungerGamesBukkit.CMD_ADMIN);
 			return;
 		}
 		

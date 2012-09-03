@@ -1,7 +1,7 @@
 package com.randude14.hungergames.games;
 
 import com.randude14.hungergames.Config;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.utils.ChatUtils;
 import java.util.HashMap;
@@ -38,12 +38,12 @@ public class SpectatorSponsoringRunnable implements Runnable{
 				}
 				spectatorTimes.put(player.getName(), Config.getSpectatorSponsorPeriod(game.getSetup()) * 20);
 				ChatUtils.send(player, ChatColor.GOLD, "You can now sponsor a player with an item.");
-				ConversationFactory factory = new ConversationFactory(HungerGames.getInstance());
+				ConversationFactory factory = new ConversationFactory(HungerGamesBukkit.getInstance());
 				factory.withEscapeSequence("quit");
 				factory.withFirstPrompt(new SpectatorSponsorBeginPrompt());
 				Map<Object, Object> sessionData = new HashMap<Object, Object>();
 				Set<ItemStack> items = ItemConfig.getAllSponsorLootWithGlobal(game.getItemSets()).keySet();
-				ItemStack item = (ItemStack) (items.toArray()[HungerGames.getRandom().nextInt(items.size())]);
+				ItemStack item = (ItemStack) (items.toArray()[HungerGamesBukkit.getRandom().nextInt(items.size())]);
 				sessionData.put("item", item);
 				sessionData.put("amount", item.getAmount());
 				if (ItemConfig.useMatchMaterial()) {
@@ -64,7 +64,7 @@ public class SpectatorSponsoringRunnable implements Runnable{
 	}
 	
 	public void cancel() {
-		HungerGames.cancelTask(taskId);
+		HungerGamesBukkit.cancelTask(taskId);
 		spectatorTimes.clear();
 	}
 	

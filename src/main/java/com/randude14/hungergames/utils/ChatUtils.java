@@ -3,7 +3,7 @@ package com.randude14.hungergames.utils;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +14,11 @@ public class ChatUtils {
 
 	// TODO convert to CommandSender
 	public static String getPrefix() {
-		return String.format("[%s] - ", HungerGames.getInstance().getName());
+		return String.format("[%s] - ", HungerGamesBukkit.getInstance().getName());
 	}
 
 	public static String getHeadLiner() {
-		return String.format("-------------------[%s]--------------------", HungerGames.getInstance().getName());
+		return String.format("-------------------[%s]--------------------", HungerGamesBukkit.getInstance().getName());
 	}
 
 	public static void broadcast(ChatColor color, String message, boolean subscribedOnly) {

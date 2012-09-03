@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 
 public class GameManager extends com.randude14.hungergames.api.GameManager {
-	private static final HungerGames plugin = HungerGames.getInstance();
+	private static final HungerGamesBukkit plugin = HungerGamesBukkit.getInstance();
 	public static final GameManager INSTANCE = new GameManager();
 	private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
@@ -291,7 +291,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	
 	@Override
 	public boolean isPlayerSubscribed(Player player) {
-		return subscribedPlayers.contains(player.getName()) || HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_SUBSCRIBE);
+		return subscribedPlayers.contains(player.getName()) || HungerGamesBukkit.hasPermission(player, Defaults.Perm.USER_AUTO_SUBSCRIBE);
 	}
 	
 	@Override
@@ -334,7 +334,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 				cc.setSessionData("cancelled", true);
 				return "No items are available to sponsor. Reply to exit.";
 			}
-			if (!HungerGames.isEconomyEnabled()) {
+			if (!HungerGamesBukkit.isEconomyEnabled()) {
 				cc.setSessionData("cancelled", true);
 				return "Economy is disabled. Reply to exit.";
 			}
@@ -395,12 +395,12 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 				cc.getForWhom().sendRawMessage("Sponsee is not online anymore.");
 				return END_OF_CONVERSATION;
 			}
-			if (!HungerGames.hasEnough(beingSponsored, price)) {
+			if (!HungerGamesBukkit.hasEnough(beingSponsored, price)) {
 				cc.getForWhom().sendRawMessage("You do not have enough money.");
 				return END_OF_CONVERSATION;
 			}
 			
-			HungerGames.withdraw(player, price);
+			HungerGamesBukkit.withdraw(player, price);
 			if (item.getEnchantments().isEmpty()) {
 				ChatUtils.send(beingSponsored, "%s has sponsored you %d %s(s).",
 				player.getName(), item.getAmount(), item.getType().name());

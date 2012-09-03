@@ -2,7 +2,7 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.PlayerQueueHandler;
 
@@ -45,13 +45,13 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerQuit(PlayerQuitEvent event) {
 		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
-		HungerGames.playerLeftServer(event.getPlayer());
+		HungerGamesBukkit.playerLeftServer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerKick(PlayerKickEvent event) {
 		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
-		HungerGames.playerLeftServer(event.getPlayer());
+		HungerGamesBukkit.playerLeftServer(event.getPlayer());
 	}
 	
 	@EventHandler

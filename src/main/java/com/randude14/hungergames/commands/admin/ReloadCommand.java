@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands.admin;
 
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -18,8 +18,8 @@ public class ReloadCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {
 		Player player = (Player) cs;
 
-		HungerGames.reload();
-		ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
+		HungerGamesBukkit.reload();
+		ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded %s", HungerGamesBukkit.getInstance().getDescription().getVersion());
 	}
 
 	@Override
