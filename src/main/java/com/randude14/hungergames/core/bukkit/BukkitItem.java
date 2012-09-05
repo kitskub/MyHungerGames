@@ -1,7 +1,7 @@
 package com.randude14.hungergames.core.bukkit;
 
 import com.randude14.hungergames.core.Location;
-import com.randude14.hungergames.core.bukkit.BukkitUtil;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,6 +12,7 @@ import java.util.UUID;
  */
 public class BukkitItem extends BukkitEntity {
     private final ItemStack stack;
+
     public BukkitItem(Location loc, ItemStack stack, UUID entityId) {
         super(loc, EntityType.DROPPED_ITEM, entityId);
         this.stack = stack;

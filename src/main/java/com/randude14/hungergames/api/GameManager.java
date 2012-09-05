@@ -1,12 +1,11 @@
 package com.randude14.hungergames.api;
 
+import com.randude14.hungergames.core.LocalPlayer;
+import com.randude14.hungergames.core.Location;
 import com.randude14.hungergames.utils.EquatableWeakReference;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 public abstract class GameManager {
 	public static final GameManager INSTANCE = com.randude14.hungergames.GameManager.INSTANCE;
@@ -33,9 +32,9 @@ public abstract class GameManager {
 	 * @param player
 	 * @return the game a player is in
 	 */
-	public abstract WeakReference<? extends Game> getSession(Player player);
+	public abstract WeakReference<? extends Game> getSession(LocalPlayer player);
 
-	public abstract Game getRawSession(Player player);
+	public abstract Game getRawSession(LocalPlayer player);
 
 	/**
 	 * This returns the game a player is playing. If the player is in a game, but not playing, returns null
@@ -43,31 +42,31 @@ public abstract class GameManager {
 	 * @param player
 	 * @return the game a player is in
 	 */
-	public abstract WeakReference<? extends Game> getPlayingSession(Player player);
+	public abstract WeakReference<? extends Game> getPlayingSession(LocalPlayer player);
 	
-	public abstract Game getRawPlayingSession(Player player);
+	public abstract Game getRawPlayingSession(LocalPlayer player);
 
 	public abstract boolean doesNameExist(String name);
 
-	public abstract boolean addSponsor(Player player, Player playerToBeSponsored);
+	public abstract boolean addSponsor(LocalPlayer player, LocalPlayer playerToBeSponsored);
 
-	public abstract boolean addSpectator(Player player, Game game, Player spectated);
+	public abstract boolean addSpectator(LocalPlayer player, Game game, LocalPlayer spectated);
 
-	public abstract EquatableWeakReference<? extends Game> getSpectating(Player player);
+	public abstract EquatableWeakReference<? extends Game> getSpectating(LocalPlayer player);
 
-	public abstract boolean removeSpectator(Player player);
+	public abstract boolean removeSpectator(LocalPlayer player);
 
-	public abstract void freezePlayer(Player player);
+	public abstract void freezePlayer(LocalPlayer player);
 
-	public abstract void unfreezePlayer(Player player);
+	public abstract void unfreezePlayer(LocalPlayer player);
 
-	public abstract boolean isPlayerFrozen(Player player);
+	public abstract boolean isPlayerFrozen(LocalPlayer player);
 
-	public abstract Location getFrozenLocation(Player player);
+	public abstract Location getFrozenLocation(LocalPlayer player);
 
-	public abstract boolean isPlayerSubscribed(Player player);
+	public abstract boolean isPlayerSubscribed(LocalPlayer player);
 
-	public abstract void removedSubscribedPlayer(Player player);
+	public abstract void removedSubscribedPlayer(LocalPlayer player);
 
-	public abstract void addSubscribedPlayer(Player player);
+	public abstract void addSubscribedPlayer(LocalPlayer player);
 }

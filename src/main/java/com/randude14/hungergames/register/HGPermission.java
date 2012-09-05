@@ -1,7 +1,7 @@
 package com.randude14.hungergames.register;
 
 import com.randude14.hungergames.Defaults.Perm;
-import org.bukkit.command.CommandSender;
+import com.randude14.hungergames.core.CommandSender;
 
 public abstract class HGPermission {
 	

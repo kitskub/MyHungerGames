@@ -2,19 +2,20 @@ package com.randude14.hungergames.core.spout;
 
 import com.randude14.hungergames.core.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.spout.api.Engine;
 import org.spout.api.Server;
 import org.spout.api.entity.Entity;
+import org.spout.api.entity.Player;
 import org.spout.api.geo.World;
 import org.spout.api.geo.cuboid.Block;
 import org.spout.api.geo.discrete.Point;
 import org.spout.api.material.block.BlockFace;
 import org.spout.api.math.MathHelper;
 import org.spout.api.math.Vector3;
-import org.spout.api.entity.Player;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.spout.api.material.Material;
 
 public class SpoutUtil {
     private SpoutUtil() {
@@ -74,5 +75,13 @@ public class SpoutUtil {
 
     public static Location toLocation(Entity ent) {
         return new Location(getLocalWorld(ent.getWorld()), toVector(ent.getPosition()), ent.getYaw(), ent.getPitch());
+    }
+    
+    public static ItemStack convertItemStack(org.spout.api.inventory.ItemStack stack) {
+	    return new ItemStack(stack.getMaterial().getId(), stack.getAmount(), stack.getData());
+    }
+    
+    public static org.spout.api.inventory.ItemStack convertItemStack(ItemStack stack) {
+	    return new org.spout.api.inventory.ItemStack(Material.get(stack.getType()), stack.getAmount(), stack.getData());
     }
 }

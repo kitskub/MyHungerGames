@@ -55,32 +55,12 @@ public class BaseItem {
     }
 
     /**
-     * Get the damage value.
-     * 
-     * @return the damage
-     */
-    @Deprecated
-    public short getDamage() {
-        return data;
-    }
-
-    /**
      * Get the data value.
      * 
      * @return the data
      */
     public short getData() {
         return data;
-    }
-
-    /**
-     * Set the data value.
-     * 
-     * @param data the damage to set
-     */
-    @Deprecated
-    public void setDamage(short data) {
-        this.data = data;
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
+import com.randude14.hungergames.core.*;
+import com.randude14.hungergames.core.blocks.Chest;
 
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.listeners.*;
@@ -26,33 +28,34 @@ import org.w3c.dom.NodeList;
 public class HungerGames {
 	public static final String CMD_ADMIN = "hga", CMD_USER = "hg";
 	public static final String name = "MyHungerGames";
-	private static HungerGamesPlugin instance;
+	private static HungerGamesPlugin plugin;
 	private static HGPermission perm;
 	private static Economy econ;
 	private static Random rand;
 
-	public static void enable(HungerGamesPlugin instance) {
-		HungerGames.instance = instance;
-		instance.registerCommands();
+	public static void enable(HungerGamesPlugin plugin) {
+		HungerGames.plugin = plugin;
+		plugin.registerCommands();
 		Files.loadAll();
 		rand = new Random(name.hashCode());
-		instance.registerEvents();
-		instance.updateConfig();
-		instance.loadRegistry();
-		instance.loadResetter();
+		plugin.registerEvents();
+		updateConfig();
+		econ = plugin.loadEconomy();
+		perm = plugin.loadPermission();
+		plugin.loadResetter();
 		callTasks();
 		GameManager.INSTANCE.loadGames();
 		LobbyListener.load();
 		Logging.info("%s games loaded.", GameManager.INSTANCE.getRawGames().size());
-		instance.loadMetrics();
+		plugin.loadMetrics();
 		Logging.info("Enabled.");
 	}
 
 	private static void callTasks() {
-	    HungerGames.instance.getServerInterface().scheduleAsyncRepeatingTask(new Runnable() {
+	    HungerGames.plugin.getServerInterface().scheduleAsyncRepeatingTask(new Runnable() {
 		public void run() {
 		    if (!latestVersionCheck())
-			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), HungerGames.instance.getVersion());
+			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), HungerGames.plugin.getVersion());
 		}
 	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
@@ -72,24 +75,18 @@ public class HungerGames {
 		Files.loadAll();
 		GameManager.INSTANCE.loadGames();
 		SignListener.loadSigns();
-		instance.loadRegistry();
+		econ = plugin.loadEconomy();
 	}
 
-	public static boolean hasPermission(CommandSender cs, Defaults.Perm perm) {
-		return perm.hasPermission(cs, perm);
-	}
-
-	public static boolean equals(Location loc1, Location loc2) {
-		return loc1.getBlockX() == loc2.getBlockX()
-				&& loc1.getBlockY() == loc2.getBlockY()
-				&& loc1.getBlockZ() == loc2.getBlockZ();
+	public static boolean hasPermission(CommandSender cs, Defaults.Perm toCheck) {
+		return perm.hasPermission(cs, toCheck);
 	}
 
 	public static boolean isEconomyEnabled() {
 		return econ != null;
 	}
 
-	public static void withdraw(Player player, double amount) {
+	public static void withdraw(LocalPlayer player, double amount) {
 		if (!isEconomyEnabled()) {
 			ChatUtils.error(player, "Economy use has been disabled.");
 			return;
@@ -97,7 +94,7 @@ public class HungerGames {
 		econ.withdraw(player.getName(), amount);
 	}
 
-	public static void deposit(Player player, double amount) {
+	public static void deposit(LocalPlayer player, double amount) {
 		if (!isEconomyEnabled()) {
 			ChatUtils.error(player, "Economy use has been disabled.");
 			return;
@@ -105,7 +102,7 @@ public class HungerGames {
 		econ.deposit(player.getName(), amount);
 	}
 
-	public static boolean hasEnough(Player player, double amount) {
+	public static boolean hasEnough(LocalPlayer player, double amount) {
 		if (!isEconomyEnabled()) {
 			ChatUtils.error(player, "Economy use has been disabled.");
 			return false;
@@ -114,19 +111,39 @@ public class HungerGames {
 	}
 
 	public static boolean isChest(Location loc) {
-		return loc.getBlock().getState() instanceof Chest;
+		return loc.getBlock() instanceof Chest;
 	}
 
 	public static Random getRandom() {
 		return rand;
 	}
 
-	public static int scheduleTask(Runnable runnable, long initial, long delay) {
-		return Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, runnable, initial, delay);
-	}
-
 	public static void cancelTask(int taskID) {
-		Bukkit.getServer().getScheduler().cancelTask(taskID);
+		plugin.getServerInterface().cancelTask(taskID);
+	}
+	
+	private static void updateConfig() {
+		if (Files.CONFIG.getConfig().contains("global.chest-loot")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("global.chest-loot." + key);
+				Files.ITEMCONFIG.getConfig().set("global.chest-loot." + key, value);
+				Files.CONFIG.getConfig().set("global.chest-loot." + key, null);
+			}
+		}
+		if (Files.CONFIG.getConfig().contains("global.sponsor-loot")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("global.sponsor-loot." + key);
+				Files.ITEMCONFIG.getConfig().set("global.sponsor-loot." + key, value);
+				Files.CONFIG.getConfig().set("global.sponsor-loot." + key, null);
+			}
+		}
+		if (Files.CONFIG.getConfig().contains("itemsets")) {
+			for (String key : Files.CONFIG.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
+				Object value = Files.CONFIG.getConfig().get("itemsets." + key);
+				Files.ITEMCONFIG.getConfig().set("itemsets." + key, value);
+				Files.CONFIG.getConfig().set("itemsets." + key, null);
+			}
+		}
 	}
 
 	public static boolean latestVersionCheck(){
@@ -149,7 +166,7 @@ public class HungerGames {
 		}
 		DateFormat pubDate = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
 		try {
-			File jarFile = new File(HungerGames.instance.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			File jarFile = new File(HungerGames.plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 			timeMod = jarFile.lastModified();
 		} catch (URISyntaxException e1) {
 		}
@@ -176,11 +193,11 @@ public class HungerGames {
 			}
 		} catch (Exception ex) {
 		}
-		return HungerGames.instance.getVersion();
+		return HungerGames.plugin.getVersion();
 	}
 
 	public static void callEvent(Event event) {
-		instance.getServer().getPluginManager().callEvent(event);
+		plugin.getServer().getPluginManager().callEvent(event);
 	}
 
 	public static String parseToString(Location loc) {
@@ -190,7 +207,7 @@ public class HungerGames {
 		symbols.setDecimalSeparator('.');
 		symbols.setGroupingSeparator(',');
 		df.setDecimalFormatSymbols(symbols);
-		return String.format("%s %s %s %s %s %s", df.format((Number) loc.getX()), df.format((Number) loc.getY()), df.format((Number) loc.getZ()), df.format((Number) loc.getYaw()), 
+		return String.format("%s %s %s %s %s %s", df.format((Number) loc.getPosition().getX()), df.format((Number) loc.getPosition().getY()), df.format((Number) loc.getPosition().getZ()), df.format((Number) loc.getYaw()), 
 			df.format((Number) loc.getPitch()), loc.getWorld().getName());
 	}
 
@@ -205,9 +222,9 @@ public class HungerGames {
 		double z = Double.parseDouble(strs[2]);
 		float yaw = Float.parseFloat(strs[3]);
 		float pitch = Float.parseFloat(strs[4]);
-		World world = Bukkit.getServer().getWorld(strs[5]);
+		LocalWorld world = plugin.getServerInterface().getWorld(strs[5]);
 		if (world == null) return null;
-		return new Location(world, x, y, z, yaw, pitch);
+		return new Location(world, new Vector(x, y, z), yaw, pitch);
 	}
 	
 	public static String formatTime(int time) {
@@ -230,20 +247,20 @@ public class HungerGames {
 		return buff.toString();
 	}
 
-	public static void playerLeftServer(Player player) {
+	public static void playerLeftServer(LocalPlayer player) {
 		SessionListener.removePlayer(player);
 	}
 
-	public static boolean hasInventoryBeenCleared(Player player) {
-		PlayerInventory inventory = player.getInventory();
+	public static boolean hasInventoryBeenCleared(LocalPlayer player) {
+		LocalPlayerInventory inventory = player.getPlayerInventory();
 		for (ItemStack item : inventory.getContents()) {
-			if (item != null && item.getType() != Material.AIR) {
+			if (item != null) {
 				return false;
 			}
 
 		}
 		for (ItemStack item : inventory.getArmorContents()) {
-			if (item != null && item.getType() != Material.AIR) {
+			if (item != null) {
 				return false;
 			}
 
@@ -252,15 +269,15 @@ public class HungerGames {
 	}
 
 	public static void fillFixedChest(Chest chest, String name) {
-		chest.getInventory().clear();
+		chest.setContents(new ItemStack[chest.getContents().length]);
 		List<ItemStack> items = ItemConfig.getFixedChest(name);
 		for (ItemStack stack : items) {
 			int index = 0;
 			do {
-				index = rand.nextInt(chest.getInventory().getSize());
-			} while (chest.getInventory().getItem(index) != null);
+				index = rand.nextInt(chest.getContents().length);
+			} while (chest.getContents()[index] != null);
 			
-			chest.getInventory().setItem(index, stack);
+			chest.setItem(index, stack);
 		}
 	}
 	
@@ -269,10 +286,10 @@ public class HungerGames {
 			return;
 		}
 
-		chest.getInventory().clear();
+		chest.setContents(new ItemStack[chest.getContents().length]);
 		Map<ItemStack, Float> itemMap = ItemConfig.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
-		int size = chest.getInventory().getSize();
+		int size = chest.getContents().length;
 		final int maxItemSize = 100;
 		int numItems = items.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(items.size()))/Math.sqrt(maxItemSize));
 		int minItems = (int) Math.floor(numItems/2);
@@ -280,19 +297,19 @@ public class HungerGames {
 		for (int cntr = 0; cntr < numItems || itemsIn < minItems; cntr++) {
 			int index = 0;
 			do {
-				index = rand.nextInt(chest.getInventory().getSize());
-			} while (chest.getInventory().getItem(index) != null);
+				index = rand.nextInt(chest.getContents().length);
+			} while (chest.getContents()[index] != null);
 			
 			ItemStack item = items.get(rand.nextInt(items.size()));
 			if (weight * itemMap.get(item) >= rand.nextFloat()) {
-				chest.getInventory().setItem(index, item);
+				chest.setItem(index, item);
 				itemsIn++;
 			}
 
 		}
 	}
 
-	public static void rewardPlayer(Player player) {
+	public static void rewardPlayer(LocalPlayer player) {
 		List<ItemStack> items = new ArrayList<ItemStack>();
 		items.addAll(ItemConfig.getStaticRewards());
 		
@@ -308,18 +325,18 @@ public class HungerGames {
 			}
 
 		}
-		for (ItemStack i : player.getInventory().addItem(items.toArray(new ItemStack[0])).values()) {
-			player.getLocation().getWorld().dropItem(player.getLocation(), i);
+		for (ItemStack i : player.getPlayerInventory().addItem(items.toArray(new ItemStack[0]))) {
+			player.getWorld().dropItem(player.getLocation(), i);
 		}
 	}
 	
-	public static HungerGamesPlugin getInstance() {
-		return instance;
+	public static HungerGamesPlugin getPlugin() {
+		return plugin;
 	}
 
 	public static boolean checkPermission(CommandSender cs, Defaults.Perm perm) {
-		if (!HungerGamesBukkit.hasPermission(cs, perm)) {
-			cs.sendMessage(ChatColor.RED + Lang.getNoPerm());
+		if (!hasPermission(cs, perm)) {
+			ChatUtils.error(cs, Lang.getNoPerm());
 			return false;
 		}
 		return true;

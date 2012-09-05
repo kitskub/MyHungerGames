@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.core.ItemStack;
 import static com.randude14.hungergames.utils.ConfigUtils.*;
 
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 
 public class ItemConfig {
 	
@@ -125,8 +125,8 @@ public class ItemConfig {
 		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
 	    }
 	    StringBuilder builder = new StringBuilder();
-	    builder.append(item.getTypeId());
-	    builder.append(item.getData().getData());
+	    builder.append(item.getType());
+	    builder.append(item.getData());
 	    itemSection = itemSection.createSection(builder.toString());
 	    itemSection.set("stack-size", item.getAmount());
 	    itemSection.set("money", cost);
@@ -186,8 +186,8 @@ public class ItemConfig {
 	public static void addStaticReward(ItemStack item) {
 		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.static");
 		StringBuilder builder = new StringBuilder();
-		builder.append(item.getTypeId());
-		builder.append(item.getData().getData());
+		builder.append(item.getType());
+		builder.append(item.getData());
 		builder.append(",");
 		builder.append(System.currentTimeMillis());
 		itemSection = itemSection.createSection(builder.toString());
@@ -200,8 +200,8 @@ public class ItemConfig {
 	public static void addRandomReward(ItemStack item, float chance) {
 		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random");
 		StringBuilder builder = new StringBuilder();
-		builder.append(item.getTypeId());
-		builder.append(item.getData().getData());
+		builder.append(item.getType());
+		builder.append(item.getData());
 		builder.append(",");
 		builder.append(System.currentTimeMillis());
 		itemSection = itemSection.createSection(builder.toString());

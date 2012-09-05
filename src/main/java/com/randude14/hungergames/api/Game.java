@@ -1,5 +1,6 @@
 package com.randude14.hungergames.api;
 
+import com.randude14.hungergames.core.LocalPlayer;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.Cuboid;
 import java.util.List;
@@ -9,12 +10,11 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Player;
 
 public interface Game {
-	public boolean isSpectating(Player player);
+	public boolean isSpectating(LocalPlayer player);
 
-	public boolean stopGame(Player player, boolean isFinished);
+	public boolean stopGame(LocalPlayer player, boolean isFinished);
 	
 	public String stopGame(boolean isFinished);
 	
@@ -25,7 +25,7 @@ public interface Game {
 	 * @param ticks
 	 * @return true if game or countdown was successfully started
 	 */
-	public boolean startGame(Player player, int ticks);
+	public boolean startGame(LocalPlayer player, int ticks);
 	
 	/**
 	 * Starts this game with the default time if immediate is true. Otherwise, starts the game immediately.
@@ -34,7 +34,7 @@ public interface Game {
 	 * @param immediate
 	 * @return
 	 */	
-	public boolean startGame(Player notifier, boolean immediate);
+	public boolean startGame(LocalPlayer notifier, boolean immediate);
 
 	/**
 	 * Starts this game with the default time if immediate is true. Otherwise, starts the game immediately.
@@ -54,9 +54,9 @@ public interface Game {
 	public String startGame(int ticks);
 
 	
- 	public boolean resumeGame(Player player, int ticks);	
+ 	public boolean resumeGame(LocalPlayer player, int ticks);	
 	
-	public boolean resumeGame(Player player, boolean immediate);
+	public boolean resumeGame(LocalPlayer player, boolean immediate);
 	
 	public boolean resumeGame(boolean immediate);
 	
@@ -68,7 +68,7 @@ public interface Game {
 	 */
 	public String resumeGame(int ticks);
 	
-	public boolean pauseGame(Player notifier);
+	public boolean pauseGame(LocalPlayer notifier);
 	
 	/**
 	 * 
@@ -86,19 +86,19 @@ public interface Game {
 	 * @param player
 	 * @return true if successful
 	 */
-	public boolean rejoin(Player player);
+	public boolean rejoin(LocalPlayer player);
 
-	public boolean join(Player player);
+	public boolean join(LocalPlayer player);
 	
-	public boolean leave(Player player, boolean callEvent);
+	public boolean leave(LocalPlayer player, boolean callEvent);
 	
-	public boolean quit(Player player, boolean callEvent);
+	public boolean quit(LocalPlayer player, boolean callEvent);
 	
 	/**
 	 * Will be canceled if player is playing and teleporting is not allowed which should not ever happen
 	 * @param player
 	 */
-	public void teleportPlayerToSpawn(Player player);
+	public void teleportPlayerToSpawn(LocalPlayer player);
 	
 	/**
 	 * 
@@ -114,14 +114,14 @@ public interface Game {
 	 * @param players players to check
 	 * @return
 	 */
-	public boolean contains(Player... players);
+	public boolean contains(LocalPlayer... players);
 	
 	/**
 	 * 
 	 * @param players players to check
 	 * @return true if players are in the game, have lives, and are playing
 	 */
-	public boolean isPlaying(Player... players);
+	public boolean isPlaying(LocalPlayer... players);
 
 	/**
 	 * Gets the players that have lives and are playing
@@ -129,11 +129,11 @@ public interface Game {
 	 * 
 	 * @return the remaining players that have lives and are playing
 	 */
-	public List<Player> getRemainingPlayers();
+	public List<LocalPlayer> getRemainingPlayers();
 	
 	public PlayerStat getPlayerStat(OfflinePlayer player);
 	
-	public void listStats(Player player);
+	public void listStats(LocalPlayer player);
 	
 	public String getName();
 

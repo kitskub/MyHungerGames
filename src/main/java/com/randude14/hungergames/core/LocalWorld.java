@@ -1,5 +1,8 @@
 package com.randude14.hungergames.core;
 
+import com.randude14.hungergames.core.blocks.BaseBlock;
+import com.randude14.hungergames.core.blocks.Block;
+
 /**
  * Represents a world.
  *
@@ -113,7 +116,7 @@ public abstract class LocalWorld {
      * @param item
      * @param times
      */
-    public void dropItem(Vector pt, BaseItemStack item, int times) {
+    public void dropItem(Vector pt, ItemStack item, int times) {
         for (int i = 0; i < times; ++i) {
             dropItem(pt, item);
         }
@@ -125,7 +128,7 @@ public abstract class LocalWorld {
      * @param pt
      * @param item
      */
-    public abstract void dropItem(Vector pt, BaseItemStack item);
+    public abstract void dropItem(Vector pt, ItemStack item);
 
     /**
      * Remove entities in an area.
@@ -192,12 +195,12 @@ public abstract class LocalWorld {
         return successful;
     }
 
-    public BaseBlock getBlock(Vector pt) {
+    public Block getBlock(Vector pt) {
         checkLoadedChunk(pt);
 
         int type = getBlockType(pt);
         int data = getBlockData(pt);
         
-	return new BaseBlock(type, data);
+	return new Block(type, data);
     }
 }

@@ -8,9 +8,9 @@ import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
 
 import static com.randude14.hungergames.Defaults.Config.*;
+import com.randude14.hungergames.core.ItemStack;
 import static com.randude14.hungergames.utils.ConfigUtils.*;
 
 

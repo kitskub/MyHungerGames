@@ -1,36 +1,36 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.core.LocalPlayer;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class GameCountdown implements Runnable {
 	private final HungerGame game;
 	private int countdown;
 	private int taskId;
-	private Player starter;
+	private LocalPlayer starter;
 	private boolean isResuming;
 	
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
-		taskId = HungerGamesBukkit.scheduleTask(this, 20L, 20L);
+		taskId = HungerGames.scheduleTask(this, 20L, 20L);
 		this.isResuming = isResuming;
 		if(isResuming) {
 			ChatUtils.broadcast(true, "Resuming %s in %s...",
-					game.getName(), HungerGamesBukkit.formatTime(countdown));
+					game.getName(), HungerGames.formatTime(countdown));
 		}
 		else {
 			ChatUtils.broadcast(true, "Starting %s in %s...",
-					game.getName(), HungerGamesBukkit.formatTime(countdown));
+					game.getName(), HungerGames.formatTime(countdown));
 		}
 
 	}
 	
-	public GameCountdown(final HungerGame game, int num, boolean isResuming, Player starter) {
+	public GameCountdown(final HungerGame game, int num, boolean isResuming, LocalPlayer starter) {
 		this(game, num, isResuming);
 		this.starter = starter;
 	}
@@ -39,7 +39,7 @@ public class GameCountdown implements Runnable {
 		this(game, num, false);
 	}
 
-	public GameCountdown(final HungerGame game, int num, Player starter) {
+	public GameCountdown(final HungerGame game, int num, LocalPlayer starter) {
 		this(game, num, false, starter);
 	}
 	
@@ -52,7 +52,7 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public void cancel() {
-		HungerGamesBukkit.cancelTask(taskId);
+		HungerGames.cancelTask(taskId);
 	}
 
 	public int getTimeLeft() {
@@ -75,7 +75,7 @@ public class GameCountdown implements Runnable {
 		ChatColor color = ChatColor.GREEN;
 		if(countdown <= 5) color = ChatColor.GOLD;
 		if(countdown <= 3) color = ChatColor.RED;
-		ChatUtils.broadcastRaw(true, color, "%s...", HungerGamesBukkit.formatTime(countdown));
+		ChatUtils.broadcastRaw(true, color, "%s...", HungerGames.formatTime(countdown));
 	}
 
 }

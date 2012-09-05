@@ -1,6 +1,7 @@
 package com.randude14.hungergames.core.bukkit;
 
 import com.randude14.hungergames.core.*;
+import com.randude14.hungergames.core.blocks.BaseBlock;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -168,43 +170,14 @@ public class BukkitWorld extends LocalWorld {
     }
 
     /**
-     * Gets the single block inventory for a potentially double chest.
-     * Handles people who have an old version of Bukkit.
-     * This should be replaced with {@link org.bukkit.block.Chest#getBlockInventory()}
-     * in a few months (now = March 2012)
-     *
-     * @param chest The chest to get a single block inventory for
-     * @return The chest's inventory
-     */
-    private Inventory getBlockInventory(Chest chest) {
-        try {
-            return chest.getBlockInventory();
-        } catch (Throwable t) {
-            if (chest.getInventory() instanceof DoubleChestInventory) {
-                DoubleChestInventory inven = (DoubleChestInventory) chest.getInventory();
-                if (inven.getLeftSide().getHolder().equals(chest)) {
-                    return inven.getLeftSide();
-                } else if (inven.getRightSide().getHolder().equals(chest)) {
-                    return inven.getRightSide();
-                } else {
-                    return inven;
-                }
-            } else {
-                return chest.getInventory();
-            }
-        }
-    }
-
-    /**
      * Drop an item.
      *
      * @param pt
      * @param item
      */
     @Override
-    public void dropItem(Vector pt, BaseItemStack item) {
-        ItemStack bukkitItem = new ItemStack(item.getType(), item.getAmount(),
-                item.getData());
+    public void dropItem(Vector pt, com.randude14.hungergames.core.ItemStack item) {
+        ItemStack bukkitItem = new ItemStack(item.getType(), item.getAmount(), item.getData());
         world.dropItemNaturally(BukkitUtil.toLocation(world, pt), bukkitItem);
     }
 
@@ -312,94 +285,6 @@ public class BukkitWorld extends LocalWorld {
             };
     }
 
-    /**
-     * Get a container block's contents.
-     *
-     * @param pt
-     * @return
-     */
-    private BaseItemStack[] getContainerBlockContents(Vector pt) {
-        Block block = world.getBlockAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-        if (block == null) {
-            return new BaseItemStack[0];
-        }
-        BlockState state = block.getState();
-        if (!(state instanceof org.bukkit.inventory.InventoryHolder)) {
-            return new BaseItemStack[0];
-        }
-
-        org.bukkit.inventory.InventoryHolder container = (org.bukkit.inventory.InventoryHolder) state;
-        Inventory inven = container.getInventory();
-        if (container instanceof Chest) {
-            inven = getBlockInventory((Chest) container);
-        }
-        int size = inven.getSize();
-        BaseItemStack[] contents = new BaseItemStack[size];
-
-        for (int i = 0; i < size; ++i) {
-            ItemStack bukkitStack = inven.getItem(i);
-            if (bukkitStack != null && bukkitStack.getTypeId() > 0) {
-                contents[i] = new BaseItemStack(
-                        bukkitStack.getTypeId(),
-                        bukkitStack.getAmount(),
-                        bukkitStack.getDurability());
-                try {
-                    for (Map.Entry<Enchantment, Integer> entry : bukkitStack.getEnchantments().entrySet()) {
-                        contents[i].getEnchantments().put(entry.getKey().getId(), entry.getValue());
-                    }
-                } catch (Throwable ignore) {}
-            }
-        }
-
-        return contents;
-    }
-
-    /**
-     * Set a container block's contents.
-     *
-     * @param pt
-     * @param contents
-     * @return
-     */
-    private boolean setContainerBlockContents(Vector pt, BaseItemStack[] contents) {
-        Block block = world.getBlockAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-        if (block == null) {
-            return false;
-        }
-        BlockState state = block.getState();
-        if (!(state instanceof org.bukkit.inventory.InventoryHolder)) {
-            return false;
-        }
-
-        org.bukkit.inventory.InventoryHolder chest = (org.bukkit.inventory.InventoryHolder) state;
-        Inventory inven = chest.getInventory();
-        if (chest instanceof Chest) {
-            inven = getBlockInventory((Chest) chest);
-        }
-        int size = inven.getSize();
-
-        for (int i = 0; i < size; ++i) {
-            if (i >= contents.length) {
-                break;
-            }
-
-            if (contents[i] != null) {
-                ItemStack toAdd = new ItemStack(contents[i].getType(),
-                        contents[i].getAmount(),
-                        contents[i].getData());
-                try {
-                    for (Map.Entry<Integer, Integer> entry : contents[i].getEnchantments().entrySet()) {
-                        toAdd.addEnchantment(Enchantment.getById(entry.getKey()), entry.getValue());
-                    }
-                } catch (Throwable ignore) {}
-                inven.setItem(i, toAdd);
-            } else {
-                inven.setItem(i, null);
-            }
-        }
-
-        return true;
-    }
 
     @Override
     public void checkLoadedChunk(Vector pt) {
@@ -466,4 +351,13 @@ public class BukkitWorld extends LocalWorld {
         }
         return amount;
     }
+
+	@Override
+	public com.randude14.hungergames.core.blocks.Block getBlock(Vector pt) {
+		com.randude14.hungergames.core.blocks.Block block = super.getBlock(pt);
+		if (Material.CHEST.getId() == block.getId()) return new BukkitChest(this, pt);
+		return block;
+	}
+    
+    
 }

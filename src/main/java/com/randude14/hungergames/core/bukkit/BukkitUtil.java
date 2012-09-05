@@ -13,6 +13,9 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 
 public class BukkitUtil {
     private BukkitUtil() {
@@ -116,6 +119,44 @@ public class BukkitUtil {
                 return new BukkitItem(toLocation(e.getLocation()), ((Item)e).getItemStack(), e.getUniqueId());
             default:
                 return new BukkitEntity(toLocation(e.getLocation()), e.getType(), e.getUniqueId());
+        }
+    }
+    
+    public static ItemStack convertItemStack(org.bukkit.inventory.ItemStack stack) {
+	    return new ItemStack(stack.getTypeId(), stack.getAmount(), stack.getDurability());
+    }
+    
+    public static org.bukkit.inventory.ItemStack convertItemStack(ItemStack stack) {
+	    return new org.bukkit.inventory.ItemStack(stack.getType(), stack.getAmount(), stack.getData());
+    }
+    
+    
+    
+    /**
+     * Gets the single block inventory for a potentially double chest.
+     * Handles people who have an old version of Bukkit.
+     * This should be replaced with {@link org.bukkit.block.Chest#getBlockInventory()}
+     * in a few months (now = March 2012)
+     *
+     * @param chest The chest to get a single block inventory for
+     * @return The chest's inventory
+     */
+    public static Inventory getBlockInventory(Chest chest) {
+        try {
+            return chest.getBlockInventory();
+        } catch (Throwable t) {
+            if (chest.getInventory() instanceof DoubleChestInventory) {
+                DoubleChestInventory inven = (DoubleChestInventory) chest.getInventory();
+                if (inven.getLeftSide().getHolder().equals(chest)) {
+                    return inven.getLeftSide();
+                } else if (inven.getRightSide().getHolder().equals(chest)) {
+                    return inven.getRightSide();
+                } else {
+                    return inven;
+                }
+            } else {
+                return chest.getInventory();
+            }
         }
     }
 }

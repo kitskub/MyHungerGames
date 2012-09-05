@@ -64,7 +64,7 @@ public class SpoutWorld extends LocalWorld {
     public boolean setBlockType(Vector pt, int type) {
         Material mat = VanillaMaterials.getMaterial((short) type);
         if (mat != null && mat instanceof BlockMaterial) {
-            return world.setBlockMaterial(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (BlockMaterial) mat, (short)0, (HungerGamesSpout) HungerGames.getInstance());
+            return world.setBlockMaterial(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (BlockMaterial) mat, (short)0, (HungerGamesSpout) HungerGames.getPlugin());
         }
         return false;
     }
@@ -92,7 +92,7 @@ public class SpoutWorld extends LocalWorld {
     public boolean setTypeIdAndData(Vector pt, int type, int data) {
         Material mat = VanillaMaterials.getMaterial((short) type);
         if (mat != null && mat instanceof BlockMaterial) {
-            return world.setBlockMaterial(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (BlockMaterial) mat, (short)data, (HungerGamesSpout) HungerGames.getInstance());
+            return world.setBlockMaterial(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (BlockMaterial) mat, (short)data, (HungerGamesSpout) HungerGames.getPlugin());
         }
         return false;
     }
@@ -130,7 +130,7 @@ public class SpoutWorld extends LocalWorld {
      */
     @Override
     public void setBlockData(Vector pt, int data) {
-        world.setBlockData(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (short) data, (HungerGamesSpout) HungerGames.getInstance());
+        world.setBlockData(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ(), (short) data, (HungerGamesSpout) HungerGames.getPlugin());
     }
 
     /**
@@ -288,7 +288,7 @@ public class SpoutWorld extends LocalWorld {
      * @param item
      */
     @Override
-    public void dropItem(Vector pt, BaseItemStack item) {
+    public void dropItem(Vector pt, com.randude14.hungergames.core.ItemStack item) {
         Material mat = VanillaMaterials.getMaterial((short) item.getType());
         if (mat.hasSubMaterials()) {
             mat = mat.getSubMaterial(item.getData());

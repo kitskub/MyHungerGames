@@ -1,5 +1,7 @@
 package com.randude14.hungergames.core;
 
+import com.randude14.hungergames.core.blocks.Block;
+
 public class Location {
     private final LocalWorld world;
     private final Vector position;
@@ -97,5 +99,9 @@ public class Location {
         final float pitch = (float) Math.toDegrees(Math.atan2(-eye.getY(), length));
 
         return new Location(world, start, yaw, pitch);
+    }
+    
+    public Block getBlock() {
+	    return world.getBlock(position);
     }
 }

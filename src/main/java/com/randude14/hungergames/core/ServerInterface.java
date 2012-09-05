@@ -19,9 +19,17 @@ public abstract class ServerInterface {
      * @return Task id number (-1 if scheduling failed)
      */
     public abstract int scheduleAsyncRepeatingTask(Runnable task, long delay, long period);
+    
+    public abstract int scheduleSyncRepeatingTask(Runnable task, long delay, long period);
+    
+    public abstract void cancelTask(int id);
+    
+    public abstract LocalWorld getWorld(String name);
 
     public List<LocalWorld> getWorlds() {
         return Collections.emptyList();
     }
+    
+    public abstract List<LocalPlayer> getOnlinePlayers();
     
 }

@@ -1,22 +1,23 @@
 package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.Config;
+import com.randude14.hungergames.core.LocalPlayer;
 import com.randude14.hungergames.games.HungerGame;
-import java.lang.ref.WeakReference;
+
 import java.util.*;
 
 import org.bukkit.entity.Player;
 
 public class PlayerStat implements Comparable<PlayerStat> {
 	public static final String NODODY = "NOBODY";
-	private Player player;
+	private LocalPlayer player;
 	private HungerGame game;
 	private List<String> deaths;
 	private List<String> kills;
 	private PlayerState state;
 	private long elapsedTimeInMillis;
 
-	public PlayerStat(HungerGame game, Player player) {
+	public PlayerStat(HungerGame game, LocalPlayer player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
@@ -76,7 +77,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		return state;
 	}
 
-	public Player getPlayer() {
+	public LocalPlayer getPlayer() {
 		return player;
 	}
 	

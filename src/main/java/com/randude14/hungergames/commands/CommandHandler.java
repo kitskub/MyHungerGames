@@ -1,9 +1,10 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Defaults.Perm;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.HungerGamesSpout;
-import com.randude14.hungergames.core.Player;
+import com.randude14.hungergames.core.LocalPlayer;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.HashMap;
@@ -31,22 +32,22 @@ public class CommandHandler implements org.bukkit.command.CommandExecutor, org.s
 			return true;
 		}
 		if (cmd.getLabel().equalsIgnoreCase(HungerGamesBukkit.CMD_USER)) {
-			handleUserCommand(Player.fromCommandSender(sender), cmd, args);
+			handleUserCommand(LocalPlayer.fromCommandSender(sender), cmd, args);
 		} else if (cmd.getLabel().equalsIgnoreCase(HungerGamesBukkit.CMD_ADMIN)) {
-			handleAdminCommand(Player.fromCommandSender(sender), cmd, args);
+			handleAdminCommand(LocalPlayer.fromCommandSender(sender), cmd, args);
 		}
 		return false;
 	}
 
 	public void processCommand(CommandSource source, org.spout.api.command.Command command, CommandContext args) throws CommandException {
-		if (!(source instanceof Player)) {
+		if (!(source instanceof LocalPlayer)) {
 			source.sendMessage("In-game use only.");
 			return;
 		}
 		if (args.getCommand().equalsIgnoreCase(HungerGamesSpout.CMD_USER)) {
-			handleUserCommand(Player.fromCommandSource(source), command, args.getJoinedString(0).asString().split(" "));
+			handleUserCommand(LocalPlayer.fromCommandSource(source), command, args.getJoinedString(0).asString().split(" "));
 		} else if (args.getCommand().equalsIgnoreCase(HungerGamesSpout.CMD_ADMIN)) {
-			handleAdminCommand(Player.fromCommandSource(source), command, args.getJoinedString(0).asString().split(" "));
+			handleAdminCommand(LocalPlayer.fromCommandSource(source), command, args.getJoinedString(0).asString().split(" "));
 		}
 	}
 
@@ -64,10 +65,10 @@ public class CommandHandler implements org.bukkit.command.CommandExecutor, org.s
 		}
 	}
 
-	private void handleUserCommand(Player player, Command cmd, String[] args) {
+	private void handleUserCommand(LocalPlayer player, Command cmd, String[] args) {
 		Command command = null;
 		if (args.length == 0 || (command = userCommands.get(args[0].toLowerCase())) == null) {
-			if (!HungerGamesBukkit.checkPermission(player, Perm.USER_HELP)) return;
+			if (!HungerGames.checkPermission(player, Perm.USER_HELP)) return;
 			getUserCommands(player, cmd);
 			return;
 		}
@@ -75,10 +76,10 @@ public class CommandHandler implements org.bukkit.command.CommandExecutor, org.s
 		command.save();
 	}
 
-	private void handleAdminCommand(Player player, Command cmd, String[] args) {
+	private void handleAdminCommand(LocalPlayer player, Command cmd, String[] args) {
 		Command command = null;
 		if (args.length == 0 || (command = adminCommands.get(args[0].toLowerCase())) == null) {
-			if (!HungerGamesBukkit.hasPermission(player, Perm.ADMIN_HELP)) return;
+			if (!HungerGames.hasPermission(player, Perm.ADMIN_HELP)) return;
 			getAdminCommands(player, cmd);
 			return;
 		}
@@ -86,14 +87,14 @@ public class CommandHandler implements org.bukkit.command.CommandExecutor, org.s
 		command.save();
 	}
 
-	private void getUserCommands(Player player, org.bukkit.command.Command cmd) {
+	private void getUserCommands(LocalPlayer player, org.bukkit.command.Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Command c : userCommands.values()) {
 			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
 		}
 	}
 
-	private void getAdminCommands(Player player, org.bukkit.command.Command cmd) {
+	private void getAdminCommands(LocalPlayer player, org.bukkit.command.Command cmd) {
 		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Command c : adminCommands.values()) {
 			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());

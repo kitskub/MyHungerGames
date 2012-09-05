@@ -79,6 +79,8 @@ public abstract class LocalPlayer extends CommandSender {
             return null;
         }
     }
+    
+    public abstract LocalPlayerInventory getPlayerInventory() ;
 
     /**
      * Get the ID of the item that the player is holding.
@@ -100,7 +102,7 @@ public abstract class LocalPlayer extends CommandSender {
      *
      * @return point
      */
-    public abstract WorldVector getPosition();
+    public abstract Location getLocation();
 
     /**
      * Get the player's world.

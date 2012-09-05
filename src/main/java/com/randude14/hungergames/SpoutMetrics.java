@@ -46,6 +46,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import org.spout.api.Server;
 
 import org.spout.api.Spout;
 import org.spout.api.exception.ConfigurationException;
@@ -350,7 +351,7 @@ public class SpoutMetrics {
        final StringBuilder data = new StringBuilder();
        data.append(encode("guid")).append('=').append(encode(guid));
        encodeDataPair(data, "version", plugin.getDescription().getVersion());
-       encodeDataPair(data, "players", Integer.toString(Spout.getEngine().getOnlinePlayers().length));
+       encodeDataPair(data, "players", Integer.toString(((Server)Spout.getEngine()).getOnlinePlayers().length));
        encodeDataPair(data, "revision", String.valueOf(REVISION));
 
         // If we're pinging, append it
