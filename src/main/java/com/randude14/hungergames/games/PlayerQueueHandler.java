@@ -2,6 +2,7 @@ package com.randude14.hungergames.games;
 
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.HungerGamesBukkit;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.Game.GameState;
@@ -29,7 +30,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 
 	public static void addPlayer(Player player) {
 		if (!enabled) return;
-		if (!HungerGamesBukkit.hasPermission(player, Defaults.Perm.USER_AUTO_JOIN_ALLOWED)) return;
+		if (!HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_JOIN_ALLOWED)) return;
 		queuedPlayers.offer(player.getName());
 	}
 	

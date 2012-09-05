@@ -23,5 +23,9 @@ public class BukkitInventory implements LocalInventory {
 	public void setItem(int index, ItemStack stack) {
 		inv.setItem(index, BukkitUtil.convertItemStack(stack));
 	}
+
+	public ItemStack[] addItem(ItemStack... stack) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 	
 }

@@ -9,6 +9,7 @@ import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.core.LocalPlayer;
+import com.randude14.hungergames.core.Location;
 import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
@@ -25,7 +26,6 @@ import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.*;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.block.Block;
@@ -120,7 +120,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				String str = spawnPointsSection.getString(key);
 				Location loc = null;
 				try {
-					loc = HungerGamesBukkit.parseToLoc(str);
+					loc = HungerGames.parseToLoc(str);
 				}
 				catch (NumberFormatException e) {}
 				if (loc == null) {
@@ -139,7 +139,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				Location loc = null;
 				float weight = 1f;
 				try {
-					loc = HungerGamesBukkit.parseToLoc(parts[0]);
+					loc = HungerGames.parseToLoc(parts[0]);
 					weight = Float.parseFloat(parts[1]);
 				}
 				catch (NumberFormatException e) {}
@@ -165,7 +165,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				if (split.length != 2) continue;
 				Location loc = null;
 				try {
-					loc = HungerGamesBukkit.parseToLoc(split[0]);
+					loc = HungerGames.parseToLoc(split[0]);
 				}
 				catch (NumberFormatException e) {
 				}
@@ -199,10 +199,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		setEnabled(section.getBoolean("enabled", true));
 		if (section.contains("setup")) setup = section.getString("setup");
 		try {
-			if (section.contains("spawn")) spawn = HungerGamesBukkit.parseToLoc(section.getString("spawn"));
+			if (section.contains("spawn")) spawn = HungerGames.parseToLoc(section.getString("spawn"));
 		} 
 		catch (NumberFormatException numberFormatException) {}
-		HungerGamesBukkit.callEvent(new GameLoadEvent(this));
+		HungerGames.callEvent(new GameLoadEvent(this));
 	}
 
 	public void saveTo(ConfigurationSection section) {
@@ -215,17 +215,17 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			Location loc = spawnPoints.get(cntr);
 			if (loc == null) continue;
 			//Logging.debug("Saving a spawnpoint. It's location is: " + loc);
-			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGamesBukkit.parseToString(loc));
+			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
 		}
 		cntr = 1;
 		for (Location loc : chests.keySet()) {
 			cntr++;
-			chestsSection.set("chest" + cntr, HungerGamesBukkit.parseToString(loc) + "," + chests.get(loc));
+			chestsSection.set("chest" + cntr, HungerGames.parseToString(loc) + "," + chests.get(loc));
 		}
 		
 		cntr = 1;
 		for (Location loc : fixedChests.keySet()) {
-			fixedChestsSection.set("fixedchest" + cntr, HungerGamesBukkit.parseToString(loc) + "," + fixedChests.get(loc));
+			fixedChestsSection.set("fixedchest" + cntr, HungerGames.parseToString(loc) + "," + fixedChests.get(loc));
 			cntr++;
 		}
 		section.set("itemsets", itemsets);
@@ -241,14 +241,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		section.set("enabled", state != DISABLED);
 		section.set("setup", setup);
-		section.set("spawn", HungerGamesBukkit.parseToString(spawn));
+		section.set("spawn", HungerGames.parseToString(spawn));
 		
-		HungerGamesBukkit.callEvent(new GameSaveEvent(this));
+		HungerGames.callEvent(new GameSaveEvent(this));
 	}
 
 	public void run() {
 		if (state != RUNNING) return;
-		Random rand = HungerGamesBukkit.getRandom();
+		Random rand = HungerGames.getRandom();
 		Location loc = getRemainingPlayers().get(rand.nextInt(getRemainingPlayers().size())).getLocation();
 		if (randomLocs.size() >= 15) randomLocs.remove(rand.nextInt(15));
 		randomLocs.add(loc);
@@ -335,7 +335,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (Config.getSpectatorSponsorPeriod(setup) != 0) {
 			 spectatorSponsoringRunnable.addSpectator(player);
 		}
-		Random rand = HungerGamesBukkit.getRandom();
+		Random rand = HungerGames.getRandom();
 		Location loc = randomLocs.get(rand.nextInt(randomLocs.size()));
 		if (spectated != null) loc = spectated.getLocation();
 		player.teleport(loc);
@@ -414,7 +414,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
 			}
 			teleportPlayerToSpawn(player);
-			if (isFinished) HungerGamesBukkit.rewardPlayer(player);
+			if (isFinished) HungerGames.rewardPlayer(player);
 		}
 		for (String stat : stats.keySet()) {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
@@ -427,12 +427,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			removeSpectator(spectator);
 		}
 		spectatorSponsoringRunnable.cancel();
-		HungerGamesBukkit.cancelTask(locTaskId);
+		HungerGames.cancelTask(locTaskId);
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		state = STOPPED;
 		if (!isFinished) {
 			GameEndEvent event = new GameEndEvent(this);
-			HungerGamesBukkit.callEvent(event);
+			HungerGames.callEvent(event);
 		}
 		clear();
 		ResetHandler.resetChanges(this);
@@ -485,12 +485,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this);
-		HungerGamesBukkit.callEvent(event);
+		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
-		locTaskId = HungerGamesBukkit.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
-		spectatorSponsoringRunnable.setTaskId(HungerGamesBukkit.scheduleTask(spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
+		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
+		spectatorSponsoringRunnable.setTaskId(HungerGames.scheduleTask(spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
@@ -548,7 +548,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this, true);
-		HungerGamesBukkit.callEvent(event);
+		HungerGames.callEvent(event);
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
@@ -606,7 +606,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			LocalPlayer spectator = Bukkit.getPlayer(spectatorName);
 			removeSpectator(spectator);
 		}
-		HungerGamesBukkit.callEvent(new GamePauseEvent(this));
+		HungerGames.callEvent(new GamePauseEvent(this));
 		return null;
 	}
 	
@@ -624,7 +624,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (fixedChests.containsKey(chest.getLocation())) return;
 		if(!chests.keySet().contains(chest.getLocation()) && !blacklistedChests.contains(chest.getLocation())) {
 			//Logging.debug("Inventory Location was not in randomInvs.");
-			HungerGamesBukkit.fillChest(chest, 0, itemsets);
+			HungerGames.fillChest(chest, 0, itemsets);
 			addChest(chest.getLocation(), 1f);
 		}
 	}
@@ -644,7 +644,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    }
 		    prev = loc;
 		    Chest chest = (Chest) loc.getBlock().getState();
-		    HungerGamesBukkit.fillChest(chest, chests.get(loc), itemsets);
+		    HungerGames.fillChest(chest, chests.get(loc), itemsets);
 	    }
 	    for (Location loc : fixedChests.keySet()) {
 		    if (prev != null && prev.getBlock().getFace(loc.getBlock()) != null) {
@@ -657,7 +657,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    }
 		    prev = loc;
 		    Chest chest = (Chest) loc.getBlock().getState();
-		    HungerGamesBukkit.fillFixedChest(chest, fixedChests.get(loc));   
+		    HungerGames.fillFixedChest(chest, fixedChests.get(loc));   
 	    }
 
 	}
@@ -682,7 +682,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
-		HungerGamesBukkit.callEvent(event);
+		HungerGames.callEvent(event);
 		if (event.isCancelled()) return false;
 		if (!playerEntering(player, false)) return false;
 		stats.get(player.getName()).setState(PlayerState.PLAYING);
@@ -713,7 +713,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    return false;
 	    }
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
-	    HungerGamesBukkit.callEvent(event);
+	    HungerGames.callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
 	    stats.put(player.getName(), GameManager.INSTANCE.createStat(this, player));
@@ -746,7 +746,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 
 	    if (Config.getRequireInvClear(setup)) {
-		    if(!HungerGamesBukkit.hasInventoryBeenCleared(player)) {
+		    if(!HungerGames.hasInventoryBeenCleared(player)) {
 			    ChatUtils.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
 			    return false;
 		    }
@@ -789,7 +789,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 	
 	public Location getNextOpenSpawnPoint() {
-		Random rand = HungerGamesBukkit.getRandom();
+		Random rand = HungerGames.getRandom();
 		Location loc;
 		do {
 			loc = spawnPoints.get(rand.nextInt(spawnPoints.size()));
@@ -808,7 +808,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 
-		if (callEvent) HungerGamesBukkit.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
+		if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
 		if (!Config.getAllowRejoin(setup)) {
 			stats.get(player.getName()).die();
 		}
@@ -835,7 +835,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
-	    if (callEvent) HungerGamesBukkit.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.QUIT));
+	    if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.QUIT));
 	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING || stats.get(player.getName()).getState() == PlayerState.WAITING;
 	    if (wasPlaying) {
 		    dropInventory(player);
@@ -943,7 +943,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				ChatUtils.send(winner, "Congratulations! You won!");// TODO message
 				event = new GameEndEvent(this, winner);
 			}
-			HungerGamesBukkit.callEvent(event);
+			HungerGames.callEvent(event);
 			stopGame(true);
 			return true;
 		}
@@ -1009,12 +1009,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			event = new PlayerKillEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		HungerGamesBukkit.callEvent(event);
+		HungerGames.callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			playerLeaving(killed, false);
 			final ItemStack[] armor = killed.getInventory().getArmorContents();
 			final ItemStack[] inventory = killed.getInventory().getContents();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGamesBukkit.getInstance(), new Runnable() {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					killed.getInventory().setArmorContents(armor);
@@ -1036,7 +1036,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			else {
-				Location respawn = randomLocs.get(HungerGamesBukkit.getRandom().nextInt(randomLocs.size()));
+				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
@@ -1182,11 +1182,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		Iterator<Location> iterator = spawnPoints.iterator();
 		Location l;
 		while (iterator.hasNext()) {
-			if (HungerGamesBukkit.equals(loc, l = iterator.next())) {
+			if (HungerGames.equals(loc, l = iterator.next())) {
 				iterator.remove();
 				for (String playerName : spawnsTaken.keySet()) {
 					Location comp = spawnsTaken.get(playerName);
-					if (HungerGamesBukkit.equals(l, comp)) {
+					if (HungerGames.equals(l, comp)) {
 						spawnsTaken.remove(playerName);
 						if (Bukkit.getPlayer(playerName) == null) continue;
 						ChatUtils.error(Bukkit.getPlayer(playerName),
