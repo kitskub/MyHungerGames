@@ -315,8 +315,8 @@ public class HungerGames extends JavaPlugin{
 		DecimalFormat df = new DecimalFormat();
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator('.');
-		symbols.setGroupingSeparator(',');
 		df.setDecimalFormatSymbols(symbols);
+		df.setGroupingUsed(false);
 		return String.format("%s %s %s %s %s %s", df.format((Number) loc.getX()), df.format((Number) loc.getY()), df.format((Number) loc.getZ()), df.format((Number) loc.getYaw()), 
 			df.format((Number) loc.getPitch()), loc.getWorld().getName());
 	}
