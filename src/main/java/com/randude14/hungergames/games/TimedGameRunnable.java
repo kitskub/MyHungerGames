@@ -59,7 +59,7 @@ public class TimedGameRunnable implements Runnable, Listener{
 	public void run() {
 		if (game.get() == null) stop();
 		game.get().stopGame(false);
-		ChatUtils.broadcast(true, "Game %s has ended because it ran out of time!", game.get().getName());
+		ChatUtils.broadcast(game.get(), "Game %s has ended because it ran out of time!", game.get().getName());
 		stop();
 	}
 	

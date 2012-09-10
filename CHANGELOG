@@ -1,4 +1,7 @@
 v0.8
+- Fixed grouping separator error
+- Made subscribing per-game as well as global
+- Refactor of ChatUtils
 
 v0.7
 - Bug fixes

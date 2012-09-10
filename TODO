@@ -6,8 +6,6 @@ MEDIUM:
 - WebStats - finish
 - leaderboards
 - Deathmatch
-- Change command handling to have each command register itself, rather than adding a new line each time
-- Make subscriptions game-based
 
 LOW:
 - economy config stuff

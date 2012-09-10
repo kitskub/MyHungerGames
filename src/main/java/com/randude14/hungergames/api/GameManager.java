@@ -65,9 +65,9 @@ public abstract class GameManager {
 
 	public abstract Location getFrozenLocation(Player player);
 
-	public abstract boolean isPlayerSubscribed(Player player);
+	public abstract <T extends Game> boolean isPlayerSubscribed(Player player, T game);
 
-	public abstract void removedSubscribedPlayer(Player player);
+	public abstract <T extends Game> void removedSubscribedPlayer(Player player, T game);
 
-	public abstract void addSubscribedPlayer(Player player);
+	public abstract <T extends Game> void addSubscribedPlayer(Player player, T game);
 }

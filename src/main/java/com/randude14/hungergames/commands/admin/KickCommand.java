@@ -38,7 +38,7 @@ public class KickCommand extends Command {
 		    ChatUtils.error(player, "%s is currently not in a game.", kick.getName());
 		    return;
 		}
-		ChatUtils.broadcast(true, "%s has been kicked from the game %s.", player.getName(), game.getName());
+		ChatUtils.broadcast(game, "%s has been kicked from the game %s.", player.getName(), game.getName());
 		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
 		game.leave(kick, false);
 		return;

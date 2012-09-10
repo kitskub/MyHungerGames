@@ -20,11 +20,11 @@ public class GameCountdown implements Runnable {
 		taskId = HungerGames.scheduleTask(this, 20L, 20L);
 		this.isResuming = isResuming;
 		if(isResuming) {
-			ChatUtils.broadcast(true, "Resuming %s in %s...",
+			ChatUtils.broadcast(game, "Resuming %s in %s...",
 					game.getName(), HungerGames.formatTime(countdown));
 		}
 		else {
-			ChatUtils.broadcast(true, "Starting %s in %s...",
+			ChatUtils.broadcast(game, "Starting %s in %s...",
 					game.getName(), HungerGames.formatTime(countdown));
 		}
 
@@ -75,7 +75,7 @@ public class GameCountdown implements Runnable {
 		ChatColor color = ChatColor.GREEN;
 		if(countdown <= 5) color = ChatColor.GOLD;
 		if(countdown <= 3) color = ChatColor.RED;
-		ChatUtils.broadcastRaw(true, color, "%s...", HungerGames.formatTime(countdown));
+		ChatUtils.broadcastRaw(game, color, "%s...", HungerGames.formatTime(countdown));
 	}
 
 }

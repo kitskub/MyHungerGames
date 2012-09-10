@@ -28,10 +28,10 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	public static final GameManager INSTANCE = new GameManager();
 	private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
-	private static final Map<Player, Location> respawnLocation = new HashMap<Player, Location>();
 	private static final Map<String, EquatableWeakReference<HungerGame>> spectators = new HashMap<String, EquatableWeakReference<HungerGame>>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
-	private static final Set<String> subscribedPlayers = new HashSet<String>();
+	private static final Set<String> globalSubscribedPlayers = new HashSet<String>();
+	private static final Map<EquatableWeakReference<HungerGame>, Set<String>> subscribedPlayers = new HashMap<EquatableWeakReference<HungerGame>, Set<String>>();
 	private static final Map<String, Location> playerBackLocations = new HashMap<String, Location>();
 	
 	@Override
@@ -290,18 +290,51 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	}
 	
 	@Override
-	public boolean isPlayerSubscribed(Player player) {
-		return subscribedPlayers.contains(player.getName()) || HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_SUBSCRIBE);
+	public boolean isPlayerSubscribed(Player player, Game game) {
+		if (HungerGames.hasPermission(player, Defaults.Perm.USER_AUTO_SUBSCRIBE)) return true;
+		if (game != null){
+			if (subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)) == null) {
+				subscribedPlayers.put(new EquatableWeakReference<HungerGame>(((HungerGame) game)), new HashSet<String>());
+			}
+			if (subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)).contains(player.getName())) return true;
+		}
+		return globalSubscribedPlayers.contains(player.getName());
 	}
 	
 	@Override
-	public void removedSubscribedPlayer(Player player) {
-		subscribedPlayers.remove(player.getName());
+	public void removedSubscribedPlayer(Player player, Game game) {
+		if (game != null) {
+			if (subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)) == null) {
+				subscribedPlayers.put(new EquatableWeakReference<HungerGame>(((HungerGame) game)), new HashSet<String>());
+			}
+			subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)).remove(player.getName());
+		}
+		else {
+			globalSubscribedPlayers.remove(player.getName());
+		}
 	}
 	
 	@Override
-	public void addSubscribedPlayer(Player player) {
-		subscribedPlayers.add(player.getName());
+	public void addSubscribedPlayer(Player player, Game game) {
+		if (game != null) {
+			if (subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)) == null) {
+				subscribedPlayers.put(new EquatableWeakReference<HungerGame>(((HungerGame) game)), new HashSet<String>());
+			}
+			subscribedPlayers.get(new EquatableWeakReference<HungerGame>((HungerGame) game)).add(player.getName());
+		}
+		else {
+			globalSubscribedPlayers.add(player.getName());
+		}
+	}
+	
+	public Set<String> getSubscribedPlayers(HungerGame game) {
+		Set<String> set = new HashSet<String>();
+		if (game != null) {
+			set.addAll(subscribedPlayers.get(new EquatableWeakReference<HungerGame>(game)));
+		} else {
+			set.addAll(globalSubscribedPlayers);
+		}
+		return set;
 	}
 	
 	public void addBackLocation(Player player) {
