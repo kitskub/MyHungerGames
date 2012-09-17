@@ -808,7 +808,6 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 
-		if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
 		if (!Config.getAllowRejoin(setup)) {
 			stats.get(player.getName()).die();
 		}
@@ -816,7 +815,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
 			stats.get(player.getName()).death(PlayerStat.NODODY);
 		}
-		playerEntering(player, true);
+		if (callEvent) HungerGames.callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
+		if (state == PAUSED) playerEntering(player, true);
 		InventorySave.loadGameInventory(player);
 		dropInventory(player);
 		playerLeaving(player, false);
