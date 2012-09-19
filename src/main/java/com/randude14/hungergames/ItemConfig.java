@@ -151,11 +151,20 @@ public class ItemConfig {
 		return readItemSectionWithMoney(itemSection, useMatchMaterial());
 	}
 
-
 	public static Set<String> getFixedChests() {
 		ConfigurationSection chestSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("chests");
 		if (chestSection == null) return new HashSet<String>();
 		return chestSection.getKeys(false);
+	}
+
+	public static Set<String> getKits() {
+		ConfigurationSection chestSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("kits");
+		if (chestSection == null) return new HashSet<String>();
+		return chestSection.getKeys(false);
+	}
+	
+	public static List<ItemStack> getKit(String kit) {
+		return readItemSection(Files.ITEMCONFIG.getConfig().getConfigurationSection("kits." + kit), useMatchMaterial());
 	}
 	
 	private static List<ItemStack> getFixedChest(String chest, Set<String> checked) {

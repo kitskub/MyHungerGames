@@ -13,7 +13,6 @@ LOW:
 - /hg rules
 - Log command
 - Have lobby check for conflicting signs
-- /hg kit
 - Compass tracks players
 
 OPTIONAL:

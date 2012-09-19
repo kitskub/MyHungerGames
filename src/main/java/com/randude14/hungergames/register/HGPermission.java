@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Perm;
 import org.bukkit.command.CommandSender;
 
 public abstract class HGPermission {
+	public static HGPermission INSTANCE;
 	
 	public boolean hasPermission(CommandSender cs, Perm permission) {
 		if (permission == null) return true;

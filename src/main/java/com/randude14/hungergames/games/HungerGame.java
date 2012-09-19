@@ -2,12 +2,14 @@ package com.randude14.hungergames.games;
 
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.*;
+import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.api.Game;
 import static com.randude14.hungergames.api.Game.GameState.*;
 import static com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
+import com.randude14.hungergames.register.HGPermission;
 import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
@@ -780,6 +782,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    if (Config.getHidePlayers(setup)) player.setSneaking(true);
 	    if (Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
+	    for (String kit : ItemConfig.getKits()) {
+		    if (HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName()) || HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName() + "." + kit)) {
+			    player.getInventory().addItem((ItemStack[]) ItemConfig.getKit(kit).toArray());
+		    }
+	    }
 	    for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;

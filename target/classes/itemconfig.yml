@@ -49,3 +49,10 @@ rewards:
 #       stack-size: 1
 #	      chance: 0.01
 #	      DURABILITY: 3
+
+kits:
+   # Example
+#  test:
+#    DIAMOND_PICKAXE,1:
+#      stack-size: 1
+#      DURABILITY: 3

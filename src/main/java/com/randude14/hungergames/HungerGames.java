@@ -123,6 +123,7 @@ public class HungerGames extends JavaPlugin{
 	    } else {
 		perm = new VaultPermission();
 	    }
+	    HGPermission.INSTANCE = perm;
 
 	    if (!Economy.isVaultInstalled()) {
 		Logging.warning("Vault is not installed, economy use disabled.");

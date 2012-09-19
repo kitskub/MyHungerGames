@@ -164,6 +164,7 @@ public class Defaults {
 	USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER),
 	USER_BACK(new Permission("hungergame.user.back"), USER),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
+	USER_KIT(new Permission("hungergame.user.kit"), USER),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 	USER_LIST(new Permission("hungergame.user.list"), USER),
 	USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),
