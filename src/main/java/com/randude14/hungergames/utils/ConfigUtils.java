@@ -13,7 +13,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-public class ConfigUtils {	
+public class ConfigUtils {
+	
+	public static ConfigurationSection getOrCreateSection(ConfigurationSection section, String string) {
+		ConfigurationSection config = section.getConfigurationSection(string);
+		if (config == null) {
+			config = section.createSection(string);
+		}
+		return config;
+	}
 	
 	public static ItemStack getItemStack(Block block) {
 		return new ItemStack(block.getType(), 1, block.getData());

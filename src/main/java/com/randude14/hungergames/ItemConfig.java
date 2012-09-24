@@ -1,5 +1,6 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.utils.ConfigUtils;
 import static com.randude14.hungergames.utils.ConfigUtils.*;
 
 import java.util.ArrayList;
@@ -92,16 +93,10 @@ public class ItemConfig {
 	public static void addChestLoot(String itemset, ItemStack item, float chance){
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
-		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
-		    if (itemSection == null) {
-			    itemSection = Files.ITEMCONFIG.getConfig().createSection("global.chest-loot");
-		    }
+		    itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "global.chest-loot");
 	    }
 	    else {
-		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
-		    if (itemSection == null) {
-			    itemSection = Files.ITEMCONFIG.getConfig().createSection("itemsets." + itemset + ".chest-loot");
-		    }
+		    itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "itemsets." + itemset + ".chest-loot");
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
@@ -119,10 +114,10 @@ public class ItemConfig {
 	public static void addSponsorLoot(String itemset, ItemStack item, double cost){
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
-		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
+		    itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "global.sponsor-loot");
 	    }
 	    else {
-		    itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot");
+		    itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "itemsets." + itemset + ".sponsor-loot");
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
@@ -193,7 +188,7 @@ public class ItemConfig {
 	}
 	
 	public static void addStaticReward(ItemStack item) {
-		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.static");
+		ConfigurationSection itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "rewards.static");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
 		builder.append(item.getData().getData());
@@ -207,7 +202,7 @@ public class ItemConfig {
 	}
 	
 	public static void addRandomReward(ItemStack item, float chance) {
-		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random");
+		ConfigurationSection itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "rewards.random");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
 		builder.append(item.getData().getData());
