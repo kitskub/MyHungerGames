@@ -10,9 +10,12 @@ chests:
 #    inherits: example1
 #    DIAMOND_PICKAXE,1:
 #      stack-size: 1
-#      DURABILITY: 3
+#      # chance is not needed, without it, it defaults to 1/3.
+#      # 1 is always, 0 is never
+#      chance: .5
 #    DIAMOND_PICKAXE,2:
 #      stack-size: 1
+#      chance: 1
 #      DURABILITY: 3
 
 itemsets:
@@ -22,16 +25,16 @@ itemsets:
 #  test:
 #   inherits: itemset1
 #	  chest-loot:
-#		  # Note DURABIlITY is an enchantment
-#     # anything after a comma is ignored and is only there so you can have multiple of the same item. 
-#     # Items added by code will have a generated number after it. Ignore it.
+#           # Note DURABIlITY is an enchantment
+#           # anything after a comma is ignored and is only there so you can have multiple of the same item. 
+#           # Items added by code will have a generated number after it. Ignore it.
 #	    278,1:
-#       stack-size: 1
+#           stack-size: 1
 #	      chance: 0.01
 #	      DURABILITY: 3
-#   sponsor-loot:
+#         sponsor-loot:
 #	    278,1:
-#       stack-size: 1
+#             stack-size: 1
 #	      money: 10.00
 #	      DURABILITY: 3
 
@@ -45,10 +48,10 @@ rewards:
   max-random: 5
   # The following will be randomly given to the player
   random:
-#	    278,1:
-#       stack-size: 1
-#	      chance: 0.01
-#	      DURABILITY: 3
+#   278,1:
+#     stack-size: 1
+#       chance: 0.01
+#       DURABILITY: 3
 
 kits:
    # Example
