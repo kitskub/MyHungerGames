@@ -27,28 +27,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BlockListener implements Listener {
 	
-	@EventHandler(ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
-		if(session != null) {
-			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
-				event.setCancelled(true);
-				return;
-			}
-			String setup = session.getSetup();
-			if(!Config.getCanPlaceBlock(setup, event.getBlock())) {
-				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
-				event.setCancelled(true);
-				return;
-			}
-		}
-		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
-			event.setCancelled(true);
-			ChatUtils.error(player, "You cannot place this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
-		}
-	}
-	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Logging.debug(event.getLine(0));
@@ -86,7 +64,29 @@ public class BlockListener implements Listener {
 	public void onchestBreak(BlockBreakEvent event) {
 		if (!(event.getBlock().getState() instanceof Chest)) return;
 		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
-			game.removeChest(event.getBlock().getLocation());
+			game.chestBroken(event.getBlock().getLocation());
+		}
+	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
+		if(session != null) {
+			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+				event.setCancelled(true);
+				return;
+			}
+			String setup = session.getSetup();
+			if(!Config.getCanPlaceBlock(setup, event.getBlock())) {
+				ChatUtils.error(player, "You cannot place this block while in game %s.", session.getName());
+				event.setCancelled(true);
+				return;
+			}
+		}
+		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
+			event.setCancelled(true);
+			ChatUtils.error(player, "You cannot place this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
 		}
 	}
 

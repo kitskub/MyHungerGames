@@ -159,6 +159,27 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 		}
 
+		if (section.contains("blacklistedchests")) {
+			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
+			for (String key : chestsSection.getKeys(false)) {
+				Location loc = null;
+				try {
+					loc = HungerGames.parseToLoc(chestsSection.getString(key));
+				}
+				catch (NumberFormatException e) {}
+				if (loc == null || loc.getWorld() == null) {
+					Logging.warning("failed to load location '%s'", chestsSection.getString(key));
+					continue;
+				}
+				if (!(loc.getBlock().getState() instanceof Chest)) {
+					Logging.warning("'%s' is no longer a chest.", chestsSection.getString(key));
+					continue;
+				}
+				blacklistedChests.add(loc);
+			}
+
+		}
+
 		if (section.contains("fixedchests")) {
 			ConfigurationSection fixedChestsSection = section.getConfigurationSection("fixedchests");
 			for (String key : fixedChestsSection.getKeys(false)) {
@@ -210,6 +231,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public void saveTo(ConfigurationSection section) {
 		ConfigurationSection spawnPointsSection = section.createSection("spawn-points");
 		ConfigurationSection chestsSection = section.createSection("chests");
+		ConfigurationSection blacklistedchestsSection = section.createSection("blacklistedchests");
 		ConfigurationSection fixedChestsSection = section.createSection("fixedchests");
 		int cntr;
 		
@@ -223,6 +245,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		for (Location loc : chests.keySet()) {
 			cntr++;
 			chestsSection.set("chest" + cntr, HungerGames.parseToString(loc) + "," + chests.get(loc));
+		}
+		cntr = 1;
+		for (Location loc : blacklistedChests) {
+			cntr++;
+			blacklistedchestsSection.set("chest" + cntr, HungerGames.parseToString(loc));
 		}
 		
 		cntr = 1;
@@ -1183,6 +1210,20 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
+	public void chestBroken(Location loc) {
+		Block b = loc.getBlock();
+		Location ad = null;
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.SOUTH).getLocation();
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) loc = b.getRelative(BlockFace.EAST).getLocation();
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) loc = b.getRelative(BlockFace.WEST).getLocation();
+		if (ad != null) {
+			chests.remove(ad);
+			fixedChests.remove(ad);
+		}
+		chests.remove(loc);
+		fixedChests.remove(loc);
+	}
 	@Override
 	public boolean removeSpawnPoint(Location loc) {
 		if (loc == null) return false;
