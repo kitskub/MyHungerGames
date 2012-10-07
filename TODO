@@ -18,7 +18,6 @@ LOW:
 OPTIONAL:
 - Possible timed game events
 - Better messages on death
-- Maybe add some way for worlds to reset while games are not running
 - Map gen
 - Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
 - Add some /hga remove stuff

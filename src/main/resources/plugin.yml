@@ -1,7 +1,7 @@
 name: MyHungerGames
 main: com.randude14.hungergames.HungerGames
-version: 0.8-dev
-authors: [Randude14, kitskub]
+version: 0.8
+authors: [kitskub, Randude14]
 softdepend: [Vault, HawkEye, LogBlock]
 
 commands:
