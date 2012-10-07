@@ -1,3 +1,7 @@
+v0.9
+- Added death-messages - configurable of when displayed
+- Fixed maven groupId
+
 v0.8
 - Fixed grouping separator error
 - Made subscribing per-game as well as global

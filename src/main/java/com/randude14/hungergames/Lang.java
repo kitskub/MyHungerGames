@@ -1,8 +1,10 @@
 package com.randude14.hungergames;
 
 import static com.randude14.hungergames.Defaults.Lang.*;
+import java.util.ArrayList;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Lang {
@@ -13,6 +15,13 @@ public class Lang {
 		
 	private static String getGlobal(String config, String def) {
 		return Files.LANG.getConfig().getString("global." + config, def);
+	}
+	
+	private static List<String> getGlobalStringList(String config, List<String> def) {
+		if (Files.LANG.getConfig().contains("global." + config)) {
+			return Files.LANG.getConfig().getStringList("global." + config);
+		}
+		return def;
 	}
 	
 	/** 
@@ -33,6 +42,28 @@ public class Lang {
 	}
 	private static String getString(String config, String setup, String def) {
 		String s = getString(config, setup, new HashSet<String>());
+		return s == null ? def : s;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return String if found, null if not
+	 */	
+	private static List<String> getStringList(String config, String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.LANG.getConfig().contains("setups." + setup + "." + config)) {
+			return Files.LANG.getConfig().getStringList("setups." + setup + "." + config);
+		}
+		checked.add(setup);
+		for (String parent : Files.LANG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			List<String> s = getStringList(config, parent, checked);
+			if (s != null) return s;
+		}
+		return null;
+	}
+
+	private static List<String> getStringList(String config, String setup, List<String> def) {
+		List<String> s = getStringList(config, setup, new HashSet<String>());
 		return s == null ? def : s;
 	}
 	
@@ -102,6 +133,10 @@ public class Lang {
 		return getGlobal("not-in-game", NOT_IN_GAME.getMessage());
 	}
 	
+	public static List<String> getGlobalDeathMessages() {
+		return getGlobalStringList("death-messages", new ArrayList<String>());
+	}
+	
 	// Setups
 	public static String getJoinMessage(String setup) {
 		return getString("join-message", setup, getGlobalJoinMessage());
@@ -157,5 +192,9 @@ public class Lang {
 	
 	public static String getNotInGame(String setup) {
 		return getString("not-in-game", setup, getGlobalNotInGame());
+	}
+	
+	public static List<String> getDeathMessages(String setup) {
+		return getStringList("death-messages", setup, getGlobalDeathMessages());
 	}
 }

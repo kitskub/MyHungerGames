@@ -35,7 +35,6 @@ public class Config {
 	private static List<String> getGlobalStringList(String config, List<String> def) {
 		if (Files.CONFIG.getConfig().contains("global." + config)) {
 			return Files.CONFIG.getConfig().getStringList("global." + config);
-
 		}
 		return def;
 	}
@@ -86,20 +85,20 @@ public class Config {
 	 * For safe recursiveness 
 	 * return Integer if found, null if not
 	 */
-	private static Integer getInteger(String config, String setup, Set<String> checked) {
+	private static Integer getInt(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
 		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
 			return Files.CONFIG.getConfig().getInt("setups." + setup + "." + config);
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
-			Integer i = getInteger(config, parent, checked);
+			Integer i = getInt(config, parent, checked);
 			if (i != null) return i;
 		}
 		return null;
 	}
-	private static int getInteger(String config, String setup, int def) {
-		Integer i = getInteger(config, setup, new HashSet<String>());
+	private static int getInt(String config, String setup, int def) {
+		Integer i = getInt(config, setup, new HashSet<String>());
 		return i == null ? def : i;
 	}
 	
@@ -130,18 +129,19 @@ public class Config {
 	 */
 	private static List<String> getStringList(String config, String setup, Set<String> checked) {
 		if (checked.contains(setup)) return null;
+		List<String> strings = new ArrayList<String>();
 		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + config)) {
-			return Files.CONFIG.getConfig().getStringList("setups." + setup + "." + config);
+			strings.addAll(Files.CONFIG.getConfig().getStringList("setups." + setup + "." + config));
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
 			List<String> list = getStringList(config, parent, checked);
-			if (list != null) return list;
+			if (list != null) strings.addAll(list);
 		}
-		return null;
+		return strings;
 	}
 	
-	/** returns first available list */
+	/** returns combination of all lists, including global */
 	private static List<String> getStringList(String config, String setup, List<String> def) {
 		List<String> list = getStringList(config, setup, new HashSet<String>());
 		return list == null ? def : list;
@@ -337,18 +337,22 @@ public class Config {
 	public static boolean getHidePlayersGlobal() {
 		return getGlobalBoolean("hide-players", HIDE_PLAYERS.getBoolean());
 	}
+		
+	public static int getShowDeathMessagesGlobal() {
+		return getGlobalInt("show-death-messages", SHOW_DEATH_MESSAGES.getInt());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
-		return getInteger("min-vote", setup, getGlobalMinVote());
+		return getInt("min-vote", setup, getGlobalMinVote());
 	}
 	
 	public static int getMinPlayers(String setup) {
-		return getInteger("min-players", setup, getGlobalMinPlayers());
+		return getInt("min-players", setup, getGlobalMinPlayers());
 	}
 	
 	public static int getDefaultTime(String setup) {
-		return getInteger("default-time", setup, getGlobalDefaultTime());
+		return getInt("default-time", setup, getGlobalDefaultTime());
 	}
 	
 	public static int getLives(String setup) {
@@ -436,7 +440,7 @@ public class Config {
 	}
 
 	public static int getChatDistance(String setup) {
-		return getInteger("chat-distance", setup, getChatDistanceGlobal());
+		return getInt("chat-distance", setup, getChatDistanceGlobal());
 	}
 
 	public static boolean getRemoveItems(String setup) {
@@ -444,11 +448,11 @@ public class Config {
 	}
 
 	public static int getSpectatorSponsorPeriod(String setup) {
-		return getInteger("spectator-sponsor-period", setup, getSpectatorSponsorPeriodGlobal());
+		return getInt("spectator-sponsor-period", setup, getSpectatorSponsorPeriodGlobal());
 	}
 
 	public static int getDeathCannon(String setup) {
-		return getInteger("death-cannon", setup, getDeathCannonGlobal());
+		return getInt("death-cannon", setup, getDeathCannonGlobal());
 	}
 		
 	public static boolean getAutoJoinAllowed(String setup) {
@@ -456,7 +460,7 @@ public class Config {
 	}
 
 	public static int getMaxGameDuration(String setup) {
-		return getInteger("max-game-duration", setup, getMaxGameDurationGlobal());
+		return getInt("max-game-duration", setup, getMaxGameDurationGlobal());
 	}
 		
 	public static boolean getUseSpawn(String setup) {
@@ -468,7 +472,7 @@ public class Config {
 	}
 
 	public static int getTimeout(String setup) {
-		return getInteger("timeout", setup, getTimeoutGlobal());
+		return getInt("timeout", setup, getTimeoutGlobal());
 	}
 		
 	public static boolean getTakeLifeOnLeave(String setup) {
@@ -476,7 +480,7 @@ public class Config {
 	}
 
 	public static int getStartTimer(String setup) {
-		return getInteger("start-timer", setup, getStartTimerGlobal());
+		return getInt("start-timer", setup, getStartTimerGlobal());
 	}
 
 	public static boolean getStopTargetting(String setup) {
@@ -485,6 +489,10 @@ public class Config {
 
 	public static boolean getHidePlayers(String setup) {
 		return getBoolean("hide-players", setup, getHidePlayersGlobal());
+	}
+
+	public static int getShowDeathMessages(String setup) {
+		return getInt("show-death-messages", setup, getShowDeathMessagesGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {
@@ -511,7 +519,7 @@ public class Config {
 		return list;
 	}
 
-	private static Boolean getCanPlaceBlock(String setup, Block block, Set<String> checked) {
+	private static boolean getCanPlaceBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
@@ -522,15 +530,13 @@ public class Config {
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
-			Boolean b = getCanPlaceBlock(parent, block, checked);
-			can |= b;
+			can |= getCanPlaceBlock(parent, block, checked);
 		}
 		return can;
 	}
 	public static boolean getCanPlaceBlock(String setup, Block block) {
 		boolean can = false;
-		Boolean b = getCanPlaceBlock(setup, block, new HashSet<String>());
-		if (b != null) can |= b;
+		can |= getCanPlaceBlock(setup, block, new HashSet<String>());
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-place")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
@@ -539,7 +545,7 @@ public class Config {
 		return can;
 	}
 
-	private static Boolean getCanBreakBlock(String setup, Block block, Set<String> checked) {
+	private static boolean getCanBreakBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
@@ -550,15 +556,13 @@ public class Config {
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
-			Boolean b = getCanBreakBlock(parent, block, checked);
-			can |= b;
+			can |= getCanBreakBlock(parent, block, checked);
 		}
 		return can;
 	}
 	public static boolean getCanBreakBlock(String setup, Block block) {
 		boolean can = false;
-		Boolean b = getCanBreakBlock(setup, block, new HashSet<String>());
-		if (b != null) can |= b;
+		can |= getCanBreakBlock(setup, block, new HashSet<String>());
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-break")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));
@@ -567,7 +571,7 @@ public class Config {
 		return can;
 	}
 
-	private static Boolean getCanInteractBlock(String setup, Block block, Set<String> checked) {
+	private static boolean getCanInteractBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
@@ -578,15 +582,13 @@ public class Config {
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
-			Boolean b = getCanInteractBlock(parent, block, checked);
-			can |= b;
+			can |= getCanInteractBlock(parent, block, checked);
 		}
 		return can;
 	}
 	public static boolean getCanInteractBlock(String setup, Block block) {
 		boolean can = false;
-		Boolean b = getCanInteractBlock(setup, block, new HashSet<String>());
-		if (b != null) can |= b;
+		can |= getCanInteractBlock(setup, block, new HashSet<String>());
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-interact")){
 			list.add(getItemStack(s, 1, getUseMatchMaterialGlobal()));

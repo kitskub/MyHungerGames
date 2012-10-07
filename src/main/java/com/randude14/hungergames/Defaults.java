@@ -18,6 +18,7 @@ public class Defaults {
 	QUIT("<player> has quit the game <game>."),
 	VOTE("<player> is ready to play <game>. Type /hg vote when you are ready to play."),
 	KILL("<killer> killed <killed> in game <game>."),
+	DEATH("<player> died in <game>"),
 	NO_PERM("You do not have permission."),
 	NO_WINNER("You do not have permission."),
 	WIN("You do not have permission."),
@@ -86,7 +87,8 @@ public class Defaults {
 	TAKE_LIFE_ON_LEAVE(true),
 	START_TIMER(0),
 	STOP_TARGETTING(true),
-	HIDE_PLAYERS(true);
+	HIDE_PLAYERS(true),
+	SHOW_DEATH_MESSAGES(1);
 	
 	
 	private Object value;

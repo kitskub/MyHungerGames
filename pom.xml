@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.randude14</groupId>
+	<groupId>com.randude14.hungergames</groupId>
 	<artifactId>MyHungerGames</artifactId>
 	<version>0.8</version>
 	<packaging>jar</packaging>

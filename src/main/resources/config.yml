@@ -162,6 +162,11 @@ global:
   # Whether to hide players' nametag by faking a sneak
   hide-players: true
   
+  # Whether to hide players' nametag by faking a sneak
+  # If 1, a message will be shown every death
+  # If 2, a message will be shown only on the last death
+  show-death-messages: 1
+  
 # Setups ADD to global in any list
 setups:
 #  test1:

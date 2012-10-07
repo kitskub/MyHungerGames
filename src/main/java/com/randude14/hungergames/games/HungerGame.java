@@ -1063,6 +1063,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			teleportPlayerToSpawn(killed);
 			checkForGameOver(false);
 			if (Config.getDeathCannon(setup) == 1 || Config.getDeathCannon(setup) == 2) playCannonBoom();
+			if (Config.getShowDeathMessages(setup) == 1 || Config.getShowDeathMessages(setup) == 2) {
+				List<String> deathMessages = Lang.getDeathMessages(setup);
+				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
+					.replace("<killed>", killed.getDisplayName()
+					.replace("<killer>", killer.getDisplayName())
+					.replace("<game>", name)));
+			}
 		}
 		else {
 			if (Config.shouldRespawnAtSpawnPoint(setup)) {
@@ -1073,8 +1080,15 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
-			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
+			if (Config.getShowDeathMessages(setup) == 1) {
+				List<String> deathMessages = Lang.getDeathMessages(setup);
+				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
+					.replace("<killed>", killed.getDisplayName()
+					.replace("<killer>", killer.getDisplayName())
+					.replace("<game>", name)));
+			}
+			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
 	}
 

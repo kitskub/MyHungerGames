@@ -31,6 +31,11 @@ global:
   # params: Player <player>; Game <game>
   vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
   
+  # If death-messages is configured in config.yml, then one of these will be played randomly on death,
+  # params: Killed <killed>; Killer <killer>; Game <game>
+  death-messages:
+    - '<killed> was killed in <game> by <killer>'
+  
   # Message when there is not a winner
   no-winner: 'Strangely, there was no winner left.'
 
