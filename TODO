@@ -17,14 +17,12 @@ LOW:
 
 OPTIONAL:
 - Possible timed game events
-- Better messages on death
 - Map gen
 - Possibly make resetting a deque type thing to make it a rollback (useful for pistons and such)
 - Add some /hga remove stuff
 
 UNCONFIRMED:
 - Minimize external resetting of changes from players who have left but not quitted
-- Add more listeners
 - More lang messages
 - Enhance Spectating
 - Fix startTime

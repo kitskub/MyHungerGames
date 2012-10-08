@@ -88,7 +88,8 @@ public class Defaults {
 	START_TIMER(0),
 	STOP_TARGETTING(true),
 	HIDE_PLAYERS(true),
-	SHOW_DEATH_MESSAGES(1);
+	SHOW_DEATH_MESSAGES(1),
+	DISABLE_FLY(true);
 	
 	
 	private Object value;
@@ -165,6 +166,7 @@ public class Defaults {
 	USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null),
 	USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER),
 	USER_BACK(new Permission("hungergame.user.back"), USER),
+	USER_ALLOW_FLIGHT(new Permission("hungergame.user.allowflight"), USER),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
 	USER_KIT(new Permission("hungergame.user.kit"), USER),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),

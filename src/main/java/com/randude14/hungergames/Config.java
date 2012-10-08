@@ -341,6 +341,10 @@ public class Config {
 	public static int getShowDeathMessagesGlobal() {
 		return getGlobalInt("show-death-messages", SHOW_DEATH_MESSAGES.getInt());
 	}
+		
+	public static boolean getDisableFlyGlobal() {
+		return getGlobalBoolean("disable-fly", DISABLE_FLY.getBoolean());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -493,6 +497,10 @@ public class Config {
 
 	public static int getShowDeathMessages(String setup) {
 		return getInt("show-death-messages", setup, getShowDeathMessagesGlobal());
+	}
+
+	public static boolean getDisableFly(String setup) {
+		return getBoolean("disable-fly", setup, getDisableFlyGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

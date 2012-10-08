@@ -70,6 +70,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	private final Map<String, Boolean> spectatorFlying; // If a spectator was flying
 	private final Map<String, Boolean> spectatorFlightAllowed; // If a spectator's flight was allowed
 	private final Map<String, GameMode> playerGameModes; // Whether a player was in survival when game started
+	private final List<String> playersFlying; // Players that were flying when they joined
+	private final List<String> playersCanFly; // Players that could fly when they joined
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
 	private int locTaskId = 0;
@@ -106,6 +108,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		spectatorFlying = new HashMap<String, Boolean>();
 		spectatorFlightAllowed = new HashMap<String, Boolean>();
 		playerGameModes = new HashMap<String, GameMode>();
+		playersFlying = new ArrayList<String>();
+		playersCanFly = new ArrayList<String>();
 		countdown = null;
 	}
 
@@ -807,6 +811,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
 	    }
+	    if (Config.getDisableFly(setup)) {
+		    if (!HGPermission.INSTANCE.hasPermission(player, Perm.USER_ALLOW_FLIGHT)) {
+			    if (player.getAllowFlight()) {
+				    playersCanFly.add(player.getName());
+				    player.setAllowFlight(false);
+			    }
+			    if (player.isFlying()) {
+				    playersFlying.add(player.getName());
+				    player.setFlying(false);
+			    }
+			    
+		    }
+	    }
 	    if (Config.getHidePlayers(setup)) player.setSneaking(true);
 	    if (Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
 	    for (String kit : ItemConfig.getKits()) {
@@ -909,6 +926,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
+		if (Config.getDisableFly(setup)) {
+			if (!HGPermission.INSTANCE.hasPermission(player, Perm.USER_ALLOW_FLIGHT)) {
+				player.setAllowFlight(playersCanFly.remove(player.getName()));
+				player.setFlying(playersFlying.remove(player.getName()));
+			}
+		}
 		if (Config.getHidePlayers(setup)) player.setSneaking(false);
 		readyToPlay.remove(player.getName());
 		if (!temporary) {
@@ -931,6 +954,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		spectatorFlying.clear();
 		spectatorFlightAllowed.clear();
 		playerGameModes.clear();
+		playersCanFly.clear();
+		playersFlying.clear();
 		if (countdown != null) countdown.cancel(); 
 		countdown = null;
 	}
