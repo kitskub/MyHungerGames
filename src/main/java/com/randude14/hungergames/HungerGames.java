@@ -322,10 +322,10 @@ public class HungerGames extends JavaPlugin{
 			df.format((Number) loc.getPitch()), loc.getWorld().getName());
 	}
 
-	public static Location parseToLoc(String str) throws NumberFormatException{
+	public static Location parseToLoc(String str) throws NumberFormatException, WorldNotFoundException, IllegalArgumentException {
 		Strings.emptyToNull(str);
 		if (str == null) {
-			return null;
+			throw new IllegalArgumentException("Location can not be null.");
 		}
 		String[] strs = str.split(" ");
 		double x = Double.parseDouble(strs[0]);
@@ -334,7 +334,7 @@ public class HungerGames extends JavaPlugin{
 		float yaw = Float.parseFloat(strs[3]);
 		float pitch = Float.parseFloat(strs[4]);
 		World world = Bukkit.getServer().getWorld(strs[5]);
-		if (world == null) return null;
+		if (world == null) throw new WorldNotFoundException("Could not load world \"" + strs[5] + "\" when loading location \"" + str);
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 	

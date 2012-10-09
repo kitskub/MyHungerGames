@@ -1,8 +1,6 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Files;
-import com.randude14.hungergames.GameManager;
-import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.EquatableWeakReference;
@@ -260,9 +258,20 @@ public class LobbyListener implements Listener, Runnable {
 			joinSigns.clear();
 			for (String key : joinSection.getKeys(false)) {
 				ConfigurationSection section = joinSection.getConfigurationSection(key);
-				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
+				Location loc;
+				try {
+					loc = HungerGames.parseToLoc(section.getString("location", ""));
+				} catch (NumberFormatException ex) {
+					Logging.debug(ex.getMessage());
+					continue;
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (IllegalArgumentException ex) {
+					continue;
+				}
 				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
-				if (loc == null || game == null) continue;
+				if (game == null) continue;
 				joinSigns.put(loc, game);
 			}
 		}
@@ -270,7 +279,18 @@ public class LobbyListener implements Listener, Runnable {
 			gameSigns.clear();
 			for (String key : gameSection.getKeys(false)) {
 				ConfigurationSection section = gameSection.getConfigurationSection(key);
-				Location loc = HungerGames.parseToLoc(section.getString("location", ""));
+				Location loc;
+				try {
+					loc = HungerGames.parseToLoc(section.getString("location", ""));
+				} catch (NumberFormatException ex) {
+					Logging.debug(ex.getMessage());
+					continue;
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (IllegalArgumentException ex) {
+					continue;
+				}
 				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				gameSigns.put(loc, game);
@@ -284,7 +304,19 @@ public class LobbyListener implements Listener, Runnable {
 				List<String> strings = section.getStringList("signs");
 				List<Location> locs = new ArrayList<Location>();
 				for (String s : strings) {
-					locs.add(HungerGames.parseToLoc(s));
+					Location loc;
+					try {
+						loc = HungerGames.parseToLoc(s);
+					} catch (NumberFormatException ex) {
+						Logging.debug(ex.getMessage());
+						continue;
+					} catch (WorldNotFoundException ex) {
+						Logging.warning(ex.getMessage());
+						continue;
+					} catch (IllegalArgumentException ex) {
+						continue;
+					}
+					locs.add(loc);
 				}
 				InfoWall w = new InfoWall(game, locs);
 				infoWalls.add(w);

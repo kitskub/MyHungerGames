@@ -15,6 +15,7 @@ import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.*;
 import org.bukkit.block.Chest;
@@ -127,10 +130,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				Location loc = null;
 				try {
 					loc = HungerGames.parseToLoc(str);
-				}
-				catch (NumberFormatException e) {}
-				if (loc == null) {
-					Logging.warning("failed to load location '%s'", str);
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (NumberFormatException e) {
+					Logging.debug(e.getMessage());
 					continue;
 				}
 				spawnPoints.add(loc);
@@ -147,11 +151,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				try {
 					loc = HungerGames.parseToLoc(parts[0]);
 					weight = Float.parseFloat(parts[1]);
-				}
-				catch (NumberFormatException e) {}
-				catch (IndexOutOfBoundsException e) {}
-				if (loc == null || loc.getWorld() == null) {
-					Logging.warning("failed to load location '%s'", parts[0]);
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (NumberFormatException e) {
+					Logging.debug(e.getMessage());
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -164,15 +168,16 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 
 		if (section.contains("blacklistedchests")) {
-			ConfigurationSection chestsSection = section.getConfigurationSection("chests");
+			ConfigurationSection chestsSection = section.getConfigurationSection("blacklistedchests");
 			for (String key : chestsSection.getKeys(false)) {
-				Location loc = null;
+				Location loc;
 				try {
 					loc = HungerGames.parseToLoc(chestsSection.getString(key));
-				}
-				catch (NumberFormatException e) {}
-				if (loc == null || loc.getWorld() == null) {
-					Logging.warning("failed to load location '%s'", chestsSection.getString(key));
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (NumberFormatException e) {
+					Logging.debug(e.getMessage());
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -193,11 +198,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				Location loc = null;
 				try {
 					loc = HungerGames.parseToLoc(split[0]);
-				}
-				catch (NumberFormatException e) {
-				}
-				if (loc == null) {
-					Logging.warning("failed to load location '%s'", str);
+				} catch (WorldNotFoundException ex) {
+					Logging.warning(ex.getMessage());
+					continue;
+				} catch (NumberFormatException e) {
+					Logging.debug(e.getMessage());
 					continue;
 				}
 				if (!(loc.getBlock().getState() instanceof Chest)) {
@@ -227,8 +232,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (section.contains("setup")) setup = section.getString("setup");
 		try {
 			if (section.contains("spawn")) spawn = HungerGames.parseToLoc(section.getString("spawn"));
-		} 
-		catch (NumberFormatException numberFormatException) {}
+		} catch (WorldNotFoundException ex) {
+			Logging.warning(ex.getMessage());
+		} catch (NumberFormatException e) {
+			Logging.debug(e.getMessage());
+		}
 		HungerGames.callEvent(new GameLoadEvent(this));
 	}
 
@@ -247,13 +255,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		cntr = 1;
 		for (Location loc : chests.keySet()) {
-			cntr++;
 			chestsSection.set("chest" + cntr, HungerGames.parseToString(loc) + "," + chests.get(loc));
+			cntr++;
 		}
 		cntr = 1;
 		for (Location loc : blacklistedChests) {
-			cntr++;
 			blacklistedchestsSection.set("chest" + cntr, HungerGames.parseToString(loc));
+			cntr++;
 		}
 		
 		cntr = 1;

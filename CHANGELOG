@@ -1,6 +1,7 @@
-v0.9
+v0.8.1
 - Added death-messages - configurable of when displayed
 - Fixed maven groupId
+- Fix blacklisting chests
 
 v0.8
 - Fixed grouping separator error

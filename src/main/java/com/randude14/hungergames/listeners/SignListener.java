@@ -1,10 +1,7 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.*;
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.Files;
-import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
@@ -48,7 +45,15 @@ public class SignListener implements Runnable, Listener {
 			List<String> sList = section.getStringList("gameLocs");
 			if (sList != null) {
 				for (String s : sList) {
-					allGameListeners.get(type).add(HungerGames.parseToLoc(s));
+					try {
+						allGameListeners.get(type).add(HungerGames.parseToLoc(s));
+					} catch (NumberFormatException ex) {
+						Logging.debug(ex.getMessage());
+						continue;
+					} catch (WorldNotFoundException ex) {
+						Logging.warning(ex.getMessage());
+						continue;
+					}
 				}
 			}
 			if (section == null) continue;
@@ -59,7 +64,15 @@ public class SignListener implements Runnable, Listener {
 				List<Location> list = new ArrayList<Location>();
 				List<String> stringList = gameSection.getStringList("gameLocs");
 				for (String s : stringList) {
-					list.add(HungerGames.parseToLoc(s));
+					try {
+						list.add(HungerGames.parseToLoc(s));
+					} catch (NumberFormatException ex) {
+						Logging.debug(ex.getMessage());
+						continue;
+					} catch (WorldNotFoundException ex) {
+						Logging.warning(ex.getMessage());
+						continue;
+					}
 				}
 				listeners.get(type).get(game).addAll(list);
 			}
