@@ -5,22 +5,20 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SpectateCommand extends Command {
+public class SpectateCommand extends PlayerCommand {
 
 	public SpectateCommand() {
 		super(Perm.USER_SPECTATE, "spectate", USER_COMMAND);
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
+	public void handlePlayer(Player player, String label, String[] args) {
 		if (GameManager.INSTANCE.removeSpectator(player)) return;
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {

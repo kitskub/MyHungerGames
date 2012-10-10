@@ -3,23 +3,20 @@ package com.randude14.hungergames.commands.user;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SponsorCommand extends Command {
+public class SponsorCommand extends PlayerCommand {
 
 	public SponsorCommand() {
 		super(Perm.USER_SPONSOR, "sponsor", USER_COMMAND);
 	}
 
 	@Override
-	public void handle(CommandSender cs, String cmd, String[] args) {
-		Player player = (Player) cs;
-
+	public void handlePlayer(Player player, String cmd, String[] args) {
 		if (args.length < 1) {
 			ChatUtils.send(player, getUsage(), HungerGames.CMD_USER);
 			return;
@@ -35,7 +32,6 @@ public class SponsorCommand extends Command {
 			return;
 		}
 		GameManager.INSTANCE.addSponsor(player, p);
-		return;
 	}
 
 	@Override

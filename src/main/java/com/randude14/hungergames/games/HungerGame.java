@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -411,10 +412,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 	
 	@Override
-	public boolean stopGame(Player player, boolean isFinished) {
+	public boolean stopGame(CommandSender cs, boolean isFinished) {
 		String result = stopGame(isFinished);
-		if (result != null && player != null) {
-			ChatUtils.error(player, result);
+		if (result != null && cs != null) {
+			ChatUtils.error(cs, result);
 			return false;
 		}
 		return true;
@@ -481,19 +482,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	@Override
-	public boolean startGame(Player player, int ticks) {
+	public boolean startGame(CommandSender cs, int ticks) {
 		String result = startGame(0);
 		if (result != null) {
-			ChatUtils.error(player, result);
+			ChatUtils.error(cs, result);
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public boolean startGame(Player player, boolean immediate) {
-		if(!immediate) return startGame(player, Config.getDefaultTime(setup));
-		return startGame(player, 0);
+	public boolean startGame(CommandSender cs, boolean immediate) {
+		if(!immediate) return startGame(cs, Config.getDefaultTime(setup));
+		return startGame(cs, 0);
 	}
 
 	@Override
@@ -552,11 +553,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	@Override
- 	public boolean resumeGame(Player player, int ticks) {		
+ 	public boolean resumeGame(CommandSender cs, int ticks) {		
 		if (ticks <= 0) {
 			String result = resumeGame(0);
 			if (result != null) {
-				ChatUtils.error(player, result);
+				ChatUtils.error(cs, result);
 				return false;
 			}
 		} else {
@@ -567,9 +568,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 	
 	@Override
-	public boolean resumeGame(Player player, boolean immediate) {
-		if (!immediate) return resumeGame(player, Config.getDefaultTime(setup));
-		return resumeGame(player, 0);
+	public boolean resumeGame(CommandSender cs, boolean immediate) {
+		if (!immediate) return resumeGame(cs, Config.getDefaultTime(setup));
+		return resumeGame(cs, 0);
 	}
 	
 	@Override
@@ -611,10 +612,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 	
 	@Override
-	public boolean pauseGame(Player player) {
+	public boolean pauseGame(CommandSender cs) {
 		String result = pauseGame();
 		if (result != null) {
-			ChatUtils.error(player, "Cannot pause a game that has been paused.");
+			ChatUtils.error(cs, "Cannot pause a game that has been paused.");
 			return false;
 		}
 		return true;
@@ -1145,7 +1146,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	@Override
-	public void listStats(Player player) {
+	public void listStats(CommandSender cs) {
 		int living = 0, dead = 0;
 		List<String> players = new ArrayList<String>(stats.keySet());
 		String mess = "";
@@ -1171,10 +1172,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				mess += ", ";
 			}
 		}
-		ChatUtils.send(player, "<name>[lives/kills]");
-		ChatUtils.send(player, "Total Players: %s Total Living: %s Total Dead or Not Playing: %s", stats.size(), living, dead);
-		ChatUtils.send(player, "");
-		ChatUtils.send(player, mess);
+		ChatUtils.send(cs, "<name>[lives/kills]");
+		ChatUtils.send(cs, "Total Players: %s Total Living: %s Total Dead or Not Playing: %s", stats.size(), living, dead);
+		ChatUtils.send(cs, "");
+		ChatUtils.send(cs, mess);
 	}
 
 	@Override

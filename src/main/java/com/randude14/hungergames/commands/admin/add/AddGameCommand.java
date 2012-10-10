@@ -5,22 +5,20 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.event.GameCreateEvent;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddGameCommand extends Command {
+public class AddGameCommand extends PlayerCommand {
 
 	public AddGameCommand() {
 		super(Perm.ADMIN_ADD_GAME, Commands.ADMIN_ADD_HELP.getCommand(), "game");
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
-	    Player player = (Player) cs;
+	public void handlePlayer(Player player, String label, String[] args) {
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
@@ -46,7 +44,6 @@ public class AddGameCommand extends Command {
 	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
 	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
 	    }
-	    return;
 	}
 
 	@Override

@@ -5,24 +5,22 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddSpawnPointCommand extends Command {
+public class AddSpawnPointCommand extends PlayerCommand {
 
 	public AddSpawnPointCommand() {
 		super(Perm.ADMIN_ADD_SPAWNPOINT, Commands.ADMIN_ADD_HELP.getCommand(), "spawnpoint");
 	}
 
 	@Override
-	public void handle(CommandSender cs, String cmd, String[] args) {
-	    Player player = (Player) cs;	    
+	public void handlePlayer(Player player, String cmd, String[] args) {
 	    if (args.length < 1) {
 		    ChatUtils.send(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
@@ -36,7 +34,6 @@ public class AddSpawnPointCommand extends Command {
 	    
 	    SessionListener.addSession(SessionType.SPAWN_ADDER, player, game.getName());
 	    ChatUtils.send(player, ChatColor.GREEN, "Left-click blocks to add them as spawn points for %s. Right-click to finish.", game.getName());
-	    return;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class ListCommand extends Command {
 
@@ -20,19 +19,16 @@ public class ListCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String cmd, String[] args) {
-		Player player = (Player) cs;
-
-		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+		ChatUtils.send(cs, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		Collection<HungerGame> games = GameManager.INSTANCE.getRawGames();
 		if (games.isEmpty()) {
-			ChatUtils.error(player, "No games have been created yet.");
+			ChatUtils.error(cs, "No games have been created yet.");
 			return;
 		}
 
 		for (HungerGame g : games) {
-			ChatUtils.send(player, ChatColor.GOLD, "- " + g.getInfo());
+			ChatUtils.send(cs, ChatColor.GOLD, "- " + g.getInfo());
 		}
-		return;
 	}
 
 	@Override

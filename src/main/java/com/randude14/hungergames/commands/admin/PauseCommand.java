@@ -18,21 +18,20 @@ public class PauseCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
 
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 
 		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
-		    ChatUtils.error(player, "%s does not exist.", name);
+		    ChatUtils.error(cs, "%s does not exist.", name);
 		    return;
 		}
 
-		if(game.pauseGame(player)) {
+		if(game.pauseGame(cs)) {
 			ChatUtils.broadcast(game, "%s has been paused.", game.getName());
 		}
 		return;

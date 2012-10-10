@@ -10,7 +10,6 @@ import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class StatCommand extends Command {
 
@@ -19,23 +18,20 @@ public class StatCommand extends Command {
 	}
 
 	@Override
-	public void handle(CommandSender cs, String cmd, String[] args) {
-		Player player = (Player) cs;
-		
+	public void handle(CommandSender cs, String cmd, String[] args) {		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_USER);
 			return;
 		}
 
 		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
-			ChatUtils.error(player, Lang.getNotExist().replace("<item>", name));
+			ChatUtils.error(cs, Lang.getNotExist().replace("<item>", name));
 			return;
 		}
-		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
-		game.listStats(player);
-		return;
+		ChatUtils.send(cs, ChatColor.GREEN, ChatUtils.getHeadLiner());
+		game.listStats(cs);
 	}
 
 	@Override

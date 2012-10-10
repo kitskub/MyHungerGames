@@ -5,24 +5,21 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddGameSignCommand extends Command {
+public class AddGameSignCommand extends PlayerCommand {
 
 	public AddGameSignCommand() {
 		super(Perm.ADMIN_ADD_GAME_SIGN, Commands.ADMIN_ADD_HELP.getCommand(), "gamesign");
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
-
+	public void handlePlayer(Player player, String label, String[] args) {
 		if (args.length < 1) {
 			ChatUtils.send(player, getUsage(), HungerGames.CMD_ADMIN);
 			return;
@@ -36,7 +33,6 @@ public class AddGameSignCommand extends Command {
 
 		SessionListener.addSession(SessionListener.SessionType.GAME_SIGN_ADDER, player, game.getName(), "game", game.getName());
 		ChatUtils.send(player, ChatColor.GREEN, "Left-click the sign to add it as a game sign.");
-		return;
 	}
 
 	@Override

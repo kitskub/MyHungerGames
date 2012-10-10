@@ -1,5 +1,6 @@
 v0.9
 - Added about command
+- Allow console to do some commands
 
 v0.8.1
 - Added death-messages - configurable of when displayed

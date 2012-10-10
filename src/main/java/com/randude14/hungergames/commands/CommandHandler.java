@@ -21,10 +21,6 @@ public class CommandHandler implements CommandExecutor {
 	public static Map<String, Command> userCommands = new HashMap<String, Command>();
 
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("In-game use only.");
-			return true;
-		}
 		if (cmd.getLabel().equalsIgnoreCase(HungerGames.CMD_USER)) {
 			handleUserCommand((Player) sender, cmd, args);
 		} else if (cmd.getLabel().equalsIgnoreCase(HungerGames.CMD_ADMIN)) {
@@ -47,14 +43,14 @@ public class CommandHandler implements CommandExecutor {
 		}
 	}
 
-	private void handleUserCommand(Player player, org.bukkit.command.Command cmd, String[] args) {
+	private void handleUserCommand(CommandSender cs, org.bukkit.command.Command cmd, String[] args) {
 		Command command = null;
 		if (args.length == 0 || (command = userCommands.get(args[0].toLowerCase())) == null) {
-			if (!HungerGames.checkPermission(player, Perm.USER_HELP)) return;
-			getUserCommands(player, cmd);
+			if (!HungerGames.checkPermission(cs, Perm.USER_HELP)) return;
+			getUserCommands(cs, cmd);
 			return;
 		}
-		command.execute(player, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
+		command.execute(cs, args[0], (String[]) ArrayUtils.removeElement(args, args[0]));
 		command.save();
 	}
 
@@ -69,17 +65,17 @@ public class CommandHandler implements CommandExecutor {
 		command.save();
 	}
 
-	private void getUserCommands(Player player, org.bukkit.command.Command cmd) {
-		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+	private void getUserCommands(CommandSender cs, org.bukkit.command.Command cmd) {
+		ChatUtils.send(cs, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Command c : userCommands.values()) {
-			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
+			ChatUtils.helpCommand(cs, c.getUsageAndInfo(), cmd.getLabel());
 		}
 	}
 
-	private void getAdminCommands(Player player, org.bukkit.command.Command cmd) {
-		ChatUtils.send(player, ChatColor.GREEN, ChatUtils.getHeadLiner());
+	private void getAdminCommands(CommandSender cs, org.bukkit.command.Command cmd) {
+		ChatUtils.send(cs, ChatColor.GREEN, ChatUtils.getHeadLiner());
 		for (Command c : adminCommands.values()) {
-			ChatUtils.helpCommand(player, c.getUsageAndInfo(), cmd.getLabel());
+			ChatUtils.helpCommand(cs, c.getUsageAndInfo(), cmd.getLabel());
 		}
 	}
 

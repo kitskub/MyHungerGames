@@ -9,7 +9,6 @@ import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class SetEnabledCommand extends Command {
 
@@ -19,14 +18,13 @@ public class SetEnabledCommand extends Command {
 
     @Override
     public void handle(CommandSender cs, String cmd, String[] args) {
-	    Player player = (Player) cs;
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
 	    if (game == null) {
-		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
+		    ChatUtils.error(cs, Lang.getNotExist().replace("<item>", args[0]));
 		    return;
 	    }
 	    
@@ -38,11 +36,10 @@ public class SetEnabledCommand extends Command {
 	    }
 	    game.setEnabled(flag);
 	    if (flag) {
-		    ChatUtils.send(player, "%s has been enabled.", game.getName());
+		    ChatUtils.send(cs, "%s has been enabled.", game.getName());
 	    } else {
-		    ChatUtils.send(player, "%s has been disabled and stopped if it was running.", game.getName());
+		    ChatUtils.send(cs, "%s has been disabled and stopped if it was running.", game.getName());
 	    }
-	    return;
     }
 
 	@Override

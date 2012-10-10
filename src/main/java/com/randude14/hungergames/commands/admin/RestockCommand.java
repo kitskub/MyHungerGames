@@ -10,7 +10,6 @@ import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class RestockCommand extends Command {
 
@@ -20,25 +19,23 @@ public class RestockCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
-	    Player player = (Player) cs;
 	    
 	    String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 	    if (name == null) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 
 	    game = GameManager.INSTANCE.getRawGame(name);
 	    if (game == null) {
-		    ChatUtils.error(player, "%s does not exist.", name);
+		    ChatUtils.error(cs, "%s does not exist.", name);
 		    return;
 	    }
 	    if (game.getState() != GameState.RUNNING) {
-		    ChatUtils.error(player, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
+		    ChatUtils.error(cs, Lang.getNotRunning(game.getSetup()).replace("<game>", game.getName()));
 		    return;
 	    }
 	    game.fillInventories();
-	    return;
 	}
 
 	@Override

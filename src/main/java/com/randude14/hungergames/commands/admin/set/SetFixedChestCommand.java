@@ -6,23 +6,21 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetFixedChestCommand extends Command {
+public class SetFixedChestCommand extends PlayerCommand {
 
     public SetFixedChestCommand() {
 	    super(Perm.ADMIN_SET_FIXED_CHEST, Commands.ADMIN_SET_HELP.getCommand(), "fixedchest");
     }
 
     @Override
-    public void handle(CommandSender cs, String cmd, String[] args) {
-	    Player player = (Player) cs;
+    public void handlePlayer(Player player, String cmd, String[] args) {
 	    if (args.length < 2) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
@@ -45,7 +43,6 @@ public class SetFixedChestCommand extends Command {
 	    }
 	    SessionListener.addSession(SessionType.FIXED_CHEST_ADDER, player, game.getName(), "name", name);
 	    ChatUtils.send(player, "Click chest to add it as a fixed item chest.");
-	    return;
     }
 
 	@Override

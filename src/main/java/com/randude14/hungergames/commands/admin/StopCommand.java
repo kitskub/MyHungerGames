@@ -17,21 +17,19 @@ public class StopCommand extends Command {
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
-		
+	public void handle(CommandSender cs, String label, String[] args) {		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		
 		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
-		    ChatUtils.error(player, "%s does not exist.", name);
+		    ChatUtils.error(cs, "%s does not exist.", name);
 		    return;
 		}
-		if (!game.checkForGameOver(false)) game.stopGame(player, false);
+		if (!game.checkForGameOver(false)) game.stopGame(cs, false);
 	}
 
 	@Override

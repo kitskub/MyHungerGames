@@ -4,22 +4,19 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RemoveItemSetCommand extends Command {
+public class RemoveItemSetCommand extends PlayerCommand {
 
 	public RemoveItemSetCommand() {
 		super(Perm.ADMIN_REMOVE_ITEMSET, Commands.ADMIN_REMOVE_HELP.getCommand(), "itemset");
 	}
 
 	@Override
-	public void handle(CommandSender cs, String cmd, String[] args) {	    
-	    Player player = (Player) cs;
-	    
+	public void handlePlayer(Player player, String cmd, String[] args) {	    	    
 	    if(args.length < 2){
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
@@ -30,7 +27,6 @@ public class RemoveItemSetCommand extends Command {
 		    return;
 	    }
 	    game.removeItemSet(args[1]);
-	    return;
 	}
 
 	@Override

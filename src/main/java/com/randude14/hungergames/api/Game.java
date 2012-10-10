@@ -9,12 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public interface Game {
 	public boolean isSpectating(Player player);
 
-	public boolean stopGame(Player player, boolean isFinished);
+	public boolean stopGame(CommandSender notifier, boolean isFinished);
 	
 	public String stopGame(boolean isFinished);
 	
@@ -25,7 +26,7 @@ public interface Game {
 	 * @param ticks
 	 * @return true if game or countdown was successfully started
 	 */
-	public boolean startGame(Player player, int ticks);
+	public boolean startGame(CommandSender player, int ticks);
 	
 	/**
 	 * Starts this game with the default time if immediate is true. Otherwise, starts the game immediately.
@@ -34,7 +35,7 @@ public interface Game {
 	 * @param immediate
 	 * @return
 	 */	
-	public boolean startGame(Player notifier, boolean immediate);
+	public boolean startGame(CommandSender notifier, boolean immediate);
 
 	/**
 	 * Starts this game with the default time if immediate is true. Otherwise, starts the game immediately.
@@ -54,9 +55,9 @@ public interface Game {
 	public String startGame(int ticks);
 
 	
- 	public boolean resumeGame(Player player, int ticks);	
+ 	public boolean resumeGame(CommandSender notifier, int ticks);	
 	
-	public boolean resumeGame(Player player, boolean immediate);
+	public boolean resumeGame(CommandSender notifier, boolean immediate);
 	
 	public boolean resumeGame(boolean immediate);
 	
@@ -68,7 +69,7 @@ public interface Game {
 	 */
 	public String resumeGame(int ticks);
 	
-	public boolean pauseGame(Player notifier);
+	public boolean pauseGame(CommandSender notifier);
 	
 	/**
 	 * 
@@ -133,7 +134,7 @@ public interface Game {
 	
 	public PlayerStat getPlayerStat(OfflinePlayer player);
 	
-	public void listStats(Player player);
+	public void listStats(CommandSender notifier);
 	
 	public String getName();
 

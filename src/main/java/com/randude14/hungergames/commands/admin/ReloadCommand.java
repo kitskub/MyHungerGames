@@ -16,10 +16,9 @@ public class ReloadCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
 
 		HungerGames.reload();
-		ChatUtils.send(player, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
+		ChatUtils.send(cs, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
 	}
 
 	@Override

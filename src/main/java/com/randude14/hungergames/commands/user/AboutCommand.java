@@ -3,8 +3,8 @@ package com.randude14.hungergames.commands.user;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
+
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class AboutCommand extends Command {
 

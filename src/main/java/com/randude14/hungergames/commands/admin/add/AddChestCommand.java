@@ -5,24 +5,22 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.listeners.SessionListener;
 import com.randude14.hungergames.listeners.SessionListener.SessionType;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AddChestCommand extends Command {
+public class AddChestCommand extends PlayerCommand {
 
 	public AddChestCommand() {
 		super(Perm.ADMIN_ADD_CHEST, Commands.ADMIN_ADD_HELP.getCommand(), "chest");
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
-	    Player player = (Player) cs;
+	public void handlePlayer(Player player, String label, String[] args) {
 	    
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
@@ -43,7 +41,6 @@ public class AddChestCommand extends Command {
 		    } catch (NumberFormatException numberFormatException) {}
 	    }
 	    SessionListener.addSession(SessionType.CHEST_ADDER, player, args[0]);
-	    return;
 	}
 
 	@Override

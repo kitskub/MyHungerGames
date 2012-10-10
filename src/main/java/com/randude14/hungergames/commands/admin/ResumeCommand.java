@@ -18,23 +18,22 @@ public class ResumeCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
-		Player player = (Player) cs;
 		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}	
 
 		game = GameManager.INSTANCE.getRawGame(name);
 		if (game == null) {
-		    ChatUtils.error(player, "%s does not exist.", name);
+		    ChatUtils.error(cs, "%s does not exist.", name);
 		    return;
 		}
 
 		if(args.length == 1) {
-			if(!game.resumeGame(player, false)) {
-				ChatUtils.error(player, "Failed to resume %s.", game.getName());
+			if(!game.resumeGame(cs, false)) {
+				ChatUtils.error(cs, "Failed to resume %s.", game.getName());
 			}
 
 		}
@@ -44,11 +43,11 @@ public class ResumeCommand extends Command {
 			try {
 				seconds = Integer.parseInt(args[1]);
 			} catch (Exception ex) {
-				ChatUtils.error(player, "'%s' is not an integer.", args[1]);
+				ChatUtils.error(cs, "'%s' is not an integer.", args[1]);
 				return;
 			}
-			if(!game.resumeGame(player, seconds)) {
-				ChatUtils.error(player, "Failed to resume %s.", game.getName());
+			if(!game.resumeGame(cs, seconds)) {
+				ChatUtils.error(cs, "Failed to resume %s.", game.getName());
 			}
 
 		}

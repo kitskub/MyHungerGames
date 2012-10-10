@@ -4,8 +4,6 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import org.bukkit.command.CommandSender;
 
 public class SetHelp extends Command {
@@ -19,7 +17,6 @@ public class SetHelp extends Command {
 		for (Command c : subCommands) {
 			ChatUtils.helpCommand(cs, c.getUsageAndInfo(), "hga");
 		}
-		return;
 	}
 
 	@Override

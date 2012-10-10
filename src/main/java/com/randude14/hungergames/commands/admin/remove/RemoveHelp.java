@@ -2,24 +2,22 @@ package com.randude14.hungergames.commands.admin.remove;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.entity.Player;
 
-import org.bukkit.command.CommandSender;
-
-public class RemoveHelp extends Command {
+public class RemoveHelp extends PlayerCommand {
 
 	public RemoveHelp() {
 		super(Perm.ADMIN_REMOVE_HELP, "remove", ADMIN_COMMAND);
 	}
 
 	@Override
-	public void handle(CommandSender cs, String label, String[] args) {
+	public void handlePlayer(Player cs, String label, String[] args) {
 		for (Command c : subCommands) {
 			ChatUtils.helpCommand(cs, c.getUsageAndInfo(), "hga");
 		}
-		return;
 	}
 
 	@Override

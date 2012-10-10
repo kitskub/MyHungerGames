@@ -5,22 +5,20 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetSpawnCommand extends Command {
+public class SetSpawnCommand extends PlayerCommand {
 
     public SetSpawnCommand() {
 	    super(Perm.ADMIN_SET_SPAWN, Commands.ADMIN_SET_HELP.getCommand(), "spawn");
     }
 
     @Override
-    public void handle(CommandSender cs, String cmd, String[] args) {
-	    Player player = (Player) cs;
+    public void handlePlayer(Player player, String cmd, String[] args) {
 	    if (args.length < 1) {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
@@ -34,7 +32,6 @@ public class SetSpawnCommand extends Command {
 	    Location loc = player.getLocation();
 	    game.setSpawn(loc);
 	    ChatUtils.send(player, "Spawn has been set for %s.", game.getName());
-	    return;
     }
 
 	@Override
