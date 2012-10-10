@@ -1,5 +1,9 @@
+v0.9
+- Added about command
+
 v0.8.1
 - Added death-messages - configurable of when displayed
+- Added disable-flight
 - Fixed maven groupId
 - Fix blacklisting chests
 

@@ -1,8 +1,9 @@
 name: MyHungerGames
 main: com.randude14.hungergames.HungerGames
-version: 0.8.1
+version: 0.9-dev
 authors: [kitskub, Randude14]
 softdepend: [Vault, HawkEye, LogBlock]
+description: A plugin that provides functionality similar to and more than the HungerGames. Sponsored be treepuncher.com
 
 commands:
     hga:
