@@ -169,7 +169,7 @@ public class Defaults {
 	USER_BACK(new Permission("hungergame.user.back"), USER),
 	USER_ALLOW_FLIGHT(new Permission("hungergame.user.allowflight"), USER),
 	USER_JOIN(new Permission("hungergame.user.join"), USER),
-	USER_KIT(new Permission("hungergame.user.kit"), USER),
+	USER_KIT(new Permission("hungergame.user.kit"), null),
 	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 	USER_LIST(new Permission("hungergame.user.list"), USER),
 	USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),

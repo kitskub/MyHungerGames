@@ -25,7 +25,7 @@
 * Option to force survival on players
 * Configurable option to freeze players on join
 * Option to force damage, even if it had been cancelled (to stop plugins like Factions)
-* World/Arena resetting on game end internally or by hook into Hawkeye or partial hook into LogBlock (limited by LogBlock)
+* World/Arena resetting on game end internally or by hook into Hawkeye or Multiverse-Adventure or partial hook into LogBlock (limited by LogBlock)
 * Configurable player chat isolation in game
 * Option for only subscribers to hear announcements
 * Option to remove items on ground after game ends

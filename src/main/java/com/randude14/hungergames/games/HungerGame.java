@@ -803,7 +803,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	 * @param fromTemporary if the player leaving was temporary. Leave is not temporary.
 	 * @return
 	 */
-	private synchronized boolean playerEntering(Player player, boolean fromTemporary) {
+	 private synchronized boolean playerEntering(Player player, boolean fromTemporary) {
 	    Location loc;
 	    if (!fromTemporary) {
 		    loc = getNextOpenSpawnPoint();

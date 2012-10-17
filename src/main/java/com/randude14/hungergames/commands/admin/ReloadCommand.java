@@ -6,7 +6,6 @@ import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class ReloadCommand extends Command {
 
@@ -16,7 +15,6 @@ public class ReloadCommand extends Command {
 
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
-
 		HungerGames.reload();
 		ChatUtils.send(cs, ChatUtils.getPrefix() + "Reloaded %s", HungerGames.getInstance().getDescription().getVersion());
 	}

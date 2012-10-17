@@ -3,23 +3,32 @@ package com.randude14.hungergames.reset;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.games.HungerGame;
 
-public class ResetHandler{
-    public static final String INTERNAL = "INTERNAL";
-    public static final String LOGBLOCK = "LOGBLOCK";
-    public static final String HAWKEYE = "HAWKEYE";
+public class ResetHandler {
+    
+    public enum Resetters {
+	    INTERNAL,
+	    LOGBLOCK,
+	    HAWKEYE,
+	    MVA;
+    }
+
     private static Resetter resetter;
     
     
-    public static void setRessetter(String string) {
-	    if (string.equalsIgnoreCase(HAWKEYE)) {
-		    resetter = new HawkEyeResetter();
-	    }
-	    else if (string.equalsIgnoreCase(LOGBLOCK)) {
-		    resetter = new LogBlockResetter();
-	    }
-	    else {
-		    resetter = new InternalResetter();
-	    }
+    public static void setRessetter(Resetters r) {
+	    switch (r) {
+		    case HAWKEYE:
+			    resetter = new HawkEyeResetter();
+			    break;
+		    case LOGBLOCK:
+			    resetter = new LogBlockResetter();
+			    break;
+		    case MVA:
+			    resetter = new LogBlockResetter();
+			    break;
+		    default:
+			    resetter = new InternalResetter();
+	    }	
 	    resetter.init();
     }
     

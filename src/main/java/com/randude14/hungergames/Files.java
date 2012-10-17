@@ -39,7 +39,7 @@ public enum Files {
 			if (!file.exists()) {
 				Logging.debug("File %s does not exist. Creating.", path);
 				if (hasDefault) {
-					if (!file.exists()) HungerGames.getInstance().saveResource(path, false);
+					HungerGames.getInstance().saveResource(path, false);
 				}
 				else {
 					file.createNewFile();
@@ -56,10 +56,7 @@ public enum Files {
 			Logging.warning("Tried to create " + file.getName() + " but could not.");
 		} catch (IOException ex) {
 			Logging.warning("Something went wrong when loading: " + path);
-		} catch (InvalidConfigurationException ex) {
-		}
-		
-		
+		} catch (InvalidConfigurationException ex) {}		
 	}
 	
 	public File getFile() {
@@ -85,6 +82,7 @@ public enum Files {
 		}
 		return yamlConfig;
 	}
+
 	public static void loadAll() {
 		HungerGames.getInstance().getDataFolder().mkdirs();
 		for (Files f : values()) {

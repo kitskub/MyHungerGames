@@ -102,5 +102,13 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/HawkEye.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>com.onarandombox.MultiverseAdventure</groupId>
+			<artifactId>Multiverse-Adventure</artifactId>
+			<version>2.5</version>
+			<!-- Because we don't have a repo for this dep! -->
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Multiverse-Adventure.jar</systemPath>
+		</dependency>
 	</dependencies>
 </project>
