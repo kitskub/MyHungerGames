@@ -55,12 +55,14 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	public boolean resetChanges(HungerGame game) {
 		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
 		if(!changedBlocks.containsKey(new EquatableWeakReference<HungerGame>(game))) return true;
+		int chests = 0;
 		for(Location l : changedBlocks.get(eMap).keySet()) {
-		BlockState state = changedBlocks.get(eMap).get(l);
-		if (state instanceof Chest) Logging.debug("Resetting chest");
-		l.getBlock().setTypeId(state.getTypeId());
-		l.getBlock().setData(state.getRawData());
+			BlockState state = changedBlocks.get(eMap).get(l);
+			if (state instanceof Chest) chests++; 
+			l.getBlock().setTypeId(state.getTypeId());
+			l.getBlock().setData(state.getRawData());
 		}
+		Logging.debug("Reset " + chests + " chests");
 		changedBlocks.get(eMap).clear();
 		return true;
 	}

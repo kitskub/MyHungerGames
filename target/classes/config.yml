@@ -167,6 +167,16 @@ global:
   # If 2, a message will be shown only on the last death
   show-death-messages: 1
   
+  # Contains options relating to teams
+  teams:
+    
+    # If this is true, any player with the permission hungergame.team.<team> (with "team" being the team name) or hungergame.team (allows all) can join a team 
+    allow-teams: true
+
+    # If this is false, team members cannot hurt each other
+    allow-friendly-damage: false
+    
+  
 # Setups ADD to global in any list
 setups:
 #  test1:

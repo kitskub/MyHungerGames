@@ -15,10 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 
 
 public class PlayerListener implements Listener {
@@ -76,11 +73,18 @@ public class PlayerListener implements Listener {
 		PlayerQueueHandler.addPlayer(event.getPlayer());
 	}
 	
-	@EventHandler(priority= EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerSneak(PlayerToggleSneakEvent event) {
 		HungerGame game;
 		if ((game = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer())) == null) return;
 		if (!Config.getHidePlayers(game.getSetup())) return;
 		event.setCancelled(true);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)	
+	public void onItemPickup(PlayerPickupItemEvent event) {
+		if (GameManager.INSTANCE.getSpectating(event.getPlayer()) != null) {
+			event.setCancelled(true);
+		}
 	}
 }

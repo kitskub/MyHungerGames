@@ -29,7 +29,6 @@ public class BlockListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
-		Logging.debug(event.getLine(0));
 		if(!event.getLine(0).equalsIgnoreCase("[MyHungerGames]")) return;
 		String[] lines = event.getLines();
 		SignListener.ListenerType type = SignListener.ListenerType.byId(lines[1]);

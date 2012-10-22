@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.lang.ArrayUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -335,6 +336,7 @@ public class HungerGames extends JavaPlugin{
 		float pitch = Float.parseFloat(strs[4]);
 		World world = Bukkit.getServer().getWorld(strs[5]);
 		if (world == null) throw new WorldNotFoundException("Could not load world \"" + strs[5] + "\" when loading location \"" + str);
+		Logging.debug("World with name " + strs[5] + " was parsed as " + world.getName());
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 	
@@ -423,14 +425,18 @@ public class HungerGames extends JavaPlugin{
 	public static void rewardPlayer(Player player) {
 		List<ItemStack> items = new ArrayList<ItemStack>();
 		items.addAll(ItemConfig.getStaticRewards());
-		
+		Logging.debug("rewardPlayer: items after static: " + ArrayUtils.toString(items));
 		Map<ItemStack, Float> itemMap = ItemConfig.getRandomRewards();
 
 		int size = ItemConfig.getMaxRandomItems();
 		final int maxItemSize = 25;
 		int numItems = items.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(items.size()))/Math.sqrt(maxItemSize));
+		Logging.debug("rewardPlayer: items after random: " + ArrayUtils.toString(items));
 		for (int cntr = 0; cntr < numItems; cntr++) {			
-			ItemStack item = items.get(rand.nextInt(items.size()));
+			ItemStack item = null;
+			while (item == null) { // TODO items should not have any null elements, but do.
+				item = items.get(rand.nextInt(items.size()));
+			}
 			if (itemMap.get(item) >= rand.nextFloat()) {
 				items.add(item);
 			}

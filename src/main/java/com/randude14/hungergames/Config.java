@@ -345,6 +345,14 @@ public class Config {
 	public static boolean getDisableFlyGlobal() {
 		return getGlobalBoolean("disable-fly", DISABLE_FLY.getBoolean());
 	}
+		
+	public static boolean getAllowTeamsGlobal() {
+		return getGlobalBoolean("teams.allow-teams", TEAMS_ALLOW_TEAMS.getBoolean());
+	}
+		
+	public static boolean getAllowTeamFriendlyDamageGlobal() {
+		return getGlobalBoolean("teams.allow-friendly-damage", TEAMS_ALLOW_FRIENDLY_DAMAGE.getBoolean());
+	}
 	
 	// Setups
 	public static int getMinVote(String setup) {
@@ -501,6 +509,14 @@ public class Config {
 
 	public static boolean getDisableFly(String setup) {
 		return getBoolean("disable-fly", setup, getDisableFlyGlobal());
+	}
+
+	public static boolean getAllowTeam(String setup) {
+		return getBoolean("teams.allow-teams", setup, getAllowTeamsGlobal());
+	}
+
+	public static boolean getAllowTeamFriendlyDamage(String setup) {
+		return getBoolean("teams.allow-friendly-damage", setup, getAllowTeamFriendlyDamageGlobal());
 	}
 
 	public static List<ItemStack> getSpecialBlocksPlace(String setup) {

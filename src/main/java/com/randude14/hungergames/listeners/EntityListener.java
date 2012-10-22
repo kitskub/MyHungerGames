@@ -6,6 +6,7 @@ import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
+import com.randude14.hungergames.stats.PlayerStat.Team;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.entity.Player;
@@ -23,20 +24,31 @@ public class EntityListener implements Listener{
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		// Games
-		HungerGame killedGame = GameManager.INSTANCE.getRawSession(player);
-		if (killedGame != null) {
-			if (Config.getForceDamage(killedGame.getSetup())) {
+		HungerGame hurtGame = GameManager.INSTANCE.getRawSession(player);
+		if (hurtGame != null) {
+			if (Config.getForceDamage(hurtGame.getSetup())) {
 				event.setCancelled(false);
-				return;
 			}
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent newEvent = (EntityDamageByEntityEvent) event;
-				double period = Config.getGracePeriod(killedGame.getSetup());
-				long startTime = killedGame.getInitialStartTime();
+				double period = Config.getGracePeriod(hurtGame.getSetup());
+				long startTime = hurtGame.getInitialStartTime();
 				if (((System.currentTimeMillis() - startTime) / 1000) < period) {
 					event.setCancelled(true);
 					if (newEvent.getDamager() instanceof Player) {
 						ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt that player during the grace-period!");
+					}
+				}
+				if (!Config.getAllowTeamFriendlyDamage(hurtGame.getSetup())) {
+					Team hurtTeam = hurtGame.getPlayerStat(player).getTeam();
+					if (newEvent.getDamager() instanceof Player && hurtTeam != null && hurtGame.contains((Player) newEvent.getDamager())){
+						Team hurterTeam = hurtGame.getPlayerStat((Player) newEvent.getDamager()).getTeam();
+						if (hurterTeam != null) {
+							if (hurtTeam.getName().equals(hurterTeam.getName())) {
+								event.setCancelled(true);
+								ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt a player on your team!");
+							}
+						}
 					}
 				}
 			}
@@ -49,7 +61,7 @@ public class EntityListener implements Listener{
 		}
 	}
 	
-	@EventHandler(priority= EventPriority.HIGHEST, ignoreCancelled=true)
+	@EventHandler(priority= EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityTargetEntity(EntityTargetLivingEntityEvent event) {
 		if (!(event.getTarget() instanceof Player)) return;
 		Player player = (Player) event.getTarget();

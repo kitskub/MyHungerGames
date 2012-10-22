@@ -10,12 +10,12 @@ import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.register.HGPermission;
+import com.randude14.hungergames.stats.PlayerStat.Team;
 import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,8 +26,6 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.*;
 import org.bukkit.block.Chest;
@@ -52,6 +50,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
 	private final List<Long> startTimes;
 	private final List<Long> endTimes;
+	private final List<Team> teams;
 	private long initialStartTime;
 
 	// Persistent
@@ -92,6 +91,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		randomLocs = new ArrayList<Location>();
 		startTimes = new ArrayList<Long>();
 		endTimes = new ArrayList<Long>();
+		teams = new ArrayList<Team>();
 		initialStartTime = 0;
 		
 		chests = new HashMap<Location, Float>();
@@ -291,7 +291,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public void run() {
 		if (state != RUNNING) return;
 		Random rand = HungerGames.getRandom();
-		Location loc = getRemainingPlayers().get(rand.nextInt(getRemainingPlayers().size())).getLocation();
+		int size = getRemainingPlayers().size();
+		if (size < 0) {
+			Logging.debug("HungerGame.run(): Unexpected size:" + size);
+			return;
+		}
+		Location loc = getRemainingPlayers().get(rand.nextInt(size)).getLocation();
 		if (randomLocs.size() >= 15) randomLocs.remove(rand.nextInt(15));
 		randomLocs.add(loc);
 	}

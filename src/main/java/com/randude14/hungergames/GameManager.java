@@ -216,10 +216,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 		if(section == null){
 		    section = Files.GAMES.getConfig().createSection("games");
 		}
-		ConfigurationSection saveSection = section.getConfigurationSection(game.getName());
-		if(saveSection == null) {
-		    saveSection = section.createSection(game.getName());
-		}
+		ConfigurationSection saveSection = section.createSection(game.getName());
 		game.saveTo(saveSection);
 		Files.GAMES.save();
 	}

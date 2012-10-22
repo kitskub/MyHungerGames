@@ -1,8 +1,9 @@
 package com.randude14.hungergames.stats;
 
 import com.randude14.hungergames.Config;
+import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.games.HungerGame;
-import java.lang.ref.WeakReference;
+
 import java.util.*;
 
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	private List<String> kills;
 	private PlayerState state;
 	private long elapsedTimeInMillis;
+	private Team team;
 
 	public PlayerStat(HungerGame game, Player player) {
 		deaths = new ArrayList<String>();
@@ -95,6 +97,16 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		else if (ratio > otherRatio) return 1;
 		return -1;
 	}
+	
+	public void setTeam(Team team) {
+		if (team != null) team.removePlayer(this);
+		this.team = team;
+		team.addPlayer(this);
+	}
+
+	public Team getTeam() {
+		return team;
+	}
 
 	public enum PlayerState {
 		NOT_IN_GAME,
@@ -111,5 +123,57 @@ public class PlayerStat implements Comparable<PlayerStat> {
 			return o1.compareTo(o2);
 		}
 		
+	}
+	
+	public static class Team {
+		private final String name;
+		private List<PlayerStat> players = new ArrayList<PlayerStat>();
+		private static Map<String, Team> teams = new HashMap<String, Team>();
+
+		private Team(String name) {
+			this.name = name;
+		}
+		
+		public static Team get(String name) {
+			Team team = teams.get(name);
+			if (team != null) return team;
+			team = new Team(name);
+			teams.put(name, team);
+			return team;
+		}
+		private void addPlayer(PlayerStat stat) {
+			players.add(stat);
+		}
+
+		private void removePlayer(PlayerStat stat) {
+			players.remove(stat);
+		}
+		
+		public static boolean inSameTeam(PlayerStat player, PlayerStat... players) {
+			Team team = player.getTeam();
+			if (team == null) {
+				return false;
+			}
+			for (PlayerStat stat : players) {
+				Team statTeam = stat.getTeam();
+				if (statTeam == null) return false;
+				if (!team.getName().equals(statTeam.getName())) return false;
+			}
+			return true;
+		}
+
+		public boolean inTeam(PlayerStat... stats) {
+			for (PlayerStat stat : stats) {
+				if (!players.contains(stat)) return false;
+			}
+			return true;
+		}
+
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
 	}
 }

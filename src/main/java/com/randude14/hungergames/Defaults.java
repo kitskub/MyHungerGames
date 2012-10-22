@@ -89,6 +89,8 @@ public class Defaults {
 	STOP_TARGETTING(true),
 	HIDE_PLAYERS(true),
 	SHOW_DEATH_MESSAGES(1),
+	TEAMS_ALLOW_TEAMS(true),
+	TEAMS_ALLOW_FRIENDLY_DAMAGE(false),
 	DISABLE_FLY(true);
 	
 	
@@ -177,6 +179,7 @@ public class Defaults {
 	USER_SPECTATE(new Permission("hungergame.user.spectate"), USER),
 	USER_SPONSOR(new Permission("hungergame.user.sponsor"), USER),
 	USER_SUBSCRIBE(new Permission("hungergame.user.subscribe"), USER),
+	USER_TEAM(new Permission("hungergame.user.team"), USER),
 	USER_VOTE(new Permission("hungergame.user.vote"), USER),
 	USER_STAT(new Permission("hungergame.user.stat"), USER),
 	USER_HELP(new Permission("hungergame.user.help"), USER),
@@ -245,6 +248,7 @@ public class Defaults {
 	USER_SPONSOR(new SponsorCommand()),
 	USER_STAT(new StatCommand()),
 	USER_SUBSCRIBE(new SubscribeCommand()),
+	USER_TEAM(new TeamCommand()),
 	USER_VOTE(new VoteCommand());
 	
 	private Command command;
