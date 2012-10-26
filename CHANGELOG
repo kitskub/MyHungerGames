@@ -4,6 +4,7 @@ v0.9
 - Added Multiverse-Adventure to resetter
 - Added teams
 - Spectators can no longer pick up items
+- Correctly reset chests
 
 v0.8.1
 - Added death-messages - configurable of when displayed

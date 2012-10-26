@@ -35,6 +35,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.inventory.InventoryHolder;
 
 public class InternalResetter extends Resetter implements Listener, Runnable {
 	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, BlockState>> changedBlocks = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, BlockState>>());
@@ -58,9 +59,12 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 		int chests = 0;
 		for(Location l : changedBlocks.get(eMap).keySet()) {
 			BlockState state = changedBlocks.get(eMap).get(l);
-			if (state instanceof Chest) chests++; 
 			l.getBlock().setTypeId(state.getTypeId());
 			l.getBlock().setData(state.getRawData());
+			if (state instanceof InventoryHolder) {
+				((InventoryHolder) l.getBlock().getState()).getInventory().setContents(((InventoryHolder)state).getInventory().getContents());
+				chests++;
+			}
 		}
 		Logging.debug("Reset " + chests + " chests");
 		changedBlocks.get(eMap).clear();
