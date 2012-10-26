@@ -8,9 +8,8 @@ public class Economy {
 	private final net.milkbowl.vault.economy.Economy econ;
 
 	public Economy() {
-		RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> provider = Bukkit
-				.getServicesManager().getRegistration(
-						net.milkbowl.vault.economy.Economy.class);
+		RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> provider = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (provider == null) throw new IllegalStateException("Vault was not registered but is enabled");
 		econ = provider.getProvider();
 	}
 	

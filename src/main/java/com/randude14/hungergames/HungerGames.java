@@ -119,12 +119,11 @@ public class HungerGames extends JavaPlugin{
 	private static void loadRegistry() {
 	    if (!VaultPermission.isVaultInstalled()) {
 		Logging.info("Vault is not installed, defaulting to Bukkit perms.");
-		perm = new BukkitPermission();
+		HGPermission.INSTANCE = perm = new BukkitPermission();
 		return;
 	    } else {
-		perm = new VaultPermission();
+		HGPermission.INSTANCE = perm = new VaultPermission();
 	    }
-	    HGPermission.INSTANCE = perm;
 
 	    if (!Economy.isVaultInstalled()) {
 		Logging.warning("Vault is not installed, economy use disabled.");
