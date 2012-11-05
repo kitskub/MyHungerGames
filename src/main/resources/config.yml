@@ -9,7 +9,7 @@ global:
   # IP/URL to use to connect to webstats
   # use 0.0.0.0 to not record webstats
   # GLOBAL ONLY
-  webstats-ip: http://myhungergames.fragzone.org/dbproxy.php
+  webstats-ip: http://mcmyhg.com/dbproxy.php
   
   # whether players should automatically join the game when there is an available spot in a game
   # GLOBAL ONLY

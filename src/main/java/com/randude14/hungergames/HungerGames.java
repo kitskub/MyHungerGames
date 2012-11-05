@@ -335,7 +335,6 @@ public class HungerGames extends JavaPlugin{
 		float pitch = Float.parseFloat(strs[4]);
 		World world = Bukkit.getServer().getWorld(strs[5]);
 		if (world == null) throw new WorldNotFoundException("Could not load world \"" + strs[5] + "\" when loading location \"" + str);
-		Logging.debug("World with name " + strs[5] + " was parsed as " + world.getName());
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 	

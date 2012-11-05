@@ -46,7 +46,7 @@ public enum Files {
 				}
 			}
 			if (type == FileType.YML) {
-				Logging.debug("Loading: " + path);
+				//Logging.debug("Loading: " + path);
 				yamlConfig = new YamlConfiguration();
 				yamlConfig.load(file);
 			}

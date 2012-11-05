@@ -5,6 +5,7 @@ v0.9
 - Added teams
 - Spectators can no longer pick up items
 - Correctly reset chests
+- Fix countdown always starting at 0
 
 v0.8.1
 - Added death-messages - configurable of when displayed

@@ -35,11 +35,15 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class InternalResetter extends Resetter implements Listener, Runnable {
 	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, BlockState>> changedBlocks = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, BlockState>>());
-	private static final Map<Block, BlockState> toCheck = new ConcurrentHashMap<Block, BlockState>();
+	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>> changedInvs = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>>());
+	private static final Map<Location, BlockState> toCheck = new ConcurrentHashMap<Location, BlockState>();
+	private static final Map<Location, ItemStack[]> toCheckInvs = new ConcurrentHashMap<Location, ItemStack[]>();
 
 
 	@Override
@@ -56,26 +60,29 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	public boolean resetChanges(HungerGame game) {
 		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
 		if(!changedBlocks.containsKey(new EquatableWeakReference<HungerGame>(game))) return true;
-		int chests = 0;
 		for(Location l : changedBlocks.get(eMap).keySet()) {
 			BlockState state = changedBlocks.get(eMap).get(l);
 			l.getBlock().setTypeId(state.getTypeId());
 			l.getBlock().setData(state.getRawData());
-			if (state instanceof InventoryHolder) {
-				((InventoryHolder) l.getBlock().getState()).getInventory().setContents(((InventoryHolder)state).getInventory().getContents());
-				chests++;
-			}
+
+		}
+		int chests = 0;
+		for(Location l : changedInvs.get(eMap).keySet()) {
+			BlockState state = l.getBlock().getState();
+			if (!(state instanceof InventoryHolder)) throw new IllegalStateException("Error when resetting a game: inventory saved for non-InventoryHolder");
+			((InventoryHolder) state).getInventory().setContents(changedInvs.get(eMap).get(l));
+			chests++;
+
 		}
 		Logging.debug("Reset " + chests + " chests");
 		changedBlocks.get(eMap).clear();
 		return true;
 	}
 
-	private static HungerGame insideGame(Block block) {
-		Location loc = block.getLocation();
+	private static HungerGame insideGame(Location loc) {
 		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
 			if (game.getWorlds().size() <= 0 && game.getCuboids().size() <= 0) return null;
-			if (game.getWorlds().contains(block.getWorld())) return game;
+			if (game.getWorlds().contains(loc.getWorld())) return game;
 			for (Cuboid c : game.getCuboids()) {
 				if (c.isLocationWithin(loc)) return game;
 			}
@@ -85,11 +92,12 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	public void run() {
 	synchronized(toCheck) {
-		for (Iterator<Block> it = toCheck.keySet().iterator(); it.hasNext();) {
-			Block b = it.next();
-			HungerGame game = insideGame(b);
+		for (Iterator<Location> it = toCheck.keySet().iterator(); it.hasNext();) {
+			Location loc = it.next();
+			HungerGame game = insideGame(loc);
 			if (game != null) {
-				addBlockState(game, b, toCheck.get(b));
+				addBlockState(game, loc, toCheck.get(loc));
+				addInv(game, loc, toCheckInvs.get(loc));
 			}
 			it.remove();
 		}
@@ -98,20 +106,30 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	private static void addToCheck(Block block, BlockState state) {
 		synchronized(toCheck) {
-			toCheck.put(block, state);
+			toCheck.put(block.getLocation(), state);
+			if (state instanceof InventoryHolder) {
+				toCheckInvs.put(block.getLocation(), ((InventoryHolder) state).getInventory().getContents());
+			}
 		}
 	}
 
-	private static synchronized void addBlockState(HungerGame game, Block block, BlockState state) {
+	private static synchronized void addBlockState(HungerGame game, Location loc, BlockState state) {
 		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
 		if (!changedBlocks.containsKey(eMap)) changedBlocks.put(eMap, new HashMap<Location, BlockState>());
-		if (changedBlocks.get(eMap).containsKey(block.getLocation())) return; // Don't want to erase the original block
-		changedBlocks.get(eMap).put(block.getLocation(), state);
+		if (changedBlocks.get(eMap).containsKey(loc)) return; // Don't want to erase the original block
+		changedBlocks.get(eMap).put(loc, state);
+	}
+
+	private static synchronized void addInv(HungerGame game, Location loc, ItemStack[] inv) {
+		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
+		if (!changedInvs.containsKey(eMap)) changedInvs.put(eMap, new HashMap<Location, ItemStack[]>());
+		if (changedInvs.get(eMap).containsKey(loc)) return; // Don't want to erase the original block
+		changedInvs.get(eMap).put(loc, inv);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Chest) {
+		if (event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof InventoryHolder) {
 			addToCheck(event.getClickedBlock(), event.getClickedBlock().getState());
 		}
 	}

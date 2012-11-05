@@ -251,8 +251,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		for (cntr = 0; cntr < spawnPoints.size(); cntr++) {
 			Location loc = spawnPoints.get(cntr);
 			if (loc == null) continue;
-			//Logging.debug("Saving a spawnpoint. It's location is: " + loc);
-			spawnPointsSection.set("spawnpoint" + (cntr + 1), HungerGames.parseToString(loc));
+			String parsed = HungerGames.parseToString(loc);
+			Logging.debug("Saving a spawnpoint. It's location is: " + loc + "\n" + "Parsed as: " + parsed);
+			spawnPointsSection.set("spawnpoint" + (cntr + 1), parsed);
 		}
 		cntr = 1;
 		for (Location loc : chests.keySet()) {
@@ -488,7 +489,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	@Override
 	public boolean startGame(CommandSender cs, int ticks) {
-		String result = startGame(0);
+		String result = startGame(ticks);
 		if (result != null) {
 			ChatUtils.error(cs, result);
 			return false;
