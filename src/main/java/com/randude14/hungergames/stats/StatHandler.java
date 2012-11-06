@@ -34,12 +34,21 @@ import org.xml.sax.SAXException;
 *   day
 */
 public class StatHandler {
+	/**
+	 * {"requestType"; "updateGames"}
+	 * {"startTime"; game's initial start time divided by 1000 (it was in milliseconds, we want seconds)}
+	 * {"totalPlayers"; number of players in game}
+	 * {"winner"; name of winner or "N/A" if none}
+	 * {"players"; "{player1}{player2}{etc.}"}
+	 * {"totalDuration"; sum of all times divided by 1000}
+	 * {"sponsors"; "{sponsor1:{sponsee1}{sponsee2}}{sponsor2:{sponsee1}{etc.}}{etc.}"}
+	 */
 	public static void updateGame(HungerGame game) {
 		String urlString = Config.getWebStatsIP();
 		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updateGames");
-		map.put("startTime", String.valueOf(game.getInitialStartTime()/1000l));
+		map.put("startTime", new Date(game.getInitialStartTime()).toString());
 
 		map.put("totalPlayers", String.valueOf(game.getAllPlayers().size()));
 		if (game.getRemainingPlayers().size() != 1) {
@@ -58,7 +67,7 @@ public class StatHandler {
 		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
 			totalDuration += game.getEndTimes().get(i) - game.getStartTimes().get(i);
 		}
-		map.put("totalDuration", String.valueOf(totalDuration));
+		map.put("totalDuration", new Time(totalDuration).toString());
 		StringBuilder sponsorsSB = new StringBuilder();
 		for (String s : game.getSponsors().keySet()) {
 			sponsorsSB.append("{").append(s).append(":");
@@ -77,6 +86,14 @@ public class StatHandler {
 		}
 	}
 
+	/**
+	 * {"requestType"; "updatePlayers"}
+	 * {"playerName"; player name}
+	 * {"totalTime"; total time (in hh:mm:ss)}
+	 * {"wins"; 0 if lost, 1 if won}
+	 * {"kills"; number of kills}
+	 * {"deaths"; number of deaths}
+	 */
 	public static void updateStat(PlayerStat stat) {
 		String urlString = Config.getWebStatsIP();
 		if ("0.0.0.0".equals(urlString)) return;
