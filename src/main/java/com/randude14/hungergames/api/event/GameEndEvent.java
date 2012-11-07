@@ -4,28 +4,48 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.stats.PlayerStat.Team;
 
 // called when a Hunger Game ends
 public class GameEndEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
-	private final Player winner;
+	private final Player winningPlayer;
+	private final Team winningTeam;
 	private final boolean finished;
+	
+	public GameEndEvent(final HungerGame game, final Team team) {
+		super(game);
+		winningPlayer = null;
+		winningTeam = team;
+		finished = true;
+		
+	}
 	
 	public GameEndEvent(final HungerGame game, final Player player) {
 		super(game);
-		winner = player;
+		winningPlayer = player;
+		winningTeam = null;
 		finished = true;
 		
 	}
 
-	public GameEndEvent(HungerGame game) {
+	public GameEndEvent(HungerGame game, boolean finished) {
 		super(game);
-		this.finished = false;
-		this.winner = null;
+		this.finished = finished;
+		this.winningPlayer = null;
+		this.winningTeam = null;
 	}
 	
-	public Player getWinner() {
-		return winner;
+	public Player getWinningPlayer() {
+		return winningPlayer;
+	}
+	
+	public Team getWinningTeam() {
+		return winningTeam;
+	}
+	
+	public boolean isFinished() {
+		return finished;
 	}
 
 	@Override

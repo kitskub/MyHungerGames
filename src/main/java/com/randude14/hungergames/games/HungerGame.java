@@ -479,7 +479,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		state = STOPPED;
 		if (!isFinished) {
-			GameEndEvent event = new GameEndEvent(this);
+			GameEndEvent event = new GameEndEvent(this, false);
 			HungerGames.callEvent(event);
 		}
 		clear();
@@ -1003,36 +1003,54 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 		if (state != RUNNING) return false;
 		List<Player> remaining = getRemainingPlayers();
-		if (remaining.size() < 2) {
-			Player winner = null;
-			if (!remaining.isEmpty()) {
-				winner = remaining.get(0);
+		List<Team> teamsLeft = new ArrayList<Team>();
+		int left = 0;
+		for (Player p : remaining) {
+			Team team = stats.get(p.getName()).getTeam();
+			if (team == null) {
+				left++;
 			}
-			GameEndEvent event;
-			if (winner == null) {
-				ChatUtils.broadcast(this, Lang.getNoWinner(setup));
-				event = new GameEndEvent(this, null);
-			} else {
-				ChatUtils.broadcast(this, Lang.getWin(setup).replace("<player>", winner.getName()).replace("<game>", name));
-				ChatUtils.send(winner, "Congratulations! You won!");// TODO message
-				event = new GameEndEvent(this, winner);
+			else if (!teamsLeft.contains(team)) {
+				teamsLeft.add(team);
+				left++;
+			}
+		}
+		if (left < 2) {
+			GameEndEvent event = null;
+			if (teamsLeft.size() > 0) {
+				ChatUtils.sendToTeam(teamsLeft.get(0), "Congratulations! Your team won!");
+				event = new GameEndEvent(this, teamsLeft.get(0));
+			}
+			else {
+				Player winner = null;
+				if (!remaining.isEmpty()) {
+					winner = remaining.get(0);
+				}
+				if (winner == null) {
+					ChatUtils.broadcast(this, Lang.getNoWinner(setup));
+					event = new GameEndEvent(this, true);
+				} else {
+					ChatUtils.broadcast(this, Lang.getWin(setup).replace("<player>", winner.getName()).replace("<game>", name));
+					ChatUtils.send(winner, "Congratulations! You won!");// TODO message
+					event = new GameEndEvent(this, winner);
+				}
 			}
 			HungerGames.callEvent(event);
 			stopGame(true);
 			return true;
 		}
 
-	    if (!notifyOfRemaining) return false;
-	    String mess = "Remaining players: ";
-	    for (int cntr = 0; cntr < remaining.size(); cntr++) {
-		    mess += remaining.get(cntr).getName();
-		    if (cntr < remaining.size() - 1) {
-			    mess += ", ";
-		    }
+		if (!notifyOfRemaining) return false;
+		String mess = "Remaining players: ";
+		for (int cntr = 0; cntr < remaining.size(); cntr++) {
+			mess += remaining.get(cntr).getName();
+			if (cntr < remaining.size() - 1) {
+				mess += ", ";
+			}
 
-	    }
-	    ChatUtils.broadcastRaw(this, ChatColor.WHITE, mess);
-	    return false;
+		}
+		ChatUtils.broadcastRaw(this, ChatColor.WHITE, mess);
+		return false;
 	}
 
 	@Override

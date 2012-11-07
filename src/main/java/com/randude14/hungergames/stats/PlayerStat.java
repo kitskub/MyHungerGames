@@ -25,6 +25,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		this.game = game;
 		state = PlayerState.NOT_IN_GAME;
 		elapsedTimeInMillis = 0;
+		team = null;
 	}
 	
 	public void kill(String player) {
@@ -99,7 +100,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	}
 	
 	public void setTeam(Team team) {
-		if (team != null) team.removePlayer(this);
+		if (this.team != null) this.team.removePlayer(this);
 		this.team = team;
 		team.addPlayer(this);
 	}
@@ -174,6 +175,13 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		 */
 		public String getName() {
 			return name;
+		}
+
+		/**
+		 * @return the players
+		 */
+		public List<PlayerStat> getPlayers() {
+			return Collections.unmodifiableList(players);
 		}
 	}
 }

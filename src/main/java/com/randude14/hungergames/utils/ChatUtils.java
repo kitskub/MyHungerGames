@@ -5,6 +5,8 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;
+import com.randude14.hungergames.stats.PlayerStat;
+import com.randude14.hungergames.stats.PlayerStat.Team;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,6 +64,26 @@ public class ChatUtils {
 		broadcastRaw(game, ChatColor.GREEN, message);
 	}
 
+
+	public static void sendToTeam(PlayerStat player, String mess) {
+		Team team = player.getTeam();
+		if (team == null) {
+			send(player.getPlayer(), mess);
+			return;
+		}
+		for (PlayerStat p : team.getPlayers()) {
+			send(p.getPlayer(), mess);
+		}
+	}
+
+	public static void sendToTeam(Team team, String mess) {
+		if (team == null) {
+			return;
+		}
+		for (PlayerStat p : team.getPlayers()) {
+			send(p.getPlayer(), mess);
+		}
+	}
 
 	public static void send(CommandSender cs, ChatColor color, String mess) {
 		cs.sendMessage(color + mess);
