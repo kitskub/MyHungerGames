@@ -15,7 +15,6 @@ LOW:
 - Have lobby check for conflicting signs
 - Compass tracks players
 - Optionally remove [MyHungerGames]
-- Add "win-as-team"
 
 OPTIONAL:
 - Possible timed game events
