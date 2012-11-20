@@ -1,8 +1,8 @@
 package com.randude14.hungergames;
 
 import com.google.common.base.Strings;
-import com.randude14.hungergames.Defaults.Commands;
 
+import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.games.HungerGame;
@@ -17,24 +17,15 @@ import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.TimeListener;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.net.URL;
 import java.text.*;
-import java.util.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import net.h31ix.updater.Updater;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.ArrayUtils;
 
 import org.bukkit.Bukkit;
@@ -83,13 +74,15 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	private void callTasks() {
-	    Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
-		new Runnable() {
-		public void run() {
-		    if (!latestVersionCheck())
-			    Logging.warning("There is a new version: %s (You are running %s)", latestVersion(), getDescription().getVersion());
-		}
-	    }, 0L, Config.getUpdateDelay() * 20L * 60L);
+
+		Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
+			new Runnable() {
+			public void run() {
+				Updater updater = new Updater(HungerGames.getInstance(), "myhungergames", HungerGames.getInstance().getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
+				if (updater.getResult().equals(Updater.UpdateResult.UPDATE_AVAILABLE))
+					Logging.warning("There is a new version: %s (You are running %s)", updater.getLatestVersionString(), getDescription().getVersion());
+				}
+		}, 0L, Config.getUpdateDelay() * 20L * 60L);
 	}
 
 	@Override
@@ -255,56 +248,6 @@ public class HungerGames extends JavaPlugin{
 
 	public static void cancelTask(int taskID) {
 		Bukkit.getServer().getScheduler().cancelTask(taskID);
-	}
-
-	public boolean latestVersionCheck(){
-		String datePub = null;
-		long timeMod = 0;
-		try {
-			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
-			doc.getDocumentElement().normalize();
-			NodeList nodes = doc.getElementsByTagName("item");
-			Node firstNode = nodes.item(0);
-			if (firstNode.getNodeType() == 1) {
-				Element firstElement = (Element) firstNode;
-				NodeList firstElementTagName = firstElement.getElementsByTagName("pubDate");
-				Element firstNameElement = (Element) firstElementTagName.item(0);
-				NodeList firstNodes = firstNameElement.getChildNodes();
-				datePub = firstNodes.item(0).getNodeValue();
-			}
-		} catch (Exception ex) {
-		}
-		DateFormat pubDate = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z");
-		try {
-			File jarFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			timeMod = jarFile.lastModified();
-		} catch (URISyntaxException e1) {
-		}
-		try {
-			return pubDate.parse(datePub).getTime() <= (timeMod + 86400000);
-		} catch (ParseException parseException) {
-			return false;
-		}
-	}
-	
-	public String latestVersion() {
-		try {
-			URL url = new URL("http://dev.bukkit.org/server-mods/myhungergames/files.rss");
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
-			doc.getDocumentElement().normalize();
-			NodeList nodes = doc.getElementsByTagName("item");
-			Node firstNode = nodes.item(0);
-			if (firstNode.getNodeType() == 1) {
-				Element firstElement = (Element) firstNode;
-				NodeList firstElementTagName = firstElement.getElementsByTagName("title");
-				Element firstNameElement = (Element) firstElementTagName.item(0);
-				NodeList firstNodes = firstNameElement.getChildNodes();
-				return firstNodes.item(0).getNodeValue();
-			}
-		} catch (Exception ex) {
-		}
-		return getDescription().getVersion();
 	}
 
 	public static void callEvent(Event event) {
