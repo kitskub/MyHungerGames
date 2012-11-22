@@ -22,8 +22,8 @@ public abstract class Command extends org.bukkit.command.Command {
 	protected final Perm perm;
 	protected final List<Command> subCommands;
 	
-	public static final String ADMIN_COMMAND = "ADMIN";
-	public static final String USER_COMMAND = "USER";
+	public static final String ADMIN_COMMAND = HungerGames.CMD_ADMIN;
+	public static final String USER_COMMAND = HungerGames.CMD_USER;
 	
 	public Command(Perm perm, Command parent, String name) {
 		super(name);
@@ -37,10 +37,10 @@ public abstract class Command extends org.bukkit.command.Command {
 		this.perm = perm;
 		this.subCommands = new ArrayList<Command>();
 		if (type.equalsIgnoreCase(ADMIN_COMMAND)) {
-			CommandHandler.registerAdminCommand(this);
+			CommandHandler.getInstance(ADMIN_COMMAND).registerCommand(this);
 		}
 		else {
-			CommandHandler.registerUserCommand(this);
+			CommandHandler.getInstance(USER_COMMAND).registerCommand(this);
 		}
 	}	
 	

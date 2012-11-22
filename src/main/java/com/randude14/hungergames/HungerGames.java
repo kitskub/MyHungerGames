@@ -98,8 +98,8 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	private static void registerCommands() {
-		instance.getCommand(CMD_USER).setExecutor(CommandHandler.INSTANCE);
-		instance.getCommand(CMD_ADMIN).setExecutor(CommandHandler.INSTANCE);
+		instance.getCommand(CMD_USER).setExecutor(CommandHandler.getInstance(CMD_USER));
+		instance.getCommand(CMD_ADMIN).setExecutor(CommandHandler.getInstance(CMD_ADMIN));
 		for (Perm p : Perm.values()) {
 			Permission permission = p.getPermission();
 			if (p.getParent() != null) {

@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public class KillCommand extends Command {
 
 	public KillCommand() {
-		super(Perm.ADMIN_KILL, "kill", USER_COMMAND);
+		super(Perm.ADMIN_KILL, "kill", ADMIN_COMMAND);
 	}
 
 	@Override
