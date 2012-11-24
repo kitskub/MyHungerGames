@@ -36,7 +36,7 @@ public class KickCommand extends Command {
 		    return;
 		}
 		ChatUtils.broadcast(game, "%s has been kicked from the game %s.", cs.getName(), game.getName());
-		HungerGames.callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
+		Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
 		game.leave(kick, false);
 	}
 

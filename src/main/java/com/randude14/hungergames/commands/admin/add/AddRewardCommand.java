@@ -17,6 +17,9 @@ public class AddRewardCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
+		if (player.getItemInHand() == null) {
+			ChatUtils.error(player, "Cannot add no item to rewards!");
+		}
 		if (args.length < 1) {
 			ItemConfig.addStaticReward(player.getItemInHand());
 		}

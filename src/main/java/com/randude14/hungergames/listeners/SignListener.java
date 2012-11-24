@@ -9,8 +9,10 @@ import com.randude14.hungergames.api.event.GameStartEvent;
 import com.randude14.hungergames.api.event.PlayerJoinGameEvent;
 import com.randude14.hungergames.api.event.PlayerKillEvent;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
+import com.randude14.hungergames.utils.GeneralUtils;
 
 import java.util.*;
+import org.bukkit.Bukkit;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,16 +23,17 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitTask;
 
 public class SignListener implements Runnable, Listener {
 
 	private static final Map<ListenerType, Map<String, List<Location>>> listeners = Collections.synchronizedMap(new EnumMap<ListenerType, Map<String, List<Location>>>(ListenerType.class));
 	private static final Map<ListenerType, List<Location>> allGameListeners = Collections.synchronizedMap(new EnumMap<ListenerType, List<Location>>(ListenerType.class));
 	private static List<OffQueue> queues = new ArrayList<OffQueue>();
-	private static int taskId = 0;
+	private static BukkitTask task;
 	
 	public SignListener() {
-		taskId = HungerGames.scheduleTask(this, 0, 1);
+		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 0, 1);
 		loadSigns();
 	}
 	
@@ -46,7 +49,7 @@ public class SignListener implements Runnable, Listener {
 			if (sList != null) {
 				for (String s : sList) {
 					try {
-						allGameListeners.get(type).add(HungerGames.parseToLoc(s));
+						allGameListeners.get(type).add(GeneralUtils.parseToLoc(s));
 					} catch (NumberFormatException ex) {
 						Logging.debug(ex.getMessage());
 						continue;
@@ -65,7 +68,7 @@ public class SignListener implements Runnable, Listener {
 				List<String> stringList = gameSection.getStringList("gameLocs");
 				for (String s : stringList) {
 					try {
-						list.add(HungerGames.parseToLoc(s));
+						list.add(GeneralUtils.parseToLoc(s));
 					} catch (NumberFormatException ex) {
 						Logging.debug(ex.getMessage());
 						continue;
@@ -85,7 +88,7 @@ public class SignListener implements Runnable, Listener {
 			ConfigurationSection section = config.createSection(type.name());
 			List<String> allGamesList = new ArrayList<String>();
 			for (Location l : allGameListeners.get(type)) {
-				allGamesList.add(HungerGames.parseToString(l));
+				allGamesList.add(GeneralUtils.parseToString(l));
 			}
 			section.set("allGames", allGamesList);
 			for (String game : listeners.get(type).keySet()) {
@@ -93,7 +96,7 @@ public class SignListener implements Runnable, Listener {
 				List<Location> list = listeners.get(type).get(game);
 				List<String> stringList = new ArrayList<String>();
 				for (Location l : list) {
-					stringList.add(HungerGames.parseToString(l));
+					stringList.add(GeneralUtils.parseToString(l));
 				}
 				gameSection.set("gameLocs", stringList);
 			}

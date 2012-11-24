@@ -1,7 +1,7 @@
 package com.randude14.hungergames.utils;
 
-import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.WorldNotFoundException;
+
 import org.bukkit.Location;
 
 public class Cuboid {
@@ -44,14 +44,14 @@ public class Cuboid {
 	}
 	
 	public String parseToString() {
-		return HungerGames.parseToString(lower) + ":" + HungerGames.parseToString(upper);
+		return GeneralUtils.parseToString(lower) + ":" + GeneralUtils.parseToString(upper);
 	}
 	
 	public static Cuboid parseFromString(String string) {
 		try {
 			String[] parts = string.split(":");
-			Location lower = HungerGames.parseToLoc(parts[0]);
-			Location upper = HungerGames.parseToLoc(parts[1]);
+			Location lower = GeneralUtils.parseToLoc(parts[0]);
+			Location upper = GeneralUtils.parseToLoc(parts[1]);
 			return new Cuboid(lower, upper, true);
 		} catch (NumberFormatException ex) {
 			return null;

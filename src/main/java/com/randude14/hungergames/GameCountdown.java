@@ -2,30 +2,32 @@ package com.randude14.hungergames;
 
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.GeneralUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 public class GameCountdown implements Runnable {
 	private final HungerGame game;
 	private int countdown;
-	private int taskId;
+	private BukkitTask task;
 	private Player starter;
 	private boolean isResuming;
 	
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
-		taskId = HungerGames.scheduleTask(this, 20L, 20L);
+		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20L, 20L);
 		this.isResuming = isResuming;
 		if(isResuming) {
 			ChatUtils.broadcast(game, "Resuming %s in %s...",
-					game.getName(), HungerGames.formatTime(countdown));
+					game.getName(), GeneralUtils.formatTime(countdown));
 		}
 		else {
 			ChatUtils.broadcast(game, "Starting %s in %s...",
-					game.getName(), HungerGames.formatTime(countdown));
+					game.getName(), GeneralUtils.formatTime(countdown));
 		}
 
 	}
@@ -52,7 +54,8 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public void cancel() {
-		HungerGames.cancelTask(taskId);
+		task.cancel();
+		task = null;
 	}
 
 	public int getTimeLeft() {
@@ -61,7 +64,7 @@ public class GameCountdown implements Runnable {
 
 	public void run() {
 		if (countdown <= 1) {
-			Bukkit.getServer().getScheduler().cancelTask(taskId);
+			cancel();
 			game.setDoneCounting();
 			if (isResuming) {
 				game.resumeGame(starter, 0);
@@ -75,7 +78,7 @@ public class GameCountdown implements Runnable {
 		ChatColor color = ChatColor.GREEN;
 		if(countdown <= 5) color = ChatColor.GOLD;
 		if(countdown <= 3) color = ChatColor.RED;
-		ChatUtils.broadcastRaw(game, color, "%s...", HungerGames.formatTime(countdown));
+		ChatUtils.broadcastRaw(game, color, "%s...", GeneralUtils.formatTime(countdown));
 	}
 
 }

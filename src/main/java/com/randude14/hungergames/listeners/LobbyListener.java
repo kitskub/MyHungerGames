@@ -4,6 +4,7 @@ import com.randude14.hungergames.*;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.EquatableWeakReference;
+import com.randude14.hungergames.utils.GeneralUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -218,7 +219,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			count++;
 			ConfigurationSection section = joinSection.createSection(String.valueOf(count));
-			section.set("location", HungerGames.parseToString(entry.getKey()));
+			section.set("location", GeneralUtils.parseToString(entry.getKey()));
 			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
@@ -230,7 +231,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			count++;
 			ConfigurationSection section = gameSection.createSection(String.valueOf(count));
-			section.set("location", HungerGames.parseToString(entry.getKey()));
+			section.set("location", GeneralUtils.parseToString(entry.getKey()));
 			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
@@ -241,7 +242,7 @@ public class LobbyListener implements Listener, Runnable {
 			section.set("game", w.game.get().getName());
 			List<String> strings = new ArrayList<String>();
 			for (Location l : w.signs) {
-				strings.add(HungerGames.parseToString(l));
+				strings.add(GeneralUtils.parseToString(l));
 			}
 			section.set("signs", strings);
 		}
@@ -260,7 +261,7 @@ public class LobbyListener implements Listener, Runnable {
 				ConfigurationSection section = joinSection.getConfigurationSection(key);
 				Location loc;
 				try {
-					loc = HungerGames.parseToLoc(section.getString("location", ""));
+					loc = GeneralUtils.parseToLoc(section.getString("location", ""));
 				} catch (NumberFormatException ex) {
 					Logging.debug(ex.getMessage());
 					continue;
@@ -281,7 +282,7 @@ public class LobbyListener implements Listener, Runnable {
 				ConfigurationSection section = gameSection.getConfigurationSection(key);
 				Location loc;
 				try {
-					loc = HungerGames.parseToLoc(section.getString("location", ""));
+					loc = GeneralUtils.parseToLoc(section.getString("location", ""));
 				} catch (NumberFormatException ex) {
 					Logging.debug(ex.getMessage());
 					continue;
@@ -306,7 +307,7 @@ public class LobbyListener implements Listener, Runnable {
 				for (String s : strings) {
 					Location loc;
 					try {
-						loc = HungerGames.parseToLoc(s);
+						loc = GeneralUtils.parseToLoc(s);
 					} catch (NumberFormatException ex) {
 						Logging.debug(ex.getMessage());
 						continue;

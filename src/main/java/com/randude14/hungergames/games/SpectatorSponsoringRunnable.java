@@ -5,7 +5,6 @@ import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.utils.ChatUtils;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
@@ -16,12 +15,13 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 public class SpectatorSponsoringRunnable implements Runnable{
 	public static final int pollEveryInTicks = 20 * 30;
 	private final HungerGame game;
 	private static final Map<String, Integer> spectatorTimes = new HashMap<String, Integer>(); // <player, timeLeftInTicks>
-	private int taskId = 0;
+	private BukkitTask task;
 	
 	public SpectatorSponsoringRunnable(HungerGame game) {
 		this.game = game;
@@ -59,12 +59,13 @@ public class SpectatorSponsoringRunnable implements Runnable{
 		}
 	}
 	
-	public void setTaskId(int i) {
-		taskId = i;
+	public void setTask(BukkitTask task) {
+		this.task = task;
 	}
 	
 	public void cancel() {
-		HungerGames.cancelTask(taskId);
+		task.cancel();
+		task = null;
 		spectatorTimes.clear();
 	}
 	

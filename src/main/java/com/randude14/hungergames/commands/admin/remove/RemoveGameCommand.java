@@ -8,6 +8,7 @@ import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.api.event.GameRemoveEvent;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
+import org.bukkit.Bukkit;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class RemoveGameCommand extends PlayerCommand {
 	    }
 	    
 	    GameManager.INSTANCE.removeGame(args[0]);
-	    HungerGames.callEvent(new GameRemoveEvent(game));
+	    Bukkit.getPluginManager().callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[0]);
 	}
 
