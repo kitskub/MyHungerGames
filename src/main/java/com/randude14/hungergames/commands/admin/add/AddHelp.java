@@ -26,8 +26,8 @@ public class AddHelp extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s add";
+	protected String getPrivateUsage() {
+		return "add";
 	}
 	
 }

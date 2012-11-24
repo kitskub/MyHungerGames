@@ -27,8 +27,8 @@ public class RemoveSignCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s remove sign";
+	protected String getPrivateUsage() {
+		return "sign";
 	}
 	
 }

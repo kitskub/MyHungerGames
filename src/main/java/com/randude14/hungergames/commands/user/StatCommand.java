@@ -21,7 +21,7 @@ public class StatCommand extends Command {
 	public void handle(CommandSender cs, String cmd, String[] args) {		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_USER);
+			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_USER);
 			return;
 		}
 
@@ -40,8 +40,8 @@ public class StatCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s stat [game name]";
+	protected String getPrivateUsage() {
+		return "stat [game name]";
 	}
     
 }

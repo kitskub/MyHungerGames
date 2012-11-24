@@ -30,8 +30,8 @@ public class QuitCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s quit";
+	protected String getPrivateUsage() {
+		return "quit";
 	}
     
 }

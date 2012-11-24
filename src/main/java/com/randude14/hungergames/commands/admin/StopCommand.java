@@ -20,7 +20,7 @@ public class StopCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		
@@ -38,8 +38,8 @@ public class StopCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s stop [game name]";
+	protected String getPrivateUsage() {
+		return "stop [game name]";
 	}
     
 }

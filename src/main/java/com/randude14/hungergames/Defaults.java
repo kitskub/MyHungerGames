@@ -119,78 +119,85 @@ public class Defaults {
 
     public enum Perm {
 
-	ALL(new Permission("hungergame.*"), null),
-	ADMIN(new Permission("hungergame.admin.*"), ALL),
-	ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
-	ADMIN_ADD_CHEST(new Permission("hungergame.add.chest"), ADMIN),
-	ADMIN_ADD_CHEST_LOOT(new Permission("hungergame.add.chestloot"), ADMIN),
-	ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),
-	ADMIN_ADD_GAME_SIGN(new Permission("hungergame.add.game"), ADMIN),
-	ADMIN_ADD_HELP(new Permission("hungergame.add.help"), ADMIN),
-	ADMIN_ADD_INFO_WALL(new Permission("hungergame.add.infowall"), ADMIN),
-	ADMIN_ADD_ITEMSET(new Permission("hungergame.add.itemset"), ADMIN),
-	ADMIN_ADD_JOIN_SIGN(new Permission("hungergame.add.joinsign"), ADMIN),
-	ADMIN_ADD_REWARD(new Permission("hungergame.add.reward"), ADMIN),
-	ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
-	ADMIN_ADD_SPONSOR_LOOT(new Permission("hungergame.add.sponsorloot"), ADMIN),
-	ADMIN_ADD_WORLD(new Permission("hungergame.add.world"), ADMIN),
-	ADMIN_CHAT(new Permission("hungergame.admin.chat"), ADMIN),
-	ADMIN_CREATE_SIGN(new Permission("hungergame.create.sign"), ADMIN),
-	ADMIN_CREATE_SIGN_GAMEEND(new Permission("hungergame.create.sign.gameend"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_GAMEPAUSE(new Permission("hungergame.create.sign.gamepause"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_GAMESTART(new Permission("hungergame.create.sign.gamestart"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_PLAYERJOIN(new Permission("hungergame.create.sign.playerjoin"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_PLAYERKICK(new Permission("hungergame.create.sign.playerkick"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_PLAYERKILL(new Permission("hungergame.create.sign.playerkill"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_PLAYERLEAVE(new Permission("hungergame.create.sign.playerleave"), ADMIN_CREATE_SIGN),
-	ADMIN_CREATE_SIGN_PLAYERQUIT(new Permission("hungergame.create.sign.playerquit"), ADMIN_CREATE_SIGN),
-	ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
-	ADMIN_REMOVE_CHEST(new Permission("hungergame.remove.chest"), ADMIN),
-	ADMIN_REMOVE_GAME(new Permission("hungergame.remove.game"), ADMIN),
-	ADMIN_REMOVE_HELP(new Permission("hungergame.remove.help"), ADMIN),
-	ADMIN_REMOVE_ITEMSET(new Permission("hungergame.remove.itemset"), ADMIN),
-	ADMIN_REMOVE_SIGN(new Permission("hungergame.remove.sign"), ADMIN),
-	ADMIN_SET_ENABLED(new Permission("hungergame.set.enabled"), ADMIN),
-	ADMIN_SET_FIXED_CHEST(new Permission("hungergame.set.fixedchest"), ADMIN),
-	ADMIN_SET_HELP(new Permission("hungergame.set.help"), ADMIN),
-	ADMIN_SET_SPAWN(new Permission("hungergame.set.spawn"), ADMIN),
-	ADMIN_FORCE_CLEAR(new Permission("hungergame.game.forceclear"), ADMIN),
-	ADMIN_STOP(new Permission("hungergame.game.stop"), ADMIN),
-	ADMIN_START(new Permission("hungergame.game.start"), ADMIN),
-	ADMIN_PAUSE(new Permission("hungergame.game.pause"), ADMIN),
-	ADMIN_RESUME(new Permission("hungergame.game.resume"), ADMIN),
-	ADMIN_RELOAD(new Permission("hungergame.admin.reload"), ADMIN),
-	ADMIN_KICK(new Permission("hungergame.admin.kick"), ADMIN),
-	ADMIN_KILL(new Permission("hungergame.admin.kill"), ADMIN),
-	ADMIN_HELP(new Permission("hungergame.admin.help"), ADMIN),
-	ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
-	USER(new Permission("hungergame.user.*"), ALL),
-	USER_ABOUT(new Permission("hungergame.user.about"), USER),
-	USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null),
-	USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER),
-	USER_BACK(new Permission("hungergame.user.back"), USER),
-	USER_ALLOW_FLIGHT(new Permission("hungergame.user.allowflight"), USER),
-	USER_JOIN(new Permission("hungergame.user.join"), USER),
-	USER_KIT(new Permission("hungergame.user.kit"), null),
-	USER_LEAVE(new Permission("hungergame.user.leave"), USER),
-	USER_LIST(new Permission("hungergame.user.list"), USER),
-	USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),
-	USER_SEARCH(new Permission("hungergame.user.search"), USER),
-	USER_SPECTATE(new Permission("hungergame.user.spectate"), USER),
-	USER_SPONSOR(new Permission("hungergame.user.sponsor"), USER),
-	USER_SUBSCRIBE(new Permission("hungergame.user.subscribe"), USER),
-	USER_TEAM(new Permission("hungergame.user.team"), USER),
-	USER_VOTE(new Permission("hungergame.user.vote"), USER),
-	USER_STAT(new Permission("hungergame.user.stat"), USER),
-	USER_HELP(new Permission("hungergame.user.help"), USER),
-	USER_QUIT(new Permission("hungergame.user.quit"), USER);
+		ALL(new Permission("hungergame.*"), null, "gives the player all permissions"),
+		ADMIN(new Permission("hungergame.admin.*"), ALL, "gives the player all admin permissions"),
+		ADMIN_ALLOW_FLIGHT(new Permission("hungergame.admin.allowflight"), ADMIN, "allows the player to fly in game"),
+		ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
+		ADMIN_ADD_CHEST(new Permission("hungergame.add.chest"), ADMIN),
+		ADMIN_ADD_CHEST_LOOT(new Permission("hungergame.add.chestloot"), ADMIN),
+		ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),
+		ADMIN_ADD_GAME_SIGN(new Permission("hungergame.add.gamesign"), ADMIN),
+		ADMIN_ADD_HELP(new Permission("hungergame.add.help"), ADMIN, "allows the player to view add help page"),
+		ADMIN_ADD_INFO_WALL(new Permission("hungergame.add.infowall"), ADMIN),
+		ADMIN_ADD_ITEMSET(new Permission("hungergame.add.itemset"), ADMIN),
+		ADMIN_ADD_JOIN_SIGN(new Permission("hungergame.add.joinsign"), ADMIN),
+		ADMIN_ADD_REWARD(new Permission("hungergame.add.reward"), ADMIN),
+		ADMIN_ADD_SPAWNPOINT(new Permission("hungergame.add.spawnpoint"), ADMIN),
+		ADMIN_ADD_SPONSOR_LOOT(new Permission("hungergame.add.sponsorloot"), ADMIN),
+		ADMIN_ADD_WORLD(new Permission("hungergame.add.world"), ADMIN),
+		ADMIN_CHAT(new Permission("hungergame.admin.chat"), ADMIN, "Allows an admin to chat to a game by typing \"hg\" in front of their message"),
+		ADMIN_CREATE_SIGN(new Permission("hungergame.create.sign"), ADMIN, "Allows player to create a sign listener"),
+		ADMIN_CREATE_SIGN_GAMEEND(new Permission("hungergame.create.sign.gameend"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_GAMEPAUSE(new Permission("hungergame.create.sign.gamepause"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_GAMESTART(new Permission("hungergame.create.sign.gamestart"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_PLAYERJOIN(new Permission("hungergame.create.sign.playerjoin"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_PLAYERKICK(new Permission("hungergame.create.sign.playerkick"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_PLAYERKILL(new Permission("hungergame.create.sign.playerkill"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_PLAYERLEAVE(new Permission("hungergame.create.sign.playerleave"), ADMIN_CREATE_SIGN),
+		ADMIN_CREATE_SIGN_PLAYERQUIT(new Permission("hungergame.create.sign.playerquit"), ADMIN_CREATE_SIGN),
+		ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.remove.spawnpoint"), ADMIN),
+		ADMIN_REMOVE_CHEST(new Permission("hungergame.remove.chest"), ADMIN),
+		ADMIN_REMOVE_GAME(new Permission("hungergame.remove.game"), ADMIN),
+		ADMIN_REMOVE_HELP(new Permission("hungergame.remove.help"), ADMIN, "allows the player to view remove help page"),
+		ADMIN_REMOVE_ITEMSET(new Permission("hungergame.remove.itemset"), ADMIN),
+		ADMIN_REMOVE_SIGN(new Permission("hungergame.remove.sign"), ADMIN),
+		ADMIN_SET_ENABLED(new Permission("hungergame.set.enabled"), ADMIN),
+		ADMIN_SET_FIXED_CHEST(new Permission("hungergame.set.fixedchest"), ADMIN),
+		ADMIN_SET_HELP(new Permission("hungergame.set.help"), ADMIN, "allows the player to view set help page"),
+		ADMIN_SET_SPAWN(new Permission("hungergame.set.spawn"), ADMIN),
+		ADMIN_FORCE_CLEAR(new Permission("hungergame.game.forceclear"), ADMIN),
+		ADMIN_STOP(new Permission("hungergame.game.stop"), ADMIN),
+		ADMIN_START(new Permission("hungergame.game.start"), ADMIN),
+		ADMIN_PAUSE(new Permission("hungergame.game.pause"), ADMIN),
+		ADMIN_RESUME(new Permission("hungergame.game.resume"), ADMIN),
+		ADMIN_RELOAD(new Permission("hungergame.admin.reload"), ADMIN),
+		ADMIN_KICK(new Permission("hungergame.admin.kick"), ADMIN),
+		ADMIN_KILL(new Permission("hungergame.admin.kill"), ADMIN),
+		ADMIN_HELP(new Permission("hungergame.admin.help"), ADMIN, "allows a player to view admin commands"),
+		ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
+		USER(new Permission("hungergame.user.*"), ALL),
+		USER_ABOUT(new Permission("hungergame.user.about"), USER),
+		USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null, "whether a user autosubscribes to a game or not; is not inherited from *"),
+		USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER, "whether a user can autojoin games; can also have hungergame.user.autojoinallowed.<game>"),
+		USER_BACK(new Permission("hungergame.user.back"), USER),
+		USER_JOIN(new Permission("hungergame.user.join"), USER),
+		USER_KIT(new Permission("hungergame.user.kit"), null, "whether a user gets all kits on start; can also add specific kits with hungergame.user.kit.<kit>"),
+		USER_LEAVE(new Permission("hungergame.user.leave"), USER),
+		USER_LIST(new Permission("hungergame.user.list"), USER),
+		USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),
+		USER_SEARCH(new Permission("hungergame.user.search"), USER),
+		USER_SPECTATE(new Permission("hungergame.user.spectate"), USER),
+		USER_SPONSOR(new Permission("hungergame.user.sponsor"), USER),
+		USER_SUBSCRIBE(new Permission("hungergame.user.subscribe"), USER),
+		USER_TEAM(new Permission("hungergame.user.team"), USER),
+		USER_VOTE(new Permission("hungergame.user.vote"), USER),
+		USER_STAT(new Permission("hungergame.user.stat"), USER),
+		USER_HELP(new Permission("hungergame.user.help"), USER, "allows a player to view user commands"),
+		USER_QUIT(new Permission("hungergame.user.quit"), USER);
 
 	private Permission value;
 	private Perm parent;
+	private String info;
 	
 	private Perm(Permission permission, Perm parent) {
 		this.value = permission;
 		this.parent = parent;
+	}
+	
+	private Perm(Permission permission, Perm parent, String info) {
+		this.value = permission;
+		this.parent = parent;
+		this.info = info;
 	}
 	
 	public Permission getPermission(){
@@ -199,6 +206,10 @@ public class Defaults {
 	
 	public Perm getParent() {
 		return parent;
+	}
+	
+	public String getInfo() {
+		return info;
 	}
     }
     

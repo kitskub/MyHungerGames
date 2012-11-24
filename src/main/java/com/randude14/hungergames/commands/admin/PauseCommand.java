@@ -21,7 +21,7 @@ public class PauseCommand extends Command {
 
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 
@@ -43,8 +43,8 @@ public class PauseCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s pause [game name]";
+	protected String getPrivateUsage() {
+		return "pause [game name]";
 	}
     
 }

@@ -1,7 +1,7 @@
 package com.randude14.hungergames.stats;
 
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.event.*;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import java.util.Date;
@@ -61,7 +61,7 @@ public class TimeListener implements Listener {
 		startTimes.put(p.getName(), new Date().getTime());
 	}
 	
-	private void playerStopped(HungerGame game, OfflinePlayer p) {
+	private void playerStopped(Game game, OfflinePlayer p) {
 		Long l = startTimes.get(p.getName());
 		if (l != null) {
 			game.getPlayerStat(p).addTime(new Date().getTime() - l);

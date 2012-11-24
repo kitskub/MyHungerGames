@@ -39,8 +39,8 @@ public class AddRewardCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s add reward [chance]";
+	protected String getPrivateUsage() {
+		return "reward [chance]";
 	}
 	
 }

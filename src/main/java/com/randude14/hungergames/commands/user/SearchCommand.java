@@ -85,8 +85,8 @@ public class SearchCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s search <player>";
+	protected String getPrivateUsage() {
+		return "search <player>";
 	}
 
 }

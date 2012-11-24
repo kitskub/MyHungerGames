@@ -64,17 +64,20 @@ public class HungerGames extends JavaPlugin{
 		GameManager.INSTANCE.loadGames();
 		LobbyListener.load();
 		Logging.info("%s games loaded.", GameManager.INSTANCE.getRawGames().size());
-		try {
-		    Metrics metrics = new Metrics();
-		    metrics.beginMeasuringPlugin(this);
-		} catch (IOException e) {
-		// Fail silently
-		}
+		Bukkit.getScheduler().runTask(this, new Runnable() {
+			public void run() {
+				try {
+				Metrics metrics = new Metrics();
+				metrics.beginMeasuringPlugin(HungerGames.getInstance());
+				} catch (IOException e) {
+				// Fail silently
+				}
+			}
+		});
 		Logging.info("Enabled.");
 	}
 
 	private void callTasks() {
-
 		Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
 			new Runnable() {
 			public void run() {
@@ -201,9 +204,10 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	public static boolean equals(Location loc1, Location loc2) {
-		return loc1.getBlockX() == loc2.getBlockX()
-				&& loc1.getBlockY() == loc2.getBlockY()
-				&& loc1.getBlockZ() == loc2.getBlockZ();
+		return loc1.getWorld() == loc2.getWorld()
+			&& loc1.getBlockX() == loc2.getBlockX()
+			&& loc1.getBlockY() == loc2.getBlockY()
+			&& loc1.getBlockZ() == loc2.getBlockZ();
 	}
 
 	public static boolean isEconomyEnabled() {

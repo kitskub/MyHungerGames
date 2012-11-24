@@ -39,8 +39,8 @@ public class SubscribeCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s subscribe [game]";
+	protected String getPrivateUsage() {
+		return "subscribe [game]";
 	}
 	
 }

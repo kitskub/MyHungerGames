@@ -21,7 +21,7 @@ public class ResumeCommand extends Command {
 		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}	
 
@@ -60,8 +60,8 @@ public class ResumeCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s resume [game name]";
+	protected String getPrivateUsage() {
+		return "resume [game name]";
 	}
     
 }

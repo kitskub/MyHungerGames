@@ -21,7 +21,7 @@ public class RemoveGameCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -41,8 +41,8 @@ public class RemoveGameCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s remove game <game name>";
+	protected String getPrivateUsage() {
+		return "game <game name>";
 	}
 	
 }

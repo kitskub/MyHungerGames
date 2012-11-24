@@ -19,7 +19,7 @@ public class AddChestLootCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String label, String[] args) {
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		float chance = 0;
@@ -49,8 +49,8 @@ public class AddChestLootCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s add chestloot <chance> [itemset]";
+	protected String getPrivateUsage() {
+		return "chestloot <chance> [itemset]";
 	}
 	
 }

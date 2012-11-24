@@ -30,7 +30,7 @@ public class LeaveCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s leave";
+	protected String getPrivateUsage() {
+		return "leave";
 	}
 }

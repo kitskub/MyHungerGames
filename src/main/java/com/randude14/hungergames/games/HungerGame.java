@@ -39,6 +39,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.scheduler.BukkitTask;
 
 	
 public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
@@ -77,7 +78,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	private final List<String> playersCanFly; // Players that could fly when they joined
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
-	private int locTaskId = 0;
+	private BukkitTask locTask;
 
 	public HungerGame(String name) {
 		this(name, null);
@@ -449,7 +450,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			ItemStack[] contents = player.getInventory().getContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
 			for (ItemStack i : contents) {
-				if (i != null) list.add(i);
+				if (i != null) list.add(i); // Remove all null elements
 			}
 			contents = list.toArray(new ItemStack[list.size()]);
 			playerLeaving(player, false);
@@ -475,7 +476,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			removeSpectator(spectator);
 		}
 		spectatorSponsoringRunnable.cancel();
-		HungerGames.cancelTask(locTaskId);
+		if (locTask != null) {
+			locTask.cancel();
+			locTask = null;
+		}
 		if (Config.getRemoveItems(setup)) removeItemsOnGround();
 		state = STOPPED;
 		if (!isFinished) {
@@ -537,7 +541,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
-		locTaskId = HungerGames.scheduleTask(this, 20 * 120, 20 * 10); // Wait two minutes, then poll every 10 seconds
+		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
 		spectatorSponsoringRunnable.setTaskId(HungerGames.scheduleTask(spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
@@ -827,7 +831,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    player.setGameMode(GameMode.SURVIVAL);
 	    }
 	    if (Config.getDisableFly(setup)) {
-		    if (!HGPermission.INSTANCE.hasPermission(player, Perm.USER_ALLOW_FLIGHT)) {
+		    if (!HGPermission.INSTANCE.hasPermission(player, Perm.ADMIN_ALLOW_FLIGHT)) {
 			    if (player.getAllowFlight()) {
 				    playersCanFly.add(player.getName());
 				    player.setAllowFlight(false);
@@ -942,7 +946,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
 		if (Config.getDisableFly(setup)) {
-			if (!HGPermission.INSTANCE.hasPermission(player, Perm.USER_ALLOW_FLIGHT)) {
+			if (!HGPermission.INSTANCE.hasPermission(player, Perm.ADMIN_ALLOW_FLIGHT)) {
 				player.setAllowFlight(playersCanFly.remove(player.getName()));
 				player.setFlying(playersFlying.remove(player.getName()));
 			}
@@ -952,6 +956,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
 			PlayerQueueHandler.addPlayer(player);
+			GameManager.INSTANCE.removedSubscribedPlayer(player, this);
 		}
 	}
 
@@ -1266,10 +1271,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public boolean removeChest(Location loc) {
 		Block b = loc.getBlock();
 		Location ad = null;
-		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
-		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.SOUTH).getLocation();
-		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) loc = b.getRelative(BlockFace.EAST).getLocation();
-		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) loc = b.getRelative(BlockFace.WEST).getLocation();
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) ad = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) ad = b.getRelative(BlockFace.SOUTH).getLocation();
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) ad = b.getRelative(BlockFace.EAST).getLocation();
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) ad = b.getRelative(BlockFace.WEST).getLocation();
 		if (ad != null) {
 			if (chests.remove(ad) == null & fixedChests.remove(ad) == null) {
 				blacklistedChests.add(ad);
@@ -1285,10 +1290,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public void chestBroken(Location loc) {
 		Block b = loc.getBlock();
 		Location ad = null;
-		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.NORTH).getLocation();
-		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) loc = b.getRelative(BlockFace.SOUTH).getLocation();
-		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) loc = b.getRelative(BlockFace.EAST).getLocation();
-		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) loc = b.getRelative(BlockFace.WEST).getLocation();
+		if (b.getRelative(BlockFace.NORTH).getState() instanceof Chest) ad = b.getRelative(BlockFace.NORTH).getLocation();
+		else if (b.getRelative(BlockFace.SOUTH).getState() instanceof Chest) ad = b.getRelative(BlockFace.SOUTH).getLocation();
+		else if (b.getRelative(BlockFace.EAST).getState() instanceof Chest) ad = b.getRelative(BlockFace.EAST).getLocation();
+		else if (b.getRelative(BlockFace.WEST).getState() instanceof Chest) ad = b.getRelative(BlockFace.WEST).getLocation();
 		if (ad != null) {
 			chests.remove(ad);
 			fixedChests.remove(ad);

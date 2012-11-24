@@ -52,7 +52,7 @@ public class TeamCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s team <team>";
+	protected String getPrivateUsage() {
+		return "team <team>";
 	}
 }

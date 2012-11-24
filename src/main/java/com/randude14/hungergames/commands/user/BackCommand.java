@@ -36,8 +36,8 @@ public class BackCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s back";
+	protected String getPrivateUsage() {
+		return "back";
 	}
 	
 }

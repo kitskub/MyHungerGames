@@ -18,7 +18,7 @@ public class RemoveItemSetCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {	    	    
 	    if(args.length < 2){
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    
@@ -35,8 +35,8 @@ public class RemoveItemSetCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s remove itemset <game name> <itemset name>";
+	protected String getPrivateUsage() {
+		return "itemset <game name> <itemset name>";
 	}
 	
 }

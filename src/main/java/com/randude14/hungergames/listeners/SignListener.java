@@ -2,13 +2,13 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.*;
 import com.randude14.hungergames.Defaults.Perm;
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
 import com.randude14.hungergames.api.event.PlayerJoinGameEvent;
 import com.randude14.hungergames.api.event.PlayerKillEvent;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
-import com.randude14.hungergames.games.HungerGame;
 
 import java.util.*;
 
@@ -121,7 +121,7 @@ public class SignListener implements Runnable, Listener {
 	 * @param sign
 	 * @return  
 	 */
-	public static boolean addSign(ListenerType type, HungerGame game, Sign sign) {
+	public static boolean addSign(ListenerType type, Game game, Sign sign) {
 		if (game != null) {
 			Map<String, List<Location>> gameMap = listeners.get(type);
 			if (gameMap == null) {
@@ -174,7 +174,7 @@ public class SignListener implements Runnable, Listener {
 		queues.removeAll(toRemove);
 	}
 	
-	private void callListeners(ListenerType type, HungerGame game) {
+	private void callListeners(ListenerType type, Game game) {
 		Map<String, List<Location>> gameMap = listeners.get(type);
 		if (gameMap == null) {
 			listeners.put(type, new HashMap<String, List<Location>>());

@@ -6,6 +6,12 @@ v0.9
 - Spectators can no longer pick up items
 - Correctly reset chests
 - Fix countdown always starting at 0
+- Change Updater to new class
+- Properly remove adjacent chests
+- Compare worlds too when comparing Locations
+- Changed allowflight permission to be admin
+- Made events use API Game
+- Made metrics start in a Runnable to prevent startup lag
 
 v0.8.1
 - Added death-messages - configurable of when displayed

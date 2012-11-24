@@ -22,7 +22,7 @@ public class SpectateCommand extends PlayerCommand {
 		if (GameManager.INSTANCE.removeSpectator(player)) return;
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
+			ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_USER);
 			return;
 		}
 		game = GameManager.INSTANCE.getRawGame(name);
@@ -49,8 +49,8 @@ public class SpectateCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s spectate [<game name> [player]]";
+	protected String getPrivateUsage() {
+		return "spectate [<game name> [player]]";
 	}
     
 }

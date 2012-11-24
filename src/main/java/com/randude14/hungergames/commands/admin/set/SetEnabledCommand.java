@@ -19,7 +19,7 @@ public class SetEnabledCommand extends Command {
     @Override
     public void handle(CommandSender cs, String cmd, String[] args) {
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -48,8 +48,8 @@ public class SetEnabledCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s set enabled <game name> <true/false>";
+	protected String getPrivateUsage() {
+		return "enabled <game name> <true/false>";
 	}
     
 }

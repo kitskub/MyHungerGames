@@ -29,8 +29,8 @@ public class RejoinCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s rejoin";
+	protected String getPrivateUsage() {
+		return "rejoin";
 	}
     
 }

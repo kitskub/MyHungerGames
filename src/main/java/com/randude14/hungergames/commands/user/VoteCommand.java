@@ -32,8 +32,8 @@ public class VoteCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s vote";
+	protected String getPrivateUsage() {
+		return "vote";
 	}
     
 }

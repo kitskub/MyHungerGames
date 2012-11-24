@@ -20,7 +20,7 @@ public class SetSpawnCommand extends PlayerCommand {
     @Override
     public void handlePlayer(Player player, String cmd, String[] args) {
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -40,8 +40,8 @@ public class SetSpawnCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s set spawn <game name>";
+	protected String getPrivateUsage() {
+		return "spawn <game name>";
 	}
     
 }

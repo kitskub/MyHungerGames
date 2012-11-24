@@ -25,8 +25,8 @@ public class SetHelp extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s set";
+	protected String getPrivateUsage() {
+		return "set";
 	}
 	
 }

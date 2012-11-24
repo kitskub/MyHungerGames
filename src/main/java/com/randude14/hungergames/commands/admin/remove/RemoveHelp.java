@@ -26,8 +26,8 @@ public class RemoveHelp extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s remove";
+	protected String getPrivateUsage() {
+		return "remove";
 	}
 	
 }

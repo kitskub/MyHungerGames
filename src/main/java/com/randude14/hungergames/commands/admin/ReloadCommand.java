@@ -25,8 +25,8 @@ public class ReloadCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s reload";
+	protected String getPrivateUsage() {
+		return "reload";
 	}
     
 }

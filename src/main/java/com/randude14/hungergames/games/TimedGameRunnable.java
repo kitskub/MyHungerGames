@@ -3,6 +3,7 @@ package com.randude14.hungergames.games;
 import com.randude14.hungergames.Config;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
@@ -17,19 +18,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class TimedGameRunnable implements Runnable, Listener{
-	private static WeakHashMap<EquatableWeakReference<HungerGame>, TimedGameRunnable> runnables = new WeakHashMap<EquatableWeakReference<HungerGame>, TimedGameRunnable>();
-	private EquatableWeakReference<HungerGame> game;
+	private static WeakHashMap<EquatableWeakReference<Game>, TimedGameRunnable> runnables = new WeakHashMap<EquatableWeakReference<Game>, TimedGameRunnable>();
+	private EquatableWeakReference<Game> game;
 	private int taskId;
 	private long timeLeft;
 	
-	private TimedGameRunnable setGame(HungerGame game) {
-		this.game = new EquatableWeakReference<HungerGame>(game);
+	private TimedGameRunnable setGame(Game game) {
+		this.game = new EquatableWeakReference<Game>(game);
 		return this;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public static void onGamePause(GamePauseEvent event) {
-		TimedGameRunnable get = runnables.get(new EquatableWeakReference<HungerGame>(event.getGame()));
+		TimedGameRunnable get = runnables.get(new EquatableWeakReference<Game>(event.getGame()));
 		if (get != null) {
 			get.pause();
 		}
@@ -41,7 +42,7 @@ public class TimedGameRunnable implements Runnable, Listener{
 			new TimedGameRunnable().setGame(event.getGame()).start();
 		}
 		else {
-			TimedGameRunnable get = runnables.get(new EquatableWeakReference<HungerGame>(event.getGame()));
+			TimedGameRunnable get = runnables.get(new EquatableWeakReference<Game>(event.getGame()));
 			if (get != null) {
 				get.resume();
 			}
@@ -50,7 +51,7 @@ public class TimedGameRunnable implements Runnable, Listener{
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public static void onGameEnd(GameEndEvent event) {
-		TimedGameRunnable get = runnables.get(new EquatableWeakReference<HungerGame>(event.getGame()));
+		TimedGameRunnable get = runnables.get(new EquatableWeakReference<Game>(event.getGame()));
 		if (get != null) {
 			get.stop();
 		}

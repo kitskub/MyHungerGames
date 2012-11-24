@@ -1,5 +1,7 @@
 HIGH:
 - Tutorial
+- Make configs enum based
+- Moved some methods to a GeneralUtils class
 
 MEDIUM:
 - Random events

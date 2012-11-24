@@ -37,8 +37,8 @@ public class ListCommand extends Command {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s list";
+	protected String getPrivateUsage() {
+		return "list";
 	}
     
 }

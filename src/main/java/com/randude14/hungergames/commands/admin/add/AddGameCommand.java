@@ -20,7 +20,7 @@ public class AddGameCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String label, String[] args) {
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -42,7 +42,7 @@ public class AddGameCommand extends PlayerCommand {
 	    }
 	    else {
 	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
-	    	ChatUtils.send(player, ChatColor.GREEN, "type the command '/%s add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
+	    	ChatUtils.send(player, ChatColor.GREEN, "type the command 'add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
 	    }
 	}
 
@@ -52,8 +52,8 @@ public class AddGameCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s add game <game name> [setup]";
+	protected String getPrivateUsage() {
+		return "game <game name> [setup]";
 	}
 	
 }

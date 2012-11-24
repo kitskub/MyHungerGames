@@ -20,7 +20,7 @@ public class JoinCommand extends PlayerCommand {
 	public void handlePlayer(Player player, String cmd, String[] args) {
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
+			ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_USER);
 			return;
 		}
 
@@ -39,7 +39,7 @@ public class JoinCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s join [game name]";
+	protected String getPrivateUsage() {
+		return "join [game name]";
 	}
 }

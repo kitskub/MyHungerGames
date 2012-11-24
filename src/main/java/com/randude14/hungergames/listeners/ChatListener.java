@@ -28,7 +28,7 @@ public class ChatListener implements Listener {
 						&& event.getPlayer().getLocation().getWorld() == p.getLocation().getWorld()) {
 						float distanceRequired = Config.getChatDistance(receipientGame.getSetup());
 						if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) >= distanceRequired) {
-							if (HungerGames.checkPermission(event.getPlayer(), Perm.ADMIN_CHAT)) {
+							if (HungerGames.hasPermission(event.getPlayer(), Perm.ADMIN_CHAT)) {
 								if (event.getMessage().startsWith("hg ")) {
 									event.setMessage(event.getMessage().substring(3));
 									return;
@@ -48,6 +48,16 @@ public class ChatListener implements Listener {
 					}
 				}
 				else {
+					if (HungerGames.hasPermission(event.getPlayer(), Perm.ADMIN_CHAT)) {
+						if (event.getMessage().startsWith("hg ")) {
+							event.setMessage(event.getMessage().substring(3));
+							return;
+						}
+						if (event.getMessage().startsWith("hg")) {
+							event.setMessage(event.getMessage().substring(2));
+							return;
+						}
+					}
 					//Logging.debug("Cancelling chat because chatter was not in a game.");
 					event.getRecipients().remove(p);
 				}

@@ -19,7 +19,7 @@ public class AddSponsorLootCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
 		if (args.length < 1) {
-			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		float chance = Float.valueOf(args[0]);
@@ -38,8 +38,8 @@ public class AddSponsorLootCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s add sponsorloot <money> [itemset]";
+	protected String getPrivateUsage() {
+		return "sponsorloot <money> [itemset]";
 	}
 	
 }

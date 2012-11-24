@@ -22,7 +22,7 @@ public class RemoveChestCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String label, String[] args) {
 	    if (args.length < 1) {
-		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
+		    ChatUtils.helpCommand(player, getPrivateUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
 	    game = GameManager.INSTANCE.getRawGame(args[0]);
@@ -41,7 +41,7 @@ public class RemoveChestCommand extends PlayerCommand {
 	}
 
 	@Override
-	public String getUsage() {
-		return "/%s remove chest <game name>";
+	protected String getPrivateUsage() {
+		return "chest <game name>";
 	}
 }
