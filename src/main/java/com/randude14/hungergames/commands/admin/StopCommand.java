@@ -8,7 +8,6 @@ import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class StopCommand extends Command {
 
@@ -20,7 +19,7 @@ public class StopCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {		
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		

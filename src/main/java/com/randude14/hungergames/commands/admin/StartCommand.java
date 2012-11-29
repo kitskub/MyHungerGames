@@ -20,7 +20,7 @@ public class StartCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {
 		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
 		if (name == null) {
-			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 		game = GameManager.INSTANCE.getRawGame(name);

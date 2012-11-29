@@ -19,7 +19,7 @@ public class KillCommand extends Command {
 	@Override
 	public void handle(CommandSender cs, String label, String[] args) {
 		if (args.length < 1) {
-			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 

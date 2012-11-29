@@ -21,7 +21,7 @@ public class KickCommand extends Command {
 	public void handle(CommandSender cs, String label, String[] args) {
 
 		if (args.length < 1) {
-			ChatUtils.helpCommand(cs, getPrivateUsage(), HungerGames.CMD_ADMIN);
+			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
 

@@ -74,7 +74,7 @@ public abstract class Command extends org.bukkit.command.Command {
 	protected abstract String getPrivateUsage();
 	
 	@Override
-	public String getUsage() {
+	public final String getUsage() {
 		String parentUsage = "";
 		if (parent != null) {
 			parentUsage = parent.getPrivateUsage() + " ";

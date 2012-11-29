@@ -18,7 +18,7 @@ public class SponsorCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
 		if (args.length < 1) {
-			ChatUtils.send(player, getPrivateUsage(), HungerGames.CMD_USER);
+			ChatUtils.send(player, getUsage(), HungerGames.CMD_USER);
 			return;
 		}
 
