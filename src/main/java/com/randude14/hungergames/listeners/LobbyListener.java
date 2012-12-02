@@ -53,10 +53,9 @@ public class LobbyListener implements Listener, Runnable {
 			if (w.signs.contains(loc)) {
 				w.clearSigns();
 				it.remove();
-				save();
 			}
 		}
-		
+		save();
 	}
 	
 	public static boolean addInfoWall(Location one, Location two, BlockFace clickedFace, String str) {
@@ -131,18 +130,18 @@ public class LobbyListener implements Listener, Runnable {
 		return true;
 	}
 
-	public static boolean addJoinSign(Location location, String str) {
+	public static boolean addJoinSign(Location location, String name) {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(name);
 		if (game == null) return false;
 		joinSigns.put(location, game);
 		Sign sign = (Sign) block.getState();
 		sign.setLine(0, "[MyHungerGames]");
 		sign.setLine(1, "Click the sign");
 		sign.setLine(2, "to join");
-		sign.setLine(3, str);
+		sign.setLine(3, name);
 		sign.update(false);
 		save();
 		return true;
@@ -174,7 +173,7 @@ public class LobbyListener implements Listener, Runnable {
 	
 	@EventHandler(priority= EventPriority.MONITOR, ignoreCancelled=true)
 	public static void onBlockBreak(BlockBreakEvent event) {
-		joinSigns.remove(event.getBlock().getLocation());
+		removeSign(event.getBlock().getLocation());		
 	}
 
 	public void run() {
@@ -197,11 +196,11 @@ public class LobbyListener implements Listener, Runnable {
 			InfoWall w = it.next();
 			if (w.signs.isEmpty()) {
 				it.remove();
-				save();
 				continue;
 			}
 			w.update();
 		}
+		save();
 	}
 	
 	public static void save() {

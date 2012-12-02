@@ -49,7 +49,6 @@ public class SessionListener implements Listener {
 			    sessions.remove(player.getName());
 			    return;
 		    }
-		    ChatUtils.error(player,"%s has been removed recently due to unknown reasons.");
 		    return;
 	    }
 	    if (type == SessionType.CHEST_ADDER) {
