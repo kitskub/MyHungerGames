@@ -13,6 +13,7 @@ v0.9
 - Made events use API Game
 - Made metrics start in a Runnable to prevent startup lag
 - Moved some methods to a GeneralUtils class
+- Made configs use Defaults directly
 
 v0.8.1
 - Added death-messages - configurable of when displayed

@@ -1,7 +1,7 @@
 package com.randude14.hungergames.games;
 
-import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.event.GameEndEvent;
@@ -37,7 +37,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameEnd(GameEndEvent event) {
 		if (!enabled) return;
-		if (!Config.getAutoJoinAllowed(event.getGame().getSetup())) return;
+		if (!Config.AUTO_JOIN_ALLOWED.getBoolean(event.getGame().getSetup())) return;
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
 		queuedGames.offer(new EquatableWeakReference<Game>(event.getGame()));
 	}

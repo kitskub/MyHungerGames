@@ -70,7 +70,7 @@ public class HungerGames extends JavaPlugin{
 				if (updater.getResult().equals(Updater.UpdateResult.UPDATE_AVAILABLE))
 					Logging.warning("There is a new version: %s (You are running %s)", updater.getLatestVersionString(), getDescription().getVersion());
 				}
-		}, 0L, Config.getUpdateDelay() * 20L * 60L);
+		}, 0L, Defaults.Config.UPDATE_DELAY.getGlobalInt() * 20L * 60L);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class HungerGames extends JavaPlugin{
 	}
 	
 	private static void loadResetter() {
-	    if (Config.getForceInternalGlobal()) {
+	    if (Defaults.Config.FORCE_INTERNAL.getGlobalBoolean()) {
 		    Logging.info("Forcing internal resetter.");
 		    ResetHandler.setRessetter(ResetHandler.Resetters.INTERNAL);
 		    return;
@@ -150,7 +150,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TimedGameRunnable(), instance);
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
-		if (Config.getAutoJoin()) pm.registerEvents(new PlayerQueueHandler(), instance);
+		if (Defaults.Config.AUTO_JOIN_ALLOWED.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
 	private static void updateConfig() {

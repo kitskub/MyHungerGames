@@ -1,6 +1,6 @@
 package com.randude14.hungergames.games;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -36,7 +36,7 @@ public class SpectatorSponsoringRunnable implements Runnable{
 					spectatorTimes.remove(string);
 					continue;
 				}
-				spectatorTimes.put(player.getName(), Config.getSpectatorSponsorPeriod(game.getSetup()) * 20);
+				spectatorTimes.put(player.getName(), Config.SPECTATOR_SPONSOR_PERIOD.getInt(game.getSetup()) * 20);
 				ChatUtils.send(player, ChatColor.GOLD, "You can now sponsor a player with an item.");
 				ConversationFactory factory = new ConversationFactory(HungerGames.getInstance());
 				factory.withEscapeSequence("quit");
@@ -70,7 +70,7 @@ public class SpectatorSponsoringRunnable implements Runnable{
 	}
 	
 	public void addSpectator(Player player) {
-		spectatorTimes.put(player.getName(), Config.getSpectatorSponsorPeriod(game.getSetup()) * 20);
+		spectatorTimes.put(player.getName(), Config.SPECTATOR_SPONSOR_PERIOD.getInt(game.getSetup()) * 20);
 	}
 	
 	public void removeSpectator(Player player) {

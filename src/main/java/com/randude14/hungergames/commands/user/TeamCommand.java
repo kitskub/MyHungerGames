@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.commands.PlayerCommand;
@@ -22,7 +22,7 @@ public class TeamCommand extends PlayerCommand {
 			ChatUtils.error(player, "You are not in a game!");
 			return;
 		}
-		if (!Config.getAllowTeam(game.getSetup())) {
+		if (!Defaults.Config.TEAMS_ALLOW_TEAMS.getBoolean(game.getSetup())) {
 			ChatUtils.error(player, "Teams are not enabled for this game!");
 			return;
 		}

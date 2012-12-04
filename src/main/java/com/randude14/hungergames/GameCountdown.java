@@ -6,6 +6,7 @@ import com.randude14.hungergames.utils.GeneralUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -13,7 +14,7 @@ public class GameCountdown implements Runnable {
 	private final HungerGame game;
 	private int countdown;
 	private BukkitTask task;
-	private Player starter;
+	private CommandSender starter;
 	private boolean isResuming;
 	
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
@@ -46,11 +47,11 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public GameCountdown(final HungerGame game, boolean isResuming) {
-		this(game, Config.getDefaultTime(game.getSetup()), isResuming);
+		this(game, Defaults.Config.DEFAULT_TIME.getInt(game.getSetup()), isResuming);
 	}
 	
 	public GameCountdown(final HungerGame game) {
-		this(game, Config.getDefaultTime(game.getSetup()), false);
+		this(game, Defaults.Config.DEFAULT_TIME.getInt(game.getSetup()), false);
 	}
 	
 	public void cancel() {
@@ -79,6 +80,10 @@ public class GameCountdown implements Runnable {
 		if(countdown <= 5) color = ChatColor.GOLD;
 		if(countdown <= 3) color = ChatColor.RED;
 		ChatUtils.broadcastRaw(game, color, "%s...", GeneralUtils.formatTime(countdown));
+	}
+	
+	public void setStarter(CommandSender starter) {
+		this.starter = starter;
 	}
 
 }

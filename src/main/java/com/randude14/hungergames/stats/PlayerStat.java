@@ -1,7 +1,6 @@
 package com.randude14.hungergames.stats;
 
-import com.randude14.hungergames.Config;
-import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.games.HungerGame;
 
 import java.util.*;
@@ -59,14 +58,14 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	
 	private void update() {
 		if (state == PlayerState.DEAD) return;
-		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
+		int lives = (game == null) ? Defaults.Config.LIVES.getGlobalInt() : Defaults.Config.LIVES.getInt(game.getSetup());
 		if (lives == 0 || deaths.size() >= lives) {
 			die();
 		}
 	}
 	
 	public int getLivesLeft() {
-		int lives = (game == null) ? Config.getLivesGlobal() : Config.getLives(game.getSetup());
+		int lives = (game == null) ? Defaults.Config.LIVES.getGlobalInt() : Defaults.Config.LIVES.getInt(game.getSetup());
 		if(lives == 0) return -1;
 		return lives - deaths.size();
 	}

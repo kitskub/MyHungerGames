@@ -1,6 +1,6 @@
 package com.randude14.hungergames.games;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.api.Game;
@@ -89,7 +89,7 @@ public class TimedGameRunnable implements Runnable, Listener{
 	
 	private void start() {
 		if (game.get() == null) return;
-		timeLeft = Config.getMaxGameDuration(game.get().getSetup()) * 1000;
+		timeLeft = Config.MAX_GAME_DURATION.getInt(game.get().getSetup()) * 1000;
 		if (timeLeft <= 0) return;
 		runnables.put(game, this);
 		Logging.debug("Scheduled TimedGameRunnable for "  + timeLeft * 20);

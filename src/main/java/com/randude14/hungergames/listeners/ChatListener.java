@@ -1,6 +1,6 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -22,11 +22,11 @@ public class ChatListener implements Listener {
 		HungerGame chatterGame = GameManager.INSTANCE.getRawSession(event.getPlayer());
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
 			HungerGame receipientGame = GameManager.INSTANCE.getRawSession(event.getPlayer());
-			if (receipientGame != null && Config.getIsolatePlayerChat(receipientGame.getSetup())) {
+			if (receipientGame != null && Config.ISOLATE_PLAYER_CHAT.getBoolean(receipientGame.getSetup())) {
 				if (chatterGame != null) {
 					if (chatterGame.compareTo(receipientGame) == 0 
 						&& event.getPlayer().getLocation().getWorld() == p.getLocation().getWorld()) {
-						float distanceRequired = Config.getChatDistance(receipientGame.getSetup());
+						float distanceRequired = Config.CHAT_DISTANCE.getInt(receipientGame.getSetup());
 						if (distanceRequired != 0 && event.getPlayer().getLocation().distance(p.getLocation()) >= distanceRequired) {
 							if (HungerGames.hasPermission(event.getPlayer(), Perm.ADMIN_CHAT)) {
 								if (event.getMessage().startsWith("hg ")) {

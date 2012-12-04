@@ -1,6 +1,6 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
@@ -77,7 +77,7 @@ public class PlayerListener implements Listener {
 	public void playerSneak(PlayerToggleSneakEvent event) {
 		HungerGame game;
 		if ((game = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer())) == null) return;
-		if (!Config.getHidePlayers(game.getSetup())) return;
+		if (!Config.HIDE_PLAYERS.getBoolean(game.getSetup())) return;
 		event.setCancelled(true);
 	}
 	

@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
@@ -21,7 +21,7 @@ public class CommandListener implements Listener {
 		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if(session == null) return;
 		message = message.split(" ")[0];
-		if(Config.getUseCommand(session.getSetup()) ^ Config.getSpecialCommands(session.getSetup()).contains("/" + message)) {
+		if(Config.USE_COMMAND.getBoolean(session.getSetup()) ^ Config.SPECIAL_COMMANDS.getStringList(session.getSetup()).contains("/" + message)) {
 			ChatUtils.error(player, "Cannot use that command while in game %s.", session.getName());
 			event.setCancelled(true);
 		}

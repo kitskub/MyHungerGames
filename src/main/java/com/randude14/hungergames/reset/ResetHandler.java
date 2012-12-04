@@ -1,6 +1,6 @@
 package com.randude14.hungergames.reset;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.games.HungerGame;
 
 public class ResetHandler {
@@ -37,7 +37,7 @@ public class ResetHandler {
     }
     
     private static boolean resetBlockChanges(HungerGame game) {
-	    if (!Config.getResetChanges(game.getSetup())) return true;
+	    if (!Config.RESET_CHANGES.getBoolean(game.getSetup())) return true;
 	    return resetter.resetChanges(game);
     }
     

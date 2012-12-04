@@ -1,19 +1,18 @@
 package com.randude14.hungergames.stats;
 
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.utils.ConnectionUtils;
-import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
+
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,7 +43,7 @@ public class StatHandler {
 	 * {"sponsors"; "{sponsor1:{sponsee1}{sponsee2}}{sponsor2:{sponsee1}{etc.}}{etc.}"}
 	 */
 	public static void updateGame(HungerGame game) {
-		String urlString = Config.getWebStatsIP();
+		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updateGames");
@@ -95,7 +94,7 @@ public class StatHandler {
 	 * {"deaths"; number of deaths}
 	 */
 	public static void updateStat(PlayerStat stat) {
-		String urlString = Config.getWebStatsIP();
+		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "updatePlayers");
@@ -122,7 +121,7 @@ public class StatHandler {
 	}
 
 	public static SQLStat getStat(String s) {
-		String urlString = Config.getWebStatsIP();
+		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return null;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("requestType", "requestPlayer");

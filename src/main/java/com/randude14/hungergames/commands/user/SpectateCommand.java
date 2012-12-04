@@ -1,6 +1,6 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
@@ -20,7 +20,7 @@ public class SpectateCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String label, String[] args) {
 		if (GameManager.INSTANCE.removeSpectator(player)) return;
-		String name = (args.length < 1) ? Config.getDefaultGame() : args[0];
+		String name = (args.length < 1) ? Defaults.Config.DEFAULT_GAME.getGlobalString() : args[0];
 		if (name == null) {
 			ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_USER);
 			return;

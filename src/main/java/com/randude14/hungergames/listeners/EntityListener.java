@@ -1,6 +1,6 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.games.HungerGame;
@@ -26,12 +26,12 @@ public class EntityListener implements Listener{
 		// Games
 		HungerGame hurtGame = GameManager.INSTANCE.getRawSession(player);
 		if (hurtGame != null) {
-			if (Config.getForceDamage(hurtGame.getSetup())) {
+			if (Config.FORCE_DAMAGE.getBoolean(hurtGame.getSetup())) {
 				event.setCancelled(false);
 			}
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent newEvent = (EntityDamageByEntityEvent) event;
-				double period = Config.getGracePeriod(hurtGame.getSetup());
+				double period = Config.GRACE_PERIOD.getDouble(hurtGame.getSetup());
 				long startTime = hurtGame.getInitialStartTime();
 				if (((System.currentTimeMillis() - startTime) / 1000) < period) {
 					event.setCancelled(true);
@@ -39,7 +39,7 @@ public class EntityListener implements Listener{
 						ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt that player during the grace-period!");
 					}
 				}
-				if (!Config.getAllowTeamFriendlyDamage(hurtGame.getSetup())) {
+				if (!Config.TEAMS_ALLOW_FRIENDLY_DAMAGE.getBoolean(hurtGame.getSetup())) {
 					Team hurtTeam = hurtGame.getPlayerStat(player).getTeam();
 					if (newEvent.getDamager() instanceof Player && hurtTeam != null && hurtGame.contains((Player) newEvent.getDamager())){
 						Team hurterTeam = hurtGame.getPlayerStat((Player) newEvent.getDamager()).getTeam();
@@ -69,7 +69,7 @@ public class EntityListener implements Listener{
 		HungerGame game = GameManager.INSTANCE.getRawSession(player);
 		if (game != null) {
 			if (game.getState() == GameState.STOPPED) {
-				if (!Config.getStopTargetting(game.getSetup())) return;
+				if (!Config.STOP_TARGETTING.getBoolean(game.getSetup())) return;
 				PlayerStat stat = game.getPlayerStat(player);
 				if (stat != null && stat.getState().equals(PlayerState.WAITING)) event.setCancelled(true); 
 			}

@@ -6,6 +6,10 @@ import com.randude14.hungergames.commands.admin.*;
 import com.randude14.hungergames.commands.admin.remove.*;
 import com.randude14.hungergames.commands.admin.set.*;
 import com.randude14.hungergames.commands.user.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.permissions.Permission;
 
 public class Defaults {
@@ -41,62 +45,12 @@ public class Defaults {
 	    return value;
 	}
     }
-    
-    public enum Config {
-	
-	MIN_VOTE(5),
-	MIN_PLAYERS(2),
-	UPDATE_DELAY(30),
-	AUTO_JOIN(false),
-	DEFAULT_TIME(10),
-	ALLOW_REJOIN(true),
-	ALLOW_JOIN_WHILE_RUNNING(false),
-	WINNER_KEEPS_ITEMS(true),
-	RESPAWN_ON_DEATH(false),
-	DEFAULT_GAME("Test"),
-	LIVES(1),
-	CLEAR_INV(true),
-	REQUIRE_INV_CLEAR(false),
-	ALL_VOTE(false),
-	AUTO_VOTE(false),
-	CAN_PLACE_BLOCK(false),
-	CAN_BREAK_BLOCK(false),
-	CAN_INTERACT_BLOCK(false),
-	CAN_TELEPORT(false),
-	USE_COMMAND(false),
-	AUTO_ADD(true),
-	RESET_CHANGES(true),
-	FORCE_SURVIVAL(true),
-	FREEZE_PLAYERS(true),
-	FORCE_DAMAGE(false),
-	FORCE_INTERNAL(false),
-	ISOLATE_PLAYER_CHAT(true),
-	CHAT_DISTANCE(15),
-	ALLOW_MINIMAL_MESSAGES(true),
-	REMOVE_ITEMS(true),
-	USE_MATCH_MATERIAL(true),
-	MAX_RANDOM_ITEMS(5),
-	SPECTATOR_SPONSOR_PERIOD(0),
-	WEBSTATS_IP("http://myhungergames.fragzone.org/dbproxy.php"),
-	DEATH_CANNON(1),
-	AUTO_JOIN_ALLOWED(true),
-	MAX_GAME_DURATION(0),
-	USE_SPAWN(true),
-	GRACE_PERIOD(0d),
-	TIMEOUT(300),
-	TAKE_LIFE_ON_LEAVE(true),
-	START_TIMER(0),
-	STOP_TARGETTING(true),
-	HIDE_PLAYERS(true),
-	SHOW_DEATH_MESSAGES(1),
-	TEAMS_ALLOW_TEAMS(true),
-	TEAMS_ALLOW_FRIENDLY_DAMAGE(false),
-	DISABLE_FLY(true);
-	
-	
+    public enum ItemConfig {
+	MAX_RANDOM_ITEMS(5);
+	    
 	private Object value;
-	
-	private Config(Object message) {
+
+	private ItemConfig(Object message) {
 	    this.value = message;
 	}
 	
@@ -114,6 +68,218 @@ public class Defaults {
 	
 	public String getString(){
 	    return (String) value;	    
+	}
+    }
+
+    public enum Config {
+	
+	MIN_VOTE(5, "min-vote"),
+	MIN_PLAYERS(2, "min-players"),
+	UPDATE_DELAY(30, "update-delay"),
+	AUTO_JOIN(false, "auto-join"),
+	AUTO_JOIN_ALLOWED(true, "auto-join-allowed"),
+	DEFAULT_TIME(10, "default-time"),
+	ALLOW_REJOIN(true, "allow-rejoin"),
+	ALLOW_JOIN_DURING_GAME(false, "allow-join-during-game"),
+	WINNER_KEEPS_ITEMS(true, "winner-keeps-items"),
+	SPAWNPOINT_ON_DEATH(false, "spawnpoint-on-death"),
+	DEFAULT_GAME("Test", "default-game"),
+	LIVES(1, "lives"),
+	CLEAR_INV(true, "clear-inv"),
+	REQUIRE_INV_CLEAR(false, "require-inv-clear"),
+	ALL_VOTE(false, "all-vote"),
+	AUTO_VOTE(false, "auto-vote"),
+	CAN_PLACE_BLOCK(false, "can-place-block"),
+	CAN_BREAK_BLOCK(false, "can-break-block"),
+	CAN_INTERACT_BLOCK(false, "can-interact-block"),
+	SPECIAL_BLOCKS_PLACE(new ArrayList<String>(), "special-blocks-place"),
+	SPECIAL_BLOCKS_BREAK(new ArrayList<String>(), "special-blocks-break"),
+	SPECIAL_BLOCKS_INTERACT(new ArrayList<String>(), "special-blocks-interact"),
+	CAN_TELEPORT(false, "can-teleport"),
+	USE_COMMAND(false, "use-command"),
+	SPECIAL_COMMANDS(new ArrayList<String>(), "special-commands"),
+	AUTO_ADD(true, "auto-add"),
+	RESET_CHANGES(true, "reset-changes"),
+	FORCE_SURVIVAL(true, "force-survival"),
+	FREEZE_PLAYERS(true, "freeze-players"),
+	FORCE_DAMAGE(false, "force-damage"),
+	FORCE_INTERNAL(false, "force-internal"),
+	ISOLATE_PLAYER_CHAT(true, "isolate-player-chat"),
+	CHAT_DISTANCE(15, "chat-distance"),
+	ALLOW_MINIMAL_MESSAGES(true, "allow-minimal-messages"),
+	REMOVE_ITEMS(true, "remove-items"),
+	USE_MATCH_MATERIAL(true, "use-match-material"),
+	SPECTATOR_SPONSOR_PERIOD(0, "spectator-sponsor-period"),
+	WEBSTATS_IP("http://myhungergames.fragzone.org/dbproxy.php", "webstats-ip"),
+	DEATH_CANNON(1, "death-cannon"),
+	MAX_GAME_DURATION(0, "max-game-duration"),
+	USE_SPAWN(true, "use-spawn"),
+	GRACE_PERIOD(0, "grace-period"),
+	TIMEOUT(300, "timeout"),
+	TAKE_LIFE_ON_LEAVE(true, "take-life-on-leave"),
+	START_TIMER(0, "start-timer"),
+	STOP_TARGETTING(true, "stop-targetting"),
+	HIDE_PLAYERS(true, "hide-players"),
+	SHOW_DEATH_MESSAGES(1, "show-death-messages"),
+	TEAMS_ALLOW_TEAMS(true, "teams.allow-teams"),
+	TEAMS_ALLOW_FRIENDLY_DAMAGE(false, "teams.allow-friendly-damage"),
+	DISABLE_FLY(true, "disable-fly");
+	
+	
+	private Object value;
+	private String option;
+
+	private Config(Object message, String option) {
+	    this.value = message;
+	    this.option = option;
+	}
+
+	/*
+	public boolean getBoolean(){
+	    return (Boolean) value;
+	}
+
+	public int getInt(){
+	    return (Integer) value;
+	}
+
+	public double getDouble(){
+	    return (Double) value;
+	}
+
+	public String getString(){
+	    return (String) value;	    
+	}*/
+
+	public boolean getGlobalBoolean(){
+		return Files.CONFIG.getConfig().getBoolean("global." + option, (Boolean) value);
+	}
+
+	public int getGlobalInt(){
+		return Files.CONFIG.getConfig().getInt("global." + option, (Integer) value);
+	}
+
+	public double getGlobalDouble(){
+		return Files.CONFIG.getConfig().getDouble("global." + option, (Double) value);
+	}
+
+	public String getGlobalString(){
+		return Files.CONFIG.getConfig().getString("global." + option, (String) value);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> getGlobalStringList() {
+		if (Files.CONFIG.getConfig().contains("global." + option)) {
+			return Files.CONFIG.getConfig().getStringList("global." + option);
+		}
+		return (List<String>) value;
+	}
+	/** 
+	 * For safe recursiveness 
+	 * return boolean if found, null if not
+	 */
+	private Boolean getBoolean(String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + option)) {
+			return Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + option);
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			Boolean b = getBoolean(parent, checked);
+			if (b != null) return b;
+		}
+		return null;
+	}
+	public boolean getBoolean(String setup) {
+		Boolean b = getBoolean(setup, new HashSet<String>());
+		return b == null ? getGlobalBoolean() : b;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return String if found, null if not
+	 */	
+	private String getString(String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + option)) {
+			return Files.CONFIG.getConfig().getString("setups." + setup + "." + option);
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			String s = getString(parent, checked);
+			if (s != null) return s;
+		}
+		return null;
+	}
+	public String getString(String setup) {
+		String s = getString(setup, new HashSet<String>());
+		return s == null ? getGlobalString() : s;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return Integer if found, null if not
+	 */
+	private Integer getInt(String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + option)) {
+			return Files.CONFIG.getConfig().getInt("setups." + setup + "." + option);
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			Integer i = getInt(parent, checked);
+			if (i != null) return i;
+		}
+		return null;
+	}
+	public int getInt(String setup) {
+		Integer i = getInt(setup, new HashSet<String>());
+		return i == null ? getGlobalInt() : i;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return Integer if found, null if not
+	 */
+	private Double getDouble(String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + option)) {
+			return Files.CONFIG.getConfig().getDouble("setups." + setup + "." + option);
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			Double d = getDouble(parent, checked);
+			if (d != null) return d;
+		}
+		return null;
+	}
+	public double getDouble(String setup) {
+		Double d = getDouble(setup, new HashSet<String>());
+		return d == null ? getGlobalDouble() : d;
+	}
+	
+	/** 
+	 * For safe recursiveness 
+	 * return List if found, null if not
+	 */
+	private List<String> getStringList(String setup, Set<String> checked) {
+		if (checked.contains(setup)) return null;
+		List<String> strings = new ArrayList<String>();
+		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + option)) {
+			strings.addAll(Files.CONFIG.getConfig().getStringList("setups." + setup + "." + option));
+		}
+		checked.add(setup);
+		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
+			List<String> list = getStringList(parent, checked);
+			if (list != null) strings.addAll(list);
+		}
+		return strings;
+	}
+	
+	/** returns combination of all lists, including global */
+	public List<String> getStringList(String setup) {
+		List<String> list = getStringList(setup, new HashSet<String>());
+		return list == null ? getGlobalStringList() : list;
 	}
     }
 

@@ -1,6 +1,6 @@
 package com.randude14.hungergames.utils;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.HungerGames;
@@ -48,7 +48,7 @@ public class ChatUtils {
 	 */
 	public static void broadcastRaw(Game game, ChatColor color, String message) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (Config.getAllowMinimalMessagesGlobal() && !GameManager.INSTANCE.isPlayerSubscribed(player, game)) continue;
+			if (Defaults.Config.ALLOW_MINIMAL_MESSAGES.getGlobalBoolean() && !GameManager.INSTANCE.isPlayerSubscribed(player, game)) continue;
 			player.sendMessage(color + message);
 		}
 
@@ -86,6 +86,7 @@ public class ChatUtils {
 	}
 
 	public static void send(CommandSender cs, ChatColor color, String mess) {
+		if (cs == null) return;
 		cs.sendMessage(color + mess);
 	}
 	

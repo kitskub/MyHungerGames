@@ -1,7 +1,7 @@
 package com.randude14.hungergames.games;
 
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.*;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.api.Game;
 import static com.randude14.hungergames.api.Game.GameState.*;
@@ -332,13 +332,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		readyToPlay.add(player.getName());
 		String mess = Lang.getVoteMessage(setup).replace("<player>", player.getName()).replace("<game>", this.name);
 		ChatUtils.broadcast(this, mess);
-		int minVote = Config.getMinVote(setup);
-		int minPlayers = Config.getMinPlayers(setup);
-		int startTimer = Config.getStartTimer(setup);
+		int minVote = Config.MIN_VOTE.getInt(setup);
+		int minPlayers = Config.MIN_PLAYERS.getInt(setup);
+		int startTimer = Config.START_TIMER.getInt(setup);
 		int ready = readyToPlay.size();
 		int joined = stats.size();
-		boolean allVote = Config.getAllVote(setup);
-		boolean autoVote = Config.getAutoVote(setup);
+		boolean allVote = Config.ALL_VOTE.getBoolean(setup);
+		boolean autoVote = Config.AUTO_VOTE.getBoolean(setup);
 		if (joined >= minPlayers) {
 			if ((ready >= minVote && !allVote) || (ready >= joined && allVote && !autoVote)) {
 				ChatUtils.broadcast(this, "Enough players have voted that they are ready. Starting game...", this.name);
@@ -382,7 +382,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 		spectators.put(player.getName(), player.getLocation());
-		if (Config.getSpectatorSponsorPeriod(setup) != 0) {
+		if (Config.SPECTATOR_SPONSOR_PERIOD.getInt(setup) != 0) {
 			 spectatorSponsoringRunnable.addSpectator(player);
 		}
 		Random rand = HungerGames.getRandom();
@@ -455,7 +455,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			}
 			contents = list.toArray(new ItemStack[list.size()]);
 			playerLeaving(player, false);
-			if (isFinished && Config.getWinnerKeepsItems(setup)) {
+			if (isFinished && Config.WINNER_KEEPS_ITEMS.getBoolean(setup)) {
 				for (ItemStack i : player.getInventory().addItem(contents).values()) {
 					player.getLocation().getWorld().dropItem(player.getLocation(), i);
 				}
@@ -481,7 +481,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			locTask.cancel();
 			locTask = null;
 		}
-		if (Config.getRemoveItems(setup)) removeItemsOnGround();
+		if (Config.REMOVE_ITEMS.getBoolean(setup)) removeItemsOnGround();
 		state = STOPPED;
 		if (!isFinished) {
 			GameEndEvent event = new GameEndEvent(this, false);
@@ -495,6 +495,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	@Override
 	public boolean startGame(CommandSender cs, int ticks) {
 		String result = startGame(ticks);
+		if (countdown != null) countdown.setStarter(cs);
 		if (result != null) {
 			ChatUtils.error(cs, result);
 			return false;
@@ -504,13 +505,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	@Override
 	public boolean startGame(CommandSender cs, boolean immediate) {
-		if(!immediate) return startGame(cs, Config.getDefaultTime(setup));
+		if(!immediate) return startGame(cs, Config.DEFAULT_TIME.getInt(setup));
 		return startGame(cs, 0);
 	}
 
 	@Override
 	public boolean startGame(boolean immediate) {
-		if(!immediate) return startGame(Config.getDefaultTime(setup)) == null;
+		if(!immediate) return startGame(Config.DEFAULT_TIME.getInt(setup)) == null;
 		return startGame(0) == null;
 	}
 
@@ -519,6 +520,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (state == DELETED) return "Game no longer exists.";
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
 		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
+		if (stats.size() < Config.MIN_PLAYERS.getInt(setup)) return String.format("There are not enough players in %s", name);
 		if (countdown != null) {
 			if (ticks < countdown.getTimeLeft()) {
 				countdown.cancel();
@@ -533,15 +535,14 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			state = COUNTING_FOR_START;
 			return null;
 		}
-		if (stats.size() < Config.getMinPlayers(setup)) return String.format("There are not enough players in %s", name);
-		if (stats.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
-		initialStartTime = System.currentTimeMillis();
-		startTimes.add(System.currentTimeMillis());
 		GameStartEvent event = new GameStartEvent(this);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
+		if (stats.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
+		initialStartTime = System.currentTimeMillis();
+		startTimes.add(System.currentTimeMillis());
 		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
 		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
 		ResetHandler.gameStarting(this);
@@ -580,13 +581,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	
 	@Override
 	public boolean resumeGame(CommandSender cs, boolean immediate) {
-		if (!immediate) return resumeGame(cs, Config.getDefaultTime(setup));
+		if (!immediate) return resumeGame(cs, Config.DEFAULT_TIME.getInt(setup));
 		return resumeGame(cs, 0);
 	}
 	
 	@Override
 	public boolean resumeGame(boolean immediate) {
-		if (!immediate) return resumeGame(Config.getDefaultTime(setup)) == null;
+		if (!immediate) return resumeGame(Config.DEFAULT_TIME.getInt(setup)) == null;
 		return resumeGame(0) == null;
 	}
 
@@ -722,7 +723,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 		if(!playerEnteringPreCheck(player)) return false;
-		if (!Config.getAllowRejoin(setup)) {
+		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
 			ChatUtils.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
@@ -757,7 +758,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    return false;
 	    }
 	    if (!playerEnteringPreCheck(player)) return false;
-	    if (state == RUNNING && !Config.getAllowJoinWhileRunning(setup)) {
+	    if (state == RUNNING && !Config.ALLOW_JOIN_DURING_GAME.getBoolean(setup)) {
 		    ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
 		    return false;
 	    }
@@ -778,7 +779,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    else {
 		    stats.get(player.getName()).setState(PlayerState.WAITING);
-		    if (Config.getAutoVote(setup)) addReadyPlayer(player);
+		    if (Config.AUTO_VOTE.getBoolean(setup)) addReadyPlayer(player);
 	    }
 	    return true;
 	}
@@ -798,7 +799,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    return false;
 	    }
 
-	    if (Config.getRequireInvClear(setup)) {
+	    if (Config.REQUIRE_INV_CLEAR.getBoolean(setup)) {
 		    if(!GeneralUtils.hasInventoryBeenCleared(player)) {
 			    ChatUtils.error(player, "You must clear your inventory first (Be sure you're not wearing armor either).");
 			    return false;
@@ -826,12 +827,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    GameManager.INSTANCE.addSubscribedPlayer(player, this);
 	    GameManager.INSTANCE.addBackLocation(player);
 	    player.teleport(loc, TeleportCause.PLUGIN);
-	    if (state != RUNNING && Config.getFreezePlayers(setup)) GameManager.INSTANCE.freezePlayer(player);
-	    if (Config.getForceSurvival(setup)) {
+	    if (state != RUNNING && Config.FREEZE_PLAYERS.getBoolean(setup)) GameManager.INSTANCE.freezePlayer(player);
+	    if (Config.FORCE_SURVIVAL.getBoolean(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
 	    }
-	    if (Config.getDisableFly(setup)) {
+	    if (Config.DISABLE_FLY.getBoolean(setup)) {
 		    if (!HGPermission.INSTANCE.hasPermission(player, Perm.ADMIN_ALLOW_FLIGHT)) {
 			    if (player.getAllowFlight()) {
 				    playersCanFly.add(player.getName());
@@ -844,8 +845,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			    
 		    }
 	    }
-	    if (Config.getHidePlayers(setup)) player.setSneaking(true);
-	    if (Config.getClearInv(setup)) InventorySave.saveAndClearInventory(player);
+	    if (Config.HIDE_PLAYERS.getBoolean(setup)) player.setSneaking(true);
+	    if (Config.CLEAR_INV.getBoolean(setup)) InventorySave.saveAndClearInventory(player);
 	    for (String kit : ItemConfig.getKits()) {
 		    if (HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName()) || HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName() + "." + kit)) {
 			    player.getInventory().addItem((ItemStack[]) ItemConfig.getKit(kit).toArray());
@@ -879,7 +880,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			return false;
 		}
 
-		if (!Config.getAllowRejoin(setup)) {
+		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
 			stats.get(player.getName()).die();
 		}
 		else {
@@ -946,13 +947,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
 		}
-		if (Config.getDisableFly(setup)) {
+		if (Config.DISABLE_FLY.getBoolean(setup)) {
 			if (!HGPermission.INSTANCE.hasPermission(player, Perm.ADMIN_ALLOW_FLIGHT)) {
 				player.setAllowFlight(playersCanFly.remove(player.getName()));
 				player.setFlying(playersFlying.remove(player.getName()));
 			}
 		}
-		if (Config.getHidePlayers(setup)) player.setSneaking(false);
+		if (Config.HIDE_PLAYERS.getBoolean(setup)) player.setSneaking(false);
 		readyToPlay.remove(player.getName());
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
@@ -986,7 +987,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (player == null) {
 			return;
 		}
-		if (Config.getUseSpawn(setup)) {
+		if (Config.USE_SPAWN.getBoolean(setup)) {
 			if (spawn != null) {
 				player.teleport(spawn);
 				return;
@@ -1126,17 +1127,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			deathEvent.getDrops().clear();
 			teleportPlayerToSpawn(killed);
 			checkForGameOver(false);
-			if (Config.getDeathCannon(setup) == 1 || Config.getDeathCannon(setup) == 2) playCannonBoom();
-			if (Config.getShowDeathMessages(setup) == 1 || Config.getShowDeathMessages(setup) == 2) {
-				List<String> deathMessages = Lang.getDeathMessages(setup);
-				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
+			int deathCannon = Config.DEATH_CANNON.getInt(setup);
+			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
+			if (deathCannon == 1 || deathCannon == 2) playCannonBoom();
+			if (deathMessages == 1 || deathMessages == 2) {
+				List<String> messages = Lang.getDeathMessages(setup);
+				ChatUtils.broadcast(this, messages.get((new Random()).nextInt(messages.size()))
 					.replace("<killed>", killed.getDisplayName()
 					.replace("<killer>", killer.getDisplayName())
 					.replace("<game>", name)));
 			}
 		}
 		else {
-			if (Config.shouldRespawnAtSpawnPoint(setup)) {
+			if (Config.SPAWNPOINT_ON_DEATH.getBoolean(setup)) {
 				Location respawn = spawnsTaken.get(killed.getName());
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
@@ -1144,8 +1147,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
-			if (Config.getDeathCannon(setup) == 1) playCannonBoom();
-			if (Config.getShowDeathMessages(setup) == 1) {
+			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
+			if (Config.SHOW_DEATH_MESSAGES.getInt(setup) == 1) {
 				List<String> deathMessages = Lang.getDeathMessages(setup);
 				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
 					.replace("<killed>", killed.getDisplayName()

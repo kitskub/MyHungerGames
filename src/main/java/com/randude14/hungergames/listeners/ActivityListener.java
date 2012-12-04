@@ -1,6 +1,6 @@
 package com.randude14.hungergames.listeners;
 
-import com.randude14.hungergames.Config;
+import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;
@@ -38,7 +38,7 @@ public class ActivityListener implements Listener, Runnable {
 			}
 			Game game = ref.get();
 			if (times.get(ref) == null) times.put(ref, new HashMap<String, Long>());
-			long maxTime = Config.getTimeout(game.getSetup()) * 1000;
+			long maxTime = Config.TIMEOUT.getInt(game.getSetup()) * 1000;
 			if (maxTime <= 0) continue;
 			for (String s : times.get(ref).keySet()) {
 				if ((System.currentTimeMillis() - times.get(ref).get(s)) >= maxTime) {

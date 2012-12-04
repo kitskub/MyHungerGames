@@ -119,7 +119,7 @@ public class BlockListener implements Listener {
                 Player player = event.getPlayer();
                 HungerGame game = GameManager.INSTANCE.getRawPlayingSession(player);
                 if(game == null) return;
-		if(!Config.getAutoAdd(game.getSetup())) return;
+		if(!Defaults.Config.AUTO_ADD.getBoolean(game.getSetup())) return;
 		
 		// Logging.log(Level.FINEST, "Inventory opened and checking for fill. Player: {0}", player.getName());
                 game.addAndFillChest((Chest) event.getClickedBlock().getState());

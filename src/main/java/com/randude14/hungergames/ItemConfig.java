@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 public class ItemConfig {
 	
 	public static boolean useMatchMaterial() {
-		return Files.ITEMCONFIG.getConfig().getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getBoolean());
+		return Files.ITEMCONFIG.getConfig().getBoolean("global.use-match-material", Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean());
 	}
 	
 	// Itemsets
@@ -217,6 +217,6 @@ public class ItemConfig {
 	}
 	
 	public static int getMaxRandomItems() {
-		return Files.ITEMCONFIG.getConfig().getInt("rewards.max-random", Defaults.Config.MAX_RANDOM_ITEMS.getInt());
+		return Files.ITEMCONFIG.getConfig().getInt("rewards.max-random", Defaults.ItemConfig.MAX_RANDOM_ITEMS.getInt());
 	}
 }
