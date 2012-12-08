@@ -17,42 +17,50 @@
  	<!-- Build settings -->
 	<build>
 		<defaultGoal>clean install</defaultGoal>
-		<!--<plugins>
-			<plugin>
-				<groupId>org.codehaus.groovy.maven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>set-properties</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<configuration>
-							<properties>
-								<name></name>
-							</properties>
-							<source>
-							StringBuilder builder = new StringBuilder();
-							builder.append(project.artifactId).append("-").append(project.version);
-							if (project.version.split("-").length == 1) {
-							name = builder.toString();
-							} else {
-							java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMddyyyyHHmm");
-							// name = builder.append("-").append(System.currentTimeMillis()).toString();
-							name = builder.append("-").append(sdf.format(new Date())).toString();
-							}
-							print(name);
-							project.build.finalName = name;
-							</source>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins> -->
 	</build>
 	
+	<profiles>
+		<profile>
+			<id>jenkins</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.groovy.maven</groupId>
+						<artifactId>gmaven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<id>set-properties</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<properties>
+										<name></name>
+									</properties>
+									<source>
+									StringBuilder builder = new StringBuilder();
+									builder.append(project.artifactId).append("-").append(project.version);
+									if (project.version.split("-").length == 1) {
+									name = builder.toString();
+									} else {
+									java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMddyyyyHHmm");
+									// name = builder.append("-").append(System.currentTimeMillis()).toString();
+									name = builder.append("-").append(sdf.format(new Date())).toString();
+									}
+									print(name);
+									project.build.finalName = name;
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
