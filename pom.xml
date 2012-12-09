@@ -21,6 +21,11 @@
 	
 	<profiles>
 		<profile>
+			<activation>
+				<property>
+					<name>jenkins</name>
+				</property>
+			</activation>
 			<id>jenkins</id>
 			<build>
 				<plugins>
