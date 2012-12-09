@@ -1,8 +1,5 @@
 HIGH:
 - Tutorial
-- Make configs enum based
-- Moved some methods to a GeneralUtils class
-- Make SessionListener use switch
 
 MEDIUM:
 - Random events

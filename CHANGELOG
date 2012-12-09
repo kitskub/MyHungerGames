@@ -14,6 +14,8 @@ v0.9
 - Made metrics start in a Runnable to prevent startup lag
 - Moved some methods to a GeneralUtils class
 - Made configs use Defaults directly
+- Fixed countdown bug
+- Made SessionListener use switch
 
 v0.8.1
 - Added death-messages - configurable of when displayed

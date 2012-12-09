@@ -56,7 +56,6 @@ public class GameCountdown implements Runnable {
 	
 	public void cancel() {
 		task.cancel();
-		task = null;
 	}
 
 	public int getTimeLeft() {
