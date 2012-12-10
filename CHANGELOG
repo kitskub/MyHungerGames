@@ -16,6 +16,7 @@ v0.9
 - Made configs use Defaults directly
 - Fixed countdown bug
 - Made SessionListener use switch
+- Fixed "Cannot teleport while in-game"
 
 v0.8.1
 - Added death-messages - configurable of when displayed

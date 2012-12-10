@@ -9,6 +9,7 @@ import static com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
+import com.randude14.hungergames.listeners.TeleportListener;
 import com.randude14.hungergames.register.HGPermission;
 import com.randude14.hungergames.stats.PlayerStat.Team;
 import com.randude14.hungergames.stats.StatHandler;
@@ -826,6 +827,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    GameManager.INSTANCE.addSubscribedPlayer(player, this);
 	    GameManager.INSTANCE.addBackLocation(player);
+	    TeleportListener.allowTeleport(player);
 	    player.teleport(loc, TeleportCause.PLUGIN);
 	    if (state != RUNNING && Config.FREEZE_PLAYERS.getBoolean(setup)) GameManager.INSTANCE.freezePlayer(player);
 	    if (Config.FORCE_SURVIVAL.getBoolean(setup)) {
@@ -1141,10 +1143,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		else {
 			if (Config.SPAWNPOINT_ON_DEATH.getBoolean(setup)) {
 				Location respawn = spawnsTaken.get(killed.getName());
+				TeleportListener.allowTeleport(killed);
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			else {
 				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
+				TeleportListener.allowTeleport(killed);
 				killed.teleport(respawn, TeleportCause.PLUGIN);
 			}
 			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
