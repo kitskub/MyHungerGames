@@ -49,7 +49,7 @@ public class SetEnabledCommand extends Command {
 
 	@Override
 	protected String getPrivateUsage() {
-		return "enabled <game name> <true/false>";
+		return "enabled <game name> [true/false]";
 	}
     
 }

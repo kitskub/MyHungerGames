@@ -42,7 +42,6 @@ public class HungerGames extends JavaPlugin{
 		Files.loadAll();
 		rand = new Random(getName().hashCode());
 		registerEvents();
-		updateConfig();
 		loadRegistry();
 		loadResetter();
 		callTasks();
@@ -151,30 +150,6 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
 		if (Defaults.Config.AUTO_JOIN_ALLOWED.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
-	}
-	
-	private static void updateConfig() {
-		if (Files.CONFIG.getConfig().contains("global.chest-loot")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.chest-loot").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("global.chest-loot." + key);
-				Files.ITEMCONFIG.getConfig().set("global.chest-loot." + key, value);
-				Files.CONFIG.getConfig().set("global.chest-loot." + key, null);
-			}
-		}
-		if (Files.CONFIG.getConfig().contains("global.sponsor-loot")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("global.sponsor-loot").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("global.sponsor-loot." + key);
-				Files.ITEMCONFIG.getConfig().set("global.sponsor-loot." + key, value);
-				Files.CONFIG.getConfig().set("global.sponsor-loot." + key, null);
-			}
-		}
-		if (Files.CONFIG.getConfig().contains("itemsets")) {
-			for (String key : Files.CONFIG.getConfig().getConfigurationSection("itemsets").getKeys(false)) {
-				Object value = Files.CONFIG.getConfig().get("itemsets." + key);
-				Files.ITEMCONFIG.getConfig().set("itemsets." + key, value);
-				Files.CONFIG.getConfig().set("itemsets." + key, null);
-			}
-		}
 	}
 	
 	public static void reload() {

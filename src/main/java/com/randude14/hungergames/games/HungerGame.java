@@ -1112,6 +1112,10 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
+			for (ItemStack i : deathEvent.getDrops()) {
+				killed.getWorld().dropItemNaturally(killed.getLocation(), i);
+			}
+			deathEvent.getDrops().clear();
 			playerLeaving(killed, false);
 			final ItemStack[] armor = killed.getInventory().getArmorContents();
 			final ItemStack[] inventory = killed.getInventory().getContents();
@@ -1123,10 +1127,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				}
 
 			});
-			for (ItemStack i : deathEvent.getDrops()) {
-				killed.getWorld().dropItemNaturally(killed.getLocation(), i);
-			}
-			deathEvent.getDrops().clear();
+
 			teleportPlayerToSpawn(killed);
 			checkForGameOver(false);
 			int deathCannon = Config.DEATH_CANNON.getInt(setup);

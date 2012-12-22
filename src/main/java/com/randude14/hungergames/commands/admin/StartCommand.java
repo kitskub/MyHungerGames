@@ -28,7 +28,7 @@ public class StartCommand extends Command {
 
 		int seconds;
 
-		if (args.length == 2) {
+		if (args.length == 2) {//TODO better
 			try {
 				seconds = Integer.parseInt(args[1]);
 			} catch (Exception ex) {
@@ -52,7 +52,7 @@ public class StartCommand extends Command {
 
 	@Override
 	protected String getPrivateUsage() {
-		return "start [<game name> [seconds]]";
+		return "start [[game name] [seconds]]";
 	}
     
 }

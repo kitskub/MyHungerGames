@@ -32,13 +32,12 @@ public class ResumeCommand extends Command {
 		    return;
 		}
 
-		if(args.length == 1) {
+		if(args.length < 2) {//TODO WRONG!
 			if(!game.resumeGame(cs, false)) {
 				ChatUtils.error(cs, "Failed to resume %s.", game.getName());
 			}
 
 		}
-
 		else {
 			int seconds;
 			try {

@@ -158,8 +158,6 @@ public class SignListener implements Runnable, Listener {
 				// Logging.debug("Removing sign from queue");
 				for (SignData sign : queue.signs) {
 					Block b = sign.loc.getBlock();
-					b.setType(Material.AIR);
-					b.setType(sign.type);
 					b.setTypeIdAndData(sign.type.getId(), sign.data, true);
 					if (sign.lines != null) {
 						if (b.getState() instanceof Sign) {

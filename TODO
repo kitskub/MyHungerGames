@@ -1,5 +1,6 @@
 HIGH:
 - Tutorial
+- Remove getRandom()
 
 MEDIUM:
 - Random events
