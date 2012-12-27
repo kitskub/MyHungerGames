@@ -8,19 +8,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 public class GameCountdown implements Runnable {
 	private final HungerGame game;
 	private int countdown;
-	private BukkitTask task;
+	private int task;
 	private CommandSender starter;
 	private boolean isResuming;
 	
 	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
 		this.game = game;
 		countdown = num;
-		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20L, 20L);
+		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20L, 20L).getTaskId();
 		this.isResuming = isResuming;
 		if(isResuming) {
 			ChatUtils.broadcast(game, "Resuming %s in %s...",
@@ -55,7 +54,7 @@ public class GameCountdown implements Runnable {
 	}
 	
 	public void cancel() {
-		task.cancel();
+		Bukkit.getScheduler().cancelTask(task);
 	}
 
 	public int getTimeLeft() {
