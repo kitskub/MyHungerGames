@@ -1098,7 +1098,9 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		killed.setFoodLevel(20);
 		PlayerStat killedStat = stats.get(killed.getName());
 		PlayerKillEvent event;
+		String killerDisplayName;
 		if (killer != null) {
+			killerDisplayName = killer.getDisplayName();
 			PlayerStat killerStat = stats.get(killer.getName());
 			killerStat.kill(killed.getName());
 			String message = Lang.getKillMessage(setup).replace("<killer>", killer.getName()).replace("<killed>", killed.getName()).replace("<game>", name);
@@ -1109,6 +1111,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		else {
 			event = new PlayerKillEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
+			killerDisplayName = killed.getDisplayName();
 		}
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
@@ -1137,7 +1140,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				List<String> messages = Lang.getDeathMessages(setup);
 				ChatUtils.broadcast(this, messages.get((new Random()).nextInt(messages.size()))
 					.replace("<killed>", killed.getDisplayName()
-					.replace("<killer>", killer.getDisplayName())
+					.replace("<killer>", killerDisplayName)
 					.replace("<game>", name)));
 			}
 		}
@@ -1157,7 +1160,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				List<String> deathMessages = Lang.getDeathMessages(setup);
 				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
 					.replace("<killed>", killed.getDisplayName()
-					.replace("<killer>", killer.getDisplayName())
+					.replace("<killer>", killerDisplayName)
 					.replace("<game>", name)));
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
