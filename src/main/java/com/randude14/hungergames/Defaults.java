@@ -114,7 +114,7 @@ public class Defaults {
 	DEATH_CANNON(1, "death-cannon"),
 	MAX_GAME_DURATION(0, "max-game-duration"),
 	USE_SPAWN(true, "use-spawn"),
-	GRACE_PERIOD(0, "grace-period"),
+	GRACE_PERIOD(0d, "grace-period"),
 	TIMEOUT(300, "timeout"),
 	TAKE_LIFE_ON_LEAVE(true, "take-life-on-leave"),
 	START_TIMER(0, "start-timer"),
