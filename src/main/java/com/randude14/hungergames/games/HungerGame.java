@@ -1132,39 +1132,39 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			});
 
 			teleportPlayerToSpawn(killed);
-			checkForGameOver(false);
 			int deathCannon = Config.DEATH_CANNON.getInt(setup);
 			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
 			if (deathCannon == 1 || deathCannon == 2) playCannonBoom();
 			if (deathMessages == 1 || deathMessages == 2) {
-				List<String> messages = Lang.getDeathMessages(setup);
-				ChatUtils.broadcast(this, messages.get((new Random()).nextInt(messages.size()))
-					.replace("<killed>", killed.getDisplayName()
-					.replace("<killer>", killerDisplayName)
-					.replace("<game>", name)));
+				broadcastKillMessage(killed.getDisplayName(), killerDisplayName);
 			}
+			checkForGameOver(false);
 		}
 		else {
+			Location respawn;
 			if (Config.SPAWNPOINT_ON_DEATH.getBoolean(setup)) {
-				Location respawn = spawnsTaken.get(killed.getName());
-				TeleportListener.allowTeleport(killed);
-				killed.teleport(respawn, TeleportCause.PLUGIN);
+				respawn = spawnsTaken.get(killed.getName());
 			}
 			else {
-				Location respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
-				TeleportListener.allowTeleport(killed);
-				killed.teleport(respawn, TeleportCause.PLUGIN);
+				respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 			}
+			TeleportListener.allowTeleport(killed);
+			killed.teleport(respawn, TeleportCause.PLUGIN);
 			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
 			if (Config.SHOW_DEATH_MESSAGES.getInt(setup) == 1) {
-				List<String> deathMessages = Lang.getDeathMessages(setup);
-				ChatUtils.broadcast(this, deathMessages.get((new Random()).nextInt(deathMessages.size()))
-					.replace("<killed>", killed.getDisplayName()
-					.replace("<killer>", killerDisplayName)
-					.replace("<game>", name)));
+				broadcastKillMessage(killed.getDisplayName(), killerDisplayName);
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
+	}
+
+	private void broadcastKillMessage(String killed, String killer) {
+		List<String> messages = Lang.getDeathMessages(setup);
+		String message = messages.get(new Random().nextInt(messages.size()));
+		message.replace("<killed>", killed);
+		message.replace("<killer>", killer);
+		message.replace("<game>", name);
+		ChatUtils.broadcast(this, message);
 	}
 
 	@Override
