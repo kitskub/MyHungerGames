@@ -59,17 +59,16 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	@Override
 	public boolean resetChanges(HungerGame game) {
 		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
-		if(!changedBlocks.containsKey(new EquatableWeakReference<HungerGame>(game))) return true;
-		for(Location l : changedBlocks.get(eMap).keySet()) {
-			BlockState state = changedBlocks.get(eMap).get(l);
+		if(!changedBlocks.containsKey(eMap)) return true;
+		Map<Location, BlockState> map = changedBlocks.get(eMap);
+		int chests = 0;
+		for(Location l : map.keySet()) {
+			BlockState state = map.get(l);
 			l.getBlock().setTypeId(state.getTypeId());
 			l.getBlock().setData(state.getRawData());
-
-		}
-		int chests = 0;
-		for(Location l : changedInvs.get(eMap).keySet()) {
-			BlockState state = l.getBlock().getState();
-			if (!(state instanceof InventoryHolder)) throw new IllegalStateException("Error when resetting a game: inventory saved for non-InventoryHolder");
+			state = l.getBlock().getState();
+			if (!(state instanceof InventoryHolder)) continue;
+			if (!changedInvs.get(eMap).containsKey(l)) continue;
 			((InventoryHolder) state).getInventory().setContents(changedInvs.get(eMap).get(l));
 			chests++;
 

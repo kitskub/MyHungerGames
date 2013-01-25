@@ -1,5 +1,10 @@
+v1.0
+- Fixed InternalResetter problem
+
 v0.9.1
 - Made GameCountdown use task id
+- Fixed Death Messages
+- Fixed ClassCastException
 
 v0.9
 - Added about command
