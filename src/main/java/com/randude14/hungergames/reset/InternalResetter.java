@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,7 +34,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -43,7 +41,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, BlockState>> changedBlocks = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, BlockState>>());
 	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>> changedInvs = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>>());
 	private static final Map<Location, BlockState> toCheck = new ConcurrentHashMap<Location, BlockState>();
-	private static final Map<Location, ItemStack[]> toCheckInvs = new ConcurrentHashMap<Location, ItemStack[]>();
+	//private static final Map<Location, ItemStack[]> toCheckInvs = new ConcurrentHashMap<Location, ItemStack[]>();
 
 
 	@Override
@@ -64,12 +62,10 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 		int chests = 0;
 		for(Location l : map.keySet()) {
 			BlockState state = map.get(l);
-			l.getBlock().setTypeId(state.getTypeId());
-			l.getBlock().setData(state.getRawData());
-			state = l.getBlock().getState();
+			state.update(true);
 			if (!(state instanceof InventoryHolder)) continue;
-			if (!changedInvs.get(eMap).containsKey(l)) continue;
-			((InventoryHolder) state).getInventory().setContents(changedInvs.get(eMap).get(l));
+			//if (!changedInvs.get(eMap).containsKey(l)) continue;
+			//((InventoryHolder) state).getInventory().setContents(changedInvs.get(eMap).get(l));
 			chests++;
 
 		}
@@ -96,7 +92,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 			HungerGame game = insideGame(loc);
 			if (game != null) {
 				addBlockState(game, loc, toCheck.get(loc));
-				addInv(game, loc, toCheckInvs.get(loc));
+				//addInv(game, loc, toCheckInvs.get(loc));
 			}
 			it.remove();
 		}
@@ -106,9 +102,9 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	private static void addToCheck(Block block, BlockState state) {
 		synchronized(toCheck) {
 			toCheck.put(block.getLocation(), state);
-			if (state instanceof InventoryHolder) {
-				toCheckInvs.put(block.getLocation(), ((InventoryHolder) state).getInventory().getContents());
-			}
+			//if (state instanceof InventoryHolder) {
+			//	toCheckInvs.put(block.getLocation(), ((InventoryHolder) state).getInventory().getContents());
+			//}
 		}
 	}
 
@@ -119,12 +115,12 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 		changedBlocks.get(eMap).put(loc, state);
 	}
 
-	private static synchronized void addInv(HungerGame game, Location loc, ItemStack[] inv) {
-		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
-		if (!changedInvs.containsKey(eMap)) changedInvs.put(eMap, new HashMap<Location, ItemStack[]>());
-		if (changedInvs.get(eMap).containsKey(loc)) return; // Don't want to erase the original block
-		changedInvs.get(eMap).put(loc, inv);
-	}
+	//private static synchronized void addInv(HungerGame game, Location loc, ItemStack[] inv) {
+	//	EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
+	//	if (!changedInvs.containsKey(eMap)) changedInvs.put(eMap, new HashMap<Location, ItemStack[]>());
+	//	if (changedInvs.get(eMap).containsKey(loc)) return; // Don't want to erase the original block
+	//	changedInvs.get(eMap).put(loc, inv);
+	//}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -142,7 +138,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		addToCheck(event.getBlock(), event.getBlock().getState());
+		addToCheck(event.getBlock(), event.getBlockReplacedState());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
