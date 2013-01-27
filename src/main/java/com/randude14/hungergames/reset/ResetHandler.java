@@ -24,7 +24,7 @@ public class ResetHandler {
 			    resetter = new LogBlockResetter();
 			    break;
 		    case MVA:
-			    resetter = new LogBlockResetter();
+			    resetter = new MultiverseAdventureResetter();
 			    break;
 		    default:
 			    resetter = new InternalResetter();
@@ -35,13 +35,9 @@ public class ResetHandler {
     public static void gameStarting(HungerGame game) {
 	    resetter.beginGame(game);
     }
-    
-    private static boolean resetBlockChanges(HungerGame game) {
+
+    public static boolean resetChanges(HungerGame game) {
 	    if (!Config.RESET_CHANGES.getBoolean(game.getSetup())) return true;
 	    return resetter.resetChanges(game);
-    }
-    
-    public static boolean resetChanges(HungerGame game) {
-	return resetBlockChanges(game);
     }
 }

@@ -1103,7 +1103,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			killerDisplayName = killer.getDisplayName();
 			PlayerStat killerStat = stats.get(killer.getName());
 			killerStat.kill(killed.getName());
-			String message = Lang.getKillMessage(setup).replace("<killer>", killer.getName()).replace("<killed>", killed.getName()).replace("<game>", name);
+			String message = Lang.getKillMessage(setup);
+			message = message
+				.replace("<killer>", killer.getName())
+				.replace("<killed>", killed.getName())
+				.replace("<game>", name);
 			event = new PlayerKillEvent(this, killer, killed, message);
 			ChatUtils.broadcast(this, message);
 			killedStat.death(killer.getName());
@@ -1432,10 +1436,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (worlds.size() <= 0) return Collections.emptySet();
 		Set<World> list = new HashSet<World>();
 		for (String s : worlds) {
-			if (Bukkit.getWorld(s) == null) continue;
-			list.add(Bukkit.getWorld(s));
+			World w = Bukkit.getWorld(s);
+			if (w == null) continue;
+			list.add(w);
 		}
-	return list;
+		return list;
 	}
 	
 	@Override

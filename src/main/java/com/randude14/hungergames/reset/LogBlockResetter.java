@@ -45,9 +45,7 @@ public class LogBlockResetter extends Resetter{
 		for (World w : game.getWorlds()) {
 			params.world = w;
 			CommandRollback commandRollback = plugin.getCommandsHandler().new CommandRollback(Bukkit.getConsoleSender(), params, true);
-		}
-		params.world = null;
-		
+		}		
 	} catch (Exception e) {
 	    Logging.log(Level.SEVERE, "LogBlock resetting failed");
 	    return false;
