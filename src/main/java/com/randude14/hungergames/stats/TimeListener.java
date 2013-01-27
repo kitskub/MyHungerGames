@@ -46,7 +46,7 @@ public class TimeListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKill(PlayerKillEvent event) {
+	public void onPlayerKill(PlayerKilledEvent event) {
 		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerState.DEAD) {
 			playerStopped(event.getGame(), event.getKilled());
 		}

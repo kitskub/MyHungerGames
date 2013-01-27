@@ -7,7 +7,7 @@ import com.randude14.hungergames.api.event.GameEndEvent;
 import com.randude14.hungergames.api.event.GamePauseEvent;
 import com.randude14.hungergames.api.event.GameStartEvent;
 import com.randude14.hungergames.api.event.PlayerJoinGameEvent;
-import com.randude14.hungergames.api.event.PlayerKillEvent;
+import com.randude14.hungergames.api.event.PlayerKilledEvent;
 import com.randude14.hungergames.api.event.PlayerLeaveGameEvent;
 import com.randude14.hungergames.utils.GeneralUtils;
 
@@ -251,7 +251,7 @@ public class SignListener implements Runnable, Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKill(PlayerKillEvent event) {
+	public void onPlayerKill(PlayerKilledEvent event) {
 		callListeners(ListenerType.PLAYER_KILL, event.getGame());
 	}
 	

@@ -23,18 +23,19 @@ global:
   # params: Player <player>; Game <game>
   quit-message: '<player> has quit the game <game>.'
 
-  # Message to player when a player kill game
-  # params: Player <player>; Game <game>
-  kill-message: '<killer> killed <killed> in game <game>.'
-
   # Message to player when a player vote game
   # params: Player <player>; Game <game>
   vote-message: '<player> is ready to play <game>. Type /hg vote when you are ready to play.'
   
-  # If death-messages is configured in config.yml, then one of these will be played randomly on death,
+  # If death-messages is configured in config.yml, then one of these will be played randomly on kill,
   # params: Killed <killed>; Killer <killer>; Game <game>
-  death-messages:
+  kill-messages:
     - '<killed> was killed in <game> by <killer>'
+  
+  # If death-messages is configured in config.yml, then one of these will be played randomly on death,
+  # params: Player <player>; Game <game>
+  death-messages:
+    - '<player> died in <game>'
   
   # Message when there is not a winner
   no-winner: 'Strangely, there was no winner left.'

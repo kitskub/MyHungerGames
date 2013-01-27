@@ -99,7 +99,7 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerKill(PlayerKillEvent event) {
+	public void onPlayerKill(PlayerKilledEvent event) {
 		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerStat.PlayerState.DEAD) {
 			times.get(new EquatableWeakReference<Game>(event.getGame())).remove(event.getKilled().getName());
 		}

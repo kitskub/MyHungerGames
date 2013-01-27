@@ -1097,22 +1097,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		killed.setHealth(20);
 		killed.setFoodLevel(20);
 		PlayerStat killedStat = stats.get(killed.getName());
-		PlayerKillEvent event;
-		String killerDisplayName;
+		PlayerKilledEvent event;
 		if (killer != null) {
 			PlayerStat killerStat = stats.get(killer.getName());
 			killerStat.kill(killed.getName());
 			killedStat.death(killer.getName());
-			killerDisplayName = killer.getDisplayName();
-			event = new PlayerKillEvent(this, killed, killer);
+			event = new PlayerKilledEvent(this, killed, killer);
 		}
 		else {
-			event = new PlayerKillEvent(this, killed);
+			event = new PlayerKilledEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
-			killerDisplayName = killed.getDisplayName();
 		}
-		String killMessage = getKillMessage(killed.getDisplayName(), killerDisplayName); 
-		event.setDeathMessage(killMessage);
+		String deathMessage = killer == null ? getDeathMessage(killed.getName()) : getKillMessage(killed.getDisplayName(), killer.getDisplayName()); 
+		event.setDeathMessage(deathMessage);
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			for (ItemStack i : deathEvent.getDrops()) {
@@ -1159,10 +1156,18 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	}
 
 	private String getKillMessage(String killed, String killer) {
-		List<String> messages = Lang.getDeathMessages(setup);
+		List<String> messages = Lang.getKillMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
 		message.replace("<killed>", killed);
 		message.replace("<killer>", killer);
+		message.replace("<game>", name);
+		return message;
+	}
+
+	private String getDeathMessage(String player) {
+		List<String> messages = Lang.getDeathMessages(setup);
+		String message = messages.get(new Random().nextInt(messages.size()));
+		message.replace("<player>", player);
 		message.replace("<game>", name);
 		return message;
 	}

@@ -2,6 +2,7 @@ package com.randude14.hungergames;
 
 import static com.randude14.hungergames.Defaults.Lang.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.util.HashSet;
 import java.util.List;
@@ -93,8 +94,8 @@ public class Lang {
 		return getGlobal("quit-message", QUIT.getMessage());
 	}
 	
-	public static String getGlobalKillMessage() {
-		return getGlobal("kill-message", KILL.getMessage());
+	public static List<String> getGlobalKillMessages() {
+		return getGlobalStringList("kill-messages", Arrays.asList(KILL.getMessage()));
 	}
 	
 	public static String getGlobalVoteMessage() {
@@ -134,9 +135,9 @@ public class Lang {
 	}
 	
 	public static List<String> getGlobalDeathMessages() {
-		return getGlobalStringList("death-messages", new ArrayList<String>());
+		return getGlobalStringList("death-messages", Arrays.asList(DEATH.getMessage()));
 	}
-	
+
 	// Setups
 	public static String getJoinMessage(String setup) {
 		return getString("join-message", setup, getGlobalJoinMessage());
@@ -154,8 +155,8 @@ public class Lang {
 		return getString("quit-message", setup, getGlobalQuitMessage());
 	}
 	
-	public static String getKillMessage(String setup) {
-		return getString("kill-message", setup, getGlobalKillMessage());
+	public static List<String> getKillMessages(String setup) {
+		return getStringList("kill-messages", setup, getGlobalKillMessages());
 	}
 	
 	public static String getVoteMessage(String setup) {

@@ -1,5 +1,7 @@
 v1.0
 - Fixed InternalResetter problem
+- Changed PlayerKillEvent to PlayerKilledEvent
+- Added kill-messages and separated from death-messages
 
 v0.9.1
 - Made GameCountdown use task id
