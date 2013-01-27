@@ -11,17 +11,17 @@ public class PlayerKillEvent extends GameEvent {
 	private final Player killer, killed;
 	private String deathMessage;
 	
-	public PlayerKillEvent(final HungerGame game, final Player killer, final Player killed, String message) {
+	public PlayerKillEvent(final HungerGame game,final Player killed, final Player killer) {
 		super(game);
 		this.killer = killer;
 		this.killed = killed;
-		deathMessage = message;
+		deathMessage = null;
 	}
-	
+
 	public PlayerKillEvent(final HungerGame game, final Player killed) {
-		this(game, null, killed, null);
+		this(game, killed, null);
 	}
-	
+
 	public Player getKiller() {
 		return killer;
 	}

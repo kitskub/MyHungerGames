@@ -1100,23 +1100,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		PlayerKillEvent event;
 		String killerDisplayName;
 		if (killer != null) {
-			killerDisplayName = killer.getDisplayName();
 			PlayerStat killerStat = stats.get(killer.getName());
 			killerStat.kill(killed.getName());
-			String message = Lang.getKillMessage(setup);
-			message = message
-				.replace("<killer>", killer.getName())
-				.replace("<killed>", killed.getName())
-				.replace("<game>", name);
-			event = new PlayerKillEvent(this, killer, killed, message);
-			ChatUtils.broadcast(this, message);
 			killedStat.death(killer.getName());
+			killerDisplayName = killer.getDisplayName();
+			event = new PlayerKillEvent(this, killed, killer);
 		}
 		else {
 			event = new PlayerKillEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 			killerDisplayName = killed.getDisplayName();
 		}
+		String killMessage = getKillMessage(killed.getDisplayName(), killerDisplayName); 
+		event.setDeathMessage(killMessage);
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			for (ItemStack i : deathEvent.getDrops()) {
@@ -1140,7 +1136,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
 			if (deathCannon == 1 || deathCannon == 2) playCannonBoom();
 			if (deathMessages == 1 || deathMessages == 2) {
-				broadcastKillMessage(killed.getDisplayName(), killerDisplayName);
+				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
 			checkForGameOver(false);
 		}
@@ -1156,19 +1152,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			killed.teleport(respawn, TeleportCause.PLUGIN);
 			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
 			if (Config.SHOW_DEATH_MESSAGES.getInt(setup) == 1) {
-				broadcastKillMessage(killed.getDisplayName(), killerDisplayName);
+				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
 			ChatUtils.send(killed, "You have " + killedStat.getLivesLeft() + " lives left.");
 		}
 	}
 
-	private void broadcastKillMessage(String killed, String killer) {
+	private String getKillMessage(String killed, String killer) {
 		List<String> messages = Lang.getDeathMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
 		message.replace("<killed>", killed);
 		message.replace("<killer>", killer);
 		message.replace("<game>", name);
-		ChatUtils.broadcast(this, message);
+		return message;
 	}
 
 	@Override
