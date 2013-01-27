@@ -26,7 +26,7 @@ public class TeleportListener implements Listener {
 		boolean isWhiteListed = playerWhiteList.remove(player.getName());
 		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
 		if (session == null) return;
-		if (Config.CAN_TELEPORT.getBoolean(session.getSetup()) && !isWhiteListed && (event.getCause().equals(PlayerTeleportEvent.TeleportCause.PLUGIN) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.COMMAND))) {
+		if (Config.CAN_TELEPORT.getBoolean(session.getSetup()) && !isWhiteListed && (event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
 			ChatUtils.error(player, "You cannot teleport while in-game!");
 			//Logging.debug("Cancelling a teleport.");
 			event.setCancelled(true);

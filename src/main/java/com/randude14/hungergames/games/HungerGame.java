@@ -1000,11 +1000,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
 		if (loc != null) {
-			player.teleport(loc);
+			player.teleport(loc, TeleportCause.UNKNOWN);
 		}
 		else {
 			ChatUtils.error(player, "For some reason, there was no back location. Please contact an admin for help.", name);
-			player.teleport(player.getWorld().getSpawnLocation());
+			player.teleport(player.getWorld().getSpawnLocation(), TeleportCause.UNKNOWN);
 		}
 	}
 

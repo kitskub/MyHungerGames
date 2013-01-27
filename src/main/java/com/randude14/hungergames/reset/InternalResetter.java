@@ -47,7 +47,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	@Override
 	public void init() {
 		Bukkit.getPluginManager().registerEvents(this, HungerGames.getInstance());
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(HungerGames.getInstance(), this, 0, 20);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(HungerGames.getInstance(), this, 0, 20);
 	}
 
 	@Override
@@ -56,6 +56,9 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 	@Override
 	public boolean resetChanges(HungerGame game) {
+		synchronized (toCheck) {
+			toCheck.clear();
+		}
 		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
 		if(!changedBlocks.containsKey(eMap)) return true;
 		Map<Location, BlockState> map = changedBlocks.get(eMap);
