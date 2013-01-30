@@ -255,7 +255,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			Location loc = spawnPoints.get(cntr);
 			if (loc == null) continue;
 			String parsed = GeneralUtils.parseToString(loc);
-			Logging.debug("Saving a spawnpoint. It's location is: " + loc + "\n" + "Parsed as: " + parsed);
+			//Logging.debug("Saving a spawnpoint. It's location is: " + loc + "\n" + "Parsed as: " + parsed);
 			spawnPointsSection.set("spawnpoint" + (cntr + 1), parsed);
 		}
 		cntr = 1;

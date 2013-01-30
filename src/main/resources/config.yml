@@ -1,179 +1,179 @@
 global:
-  # GLOBAL ONLY
+# GLOBAL ONLY
   default-game: 'Default'
   
-  # In minutes, the number of time to wait between update checks
-  # GLOBAL ONLY
+# In minutes, the number of time to wait between update checks
+# GLOBAL ONLY
   update-delay: 30
   
-  # IP/URL to use to connect to webstats
-  # use 0.0.0.0 to not record webstats
-  # GLOBAL ONLY
+# IP/URL to use to connect to webstats
+# use 0.0.0.0 to not record webstats
+# GLOBAL ONLY
   webstats-ip: http://mcmyhg.com/dbproxy.php
   
-  # whether players should automatically join the game when there is an available spot in a game
-  # GLOBAL ONLY
+# whether players should automatically join the game when there is an available spot in a game
+# GLOBAL ONLY
   auto-join: false
   
-  # with this false, you cannot use item names, but you can use custom blocks
+# with this false, you cannot use item names, but you can use custom blocks
   use-match-material: true
   
-  # Time, in seconds, after game starts before players can move
+# Time, in seconds, after game starts before players can move
   default-time: 10
   
-  # Number of players required to auto-start
+# Number of players required to auto-start
   min-vote: 5
   
-  # If players can join a game while it is running
+# If players can join a game while it is running
   allow-join-during-game: false
   
-  # Number of players required to start at all
+# Number of players required to start at all
   min-players: 2
   
-  # If a player can rejoin a game. 
-  # If false, players will lose all lives on leave. 
-  # If true, lives are carried over to any rejoins
+# If a player can rejoin a game. 
+# If false, players will lose all lives on leave. 
+# If true, lives are carried over to any rejoins
   allow-rejoin: true
   
-  # If a winner gets to keep his items
+# If a winner gets to keep his items
   winner-keeps-items: true
   
-  # number of lives a player has. 0 is unlimited
+# number of lives a player has. 0 is unlimited
   lives: 1
   
-  # whether players should clear their inventory before joining
+# whether players should clear their inventory before joining
   require-inv-clear: false
   
-  # Whether to save and clear a players inventory on join
+# Whether to save and clear a players inventory on join
   clear-inv: true
   
-  # require everyone that has joined the game to vote before the game is auto-starterd
-  # will not work when auto-vote is on
+# require everyone that has joined the game to vote before the game is auto-starterd
+# will not work when auto-vote is on
   all-vote: false
   
-  # when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
+# when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
   auto-vote: false
   
-  # whether players can use commands. Does not disallow HungerGames commands.
+# whether players can use commands. Does not disallow HungerGames commands.
   use-command: false
   
-  # Commands that are the opposite of use-command ex. [time, weather]
+# Commands that are the opposite of use-command ex. [time, weather]
   special-commands: []
   
-  # whether players can teleport
+# whether players can teleport
   can-teleport: false
   
-  # add chest and fill the first time a chest is opened
+# add chest and fill the first time a chest is opened
   auto-add: true
   
-  # whether to force a player into surval for games
+# whether to force a player into surval for games
   force-survival: true
 
-  # whether to freeze players when they join a game
+# whether to freeze players when they join a game
   freeze-players: true
 
-  # whether to force damage done to a player, regardless if another plugin has cancelled it or not
-  # Can be used to stop plugins like Factions from cancelling player damage
+# whether to force damage done to a player, regardless if another plugin has cancelled it or not
+# Can be used to stop plugins like Factions from cancelling player damage
   force-damage: false
   
-  # whether players can place blocks
+# whether players can place blocks
   can-place-block: false
   
-  # whether players can break blocks
+# whether players can break blocks
   can-break-block: false
 
-  # whether players can interact with blocks (Chests, Enchant tables, ect...)
+# whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
 
-  # blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
-  # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+# blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
+# place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-place: []
 
-  # blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
-  # break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+# blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
+# break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-break: []
 
-  # blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
-  # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
+# blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
+# interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-interact: []
 
-  # Reset block changes after a game ends
+# Reset block changes after a game ends
   reset-changes: true
 
-  # If resetting should be internal only. RECOMMENDED, especially for those who use LogBlock
-  # GLOBAL ONLY
+# If resetting should be internal only. RECOMMENDED, especially for those who use LogBlock
+# GLOBAL ONLY
   force-internal: false
   
   isolate-player-chat: true
   
-  # if isolate-player-chat is enabled, this is the maximum distance a player can hear another player from
-  # if this is 0, then in-game players can hear each other, but they can't hear out-of-game players
+# if isolate-player-chat is enabled, this is the maximum distance a player can hear another player from
+# if this is 0, then in-game players can hear each other, but they can't hear out-of-game players
   chat-distance: 15
   
-  # if this is true, players who haven't done "/hg subscribe" won't see most messages
-  # players automatically get subscribed when they enter a game
-  # subscribers are not persistent between server restarts
-  # GLOBAL ONLY
+# if this is true, players who haven't done "/hg subscribe" won't see most messages
+# players automatically get subscribed when they enter a game
+# subscribers are not persistent between server restarts
+# GLOBAL ONLY
   allow-minimal-messages: true
   
-  # whether to remove items off the ground when a game ends
+# whether to remove items off the ground when a game ends
   remove-items: true
   
-  # This is the amount of time, in seconds, before spectators can sponsor a random item for free. Restarts once reaches time.
-  # This is rounded up to the nearest half-minute mark
+# This is the amount of time, in seconds, before spectators can sponsor a random item for free. Restarts once reaches time.
+# This is rounded up to the nearest half-minute mark
   spectator-sponsor-period: 0
   
-  # If 1, a cannon sound will be played every death
-  # If 2, a cannon sound will be played only on the last death
-  # Any other number will turn it off
+# If 1, a cannon sound will be played every death
+# If 2, a cannon sound will be played only on the last death
+# Any other number will turn it off
   death-cannon: 1
   
-  # This is to check if the game allows players to auto-join
-  # Only matters if auto-join is true
+# This is to check if the game allows players to auto-join
+# Only matters if auto-join is true
   auto-join-allowed: true
   
-  # In seconds, the maximum amount of time a game can last
-  # 0 or below does not limit time
+# In seconds, the maximum amount of time a game can last
+# 0 or below does not limit time
   max-game-duration: 0
   
-  # If this is false, players are automatically sent back to where they were before they joined when a game ends
-  # If this is true and no spawn is set, it defaults to the player's back location.
+# If this is false, players are automatically sent back to where they were before they joined when a game ends
+# If this is true and no spawn is set, it defaults to the player's back location.
   use-spawn: true
   
-  # This is time in seconds from the start of the game that players cannot be hurt
-  # Can have decimals
+# This is time in seconds from the start of the game that players cannot be hurt
+# Can have decimals
   grace-period: 0
   
-  # Time in seconds that players have to move or chat before they get kicked.
-  # Has a max variance of 10 seconds
-  # Value of 0 does not use a timeout
+# Time in seconds that players have to move or chat before they get kicked.
+# Has a max variance of 10 seconds
+# Value of 0 does not use a timeout
   timeout: 300
   
-  # If true, when a player leaves a game (not quits), a life will be deducted
+# If true, when a player leaves a game (not quits), a life will be deducted
   take-life-on-leave: true
   
-  # Amount of time in seconds after min-players has been achieved does a game start
-  # 0 is off
+# Amount of time in seconds after min-players has been achieved does a game start
+# 0 is off
   start-timer: 0
   
-  # If this is true, mobs will not target players while they are waiting for a game to start
+# If this is true, mobs will not target players while they are waiting for a game to start
   stop-targetting: true
   
-  # Whether to hide players' nametag by faking a sneak
+# Whether to hide players' nametag by faking a sneak
   hide-players: true
   
-  # Whether to hide players' nametag by faking a sneak
-  # If 1, a message will be shown every death
-  # If 2, a message will be shown only on the last death
+# Whether to hide players' nametag by faking a sneak
+# If 1, a message will be shown every death
+# If 2, a message will be shown only on the last death
   show-death-messages: 1
   
-  # Contains options relating to teams
+# Contains options relating to teams
   teams:
     
-    # If this is true, any player with the permission hungergame.team.<team> (with "team" being the team name) or hungergame.team (allows all) can join a team 
+#   If this is true, any player with the permission hungergame.team.<team> (with "team" being the team name) or hungergame.team (allows all) can join a team 
     allow-teams: true
 
-    # If this is false, team members cannot hurt each other
+#   If this is false, team members cannot hurt each other
     allow-friendly-damage: false
     
   
