@@ -24,6 +24,7 @@ public class Defaults {
 	KILL("<killer> killed <killed> in game <game>."),
 	DEATH("<player> died in <game>"),
 	NO_PERM("You do not have permission."),
+	VOTED("You have voted that you are ready."),
 	NO_WINNER("You do not have permission."),
 	WIN("You do not have permission."),
 	ALREADY_COUNTING_DOWN("<game> is already counting down."),

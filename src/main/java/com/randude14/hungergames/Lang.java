@@ -137,6 +137,10 @@ public class Lang {
 	public static List<String> getGlobalDeathMessages() {
 		return getGlobalStringList("death-messages", Arrays.asList(DEATH.getMessage()));
 	}
+	
+	public static String getGlobalVoted() {
+		return getGlobal("voted", VOTED.getMessage());
+	}
 
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -197,5 +201,9 @@ public class Lang {
 	
 	public static List<String> getDeathMessages(String setup) {
 		return getStringList("death-messages", setup, getGlobalDeathMessages());
+	}
+	
+	public static String getVoted(String setup) {
+		return getString("vote", setup, getGlobalVoted());
 	}
 }

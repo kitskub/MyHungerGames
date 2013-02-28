@@ -20,7 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 public class SpectatorSponsoringRunnable implements Runnable{
 	public static final int pollEveryInTicks = 20 * 30;
 	private final HungerGame game;
-	private static final Map<String, Integer> spectatorTimes = new HashMap<String, Integer>(); // <player, timeLeftInTicks>
+	private static final Map<String, Integer> spectatorTimes = new HashMap<String, Integer>(); // <player, ticksPolled>
 	private BukkitTask task;
 	
 	public SpectatorSponsoringRunnable(HungerGame game) {
@@ -29,7 +29,7 @@ public class SpectatorSponsoringRunnable implements Runnable{
 	
 	public void run() {
 		for (String string : spectatorTimes.keySet()) {
-			int time = spectatorTimes.get(string) - pollEveryInTicks;
+			int time = pollEveryInTicks - spectatorTimes.get(string);
 			if (time <= 0) {
 				Player player = Bukkit.getPlayer(string);
 				if (player == null) {
@@ -55,6 +55,8 @@ public class SpectatorSponsoringRunnable implements Runnable{
 				factory.withInitialSessionData(sessionData);
 				factory.withTimeout(30);
 				factory.buildConversation(player);
+			} else {
+				spectatorTimes.put(string, pollEveryInTicks - time + 1);
 			}
 		}
 	}

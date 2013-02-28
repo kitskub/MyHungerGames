@@ -4,6 +4,7 @@ import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -23,7 +24,7 @@ public class VoteCommand extends PlayerCommand {
 			return;
 		}
 		game.addReadyPlayer(player);
-		ChatUtils.send(player, "You have voted that you are ready.");
+		ChatUtils.send(player, Lang.getVoted(game.getSetup()));
 	}
 
 	@Override

@@ -121,7 +121,8 @@ public class ItemConfig {
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
-	    builder.append(item.getData().getData());
+	    byte data;
+	    if ((data = item.getData().getData()) != 0) builder.append(":").append(data);
 	    itemSection = itemSection.createSection(builder.toString());
 	    itemSection.set("stack-size", item.getAmount());
 	    itemSection.set("money", cost);
@@ -191,7 +192,8 @@ public class ItemConfig {
 		ConfigurationSection itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "rewards.static");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
-		builder.append(item.getData().getData());
+		byte data;
+		if ((data = item.getData().getData()) != 0) builder.append(":").append(data);
 		builder.append(",");
 		builder.append(System.currentTimeMillis());
 		itemSection = itemSection.createSection(builder.toString());
@@ -205,7 +207,8 @@ public class ItemConfig {
 		ConfigurationSection itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "rewards.random");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());
-		builder.append(item.getData().getData());
+		byte data;
+		if ((data = item.getData().getData()) != 0) builder.append(":").append(data);
 		builder.append(",");
 		builder.append(System.currentTimeMillis());
 		itemSection = itemSection.createSection(builder.toString());

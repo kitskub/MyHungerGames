@@ -1,6 +1,7 @@
 HIGH:
 - Tutorial
 - Remove getRandom()
+- Make TimedGameRunnable into TimedGameListener and make Runnable inner class
 
 MEDIUM:
 - Random events

@@ -79,7 +79,7 @@ public abstract class Command extends org.bukkit.command.Command {
 		if (parent != null) {
 			parentUsage = parent.getPrivateUsage() + " ";
 		}
-		return "\\" + type + " " + parentUsage + getPrivateUsage();
+		return "/" + type + " " + parentUsage + getPrivateUsage();
 	}
 
 	public String getUsageAndInfo() {

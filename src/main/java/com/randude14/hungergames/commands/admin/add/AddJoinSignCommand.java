@@ -31,7 +31,7 @@ public class AddJoinSignCommand extends PlayerCommand {
 			return;
 		}
 
-		SessionListener.addSession(SessionListener.SessionType.JOIN_SIGN_ADDER, player, game.getName(), "game", game.getName());
+		SessionListener.addSession(SessionListener.SessionType.JOIN_SIGN_ADDER, player, game.getName());
 		ChatUtils.send(player, ChatColor.GREEN, "Left-click the sign to add it as a join sign.");
 	}
 

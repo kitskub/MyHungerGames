@@ -545,7 +545,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
-		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, SpectatorSponsoringRunnable.pollEveryInTicks));
+		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, 1));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
@@ -1158,17 +1158,17 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	private String getKillMessage(String killed, String killer) {
 		List<String> messages = Lang.getKillMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
-		message.replace("<killed>", killed);
-		message.replace("<killer>", killer);
-		message.replace("<game>", name);
+		message = message.replace("<killed>", killed);
+		message = message.replace("<killer>", killer);
+		message = message.replace("<game>", name);
 		return message;
 	}
 
 	private String getDeathMessage(String player) {
 		List<String> messages = Lang.getDeathMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
-		message.replace("<player>", player);
-		message.replace("<game>", name);
+		message = message.replace("<player>", player);
+		message = message.replace("<game>", name);
 		return message;
 	}
 
@@ -1354,14 +1354,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	public void setEnabled(boolean flag) {
 		if (state == DELETED) return;
 		if (!flag) {
-			if (!flag) stopGame(false);
-			state = DISABLED; // TODO do this better
-			for (String s : stats.keySet()) {
-				Player p = Bukkit.getPlayer(s);
-				if (p == null) continue;
-				playerLeaving(p, false);
-				teleportPlayerToSpawn(p);
-			}
+			stopGame(false);
 			clear();
 			state = DISABLED;
 		}

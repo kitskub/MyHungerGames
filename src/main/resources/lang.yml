@@ -66,5 +66,8 @@ global:
   # Message when in a game
   # params: Game <game>
   in-game: 'You are in <game>.'
+  
+  # Message after voting
+  voted: 'You have voted that you are ready.'
 # These names have to match the ones in the config.yml to work properly
 setups:

@@ -154,7 +154,7 @@ public class SessionListener implements Listener {
 			}
 			break;
 		case JOIN_SIGN_ADDER:
-			if (LobbyListener.addJoinSign(clickedBlock.getLocation(), session.getData().get("game").toString())) {
+			if (LobbyListener.addJoinSign(clickedBlock.getLocation(), game.getName())) {
 				sessions.remove(player.getName());
 				ChatUtils.send(player, "Join sign has been added successfully.");
 			}
