@@ -25,7 +25,7 @@ public class ConnectionUtils {
 		try {
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
-			conn.setDoInput(false);
+			conn.setDoInput(true);
 			
 			DataOutputStream out = new DataOutputStream(conn.getOutputStream());
 			
