@@ -385,6 +385,7 @@ public class Defaults {
 	ADMIN_ADD_HELP(new AddHelp()),
 	ADMIN_ADD_CUBOID(new AddCuboidCommand()),
 	ADMIN_ADD_CHEST(new AddChestCommand()),
+	ADMIN_ADD_FIXEDCHEST(new AddFixedChestCommand()),
 	ADMIN_ADD_CHEST_LOOT(new AddChestLootCommand()),
 	ADMIN_ADD_GAME(new AddGameCommand()),
 	ADMIN_ADD_GAME_SIGN(new AddGameSignCommand()),
