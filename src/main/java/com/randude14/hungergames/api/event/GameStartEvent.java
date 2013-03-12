@@ -9,7 +9,6 @@ import com.randude14.hungergames.games.HungerGame;
 public class GameStartEvent extends GameEvent implements Cancellable  {
 	private static final HandlerList handlers = new HandlerList();
 	private final boolean isResuming;
-	private boolean cancelled;
 	
 	public GameStartEvent(final HungerGame game, final boolean isResuming) {
 		super(game);
@@ -34,14 +33,5 @@ public class GameStartEvent extends GameEvent implements Cancellable  {
 		return handlers;
 	}
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	@Override
-	public void setCancelled(boolean isCancelled) {
-		cancelled = isCancelled;
-	}
 
 }
