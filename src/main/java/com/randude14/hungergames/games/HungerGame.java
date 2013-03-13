@@ -401,7 +401,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
-	
+	@Override
 	public boolean isSpectating(Player player) {
 		return spectators.containsKey(player.getName());
 	}
@@ -420,7 +420,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 	}
 	
-	
+	@Override
 	public boolean stopGame(CommandSender cs, boolean isFinished) {
 		String result = stopGame(isFinished);
 		if (result != null && cs != null) {
@@ -430,7 +430,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 	
-	
+	@Override
 	public String stopGame(boolean isFinished) {
 		if (state == DELETED) return "That game does not exist anymore.";
 		clearWaitingPlayers();
@@ -493,7 +493,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return null;
 	}
 
-	
+	@Override
 	public boolean startGame(CommandSender cs, int ticks) {
 		String result = startGame(ticks);
 		if (countdown != null) countdown.setStarter(cs);
@@ -504,19 +504,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
-	
+	@Override
 	public boolean startGame(CommandSender cs, boolean immediate) {
 		if(!immediate) return startGame(cs, Config.DEFAULT_TIME.getInt(setup));
 		return startGame(cs, 0);
 	}
 
-	
+	@Override
 	public boolean startGame(boolean immediate) {
 		if(!immediate) return startGame(Config.DEFAULT_TIME.getInt(setup)) == null;
 		return startGame(0) == null;
 	}
 
-	
+	@Override
 	public String startGame(int ticks) {
 		if (state == DELETED) return "Game no longer exists.";
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
@@ -565,7 +565,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return null;
 	}
 
-	
+	@Override
  	public boolean resumeGame(CommandSender cs, int ticks) {		
 		if (ticks <= 0) {
 			String result = resumeGame(0);
@@ -580,19 +580,19 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 	
-	
+	@Override
 	public boolean resumeGame(CommandSender cs, boolean immediate) {
 		if (!immediate) return resumeGame(cs, Config.DEFAULT_TIME.getInt(setup));
 		return resumeGame(cs, 0);
 	}
 	
-	
+	@Override
 	public boolean resumeGame(boolean immediate) {
 		if (!immediate) return resumeGame(Config.DEFAULT_TIME.getInt(setup)) == null;
 		return resumeGame(0) == null;
 	}
 
-	
+	@Override
 	public String resumeGame(int ticks) {
 		if (state == DELETED) return "That game does not exist anymore.";
 		if(state != PAUSED && state != ABOUT_TO_START) return "Cannot resume a game that has not been paused.";
@@ -624,7 +624,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return null;
 	}
 	
-	
+	@Override
 	public boolean pauseGame(CommandSender cs) {
 		String result = pauseGame();
 		if (result != null) {
@@ -638,7 +638,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	 * 
 	 * @return null if successful, message if not
 	 */
-	
+	@Override
 	public String pauseGame() {
 		if (state == DELETED) return "That game does not exist anymore.";
 		if(state == PAUSED) return "Cannot pause a game that has been paused.";
@@ -674,7 +674,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	}
 
-	
+	@Override
 	public void addAndFillChest(Chest chest) {
 		if (fixedChests.containsKey(chest.getLocation())) return;
 		if(!chests.keySet().contains(chest.getLocation()) && !blacklistedChests.contains(chest.getLocation())) {
@@ -684,7 +684,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 	}
         
-	
+	@Override
 	public void fillInventories() {
 	    Location prev = null;
 	    // Logging.debug("Filling inventories. Chests size: %s fixedChests size: %s", chests.size(), fixedChests.size());
@@ -717,7 +717,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	}
 
-	
+	@Override
 	public synchronized boolean rejoin(Player player) {
 		if (state != RUNNING) {
 			ChatUtils.error(player, Lang.getNotRunning(setup).replace("<game>", name));
@@ -748,7 +748,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
-	
+	@Override
 	public synchronized boolean join(Player player) {
 	    if (GameManager.INSTANCE.getSession(player) != null) {
 		    ChatUtils.error(player, "You are already in a game. Leave that game before joining another.");
@@ -873,7 +873,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return loc;
 	}
 	
-	
+	@Override
 	public synchronized boolean leave(Player player, boolean callEvent) {
 		if (state != RUNNING && state != PAUSED) return quit(player, true);
 		
@@ -903,7 +903,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 	
-	
+	@Override
 	public synchronized boolean quit(Player player, boolean callEvent) {
 	    if (!contains(player)) {
 		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
@@ -984,7 +984,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		countdown = null;
 	}
 
-	
+	@Override
 	public void teleportPlayerToSpawn(Player player) {
 		if (player == null) {
 			return;
@@ -1008,7 +1008,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 	}
 
-	
+	@Override
 	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 		if (state != RUNNING) return false;
 		List<Player> remaining = getRemainingPlayers();
@@ -1062,12 +1062,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return false;
 	}
 
-	
+	@Override
 	public String getInfo() {
 		return String.format("%s[%d/%d] Enabled: %b", name, spawnsTaken.size(), spawnPoints.size(), state != DISABLED);
 	}
 
-	
+	@Override
 	public boolean contains(Player... players) {
 	    if (state == DELETED) return false;
 	    for (Player player : players) {
@@ -1078,7 +1078,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    return true;
 	}
 	
-	
+	@Override
 	public boolean isPlaying(Player... players) {
 	    for (Player player : players) {
 		if (state != RUNNING || !stats.containsKey(player.getName()) 
@@ -1120,7 +1120,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			final ItemStack[] armor = killed.getInventory().getArmorContents();
 			final ItemStack[] inventory = killed.getInventory().getContents();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), new Runnable() {
-				
+				@Override
 				public void run() {
 					killed.getInventory().setArmorContents(armor);
 					killed.getInventory().setContents(inventory);
@@ -1172,7 +1172,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return message;
 	}
 
-	
+	@Override
 	public List<Player> getRemainingPlayers() {
 	    List<Player> remaining = new ArrayList<Player>();
 	    for (String playerName : stats.keySet()) {
@@ -1186,12 +1186,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    return remaining;
 	}
 
-	
+	@Override
 	public PlayerStat getPlayerStat(OfflinePlayer player) {
 		return stats.get(player.getName());
 	}
 
-	
+	@Override
 	public void listStats(CommandSender cs) {
 		int living = 0, dead = 0;
 		List<String> players = new ArrayList<String>(stats.keySet());
@@ -1224,12 +1224,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		ChatUtils.send(cs, mess);
 	}
 
-	
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	
+	@Override
 	public boolean addChest(Location loc, float weight) {
 		if (chests.keySet().contains(loc) || fixedChests.containsKey(loc)) return false;
 		blacklistedChests.remove(loc);
@@ -1242,7 +1242,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
-	
+	@Override
 	public boolean addFixedChest(Location loc, String fixedChest) {
 		if (loc == null || fixedChest == null || fixedChest.equalsIgnoreCase("")) return false;
 		if (fixedChests.keySet().contains(loc)) return false;
@@ -1258,7 +1258,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return true;
 	}
 
-	
+	@Override
 	public boolean addSpawnPoint(Location loc) {
 		if (loc == null) return false;
 		if (spawnPoints.contains(loc)) return false;
@@ -1271,7 +1271,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	 * @param loc
 	 * @return
 	 */
-	
+	@Override
 	public boolean removeFixedChest(Location loc) {
 		if (loc == null) return false;
 		if (!(loc.getBlock().getState() instanceof Chest)) return false;
@@ -1284,7 +1284,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return addChest(loc, 1f);
 	}
 
-	
+	@Override
 	public boolean removeChest(Location loc) {
 		Block b = loc.getBlock();
 		Location ad = null;
@@ -1318,7 +1318,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		chests.remove(loc);
 		fixedChests.remove(loc);
 	}
-	
+	@Override
 	public boolean removeSpawnPoint(Location loc) {
 		if (loc == null) return false;
 		Iterator<Location> iterator = spawnPoints.iterator();
@@ -1350,7 +1350,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		player.getInventory().clear();
 	}
 
-	
+	@Override
 	public void setEnabled(boolean flag) {
 		if (state == DELETED) return;
 		if (!flag) {
@@ -1361,42 +1361,42 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (flag && state == DISABLED) state = STOPPED;
 	}
 
-	
+	@Override
 	public void setSpawn(Location newSpawn) {
 		spawn = newSpawn;
 	}
 
-	
+	@Override
 	public List<String> getAllPlayers() {
 		return new ArrayList<String>(stats.keySet());
 	}
 
-	
+	@Override
 	public List<PlayerStat> getStats() {
 		return new ArrayList<PlayerStat>(stats.values());
 	}
 	
-	
+	@Override
 	public Location getSpawn() {
 		return spawn;
 	}
 
-	
+	@Override
 	public String getSetup() {
 		return (setup == null || "".equals(setup)) ? null : setup;
 	}
 
-	
+	@Override
 	public List<String> getItemSets() {
 		return itemsets;
 	}
 
-	
+	@Override
 	public void addItemSet(String name) {
 		itemsets.add(name);
 	}
 
-	
+	@Override
 	public void removeItemSet(String name) {
 		itemsets.remove(name);
 	}
@@ -1405,17 +1405,17 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		state = ABOUT_TO_START;
 	}
 	
-	
+	@Override
 	public void addWorld(World world) {
 		worlds.add(world.getName());
 	}
 
-	
+	@Override
 	public void addCuboid(Location one, Location two) {
 		cuboids.add(new Cuboid(one, two));
 	}
 
-	
+	@Override
 	public Map<String, List<String>> getSponsors() {
 		return Collections.unmodifiableMap(sponsors);
 	}
@@ -1425,7 +1425,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		sponsors.get(player).add(playerToBeSponsored);
 	}
 	
-	
+	@Override
 	public Set<World> getWorlds() {
 		if (worlds.size() <= 0) return Collections.emptySet();
 		Set<World> list = new HashSet<World>();
@@ -1437,12 +1437,12 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return list;
 	}
 	
-	
+	@Override
 	public Set<Cuboid> getCuboids() {
 		return Collections.unmodifiableSet(cuboids);
 	}
 	
-	
+	@Override
 	public void removeItemsOnGround() {
 		Logging.debug("Aboout the check items on the ground for %s worlds.", worlds.size());
 		for (String s : worlds) {
@@ -1467,34 +1467,34 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 	}
 	
-	
+	@Override
 	public int getSize() {
 		return spawnPoints.size();
 	}
 
-	
+	@Override
 	public void playCannonBoom() {
 		for (Player p : getRemainingPlayers()) {
 			p.getWorld().createExplosion(p.getLocation(), 0f, false);
 		}
 	}
 
-	
+	@Override
 	public List<Long> getEndTimes() {
 		return endTimes;
 	}
 
-	
+	@Override
 	public long getInitialStartTime() {
 		return initialStartTime;
 	}
 
-	
+	@Override
 	public List<Long> getStartTimes() {
 		return startTimes;
 	}
 	
-	
+	@Override
 	public GameState getState() {
 		return state;
 	}
@@ -1511,7 +1511,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		spawn = null;
 	}
 
-	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -1523,7 +1523,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		return this.compareTo(other) == 0;
 	}
 
-	
+	@Override
 	public int hashCode() {
 		int hash = 5;
 		hash = 59 * hash + (this.name != null ? this.name.toLowerCase().hashCode() : 0);
