@@ -11,7 +11,6 @@ public class PlayerJoinGameEvent extends GameEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private final Player player;
 	private final boolean isRejoin;
-	private boolean cancelled;
 	
 	public PlayerJoinGameEvent(final HungerGame game, final Player player, boolean isRejoin) {
 		super(game);
@@ -39,16 +38,6 @@ public class PlayerJoinGameEvent extends GameEvent implements Cancellable {
 	
 	public static HandlerList getHandlerList() {
 		return handlers;
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	@Override
-	public void setCancelled(boolean isCancelled) {
-		cancelled = isCancelled;
 	}
 
 }
