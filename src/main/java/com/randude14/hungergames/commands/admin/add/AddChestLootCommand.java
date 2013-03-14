@@ -29,12 +29,12 @@ public class AddChestLootCommand extends PlayerCommand {
 		catch (NumberFormatException e) {
 			ChatUtils.error(player,"{0} is not a valid number", args[0]);
 		}
-		
+		if (player.getItemInHand() == null) {
+			ChatUtils.error(player,"There is no item in hand. Perhaps you used the command wrong?");
+			return;
+		}		
 		if (args.length < 2) {
-			if (player.getItemInHand() == null) {
-				ChatUtils.error(player,"There is no item in hand. Perhaps you used the command wrong?");
-				return;
-			}
+
 			ItemConfig.addChestLoot(null, player.getItemInHand(), chance);
 		}
 		else {

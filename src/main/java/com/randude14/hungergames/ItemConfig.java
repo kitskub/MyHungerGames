@@ -100,6 +100,7 @@ public class ItemConfig {
 	    }
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(item.getTypeId());
+	    builder.append(":");
 	    builder.append(item.getData().getData());
 	    builder.append(",");
 	    builder.append(System.currentTimeMillis());
