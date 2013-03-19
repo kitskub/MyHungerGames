@@ -3,9 +3,7 @@ package com.randude14.hungergames.utils;
 import com.randude14.hungergames.Logging;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -48,8 +46,47 @@ public class ConfigUtils {
 		}
 		return item;
 	}
+	
+	public static List<Item> getItemSection(ConfigurationSection section, String name, boolean useMatchMaterial) {
+		List<Item> toRet = new ArrayList<Item>();
+		if(section == null) return toRet;
 		
-	public static List<ItemStack> readItemSection(ConfigurationSection chestSection, boolean useMatchMaterial) {
+		List<?> list = section.getList(name);
+		if (list.isEmpty()) return toRet;
+		
+		if (list.get(0) instanceof ConfigurationSection) return convertSection(section, name, useMatchMaterial);
+		for (Object o : list) {
+			toRet.add((Item) o);
+		}
+		return toRet;
+
+	}
+	
+	public static List<Item> convertSection(ConfigurationSection section, String name, boolean useMatchMaterial) {
+		List<Item> toRet = new ArrayList<Item>();
+		ConfigurationSection chestSection = section.getConfigurationSection(name);
+		if(chestSection == null) return toRet;
+
+		for(String key : chestSection.getKeys(false)) {
+		    ConfigurationSection keySection = chestSection.getConfigurationSection(key);
+		    ItemStack stack = getItemStack(keySection, useMatchMaterial);
+		    if(stack == null) continue;
+		    Item i = new Item(stack, null);
+		    if (keySection.contains("money")) {
+			    i.getValues().put("money", keySection.get("money"));
+		    }
+		    if (keySection.contains("chance")) {
+			    i.getValues().put("chance", keySection.get("chance"));
+		    }
+		    toRet.add(i);
+		}
+		section.set(name, toRet);
+		return toRet;
+		
+	}
+
+	/*
+	public static List<ItemStack> readItemStackSection(ConfigurationSection chestSection, boolean useMatchMaterial) {
 		List<ItemStack> toRet = new ArrayList<ItemStack>();
 		if(chestSection == null) return toRet;
 
@@ -62,7 +99,7 @@ public class ConfigUtils {
 		return toRet;
 	}
 
-	public static Map<ItemStack, Double> readItemSectionWithValue(ConfigurationSection itemSection, boolean useMatchMaterial, String value, double def){
+	public static Map<ItemStack, Double> readItemStackSectionWithValue(ConfigurationSection itemSection, boolean useMatchMaterial, String value, double def){
 	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
 	    if(itemSection == null) return toRet;
 	    
@@ -75,7 +112,7 @@ public class ConfigUtils {
 		    toRet.put(item, money);
 	    }
 	    return toRet;
-	}
+	}*/
 	
 	private static ItemStack getItemStack(ConfigurationSection section, boolean useMatchMaterial) {
 	    if (section == null) return null;

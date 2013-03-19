@@ -14,6 +14,7 @@ import com.randude14.hungergames.register.VaultPermission;
 import com.randude14.hungergames.reset.ResetHandler;
 import com.randude14.hungergames.stats.TimeListener;
 import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.Item;
 
 import java.io.IOException;
 import java.util.Random;
@@ -23,6 +24,7 @@ import net.h31ix.updater.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
@@ -39,6 +41,7 @@ public class HungerGames extends JavaPlugin{
 	public void onEnable() {
 		instance = this;
 		registerCommands();
+		ConfigurationSerialization.registerClass(Item.class, "Item");
 		Files.loadAll();
 		rand = new Random(getName().hashCode());
 		registerEvents();
