@@ -29,8 +29,8 @@ public class ItemConfig {
 	    return (list == null) ? new ArrayList<String>() : list;
 	}
 	
-	public static Map<ItemStack, Float> getAllChestLootWithGlobal(List<String> itemsets){
-	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
+	public static Map<ItemStack, Double> getAllChestLootWithGlobal(List<String> itemsets){
+	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
 	    if(itemsets != null) {
 		for(String s : itemsets){
 			toRet.putAll(getChestLoot(s));
@@ -52,10 +52,10 @@ public class ItemConfig {
 	}
 	
 	/** For safe recursiveness */
-	private static Map<ItemStack, Float> getChestLoot(String itemset, Set<String> checked) {
-		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
+	private static Map<ItemStack, Double> getChestLoot(String itemset, Set<String> checked) {
+		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readItemSectionWithChance(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot"), useMatchMaterial()));
+		chestLoot.putAll(readItemSectionWithValue(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".chest-loot"), useMatchMaterial(), CHANCE, .333));
 		checked.add(itemset);
 		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			chestLoot.putAll(getChestLoot(parent, checked));
@@ -63,7 +63,7 @@ public class ItemConfig {
 		return chestLoot;
 	}
 	
-	public static Map<ItemStack, Float> getChestLoot(String itemset){
+	public static Map<ItemStack, Double> getChestLoot(String itemset){
 		return getChestLoot(itemset, new HashSet<String>());
 	}
 	
@@ -71,7 +71,7 @@ public class ItemConfig {
 	private static Map<ItemStack, Double> getSponsorLoot(String itemset, Set<String> checked) {
 		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
 		if (checked.contains(itemset)) return chestLoot;
-		chestLoot.putAll(readItemSectionWithMoney(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot"), useMatchMaterial()));
+		chestLoot.putAll(readItemSectionWithValue(Files.ITEMCONFIG.getConfig().getConfigurationSection("itemsets." + itemset + ".sponsor-loot"), useMatchMaterial(), MONEY, 10.00));
 		checked.add(itemset);
 		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("itemsets." + itemset + ".inherits")) {
 			checked.add(parent);
@@ -90,7 +90,7 @@ public class ItemConfig {
 	 * @param item
 	 * @param chance
 	 */
-	public static void addChestLoot(String itemset, ItemStack item, float chance){
+	public static void addChestLoot(String itemset, ItemStack item, double chance){
 	    ConfigurationSection itemSection = null;
 	    if (itemset == null || itemset.equalsIgnoreCase("")){
 		    itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "global.chest-loot");
@@ -132,12 +132,12 @@ public class ItemConfig {
 	    }
 	}
 	
-	public static Map<ItemStack, Float> getGlobalChestLoot() {
-		Map<ItemStack, Float> chestLoot = new HashMap<ItemStack, Float>();
+	public static Map<ItemStack, Double> getGlobalChestLoot() {
+		Map<ItemStack, Double> chestLoot = new HashMap<ItemStack, Double>();
 		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot");
 		if(itemSection == null) return chestLoot;
 		
-		return readItemSectionWithChance(itemSection, useMatchMaterial());
+		return readItemSectionWithValue(itemSection, useMatchMaterial(), CHANCE, .333);
 	}
 	
 	public static Map<ItemStack, Double> getGlobalSponsorLoot() {
@@ -145,7 +145,7 @@ public class ItemConfig {
 		ConfigurationSection itemSection = Files.ITEMCONFIG.getConfig().getConfigurationSection("global.sponsor-loot");
 		if(itemSection == null) return sponsorLoot;
 		
-		return readItemSectionWithMoney(itemSection, useMatchMaterial());
+		return readItemSectionWithValue(itemSection, useMatchMaterial(), MONEY, 10.00);
 	}
 
 	public static Set<String> getFixedChests() {
@@ -184,8 +184,8 @@ public class ItemConfig {
 			
 	}
 	
-	public static Map<ItemStack, Float> getRandomRewards() {
-		return readItemSectionWithChance(Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random"), useMatchMaterial());
+	public static Map<ItemStack, Double> getRandomRewards() {
+		return readItemSectionWithValue(Files.ITEMCONFIG.getConfig().getConfigurationSection("rewards.random"), useMatchMaterial(), CHANCE, .333);
 			
 	}
 	
@@ -204,7 +204,7 @@ public class ItemConfig {
 		}
 	}
 	
-	public static void addRandomReward(ItemStack item, float chance) {
+	public static void addRandomReward(ItemStack item, double chance) {
 		ConfigurationSection itemSection = ConfigUtils.getOrCreateSection(Files.ITEMCONFIG.getConfig(), "rewards.random");
 		StringBuilder builder = new StringBuilder();
 		builder.append(item.getTypeId());

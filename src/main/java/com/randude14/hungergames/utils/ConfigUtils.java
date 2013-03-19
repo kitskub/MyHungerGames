@@ -14,6 +14,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class ConfigUtils {
+	public static final String MONEY = "money";
+	public static final String CHANCE = "chance";
 	
 	public static ConfigurationSection getOrCreateSection(ConfigurationSection section, String string) {
 		ConfigurationSection config = section.getConfigurationSection(string);
@@ -59,22 +61,8 @@ public class ConfigUtils {
 		}
 		return toRet;
 	}
-	
-	public static Map<ItemStack, Float> readItemSectionWithChance(ConfigurationSection itemSection, boolean useMatchMaterial){
-	    Map<ItemStack, Float> toRet = new HashMap<ItemStack, Float>();
-	    if(itemSection == null) return toRet;
-	    
-	    for(String key : itemSection.getKeys(false)) {
-		    ConfigurationSection section = itemSection.getConfigurationSection(key);
-		    ItemStack item = getItemStack(section, useMatchMaterial);
-		    if (item == null) continue;
-		    float chance = new Double(section.getDouble("chance", 0.3333337)).floatValue();
-		    toRet.put(item, chance);
-	    }
-	    return toRet;
-	}
-		
-	public static Map<ItemStack, Double> readItemSectionWithMoney(ConfigurationSection itemSection, boolean useMatchMaterial){
+
+	public static Map<ItemStack, Double> readItemSectionWithValue(ConfigurationSection itemSection, boolean useMatchMaterial, String value, double def){
 	    Map<ItemStack, Double> toRet = new HashMap<ItemStack, Double>();
 	    if(itemSection == null) return toRet;
 	    
@@ -83,7 +71,7 @@ public class ConfigUtils {
 		    ItemStack item = getItemStack(section, useMatchMaterial);
 		    if(item == null) continue;
 
-		    double money = section.getDouble("money", 10.00);
+		    double money = section.getDouble(value, def);
 		    toRet.put(item, money);
 	    }
 	    return toRet;

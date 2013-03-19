@@ -111,7 +111,7 @@ public class GeneralUtils {
 		}
 
 		chest.getInventory().clear();
-		Map<ItemStack, Float> itemMap = ItemConfig.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Double> itemMap = ItemConfig.getAllChestLootWithGlobal(itemsets);
 		List<ItemStack> items = new ArrayList<ItemStack>(itemMap.keySet());
 		int size = chest.getInventory().getSize();
 		final int maxItemSize = 100;
@@ -137,7 +137,7 @@ public class GeneralUtils {
 		List<ItemStack> items = new ArrayList<ItemStack>();
 		items.addAll(ItemConfig.getStaticRewards());
 		Logging.debug("rewardPlayer: items after static: " + ArrayUtils.toString(items));
-		Map<ItemStack, Float> itemMap = ItemConfig.getRandomRewards();
+		Map<ItemStack, Double> itemMap = ItemConfig.getRandomRewards();
 
 		int size = ItemConfig.getMaxRandomItems();
 		final int maxItemSize = 25;
