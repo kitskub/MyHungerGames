@@ -48,7 +48,7 @@ public class ChatUtils {
 	 */
 	public static void broadcastRaw(Game game, ChatColor color, String message) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (Defaults.Config.ALLOW_MINIMAL_MESSAGES.getGlobalBoolean() && !GameManager.INSTANCE.isPlayerSubscribed(player, game)) continue;
+			if (Defaults.Config.ALLOW_MINIMAL_MESSAGES.getGlobalBoolean() && !HungerGames.getInstance().getGameManager().isPlayerSubscribed(player, game)) continue;
 			player.sendMessage(color + message);
 		}
 

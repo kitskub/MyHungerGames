@@ -3,6 +3,7 @@ package com.randude14.hungergames.commands.admin;
 import com.randude14.hungergames.*;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.command.CommandSender;
@@ -24,13 +25,13 @@ public class ForceClearCommand extends Command {
 			ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 			return;
 		}
-		game = GameManager.INSTANCE.getRawGame(name);
+		game = HungerGames.getInstance().getGameManager().getRawGame(name);
 		if (game == null) {
 			ChatUtils.error(cs, Lang.getNotExist().replace("<item>", name));
 			return;
 		}
 		ChatUtils.send(cs, "Clearing game.");
-		game.clear();
+		((HungerGame) game).clear();
 	}
 
 	@Override

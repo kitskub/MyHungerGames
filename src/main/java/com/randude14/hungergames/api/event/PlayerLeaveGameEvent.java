@@ -1,11 +1,9 @@
 package com.randude14.hungergames.api.event;
 
+import com.randude14.hungergames.api.Game;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.OfflinePlayer;
-
-import com.randude14.hungergames.games.HungerGame;
-
 
 // called when a player leaves a game
 public class PlayerLeaveGameEvent extends GameEvent {
@@ -13,7 +11,7 @@ public class PlayerLeaveGameEvent extends GameEvent {
 	private final OfflinePlayer player;
 	private Type type;
 	
-	public PlayerLeaveGameEvent(final HungerGame game, final Player player, Type type) {
+	public PlayerLeaveGameEvent(final Game game, final Player player, Type type) {
 		super(game);
 		this.player = player;
 		this.type = type;

@@ -22,7 +22,7 @@ public class SetEnabledCommand extends Command {
 		    ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
-	    game = GameManager.INSTANCE.getRawGame(args[0]);
+	    game = HungerGames.getInstance().getGameManager().getRawGame(args[0]);
 	    if (game == null) {
 		    ChatUtils.error(cs, Lang.getNotExist().replace("<item>", args[0]));
 		    return;

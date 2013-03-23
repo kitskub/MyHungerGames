@@ -1,7 +1,6 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Defaults.Config;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.event.*;
@@ -63,7 +62,7 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void update(Player p) {
-		WeakReference<HungerGame> game = GameManager.INSTANCE.getPlayingSession(p);
+		WeakReference<HungerGame> game = (WeakReference<HungerGame>) HungerGames.getInstance().getGameManager().getPlayingSession(p);
 		if (game == null) return;
 		EquatableWeakReference<HungerGame> eGame = new EquatableWeakReference<HungerGame>(game);
 		if (!times.containsKey(eGame)) times.put(eGame, new HashMap<String, Long>());

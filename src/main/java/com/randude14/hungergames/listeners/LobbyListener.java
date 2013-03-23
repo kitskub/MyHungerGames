@@ -1,12 +1,12 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.*;
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.utils.EquatableWeakReference;
 import com.randude14.hungergames.utils.GeneralUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -27,8 +27,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class LobbyListener implements Listener, Runnable {
-	private static Map<Location, WeakReference<HungerGame>> joinSigns = new HashMap<Location, WeakReference<HungerGame>>();
-	private static Map<Location, WeakReference<HungerGame>> gameSigns = new HashMap<Location, WeakReference<HungerGame>>();
+	private static Map<Location, EquatableWeakReference<? extends Game>> joinSigns = new HashMap<Location, EquatableWeakReference<? extends Game>>();
+	private static Map<Location, EquatableWeakReference<? extends Game>> gameSigns = new HashMap<Location, EquatableWeakReference<? extends Game>>();
 	private static List<InfoWall> infoWalls = new ArrayList<InfoWall>();
 	private static int currentCheckPeriod = 0, maxCheckPeriod = 5;
 	
@@ -60,7 +60,7 @@ public class LobbyListener implements Listener, Runnable {
 	
 	public static boolean addInfoWall(Location one, Location two, BlockFace clickedFace, String str) {
 		if (one.getWorld() != two.getWorld()) return false;
-		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(str);
 		if (game == null) return false;
 		World w = one.getWorld();
 		int oneX = one.getBlockX();
@@ -134,7 +134,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(name);
+		EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(name);
 		if (game == null) return false;
 		joinSigns.put(location, game);
 		Sign sign = (Sign) block.getState();
@@ -151,7 +151,7 @@ public class LobbyListener implements Listener, Runnable {
 		if (location == null) return false;
 		Block block = location.getBlock();
 		if (!(block.getState() instanceof Sign)) return false;
-		EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(str);
+		EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(str);
 		if (game == null) return false;
 		gameSigns.put(location, game);
 		updateGameSigns();
@@ -163,7 +163,7 @@ public class LobbyListener implements Listener, Runnable {
 	public static void playerClickedBlock(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		if (!joinSigns.containsKey(event.getClickedBlock().getLocation())) return;
-		WeakReference<HungerGame> game = joinSigns.get(event.getClickedBlock().getLocation());
+		EquatableWeakReference<? extends Game> game = joinSigns.get(event.getClickedBlock().getLocation());
 		if (game == null || game.get() == null) {
 			joinSigns.remove(event.getClickedBlock().getLocation());
 			return;
@@ -180,7 +180,7 @@ public class LobbyListener implements Listener, Runnable {
 		currentCheckPeriod++;
 		if (currentCheckPeriod >= maxCheckPeriod) {
 			for (Location l : joinSigns.keySet()) {
-				WeakReference<HungerGame> game = joinSigns.get(l);
+				EquatableWeakReference<? extends Game> game = joinSigns.get(l);
 				if (game == null || game.get() == null) {
 					joinSigns.remove(l);
 				}
@@ -210,8 +210,8 @@ public class LobbyListener implements Listener, Runnable {
 		ConfigurationSection infoSection = config.createSection("info-walls");
 
 		int count = 0;
-		for (Iterator<Entry<Location, WeakReference<HungerGame>>> it = joinSigns.entrySet().iterator(); it.hasNext();) {
-			Entry<Location, WeakReference<HungerGame>> entry = it.next();
+		for (Iterator<Entry<Location, EquatableWeakReference<? extends Game>>> it = joinSigns.entrySet().iterator(); it.hasNext();) {
+			Entry<Location, EquatableWeakReference<? extends Game>> entry = it.next();
 			if (entry.getValue().get() == null) {
 				it.remove();
 				continue;
@@ -222,8 +222,8 @@ public class LobbyListener implements Listener, Runnable {
 			section.set("game", entry.getValue().get().getName());
 		}
 		count = 0;
-		for (Iterator<Entry<Location, WeakReference<HungerGame>>> it = gameSigns.entrySet().iterator(); it.hasNext();) {
-			Entry<Location, WeakReference<HungerGame>> entry = it.next();
+		for (Iterator<Entry<Location, EquatableWeakReference<? extends Game>>> it = gameSigns.entrySet().iterator(); it.hasNext();) {
+			Entry<Location, EquatableWeakReference<? extends Game>> entry = it.next();
 			if (entry.getValue().get() == null) {
 				it.remove();
 				continue;
@@ -270,7 +270,7 @@ public class LobbyListener implements Listener, Runnable {
 				} catch (IllegalArgumentException ex) {
 					continue;
 				}
-				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(section.getString("game", ""));
 				if (game == null) continue;
 				joinSigns.put(loc, game);
 			}
@@ -291,7 +291,7 @@ public class LobbyListener implements Listener, Runnable {
 				} catch (IllegalArgumentException ex) {
 					continue;
 				}
-				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(section.getString("game", ""));
 				if (loc == null || game == null) continue;
 				gameSigns.put(loc, game);
 			}
@@ -300,7 +300,7 @@ public class LobbyListener implements Listener, Runnable {
 			infoWalls.clear();
 			for (String key : infoSection.getKeys(false)) {
 				ConfigurationSection section = infoSection.getConfigurationSection(key);
-				EquatableWeakReference<HungerGame> game = GameManager.INSTANCE.getGame(section.getString("game", ""));
+				EquatableWeakReference<? extends Game> game = HungerGames.getInstance().getGameManager().getGame(section.getString("game", ""));
 				List<String> strings = section.getStringList("signs");
 				List<Location> locs = new ArrayList<Location>();
 				for (String s : strings) {
@@ -327,12 +327,12 @@ public class LobbyListener implements Listener, Runnable {
 	public static void updateGameSigns() {
 		for (Iterator<Location> it = gameSigns.keySet().iterator(); it.hasNext();) {
 			Location l = it.next();
-			WeakReference<HungerGame> gameRef = gameSigns.get(l);
+			EquatableWeakReference<? extends Game> gameRef = gameSigns.get(l);
 			if (gameRef == null || gameRef.get() == null) {
 				it.remove();
 				continue;
 			}
-			HungerGame game = gameRef.get();
+			Game game = gameRef.get();
 			BlockState b = l.getBlock().getState();
 			if (game.getState() == HungerGame.GameState.DELETED || !(b instanceof Sign)) {
 				it.remove();
@@ -367,9 +367,9 @@ public class LobbyListener implements Listener, Runnable {
 
 	private static final class InfoWall {
 		private final List<Location> signs;
-		private final EquatableWeakReference<HungerGame> game;
+		private final EquatableWeakReference<? extends Game> game;
 
-		public InfoWall(EquatableWeakReference<HungerGame> game, List<Location> list) {
+		public InfoWall(EquatableWeakReference<? extends Game> game, List<Location> list) {
 			this.signs = list;
 			this.game = game;
 			update();

@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class GameManager extends com.randude14.hungergames.api.GameManager {
 	private static final HungerGames plugin = HungerGames.getInstance();
-	public static final GameManager INSTANCE = new GameManager();
 	private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static final Map<String, EquatableWeakReference<HungerGame>> spectators = new HashMap<String, EquatableWeakReference<HungerGame>>(); // <player, game>
@@ -196,6 +195,7 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 		}
 	}
 
+	@Override
 	public void saveGames() {
 		for (HungerGame game : games) {
 		    saveGame(game);
@@ -211,13 +211,14 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 		games.add(game);
 	}
 
-	public void saveGame(HungerGame game){
+	@Override
+	public void saveGame(Game game) {
 		ConfigurationSection section = Files.GAMES.getConfig().getConfigurationSection("games");
 		if(section == null){
 		    section = Files.GAMES.getConfig().createSection("games");
 		}
 		ConfigurationSection saveSection = section.createSection(game.getName());
-		game.saveTo(saveSection);
+		((HungerGame) game).saveTo(saveSection);
 		Files.GAMES.save();
 	}
 	

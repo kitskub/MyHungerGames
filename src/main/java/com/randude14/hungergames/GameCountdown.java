@@ -21,6 +21,7 @@ public class GameCountdown implements Runnable {
 		countdown = num;
 		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20L, 20L).getTaskId();
 		this.isResuming = isResuming;
+		starter = Bukkit.getConsoleSender();
 		if(isResuming) {
 			ChatUtils.broadcast(game, "Resuming %s in %s...",
 					game.getName(), GeneralUtils.formatTime(countdown));

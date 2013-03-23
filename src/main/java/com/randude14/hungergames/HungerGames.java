@@ -36,6 +36,7 @@ public class HungerGames extends JavaPlugin{
 	private static HGPermission perm;
 	private static Economy econ;
 	private static Random rand;
+	private static GameManager gameManager;
 	
 	@Override
 	public void onEnable() {
@@ -48,9 +49,10 @@ public class HungerGames extends JavaPlugin{
 		loadRegistry();
 		loadResetter();
 		callTasks();
-		GameManager.INSTANCE.loadGames();
+		gameManager = new GameManager();
+		gameManager.loadGames();
 		LobbyListener.load();
-		Logging.info("%s games loaded.", GameManager.INSTANCE.getRawGames().size());
+		Logging.info("%s games loaded.", gameManager.getRawGames().size());
 		Bukkit.getScheduler().runTask(this, new Runnable() {
 			public void run() {
 				try {
@@ -77,10 +79,10 @@ public class HungerGames extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
-		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
+		for (HungerGame game : gameManager.getRawGames()) {
 			game.stopGame(false);
 		}
-		GameManager.INSTANCE.saveGames();
+		gameManager.saveGames();
 		SignListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
@@ -157,7 +159,7 @@ public class HungerGames extends JavaPlugin{
 	
 	public static void reload() {
 		Files.loadAll();
-		GameManager.INSTANCE.loadGames();
+		gameManager.loadGames();
 		SignListener.loadSigns();
 		loadRegistry();
 	}
@@ -212,5 +214,9 @@ public class HungerGames extends JavaPlugin{
 			return false;
 		}
 		return true;
+	}
+	
+	public com.randude14.hungergames.api.GameManager getGameManager() {
+		return gameManager;
 	}
 }

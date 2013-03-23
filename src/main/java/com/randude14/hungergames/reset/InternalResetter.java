@@ -78,7 +78,7 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	}
 
 	private static HungerGame insideGame(Location loc) {
-		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
+		for (HungerGame game : ((GameManager) HungerGames.getInstance().getGameManager()).getRawGames()) {
 			if (game.getWorlds().size() <= 0 && game.getCuboids().size() <= 0) return null;
 			if (game.getWorlds().contains(loc.getWorld())) return game;
 			for (Cuboid c : game.getCuboids()) {

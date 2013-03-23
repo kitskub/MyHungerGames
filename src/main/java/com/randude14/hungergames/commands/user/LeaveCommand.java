@@ -1,7 +1,7 @@
 package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -15,7 +15,7 @@ public class LeaveCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
-		game = GameManager.INSTANCE.getRawPlayingSession(player);
+		game = HungerGames.getInstance().getGameManager().getRawPlayingSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not playing a game.");
 			return;

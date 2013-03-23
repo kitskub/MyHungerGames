@@ -24,11 +24,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameOfKilled = GameManager.INSTANCE.getRawPlayingSession(killed);
+		HungerGame gameOfKilled = (HungerGame) HungerGames.getInstance().getGameManager().getRawPlayingSession(killed);
 		if (gameOfKilled == null) return;
 		Player killer = killed.getKiller();
 		if (killer != null) {
-			HungerGame gameOfKiller = GameManager.INSTANCE.getRawPlayingSession(killer);
+			HungerGame gameOfKiller = (HungerGame) HungerGames.getInstance().getGameManager().getRawPlayingSession(killer);
 			if (gameOfKiller == null) return;
 			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
 				gameOfKiller.killed(killer, killed, event);
@@ -41,13 +41,13 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerQuit(PlayerQuitEvent event) {
-		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
+		((GameManager) HungerGames.getInstance().getGameManager()).playerLeftServer(event.getPlayer());
 		HungerGames.playerLeftServer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public static void playerKick(PlayerKickEvent event) {
-		GameManager.INSTANCE.playerLeftServer(event.getPlayer());
+		((GameManager) HungerGames.getInstance().getGameManager()).playerLeftServer(event.getPlayer());
 		HungerGames.playerLeftServer(event.getPlayer());
 	}
 	
@@ -55,7 +55,7 @@ public class PlayerListener implements Listener {
 	public void playerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		Location frozenLoc = GameManager.INSTANCE.getFrozenLocation(player);
+		Location frozenLoc = HungerGames.getInstance().getGameManager().getFrozenLocation(player);
 		if (frozenLoc == null) {
 			return;
 		}
@@ -77,14 +77,14 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerSneak(PlayerToggleSneakEvent event) {
 		HungerGame game;
-		if ((game = GameManager.INSTANCE.getRawPlayingSession(event.getPlayer())) == null) return;
+		if ((game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(event.getPlayer())) == null) return;
 		if (!Config.HIDE_PLAYERS.getBoolean(game.getSetup())) return;
 		event.setCancelled(true);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)	
 	public void onItemPickup(PlayerPickupItemEvent event) {
-		if (GameManager.INSTANCE.getSpectating(event.getPlayer()) != null) {
+		if (HungerGames.getInstance().getGameManager().getSpectating(event.getPlayer()) != null) {
 			event.setCancelled(true);
 		}
 	}

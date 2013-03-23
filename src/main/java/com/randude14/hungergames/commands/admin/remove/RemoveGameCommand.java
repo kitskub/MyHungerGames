@@ -25,13 +25,13 @@ public class RemoveGameCommand extends PlayerCommand {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
-	    game = GameManager.INSTANCE.getRawGame(args[0]);
+	    game = HungerGames.getInstance().getGameManager().getRawGame(args[0]);
 	    if(game == null){
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return;
 	    }
 	    
-	    GameManager.INSTANCE.removeGame(args[0]);
+	    HungerGames.getInstance().getGameManager().removeGame(args[0]);
 	    Bukkit.getPluginManager().callEvent(new GameRemoveEvent(game));
 	    ChatUtils.send(player, ChatColor.GREEN, "%s has been removed.", args[0]);
 	}

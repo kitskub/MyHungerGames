@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -16,11 +17,11 @@ public class BackCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {		
-		if (GameManager.INSTANCE.getSession(player) != null) {
+		if (HungerGames.getInstance().getGameManager().getSession(player) != null) {
 			ChatUtils.send(player, "You cannot use that command while you are in-game.");
 			return;
 		}
-		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
+		Location loc = ((GameManager) HungerGames.getInstance().getGameManager()).getAndRemoveBackLocation(player);
 		if (loc != null) {
 			ChatUtils.send(player, "Teleporting you to your back location.");
 			player.teleport(loc);

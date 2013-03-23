@@ -4,13 +4,10 @@ import com.randude14.hungergames.Config;
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.utils.ChatUtils;
 
-import java.util.logging.Level;
 import org.bukkit.Material;
 
 import org.bukkit.block.Chest;
@@ -23,8 +20,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BlockListener implements Listener {
@@ -37,7 +32,7 @@ public class BlockListener implements Listener {
 		if (type == null) return;
 		HungerGame game = null;
 		if (lines[2] != null && !lines[2].equals("")) {
-			game = GameManager.INSTANCE.getRawGame(lines[2]);
+			game = (HungerGame) HungerGames.getInstance().getGameManager().getRawGame(lines[2]);
 			if (game == null) {
 				event.setLine(1, "");
 				event.setLine(2, "BAD GAME NAME!");
@@ -64,7 +59,7 @@ public class BlockListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onchestBreak(BlockBreakEvent event) {
 		if (!(event.getBlock().getState() instanceof Chest)) return;
-		for (HungerGame game : GameManager.INSTANCE.getRawGames()) {
+		for (HungerGame game : ((GameManager) HungerGames.getInstance().getGameManager()).getRawGames()) {
 			game.chestBroken(event.getBlock().getLocation());
 		}
 	}
@@ -72,7 +67,7 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
+		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
 		if(session != null) {
 			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
 				event.setCancelled(true);
@@ -85,16 +80,16 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
+		else if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "You cannot place this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
+			ChatUtils.error(player, "You cannot place this block while spectating %s.", HungerGames.getInstance().getGameManager().getSpectating(player));
 		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
+		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
 		if(session != null) {
 			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
 				event.setCancelled(true);
@@ -107,9 +102,9 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
+		else if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "You cannot break this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
+			ChatUtils.error(player, "You cannot break this block while spectating %s.", HungerGames.getInstance().getGameManager().getSpectating(player));
 		}
 	}
 	
@@ -119,7 +114,7 @@ public class BlockListener implements Listener {
 		if (!(event.getClickedBlock().getState() instanceof Chest)) return;
 
                 Player player = event.getPlayer();
-                HungerGame game = GameManager.INSTANCE.getRawPlayingSession(player);
+                HungerGame game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
                 if(game == null) return;
 		if(!Defaults.Config.AUTO_ADD.getBoolean(game.getSetup())) return;
 		
@@ -131,7 +126,7 @@ public class BlockListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
+		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
 		if(session != null) {
 			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
 				event.setCancelled(true);
@@ -145,9 +140,9 @@ public class BlockListener implements Listener {
 				return;
 			}
 		}
-		else if (GameManager.INSTANCE.getSpectating(player) != null) { // TODO configurable
+		else if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) { // TODO configurable
 			event.setCancelled(true);
-			ChatUtils.error(player, "You cannot interact with this block while spectating %s.", GameManager.INSTANCE.getSpectating(player));
+			ChatUtils.error(player, "You cannot interact with this block while spectating %s.", HungerGames.getInstance().getGameManager().getSpectating(player));
 		}
 	}
 }

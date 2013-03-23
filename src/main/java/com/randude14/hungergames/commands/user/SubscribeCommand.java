@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -17,18 +18,18 @@ public class SubscribeCommand extends PlayerCommand {
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {		
 		if (args.length > 0) {
-			game = GameManager.INSTANCE.getRawGame(args[0]);
+			game = HungerGames.getInstance().getGameManager().getRawGame(args[0]);
 			if (game == null) {
 				ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 				return;
 			}
 		}
-		if (GameManager.INSTANCE.getSubscribedPlayers(game).contains(player.getName())) {
-			GameManager.INSTANCE.removedSubscribedPlayer(player, game);
+		if (HungerGames.getInstance().getGameManager().isPlayerSubscribed(player, game)) {
+			HungerGames.getInstance().getGameManager().removedSubscribedPlayer(player, game);
 			ChatUtils.send(player, "You have been unsubscribed from those MyHungerGames messages.");
 		}
 		else {
-			GameManager.INSTANCE.addSubscribedPlayer(player, game);
+			HungerGames.getInstance().getGameManager().addSubscribedPlayer(player, game);
 			ChatUtils.send(player, "You have been subscribed to those MyHungerGames messages.");
 		}
 	}

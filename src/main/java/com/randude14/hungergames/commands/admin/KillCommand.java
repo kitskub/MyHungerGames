@@ -28,7 +28,7 @@ public class KillCommand extends Command {
 		    ChatUtils.error(cs, "%s is not online.", args[0]);
 		    return;
 		}
-		game = GameManager.INSTANCE.getRawSession(kill);
+		game = HungerGames.getInstance().getGameManager().getRawSession(kill);
 		if (game == null) {
 		    ChatUtils.error(cs, "%s is currently not in a game.", kill.getName());
 		    return;

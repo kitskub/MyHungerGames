@@ -27,11 +27,11 @@ public class SponsorCommand extends PlayerCommand {
 			ChatUtils.error(player, "%s is not online.", args[0]);
 			return;
 		}
-		if (GameManager.INSTANCE.getPlayingSession(p) == null) {
+		if (HungerGames.getInstance().getGameManager().getPlayingSession(p) == null) {
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 			return;
 		}
-		GameManager.INSTANCE.addSponsor(player, p);
+		HungerGames.getInstance().getGameManager().addSponsor(player, p);
 	}
 
 	@Override

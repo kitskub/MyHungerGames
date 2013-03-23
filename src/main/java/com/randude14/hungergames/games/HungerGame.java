@@ -44,7 +44,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitTask;
 
 	
-public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
+public class HungerGame implements Runnable, Game {
 	// Per game
 	private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
@@ -305,8 +305,8 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		randomLocs.add(loc);
 	}
 	
-	public int compareTo(HungerGame game) {
-		return game.name.compareToIgnoreCase(name);
+	public int compareTo(Game game) {
+		return game.getName().compareToIgnoreCase(getName());
 	}
 
 	public boolean addReadyPlayer(Player player) {
@@ -368,13 +368,13 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 			playerLeaving(player, false);
 			for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
 			teleportPlayerToSpawn(player);
-			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
+			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 			stats.remove(stat);
 		}
 	}
 
 	public boolean addSpectator(Player player, Player spectated) {
-		if (GameManager.INSTANCE.getSpectating(player) != null) {
+		if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) {
 			ChatUtils.error(player, "You cannot spectate while in a game.");
 			return false;
 		}
@@ -469,7 +469,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		}
 		for (String stat : stats.keySet()) {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
-			GameManager.INSTANCE.clearGamesForPlayer(stat, this);
+			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 		}
 		stats.clear();
 		for (String spectatorName : spectators.keySet()) {
@@ -669,7 +669,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		for (String playerName : stats.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
 			if (p == null) continue;
-			GameManager.INSTANCE.unfreezePlayer(p);
+			HungerGames.getInstance().getGameManager().unfreezePlayer(p);
 		}
 
 	}
@@ -750,7 +750,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 
 	@Override
 	public synchronized boolean join(Player player) {
-	    if (GameManager.INSTANCE.getSession(player) != null) {
+	    if (HungerGames.getInstance().getGameManager().getSession(player) != null) {
 		    ChatUtils.error(player, "You are already in a game. Leave that game before joining another.");
 		    return false;
 	    }
@@ -771,7 +771,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    Bukkit.getPluginManager().callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
-	    stats.put(player.getName(), GameManager.INSTANCE.createStat(this, player));
+	    stats.put(player.getName(), ((GameManager) HungerGames.getInstance().getGameManager()).createStat(this, player));
 	    String mess = Lang.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(this, mess);
@@ -825,11 +825,11 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    else {
 		    loc = spawnsTaken.get(player.getName());
 	    }
-	    GameManager.INSTANCE.addSubscribedPlayer(player, this);
-	    GameManager.INSTANCE.addBackLocation(player);
+	    HungerGames.getInstance().getGameManager().addSubscribedPlayer(player, this);
+	    ((GameManager) HungerGames.getInstance().getGameManager()).addBackLocation(player);
 	    TeleportListener.allowTeleport(player);
 	    player.teleport(loc, TeleportCause.PLUGIN);
-	    if (state != RUNNING && Config.FREEZE_PLAYERS.getBoolean(setup)) GameManager.INSTANCE.freezePlayer(player);
+	    if (state != RUNNING && Config.FREEZE_PLAYERS.getBoolean(setup)) HungerGames.getInstance().getGameManager().freezePlayer(player);
 	    if (Config.FORCE_SURVIVAL.getBoolean(setup)) {
 		    playerGameModes.put(player.getName(), player.getGameMode());
 		    player.setGameMode(GameMode.SURVIVAL);
@@ -919,7 +919,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 	    }
 	    else {
 		    stats.remove(player.getName());
-		    GameManager.INSTANCE.clearGamesForPlayer(player.getName(), this);
+		    ((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(player.getName(), this);
 	    }
 	    playerLeaving(player, false);
 	    if (wasPlaying || state != RUNNING) {
@@ -944,7 +944,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		    if (spectator == null) continue;
 		    player.showPlayer(spectator);
 		}
-		GameManager.INSTANCE.unfreezePlayer(player);
+		HungerGames.getInstance().getGameManager().unfreezePlayer(player);
 		InventorySave.loadInventory(player);
 		if (playerGameModes.containsKey(player.getName())) {
 			player.setGameMode(playerGameModes.remove(player.getName()));
@@ -960,7 +960,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 		if (!temporary) {
 			spawnsTaken.remove(player.getName());
 			PlayerQueueHandler.addPlayer(player);
-			GameManager.INSTANCE.removedSubscribedPlayer(player, this);
+			HungerGames.getInstance().getGameManager().removedSubscribedPlayer(player, this);
 		}
 	}
 
@@ -998,7 +998,7 @@ public class HungerGame implements Comparable<HungerGame>, Runnable, Game {
 				ChatUtils.error(player, "There was no spawn set for %s. Teleporting to back location.", name);
 			}
 		}
-		Location loc = GameManager.INSTANCE.getAndRemoveBackLocation(player);
+		Location loc = ((GameManager) HungerGames.getInstance().getGameManager()).getAndRemoveBackLocation(player);
 		if (loc != null) {
 			player.teleport(loc, TeleportCause.UNKNOWN);
 		}

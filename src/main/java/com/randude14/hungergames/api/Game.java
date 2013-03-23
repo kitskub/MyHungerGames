@@ -12,7 +12,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public interface Game {
+public interface Game extends Comparable<Game> {
 	public boolean isSpectating(Player player);
 
 	public boolean stopGame(CommandSender notifier, boolean isFinished);

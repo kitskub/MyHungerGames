@@ -26,7 +26,7 @@ public class RemoveSpawnPointCommand extends PlayerCommand {
 		    return;
 	    }
 	    
-	    game = GameManager.INSTANCE.getRawGame(args[0]);
+	    game = HungerGames.getInstance().getGameManager().getRawGame(args[0]);
 	    if(game == null) {
 		    ChatUtils.error(player, Lang.getNotExist().replace("<item>", args[0]));
 		    return;

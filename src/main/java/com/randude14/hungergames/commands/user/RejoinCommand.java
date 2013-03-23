@@ -2,6 +2,7 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.commands.PlayerCommand;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -15,7 +16,7 @@ public class RejoinCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
-		game = GameManager.INSTANCE.getRawSession(player);
+		game = HungerGames.getInstance().getGameManager().getRawSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not in a game.");
 			return;

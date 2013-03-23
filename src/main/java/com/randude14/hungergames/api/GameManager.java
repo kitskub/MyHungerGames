@@ -9,8 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public abstract class GameManager {
-	public static final GameManager INSTANCE = com.randude14.hungergames.GameManager.INSTANCE;
-
 	public abstract boolean createGame(String name);
 
 	public abstract boolean createGame(String name, String setup);
@@ -36,7 +34,10 @@ public abstract class GameManager {
 	public abstract WeakReference<? extends Game> getSession(Player player);
 
 	public abstract Game getRawSession(Player player);
+	
+	public abstract void saveGame(Game game);
 
+	public abstract void saveGames();
 	/**
 	 * This returns the game a player is playing. If the player is in a game, but not playing, returns null
 	 * 

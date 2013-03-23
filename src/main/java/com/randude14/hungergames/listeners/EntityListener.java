@@ -2,6 +2,8 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.api.Game.GameState;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
@@ -24,7 +26,7 @@ public class EntityListener implements Listener{
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		// Games
-		HungerGame hurtGame = GameManager.INSTANCE.getRawSession(player);
+		Game hurtGame = HungerGames.getInstance().getGameManager().getRawSession(player);
 		if (hurtGame != null) {
 			if (Config.FORCE_DAMAGE.getBoolean(hurtGame.getSetup())) {
 				event.setCancelled(false);
@@ -56,7 +58,7 @@ public class EntityListener implements Listener{
 
 		// Spectators
 		if (event.isCancelled()) return;
-		if (GameManager.INSTANCE.getSpectating(player) != null) {
+		if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) {
 			event.setCancelled(true);
 		}
 	}
@@ -66,7 +68,7 @@ public class EntityListener implements Listener{
 		if (!(event.getTarget() instanceof Player)) return;
 		Player player = (Player) event.getTarget();
 		// Games
-		HungerGame game = GameManager.INSTANCE.getRawSession(player);
+		Game game = HungerGames.getInstance().getGameManager().getRawSession(player);
 		if (game != null) {
 			if (game.getState() == GameState.STOPPED) {
 				if (!Config.STOP_TARGETTING.getBoolean(game.getSetup())) return;

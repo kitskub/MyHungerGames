@@ -23,21 +23,21 @@ public class AddGameCommand extends PlayerCommand {
 		    ChatUtils.helpCommand(player, getUsage(), HungerGames.CMD_ADMIN);
 		    return;
 	    }
-	    game = GameManager.INSTANCE.getRawGame(args[0]);
+	    game = HungerGames.getInstance().getGameManager().getRawGame(args[0]);
 
 	    if (game != null) {
 		    ChatUtils.error(player, "%s already exists.", args[0]);
 		    return;
 	    }
 	    if(args.length == 1){
-		    GameManager.INSTANCE.createGame(args[0]);
+		    HungerGames.getInstance().getGameManager().createGame(args[0]);
 	    }
 	    else{
-		    GameManager.INSTANCE.createGame(args[0], args[1]);
+		    HungerGames.getInstance().getGameManager().createGame(args[0], args[1]);
 	    }
-	    GameCreateEvent event = new GameCreateEvent(GameManager.INSTANCE.getRawGame(args[0]));
+	    GameCreateEvent event = new GameCreateEvent(HungerGames.getInstance().getGameManager().getRawGame(args[0]));
 	    if(event.isCancelled()) {
-	    	GameManager.INSTANCE.removeGame(args[0]);
+	    	HungerGames.getInstance().getGameManager().removeGame(args[0]);
 	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[0]);
 	    }
 	    else {

@@ -6,6 +6,7 @@ import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;
+import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import org.bukkit.entity.Player;
@@ -18,12 +19,12 @@ public class VoteCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
-		game = GameManager.INSTANCE.getRawSession(player);
+		game = HungerGames.getInstance().getGameManager().getRawSession(player);
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" + Commands.USER_JOIN.getCommand().getUsage() + "'", HungerGames.CMD_USER);
 			return;
 		}
-		game.addReadyPlayer(player);
+		((HungerGame) game).addReadyPlayer(player);
 		ChatUtils.send(player, Lang.getVoted(game.getSetup()));
 	}
 

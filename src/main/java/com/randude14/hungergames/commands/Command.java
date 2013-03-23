@@ -1,9 +1,8 @@
 package com.randude14.hungergames.commands;
 
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.api.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import org.bukkit.command.CommandSender;
  *
  */
 public abstract class Command extends org.bukkit.command.Command {
-	protected HungerGame game = null;
+	protected Game game = null;
 	protected final Perm perm;
 	protected final List<Command> subCommands;
 	protected final String type;
@@ -92,11 +91,11 @@ public abstract class Command extends org.bukkit.command.Command {
 
 	public boolean save() {
 		if(game != null) {
-		    GameManager.INSTANCE.saveGame(game);
+		    HungerGames.getInstance().getGameManager().saveGame(game);
 		    return true;
 		}
 		else{
-		    GameManager.INSTANCE.saveGames();
+		    HungerGames.getInstance().getGameManager().saveGames();
 		    return false;
 		}
 	}

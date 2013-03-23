@@ -2,9 +2,8 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.api.Game;
 
 import java.util.HashSet;
 
@@ -19,9 +18,9 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerChat(PlayerChatEvent event) {
-		HungerGame chatterGame = GameManager.INSTANCE.getRawSession(event.getPlayer());
+		Game chatterGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
-			HungerGame receipientGame = GameManager.INSTANCE.getRawSession(event.getPlayer());
+			Game receipientGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
 			if (receipientGame != null && Config.ISOLATE_PLAYER_CHAT.getBoolean(receipientGame.getSetup())) {
 				if (chatterGame != null) {
 					if (chatterGame.compareTo(receipientGame) == 0 

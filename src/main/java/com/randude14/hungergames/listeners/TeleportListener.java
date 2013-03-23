@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.randude14.hungergames.Defaults.Config;
 import com.randude14.hungergames.GameManager;
+import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 
@@ -24,7 +25,7 @@ public class TeleportListener implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		boolean isWhiteListed = playerWhiteList.remove(player.getName());
-		HungerGame session = GameManager.INSTANCE.getRawPlayingSession(player);
+		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
 		if (session == null) return;
 		if (Config.CAN_TELEPORT.getBoolean(session.getSetup()) && !isWhiteListed && (event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
 			ChatUtils.error(player, "You cannot teleport while in-game!");
