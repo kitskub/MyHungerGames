@@ -1,9 +1,12 @@
 package com.randude14.hungergames;
 
+import com.randude14.hungergames.utils.ChatUtils;
+import com.randude14.hungergames.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import org.bukkit.Bukkit;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -88,12 +91,19 @@ public enum Files {
 		for (Files f : values()) {
 			f.load();
 		}
-
+		update();
 	}
 	
 	public static void saveAll() {
 		for (Files f : values()) {
 			f.save();
+		}
+	}
+	
+	private static void update() {
+		if (ITEMCONFIG.getConfig().getConfigurationSection("global.chest-loot") != null) {
+			ChatUtils.error(Bukkit.getConsoleSender(), "The itemconfig.yml configuration has changed! An example file has been copied to the MyHungerGames folder. Please update!");
+			HungerGames.getInstance().saveResource("itemconfig_example.yml", false);
 		}
 	}
 }

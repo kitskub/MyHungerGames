@@ -1,5 +1,6 @@
 package com.randude14.hungergames.utils;
 
+import com.randude14.hungergames.Files;
 import com.randude14.hungergames.Logging;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class ConfigUtils {
 		if(section == null) return toRet;
 		
 		List<?> list = section.getList(name);
-		if (list.isEmpty()) return toRet;
+		if (list == null || list.isEmpty()) return toRet;
 		
 		if (list.get(0) instanceof ConfigurationSection) return convertSection(section, name, useMatchMaterial);
 		for (Object o : list) {

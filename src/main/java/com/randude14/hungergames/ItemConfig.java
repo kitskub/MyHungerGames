@@ -147,7 +147,7 @@ public class ItemConfig {
 	private static List<ItemStack> getFixedChest(String chest, Set<String> checked) {
 		List<ItemStack> fixedChests = new ArrayList<ItemStack>();
 		if (checked.contains(chest)) return fixedChests;
-		fixedChests.addAll(toItemStackList(getItemSection(Files.ITEMCONFIG.getConfig(), "chests." + chest, useMatchMaterial())));
+		fixedChests.addAll(toItemStackList(getItemSection(Files.ITEMCONFIG.getConfig(), "chests." + chest + ".items", useMatchMaterial())));
 		checked.add(chest);
 		for (String parent : Files.ITEMCONFIG.getConfig().getStringList("chests." + chest + ".inherits")) {
 			fixedChests.addAll(getFixedChest(parent, checked));
