@@ -2,7 +2,6 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;
@@ -31,15 +30,16 @@ public class SpectateCommand extends PlayerCommand {
 			return;
 		}
 		Player spectated;
-		if (HungerGames.getInstance().getGameManager().getSpectating(player) != null) {
-			ChatUtils.error(player, "You are already spectating a game.");
-			return;
-		}
+		boolean success;
 		if (args.length < 2 || (spectated = Bukkit.getPlayer(args[1])) == null) {
-			HungerGames.getInstance().getGameManager().addSpectator(player, game, null);
+			success = HungerGames.getInstance().getGameManager().addSpectator(player, game, null);
 		}
 		else {
-			HungerGames.getInstance().getGameManager().addSpectator(player, game, spectated);
+			success = HungerGames.getInstance().getGameManager().addSpectator(player, game, spectated);
+		}
+		if (!success) {
+			ChatUtils.error(player, "You are already spectating a game.");
+			return;
 		}
 	}
 

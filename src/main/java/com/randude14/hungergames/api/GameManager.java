@@ -9,9 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public abstract class GameManager {
-	public abstract boolean createGame(String name);
+	public abstract Game createGame(String name);
 
-	public abstract boolean createGame(String name, String setup);
+	public abstract Game createGame(String name, String setup);
 
 	public abstract boolean removeGame(String name);
 

@@ -34,23 +34,27 @@ public class GameManager extends com.randude14.hungergames.api.GameManager {
 	private static final Map<String, Location> playerBackLocations = new HashMap<String, Location>();
 	
 	@Override
-	public boolean createGame(String name) {
+	public HungerGame createGame(String name) {
 	    HungerGame game = new HungerGame(name);
 	    boolean attempt = games.add(game);
 	    if(attempt){
 		saveGames();
+		return game;
+	    } else {
+		    return null;
 	    }
-	    return attempt;
 	}
 
 	@Override
-	public boolean createGame(String name, String setup){
+	public HungerGame createGame(String name, String setup){
 	    HungerGame game = new HungerGame(name, setup);
 	    boolean attempt = games.add(game);
 	    if(attempt){
 		saveGames();
+		return game;
+	    } else {
+		return null;
 	    }
-	    return attempt;
 	}
 	
 	@Override

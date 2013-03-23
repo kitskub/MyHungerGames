@@ -5,7 +5,7 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.commands.CommandHandler;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.games.PlayerQueueHandler;
-import com.randude14.hungergames.games.TimedGameRunnable;
+import com.randude14.hungergames.games.TimedGameListener;
 import com.randude14.hungergames.listeners.*;
 import com.randude14.hungergames.register.BukkitPermission;
 import com.randude14.hungergames.register.Economy;
@@ -151,7 +151,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new SessionListener(), instance);
 		pm.registerEvents(new ChatListener(), instance);
 		pm.registerEvents(new TeleportListener(), instance);
-		pm.registerEvents(new TimedGameRunnable(), instance);
+		pm.registerEvents(new TimedGameListener(), instance);
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
 		if (Defaults.Config.AUTO_JOIN_ALLOWED.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
