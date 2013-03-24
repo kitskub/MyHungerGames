@@ -20,7 +20,7 @@ public class ChatListener implements Listener {
 	public void playerChat(PlayerChatEvent event) {
 		Game chatterGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
-			Game receipientGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
+			Game receipientGame = HungerGames.getInstance().getGameManager().getRawSession(p);
 			if (receipientGame != null && Config.ISOLATE_PLAYER_CHAT.getBoolean(receipientGame.getSetup())) {
 				if (chatterGame != null) {
 					if (chatterGame.compareTo(receipientGame) == 0 
