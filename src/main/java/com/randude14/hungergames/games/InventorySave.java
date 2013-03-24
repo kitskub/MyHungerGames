@@ -11,21 +11,29 @@ public class InventorySave {
 	
 	private ItemStack[] contents;
 	private ItemStack[] armorContents;
+	private float exp = 0;
+	private int level = 0;
 
 	private InventorySave(Player player) {
 		armorContents = player.getInventory().getArmorContents();
 		contents = player.getInventory().getContents();
+		exp = player.getExp();
+		level = player.getLevel();
 	}
 
 	private void loadInventoryTo(Player player) {
 		player.getInventory().setContents(contents);
 		player.getInventory().setArmorContents(armorContents);
+		player.setLevel(level);
+		player.setExp(exp);
 	}
 	
 	public static void saveAndClearInventory(Player player){
 		savedInventories.put(player, new InventorySave(player));
 		player.getInventory().setArmorContents(new ItemStack[player.getInventory().getArmorContents().length]);
 		player.getInventory().clear();
+		player.setLevel(0);
+		player.setExp(0);
 	}
 
 	public static void loadInventory(Player player){
@@ -37,6 +45,8 @@ public class InventorySave {
 		savedGameInventories.put(player, new InventorySave(player));
 		player.getInventory().setArmorContents(new ItemStack[player.getInventory().getArmorContents().length]);
 		player.getInventory().clear();
+		player.setLevel(0);
+		player.setExp(0);
 	}
 
 	public static void loadGameInventory(Player player){
