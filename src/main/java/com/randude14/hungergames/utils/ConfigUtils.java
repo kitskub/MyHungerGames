@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 public class ConfigUtils {
 	public static final String MONEY = "money";
@@ -28,6 +29,62 @@ public class ConfigUtils {
 		return new ItemStack(block.getType(), 1, block.getData());
 	}
 	
+	public static class MatData {
+		public MaterialData data;
+		public boolean explicit;
+
+		public MatData(MaterialData data, boolean explicit) {
+			this.data = data;
+			this.explicit = explicit;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			if (explicit) {
+				hash ^= data.hashCode();
+			} else {
+				hash ^= data.getItemTypeId();
+			}
+			return hash;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final MatData other = (MatData) obj;
+			if (!other.explicit || !explicit) { // Only check id
+				return data.getItemTypeId() == other.data.getItemTypeId();
+			} else {
+				return data.equals(other.data);
+			}
+		}
+		
+		
+	}
+	public static MatData getMatData(String s, boolean useMatchMaterial) {
+		s = s.split(",")[0];
+		String[] keyParts = s.split(":");
+		Material mat = Material.matchMaterial(keyParts[0]);
+		if(mat == null) {
+			Logging.debug("Material with name {0} could not be loaded.", keyParts[0]);
+			return null;
+		}
+		if(keyParts.length == 2){
+			try{
+				return new MatData(new MaterialData(mat, Byte.valueOf(keyParts[1])), true);
+			}
+			catch(NumberFormatException e){
+				Logging.debug("Can't convert {0} to byte. Ignoring data.", keyParts[1]);
+			}
+		}
+		return new MatData(new MaterialData(mat), false);
+	}
 	public static ItemStack getItemStack(String s, int stackSize, boolean useMatchMaterial){
 		s = s.split(",")[0];
 		String[] keyParts = s.split(":");

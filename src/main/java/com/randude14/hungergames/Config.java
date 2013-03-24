@@ -39,14 +39,15 @@ public class Config {
 		return list;
 	}
 
+	// TODO use MatData, not ItemStack
 	private static boolean getCanPlaceBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-place")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
 		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-place-block")) {
-			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(getItemStack(block));
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-place-block") ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -57,22 +58,22 @@ public class Config {
 	public static boolean getCanPlaceBlock(String setup, Block block) {
 		boolean can = false;
 		can |= getCanPlaceBlock(setup, block, new HashSet<String>());
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-place")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
-		can |= Defaults.Config.CAN_PLACE_BLOCK.getGlobalBoolean() ^ list.contains(getItemStack(block));
+		can |= Defaults.Config.CAN_PLACE_BLOCK.getGlobalBoolean() ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		return can;
 	}
 
 	private static boolean getCanBreakBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-break")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
 		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-break-block")) {
-			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(getItemStack(block));
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-break-block") ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -83,22 +84,22 @@ public class Config {
 	public static boolean getCanBreakBlock(String setup, Block block) {
 		boolean can = false;
 		can |= getCanBreakBlock(setup, block, new HashSet<String>());
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-break")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
-		can |= Defaults.Config.CAN_BREAK_BLOCK.getGlobalBoolean() ^ list.contains(getItemStack(block));
+		can |= Defaults.Config.CAN_BREAK_BLOCK.getGlobalBoolean() ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		return can;
 	}
 
 	private static boolean getCanInteractBlock(String setup, Block block, Set<String> checked) {
 		boolean can = false;
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("setups." + setup + "." + "special-blocks-interact")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
 		if (Files.CONFIG.getConfig().contains("setups." + setup + "." + "can-interact-block")) {
-			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(getItemStack(block));
+			can |= Files.CONFIG.getConfig().getBoolean("setups." + setup + "." + "can-interact-block") ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		}
 		checked.add(setup);
 		for (String parent : Files.CONFIG.getConfig().getStringList("setups." + setup + ".inherits")) {
@@ -109,11 +110,11 @@ public class Config {
 	public static boolean getCanInteractBlock(String setup, Block block) {
 		boolean can = false;
 		can |= getCanInteractBlock(setup, block, new HashSet<String>());
-		List<ItemStack> list = new ArrayList<ItemStack>();
+		List<MatData> list = new ArrayList<MatData>();
 		for (String s : Files.CONFIG.getConfig().getStringList("global.special-blocks-interact")){
-			list.add(getItemStack(s, 1, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
+			list.add(getMatData(s, Defaults.Config.USE_MATCH_MATERIAL.getGlobalBoolean()));
 		}
-		can |= Defaults.Config.CAN_INTERACT_BLOCK.getGlobalBoolean() ^ list.contains(getItemStack(block));
+		can |= Defaults.Config.CAN_INTERACT_BLOCK.getGlobalBoolean() ^ list.contains(new MatData(block.getType().getNewData(block.getData()), true));
 		return can;
 	}
 

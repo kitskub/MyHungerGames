@@ -59,7 +59,10 @@ public enum Files {
 			Logging.warning("Tried to create " + file.getName() + " but could not.");
 		} catch (IOException ex) {
 			Logging.warning("Something went wrong when loading: " + path);
-		} catch (InvalidConfigurationException ex) {}		
+		} catch (InvalidConfigurationException ex) {
+			Logging.warning(ex.getMessage());
+			ex.printStackTrace();
+		}		
 	}
 	
 	public File getFile() {
