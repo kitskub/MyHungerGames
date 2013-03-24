@@ -33,7 +33,9 @@ public class Defaults {
 	NOT_EXIST("<item> does not exist."),
 	RUNNING("<game> is an already running game."),
 	IN_GAME("You are in <game>."),
-	NOT_IN_GAME("You are not in a game.");
+	NOT_IN_GAME("You are not in a game."),
+	GRACEPERIOD_STARTED("<time> grace period!"),
+	GRACEPERIOD_ENDED("Grace period has ended!");
 	
 	
 	private String value;
@@ -124,7 +126,9 @@ public class Defaults {
 	SHOW_DEATH_MESSAGES(1, "show-death-messages"),
 	TEAMS_ALLOW_TEAMS(true, "teams.allow-teams"),
 	TEAMS_ALLOW_FRIENDLY_DAMAGE(false, "teams.allow-friendly-damage"),
-	DISABLE_FLY(true, "disable-fly");
+	DISABLE_FLY(true, "disable-fly"),
+	LIGHTNING_ON_PLAYER_COUNT(3, "lightning-on-players-count"),
+	LIGHTNING_ON_PLAYER_DELAY(10, "lightning-on-players-delay");
 	
 	
 	private Object value;

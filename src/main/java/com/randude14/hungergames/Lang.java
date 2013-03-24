@@ -1,7 +1,6 @@
 package com.randude14.hungergames;
 
 import static com.randude14.hungergames.Defaults.Lang.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.HashSet;
@@ -141,6 +140,12 @@ public class Lang {
 	public static String getGlobalVoted() {
 		return getGlobal("voted", VOTED.getMessage());
 	}
+	public static String getGlobalGracePeriodStarted() {
+		return getGlobal("graceperiod-started", GRACEPERIOD_STARTED.getMessage());
+	}
+	public static String getGlobalGracePeriodEnded() {
+		return getGlobal("graceperiod-ended", GRACEPERIOD_ENDED.getMessage());
+	}
 
 	// Setups
 	public static String getJoinMessage(String setup) {
@@ -205,5 +210,13 @@ public class Lang {
 	
 	public static String getVoted(String setup) {
 		return getString("vote", setup, getGlobalVoted());
+	}
+	
+	public static String getGracePeriodStarted(String setup) {
+		return getString("graceperiod-started", setup, getGlobalGracePeriodStarted());
+	}
+	
+	public static String getGracePeriodEnded(String setup) {
+		return getString("graceperiod-ended", setup, getGlobalGracePeriodEnded());
 	}
 }

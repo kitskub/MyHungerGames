@@ -81,6 +81,9 @@ public class HungerGame implements Runnable, Game {
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
 	private BukkitTask locTask;
+	private long lastLightningTime;
+	private int nextLightningIndex;
+	private boolean hasGraceperiodEndedBroadcast;
 
 	public HungerGame(String name) {
 		this(name, null);
@@ -118,6 +121,10 @@ public class HungerGame implements Runnable, Game {
 		playersFlying = new ArrayList<String>();
 		playersCanFly = new ArrayList<String>();
 		countdown = null;
+		
+		lastLightningTime = 0;
+		nextLightningIndex = 0;
+		hasGraceperiodEndedBroadcast = false;
 	}
 
 	public void loadFrom(ConfigurationSection section) {
@@ -294,6 +301,29 @@ public class HungerGame implements Runnable, Game {
 
 	public void run() {
 		if (state != RUNNING) return;
+		
+		if(Config.LIGHTNING_ON_PLAYER_COUNT.getInt(setup) > 0 && getRemainingPlayers().size() <= Config.LIGHTNING_ON_PLAYER_COUNT.getInt(setup)){
+			if(lastLightningTime == 0 || System.currentTimeMillis() > lastLightningTime + Config.LIGHTNING_ON_PLAYER_DELAY.getInt(setup) * 1000){
+				if(nextLightningIndex >= getRemainingPlayers().size())
+					nextLightningIndex = 0;
+				
+				Location location = getRemainingPlayers().get(nextLightningIndex).getLocation();
+				location.setY(1);
+				getRemainingPlayers().get(nextLightningIndex).getWorld().strikeLightning(location);
+								
+				nextLightningIndex++;
+				lastLightningTime = System.currentTimeMillis();				
+			}
+		}
+		
+		if(hasGraceperiodEndedBroadcast == false && Config.GRACE_PERIOD.getDouble(setup) > 0){
+			double period = Config.GRACE_PERIOD.getDouble(setup);
+			if (((System.currentTimeMillis() - getInitialStartTime()) / 1000) >= period) {
+				ChatUtils.broadcast(this, ChatColor.DARK_PURPLE, Lang.getGracePeriodEnded(setup));
+				hasGraceperiodEndedBroadcast = true;
+			}
+		}
+		
 		Random rand = HungerGames.getRandom();
 		int size = getRemainingPlayers().size();
 		if (size < 0) {
@@ -544,7 +574,8 @@ public class HungerGame implements Runnable, Game {
 		if (stats.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
-		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
+		// TODO Task ticks every second. Maybe split up into multiple tasks for randomLoc, lightning and grace message?		
+		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 1, 20 * 1);
 		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, 1));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
@@ -562,6 +593,8 @@ public class HungerGame implements Runnable, Game {
 		run(); // Add at least one randomLoc
 		readyToPlay.clear();
 		ChatUtils.broadcast(this, "Starting %s. Go!!", name);
+		if(Config.GRACE_PERIOD.getDouble(setup) > 0)
+			ChatUtils.broadcast(this, ChatColor.DARK_PURPLE, getGracePeriodStarted(Config.GRACE_PERIOD.getDouble(setup)));
 		return null;
 	}
 
@@ -1128,10 +1161,15 @@ public class HungerGame implements Runnable, Game {
 
 			});
 
+			Location strikeLocation = killed.getLocation();
+			strikeLocation.setY(1); // Let lightning hit near bedrock so we don't hurt anyone
 			teleportPlayerToSpawn(killed);
 			int deathCannon = Config.DEATH_CANNON.getInt(setup);
 			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
-			if (deathCannon == 1 || deathCannon == 2) playCannonBoom();
+			if (deathCannon == 1 || deathCannon == 2){
+				playCannonBoom();
+				killed.getWorld().strikeLightning(strikeLocation);
+			}
 			if (deathMessages == 1 || deathMessages == 2) {
 				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
@@ -1146,8 +1184,13 @@ public class HungerGame implements Runnable, Game {
 				respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 			}
 			TeleportListener.allowTeleport(killed);
+			Location strikeLocation = killed.getLocation();
+			strikeLocation.setY(1); // Let lightning hit near bedrock so we don't hurt anyone
 			killed.teleport(respawn, TeleportCause.PLUGIN);
-			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
+			if (Config.DEATH_CANNON.getInt(setup) == 1){
+				playCannonBoom();
+				killed.getWorld().strikeLightning(strikeLocation);
+			}
 			if (Config.SHOW_DEATH_MESSAGES.getInt(setup) == 1) {
 				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
@@ -1169,6 +1212,12 @@ public class HungerGame implements Runnable, Game {
 		String message = messages.get(new Random().nextInt(messages.size()));
 		message = message.replace("<player>", player);
 		message = message.replace("<game>", name);
+		return message;
+	}
+	
+	private String getGracePeriodStarted(double time) {
+		String message = Lang.getGracePeriodStarted(setup);
+		message = message.replace("<time>", GeneralUtils.formatTime((int) Config.GRACE_PERIOD.getDouble(setup)));
 		return message;
 	}
 
