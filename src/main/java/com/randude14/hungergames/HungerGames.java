@@ -154,7 +154,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TimedGameListener(), instance);
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
-		if (Defaults.Config.AUTO_JOIN_ALLOWED.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
+		if (Defaults.Config.AUTO_JOIN.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
 	public static void reload() {
