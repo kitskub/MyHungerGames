@@ -41,14 +41,18 @@ public class EntityListener implements Listener{
 						ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt that player during the grace-period!");
 					}
 				}
-				if (!Config.TEAMS_ALLOW_FRIENDLY_DAMAGE.getBoolean(hurtGame.getSetup())) {
-					Team hurtTeam = hurtGame.getPlayerStat(player).getTeam();
-					if (newEvent.getDamager() instanceof Player && hurtTeam != null && hurtGame.contains((Player) newEvent.getDamager())){
-						Team hurterTeam = hurtGame.getPlayerStat((Player) newEvent.getDamager()).getTeam();
-						if (hurterTeam != null) {
-							if (hurtTeam.getName().equals(hurterTeam.getName())) {
-								event.setCancelled(true);
-								ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt a player on your team!");
+				if (newEvent.getDamager() instanceof Player && hurtGame.contains((Player) newEvent.getDamager())) {
+					if (!Config.TEAMS_ALLOW_FRIENDLY_DAMAGE.getBoolean(hurtGame.getSetup())) {
+						Team hurtTeam = hurtGame.getPlayerStat(player).getTeam();
+						if (hurtGame.getPlayerStat(player).getState() == PlayerState.WAITING) {
+							event.setCancelled(true);
+						} else if (hurtTeam != null){
+							Team hurterTeam = hurtGame.getPlayerStat((Player) newEvent.getDamager()).getTeam();
+							if (hurterTeam != null) {
+								if (hurtTeam.getName().equals(hurterTeam.getName())) {
+									event.setCancelled(true);
+									ChatUtils.error((Player) newEvent.getDamager(), "You can't hurt a player on your team!");
+								}
 							}
 						}
 					}
