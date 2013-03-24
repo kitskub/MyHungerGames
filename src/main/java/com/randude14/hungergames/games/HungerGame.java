@@ -40,6 +40,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitTask;
@@ -479,6 +481,7 @@ public class HungerGame implements Runnable, Game {
 			}
 		}
 		StatHandler.updateGame(this);
+		gameStats.saveGameData();
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = player.getInventory().getContents();
@@ -501,6 +504,7 @@ public class HungerGame implements Runnable, Game {
 		}
 		for (String stat : stats.keySet()) {
 			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
+			gameStats.addPlayer(stats.get(stat));
 			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 		}
 		stats.clear();
@@ -520,6 +524,7 @@ public class HungerGame implements Runnable, Game {
 			GameEndEvent event = new GameEndEvent(this, false);
 			Bukkit.getPluginManager().callEvent(event);
 		}
+		gameStats.submit();
 		clear();
 		ResetHandler.resetChanges(this);
 		return null;
@@ -594,6 +599,7 @@ public class HungerGame implements Runnable, Game {
 		state = RUNNING;
 		run(); // Add at least one randomLoc
 		readyToPlay.clear();
+		gameStats = new GameStats(this);
 		ChatUtils.broadcast(this, "Starting %s. Go!!", name);
 		if(Config.GRACE_PERIOD.getDouble(setup) > 0)
 			ChatUtils.broadcast(this, ChatColor.DARK_PURPLE, getGracePeriodStarted(Config.GRACE_PERIOD.getDouble(setup)));
@@ -1147,9 +1153,24 @@ public class HungerGame implements Runnable, Game {
 			event = new PlayerKilledEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		String deathMessage = killer == null ? 
-				getDeathMessage(killed.getName(), GeneralUtils.getNonPvpDeathCause(deathEvent))	:
-				getKillMessage(killed.getDisplayName(), killer.getDisplayName()); event.setDeathMessage(deathMessage);
+		String deathMessage = "";
+		GameStats.Death death = new GameStats.Death();
+		death.setPlayer(killed.getName());
+		death.setTime(System.currentTimeMillis() - getInitialStartTime());
+		if(killer == null){
+			String cause = GeneralUtils.getNonPvpDeathCause(deathEvent);
+			deathMessage = getDeathMessage(killed.getName(), cause);
+			death.setKiller(null);
+			death.setCause(cause.toUpperCase());
+		} else {
+			deathMessage = getKillMessage(killed.getDisplayName(), killer.getDisplayName());
+			death.setKiller(killer.getName());
+			String weapon = (killer.getItemInHand() == null) ? "AIR" : killer.getItemInHand().getType().name();
+			death.setCause(weapon);
+		}
+		event.setDeathMessage(deathMessage);
+		gameStats.addDeath(death);
+				
 				
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
