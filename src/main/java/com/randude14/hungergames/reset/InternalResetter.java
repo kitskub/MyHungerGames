@@ -3,9 +3,9 @@ package com.randude14.hungergames.reset;
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.Cuboid;
-import com.randude14.hungergames.utils.EquatableWeakReference;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,11 +35,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 public class InternalResetter extends Resetter implements Listener, Runnable {
-	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, BlockState>> changedBlocks = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, BlockState>>());
-	private static final Map<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>> changedInvs = Collections.synchronizedMap(new WeakHashMap<EquatableWeakReference<HungerGame>, Map<Location, ItemStack[]>>());
+	private static final Map<HungerGame, Map<Location, BlockState>> changedBlocks = new ConcurrentHashMap<HungerGame, Map<Location, BlockState>>();
+	//private static final Map<HungerGame, Map<Location, ItemStack[]>> changedInvs = new ConcurrentHashMap<HungerGame, Map<Location, ItemStack[]>>();
 	private static final Map<Location, BlockState> toCheck = new ConcurrentHashMap<Location, BlockState>();
 	//private static final Map<Location, ItemStack[]> toCheckInvs = new ConcurrentHashMap<Location, ItemStack[]>();
 
@@ -59,9 +58,8 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 		synchronized (toCheck) {
 			toCheck.clear();
 		}
-		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
-		if(!changedBlocks.containsKey(eMap)) return true;
-		Map<Location, BlockState> map = changedBlocks.get(eMap);
+		if(!changedBlocks.containsKey(game)) return true;
+		Map<Location, BlockState> map = changedBlocks.get(game);
 		int chests = 0;
 		for(Location l : map.keySet()) {
 			BlockState state = map.get(l);
@@ -73,12 +71,13 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 
 		}
 		Logging.debug("Reset " + chests + " chests");
-		changedBlocks.get(eMap).clear();
+		changedBlocks.get(game).clear();
 		return true;
 	}
 
 	private static HungerGame insideGame(Location loc) {
 		for (HungerGame game : ((GameManager) HungerGames.getInstance().getGameManager()).getRawGames()) {
+			if (game.getState() != Game.GameState.RUNNING) continue;
 			if (game.getWorlds().size() <= 0 && game.getCuboids().size() <= 0) return null;
 			if (game.getWorlds().contains(loc.getWorld())) return game;
 			for (Cuboid c : game.getCuboids()) {
@@ -112,10 +111,9 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	}
 
 	private static synchronized void addBlockState(HungerGame game, Location loc, BlockState state) {
-		EquatableWeakReference<HungerGame> eMap = new EquatableWeakReference<HungerGame>(game);
-		if (!changedBlocks.containsKey(eMap)) changedBlocks.put(eMap, new HashMap<Location, BlockState>());
-		if (changedBlocks.get(eMap).containsKey(loc)) return; // Don't want to erase the original block
-		changedBlocks.get(eMap).put(loc, state);
+		if (!changedBlocks.containsKey(game)) changedBlocks.put(game, new HashMap<Location, BlockState>());
+		if (changedBlocks.get(game).containsKey(loc)) return; // Don't want to erase the original block
+		changedBlocks.get(game).put(loc, state);
 	}
 
 	//private static synchronized void addInv(HungerGame game, Location loc, ItemStack[] inv) {
