@@ -33,7 +33,7 @@ global:
     - '<killed> was killed in <game> by <killer>'
   
   # If death-messages is configured in config.yml, then one of these will be played randomly on death,
-  # params: Player <player>; Game <game>
+  # params: Player <player>; Cause <cause>; Game <game>
   death-messages:
     - '<player> died in <game>'
   
@@ -69,5 +69,15 @@ global:
   
   # Message after voting
   voted: 'You have voted that you are ready.'
+  
+  # Deathcause for non PVP deaths
+  # eg:
+  # deathcause:
+  #   skeletonarcher: 'Skeleton with a bow'
+  #
+  # Possible keys are: zombie, creeper, spider, cavespider,enderman, silverfish, magmacube, slime, wolf, igzobie, irongolum, giant, skeletonmelee, witherskeleton
+  #                    skeletonarcher, arrow, snowman, ghast, blaze, wither, fireball, tnt, drowning, starvation, cactus, unknown, fire, lava, lightning, poison, suffocation
+  #                    void, fall, suicide, potionofharming, withereffect, anvil
+  
 # These names have to match the ones in the config.yml to work properly
 setups:

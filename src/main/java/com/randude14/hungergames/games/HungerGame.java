@@ -11,6 +11,7 @@ import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.listeners.TeleportListener;
 import com.randude14.hungergames.register.HGPermission;
+import com.randude14.hungergames.stats.GameStats;
 import com.randude14.hungergames.stats.PlayerStat.Team;
 import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
@@ -84,6 +85,7 @@ public class HungerGame implements Runnable, Game {
 	private long lastLightningTime;
 	private int nextLightningIndex;
 	private boolean hasGraceperiodEndedBroadcast;
+	private GameStats gameStats;
 
 	public HungerGame(String name) {
 		this(name, null);
@@ -1015,6 +1017,10 @@ public class HungerGame implements Runnable, Game {
 		playersFlying.clear();
 		if (countdown != null) countdown.cancel(); 
 		countdown = null;
+		
+		lastLightningTime = 0;
+		nextLightningIndex = 0;
+		hasGraceperiodEndedBroadcast = false;
 	}
 
 	@Override
@@ -1141,8 +1147,10 @@ public class HungerGame implements Runnable, Game {
 			event = new PlayerKilledEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		String deathMessage = killer == null ? getDeathMessage(killed.getName()) : getKillMessage(killed.getDisplayName(), killer.getDisplayName()); 
-		event.setDeathMessage(deathMessage);
+		String deathMessage = killer == null ? 
+				getDeathMessage(killed.getName(), GeneralUtils.getNonPvpDeathCause(deathEvent))	:
+				getKillMessage(killed.getDisplayName(), killer.getDisplayName()); event.setDeathMessage(deathMessage);
+				
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			for (ItemStack i : deathEvent.getDrops()) {
@@ -1207,10 +1215,11 @@ public class HungerGame implements Runnable, Game {
 		return message;
 	}
 
-	private String getDeathMessage(String player) {
+	private String getDeathMessage(String player, String cause) {
 		List<String> messages = Lang.getDeathMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
 		message = message.replace("<player>", player);
+		message = message.replace("<cause>", Lang.getNonPvPDeathcause(setup, cause));
 		message = message.replace("<game>", name);
 		return message;
 	}

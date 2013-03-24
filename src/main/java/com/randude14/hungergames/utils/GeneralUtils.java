@@ -16,7 +16,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -156,5 +159,121 @@ public class GeneralUtils {
 		for (ItemStack i : player.getInventory().addItem(items.toArray(new ItemStack[0])).values()) {
 			player.getLocation().getWorld().dropItem(player.getLocation(), i);
 		}
+	}
+	
+	public static String getNonPvpDeathCause(PlayerDeathEvent e) {
+		String cause = "Unknown";
+		Player player = e.getEntity();
+		if (player.getLastDamageCause() != null) {
+			EntityDamageEvent lastDemageCause = player.getLastDamageCause();
+			EntityDamageEvent.DamageCause damageCause = lastDemageCause.getCause();
+						
+			// was killed by entity
+			if ((lastDemageCause instanceof EntityDamageByEntityEvent)) {
+				EntityDamageByEntityEvent kie = (EntityDamageByEntityEvent) lastDemageCause;
+				Entity damager = kie.getDamager();
+				if (damageCause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+					if ((damager instanceof Zombie))
+						cause = "Zombie";
+					if ((damager instanceof Creeper))
+						cause = "Creeper";
+					if ((damager instanceof Spider))
+						cause = "Spider";
+					if ((damager instanceof CaveSpider))
+						cause = "CaveSpider";
+					if ((damager instanceof Enderman))
+						cause = "Enderman";
+					if ((damager instanceof Silverfish))
+						cause = "Silverfish";
+					if ((damager instanceof MagmaCube))
+						cause = "MagmaCube";
+					if ((damager instanceof Slime))
+						cause = "Slime";
+					if ((damager instanceof Wolf))
+						cause = "Wolf";
+					if ((damager instanceof PigZombie))
+						cause = "PigZombie";
+					if ((damager instanceof IronGolem))
+						cause = "IronGolem";
+					if ((damager instanceof Giant))
+						cause = "Giant";
+					if (damager.getType() == EntityType.SKELETON) {
+						Skeleton skeleton = (Skeleton) damager;
+						if (skeleton.getSkeletonType().equals(Skeleton.SkeletonType.NORMAL))
+							cause = "SkeletonMelee";
+						if (skeleton.getSkeletonType().equals(Skeleton.SkeletonType.WITHER))
+							cause = "WitherSkeleton";
+
+					}
+
+				} else if (damageCause == EntityDamageEvent.DamageCause.PROJECTILE) {
+					Projectile projectile = (Projectile) damager;
+
+					if ((projectile instanceof Arrow)) {
+						if ((projectile.getShooter() instanceof Skeleton))
+							cause = "SkeletonArcher";
+						else {
+							cause = "Arrow";
+						}
+					} else if ((projectile instanceof Snowball)) {
+						if ((projectile.getShooter() instanceof Snowman))
+							cause = "Snowman";
+					} else if ((projectile instanceof Fireball)) {
+						if ((projectile.getShooter() instanceof Ghast))
+							cause = "Ghast";
+						else if ((projectile.getShooter() instanceof Blaze))
+							cause = "Blaze";
+						else if ((projectile.getShooter() instanceof Wither))
+							cause = "Wither";
+						else {
+							cause = "Fireball";
+						}
+					}
+
+				} else if ((damageCause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)
+						|| (damageCause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
+					if ((damager instanceof Creeper))
+						cause = "Creeper";
+					if ((damager instanceof TNTPrimed))
+						cause = "TNT";
+				}
+
+			} else {
+				if (damageCause == EntityDamageEvent.DamageCause.DROWNING)
+					cause = "Drowning";
+				if (damageCause == EntityDamageEvent.DamageCause.STARVATION)
+					cause = "Starvation";
+				if (damageCause == EntityDamageEvent.DamageCause.CONTACT)
+					cause = "Cactus";
+				if (damageCause == EntityDamageEvent.DamageCause.CUSTOM)
+					cause = "Unknown";
+				if (damageCause == EntityDamageEvent.DamageCause.FIRE)
+					cause = "Fire";
+				if (damageCause == EntityDamageEvent.DamageCause.FIRE_TICK)
+					cause = "Fire";
+				if (damageCause == EntityDamageEvent.DamageCause.LAVA)
+					cause = "Lava";
+				if (damageCause == EntityDamageEvent.DamageCause.LIGHTNING)
+					cause = "Lightning";
+				if (damageCause == EntityDamageEvent.DamageCause.POISON)
+					cause = "Poison";
+				if (damageCause == EntityDamageEvent.DamageCause.SUFFOCATION)
+					cause = "Suffocation";
+				if (damageCause == EntityDamageEvent.DamageCause.VOID)
+					cause = "Void";
+				if (damageCause == EntityDamageEvent.DamageCause.FALL)
+					cause = "Fall";
+				if (damageCause == EntityDamageEvent.DamageCause.SUICIDE)
+					cause = "Suicide";
+				if (damageCause == EntityDamageEvent.DamageCause.MAGIC)
+					cause = "PotionofHarming";
+				if (damageCause == EntityDamageEvent.DamageCause.WITHER)
+					cause = "WitherEffect";
+				if (damageCause == EntityDamageEvent.DamageCause.FALLING_BLOCK)
+					cause = "Anvil";
+			}
+		}
+
+		return cause;
 	}
 }
