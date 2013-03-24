@@ -19,5 +19,9 @@ public class GameCreateEvent extends GameEvent implements Cancellable {
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
-	
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
+		super.setCancelled(isCancelled);
+	}
 }

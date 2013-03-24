@@ -290,6 +290,7 @@ public class Defaults {
 		ADMIN(new Permission("hungergame.admin.*"), ALL, "gives the player all admin permissions"),
 		ADMIN_ALLOW_FLIGHT(new Permission("hungergame.admin.allowflight"), ADMIN, "allows the player to fly in game"),
 		ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
+		ADMIN_ADD_FIXED_CHEST(new Permission("hungergame.add.fixedchest"), ADMIN),
 		ADMIN_ADD_CHEST(new Permission("hungergame.add.chest"), ADMIN),
 		ADMIN_ADD_CHEST_LOOT(new Permission("hungergame.add.chestloot"), ADMIN),
 		ADMIN_ADD_GAME(new Permission("hungergame.add.game"), ADMIN),

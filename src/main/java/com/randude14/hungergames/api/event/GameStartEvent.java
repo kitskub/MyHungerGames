@@ -12,7 +12,6 @@ public class GameStartEvent extends GameEvent implements Cancellable  {
 	
 	public GameStartEvent(final HungerGame game, final boolean isResuming) {
 		super(game);
-		cancelled = false;
 		this.isResuming = isResuming;
 	}
 	
@@ -33,5 +32,8 @@ public class GameStartEvent extends GameEvent implements Cancellable  {
 		return handlers;
 	}
 
-
+	@Override
+	public void setCancelled(boolean isCancelled) {
+		super.setCancelled(isCancelled);
+	}
 }

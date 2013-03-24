@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 public class AddFixedChestCommand extends PlayerCommand {
 
 	public AddFixedChestCommand() {
-		super(Perm.ADMIN_ADD_CHEST, Commands.ADMIN_ADD_HELP.getCommand(), "fixedchest");
+		super(Perm.ADMIN_ADD_FIXED_CHEST, Commands.ADMIN_ADD_HELP.getCommand(), "fixedchest");
 	}
 
 	@Override

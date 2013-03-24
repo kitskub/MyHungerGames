@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 
 public abstract class GameEvent extends Event {
 	private final Game game;
-	protected boolean cancelled = false;
+	private boolean cancelled = false;
 	
 	public GameEvent(final Game game) {
 		this.game = game;
@@ -19,9 +19,8 @@ public abstract class GameEvent extends Event {
 	public boolean isCancelled() {
 		return cancelled;
 	}
-
-	public void setCancelled(boolean isCancelled) {
+	
+	protected void setCancelled(boolean isCancelled) {
 		cancelled = isCancelled;
 	}
-
 }

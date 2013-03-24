@@ -16,7 +16,6 @@ public class PlayerJoinGameEvent extends GameEvent implements Cancellable {
 		super(game);
 		this.player = player;
 		this.isRejoin = isRejoin;
-		cancelled = false;
 	}
 	
 	public PlayerJoinGameEvent(final HungerGame game, final Player player) {
@@ -40,4 +39,8 @@ public class PlayerJoinGameEvent extends GameEvent implements Cancellable {
 		return handlers;
 	}
 
+	@Override
+	public void setCancelled(boolean isCancelled) {
+		super.setCancelled(isCancelled);
+	}
 }

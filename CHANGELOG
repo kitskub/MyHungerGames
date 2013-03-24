@@ -2,11 +2,29 @@ v1.0
 - Fixed InternalResetter problem
 - Changed PlayerKillEvent to PlayerKilledEvent
 - Added kill-messages and separated from death-messages
+- Fix some aesthetic stuff
+- Fix kill messages not saying correct stuff
+- Add voted message
+- Fix spectator sponsoring
+- Fix game duration runnable
+- Fix weird data appendages
+- Tried to fix stats
+- Code cleanup
+- Add /hga add fixedchest
+- Change itemconfig.yml to use ConfigurationSerializable - BREAKING: UPDATE YOUR CONFIG
+- Put GameManager INSTANCE in HungerGames
+- Made createGame() return Game
+- Changed TimedGameRunnable to TimedGameListener and made the runnable a nested class
+- Make it so that if no data is defined in the config (config.yml), then any data counts (like just putting 18 for all leaves)
+- Fixed auto join
+- Fixed the resetter problem (again)
+
+v0.9.2
+- Fixed Death Messages
+- Fixed ClassCastException
 
 v0.9.1
 - Made GameCountdown use task id
-- Fixed Death Messages
-- Fixed ClassCastException
 
 v0.9
 - Added about command
