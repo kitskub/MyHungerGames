@@ -7,7 +7,7 @@ global:
       values:
         chance: .5
       stack:
-        ==: ItemStack
+        ==: org.bukkit.inventory.ItemStack
         type: DIAMOND_PICKAXE
         # if no amount give, defaults to 0
         damage: 1
@@ -22,19 +22,19 @@ global:
       values:
         chance: 1
       stack:
-        ==: ItemStack
+        ==: org.bukkit.inventory.ItemStack
         type: APPLE
   -   ==: Item
       values:
         chance: 1
       stack:
-        ==: ItemStack
+        ==: org.bukkit.inventory.ItemStack
         type: CAKE
   -   ==: Item
       values:
         chance: 1
       stack:
-        ==: ItemStack
+        ==: org.bukkit.inventory.ItemStack
         type: EXP_BOTTLE
   sponsor-loot:
 
@@ -49,13 +49,13 @@ chests:
 #         # 1 is always, 0 is never
 #         chance: 1
 #        stack:
-#          ==: ItemStack
+#          ==: org.bukkit.inventory.ItemStack
 #          type: APPLE
 #    -   ==: Item
 #        values:
 #          chance: 1
 #        stack:
-#          ==: ItemStack
+#          ==: org.bukkit.inventory.ItemStack
 #          type: CAKE
 
 itemsets:
@@ -72,14 +72,14 @@ itemsets:
 #         # 1 is always, 0 is never
 #         chance: 1
 #        stack:
-#          ==: ItemStack
+#          ==: org.bukkit.inventory.ItemStack
 #          type: APPLE
 #    sponsor-loot:
 #    -   ==: Item
 #        values:
 #          chance: 1
 #        stack:
-#          ==: ItemStack
+#          ==: org.bukkit.inventory.ItemStack
 #          type: CAKE
 
 rewards:
@@ -91,7 +91,7 @@ rewards:
 #       # 1 is always, 0 is never
 #       chance: 1
 #      stack:
-#        ==: ItemStack
+#        ==: org.bukkit.inventory.ItemStack
 #        type: APPLE
   # The max amount of items that can be given to a player randomly
   max-random: 5
@@ -103,7 +103,7 @@ rewards:
 #       # 1 is always, 0 is never
 #       chance: 1
 #      stack:
-#        ==: ItemStack
+#        ==: org.bukkit.inventory.ItemStack
 #        type: APPLE
 
 kits:
@@ -115,5 +115,5 @@ kits:
 #       # 1 is always, 0 is never
 #       chance: 1
 #      stack:
-#        ==: ItemStack
+#        ==: org.bukkit.inventory.ItemStack
 #        type: APPLE
