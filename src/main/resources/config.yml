@@ -166,6 +166,12 @@ global:
 # If 1, a message will be shown every death
 # If 2, a message will be shown only on the last death
   show-death-messages: 1
+
+# Have lightning strinke a near a player every X seconds if there are a certain number of players left (Set to 0 to turn it off)
+  lightning-on-players-count: 3
+  
+# Delay between lightning strikes in seconds
+  lightning-on-players-delay: 10
   
 # Contains options relating to teams
   teams:
