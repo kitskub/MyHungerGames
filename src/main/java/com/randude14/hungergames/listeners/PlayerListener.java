@@ -65,7 +65,10 @@ public class PlayerListener implements Listener {
 		int fz = frozenLoc.getBlockZ();
 		if ((px != fx) || (pz != fz)) {
 			TeleportListener.allowTeleport(player);
-			player.teleport(frozenLoc, PlayerTeleportEvent.TeleportCause.UNKNOWN);
+			Location loc = frozenLoc.clone();
+			loc.setPitch(player.getLocation().getPitch());
+			loc.setYaw(player.getLocation().getYaw());
+			player.teleport(loc, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 		}
 	}
 
