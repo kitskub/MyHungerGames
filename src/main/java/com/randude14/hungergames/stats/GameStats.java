@@ -76,7 +76,7 @@ public class GameStats {
 		for (PlayerStat p : players) {
 			String k = "players[" + p.getPlayer().getName() + "]";
 			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
-			map.put(k + "[death]", String.valueOf(p.getNumDeaths()));
+			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
 			map.put(k + "[kills]", String.valueOf(p.getNumKills()));		
 		}
 		int j = 0;
