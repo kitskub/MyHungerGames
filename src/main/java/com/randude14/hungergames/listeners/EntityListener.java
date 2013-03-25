@@ -77,7 +77,7 @@ public class EntityListener implements Listener{
 		// Games
 		Game game = HungerGames.getInstance().getGameManager().getRawSession(player);
 		if (game != null) {
-			if (game.getState() == GameState.STOPPED) {
+			if (game.getPlayerStat(player).getState() == PlayerState.WAITING) {
 				if (!Config.STOP_TARGETTING.getBoolean(game.getSetup())) return;
 				PlayerStat stat = game.getPlayerStat(player);
 				if (stat != null && stat.getState().equals(PlayerState.WAITING)) event.setCancelled(true); 
