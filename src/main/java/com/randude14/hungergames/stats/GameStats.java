@@ -22,7 +22,6 @@ import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
-import com.randude14.hungergames.stats.SQLStat.SQLGameStat;
 import com.randude14.hungergames.utils.ConnectionUtils;
 
 public class GameStats {
@@ -44,6 +43,7 @@ public class GameStats {
 	public void saveGameData(HungerGame game){
 		map.put("requestType", "updateGameDetails");
 		map.put("startTime", String.valueOf(game.getInitialStartTime()));
+		map.put("name", game.getName());
 		
 		map.put("totalPlayers", String.valueOf(game.getAllPlayers().size()));
 		if (game.getRemainingPlayers().size() != 1) {
