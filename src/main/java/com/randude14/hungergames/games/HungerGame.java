@@ -13,7 +13,6 @@ import com.randude14.hungergames.listeners.TeleportListener;
 import com.randude14.hungergames.register.HGPermission;
 import com.randude14.hungergames.stats.GameStats;
 import com.randude14.hungergames.stats.PlayerStat.Team;
-import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 import com.randude14.hungergames.utils.GeneralUtils;
@@ -455,7 +454,6 @@ public class HungerGame implements Runnable, Game {
 				InventorySave.loadGameInventory(p);
 			}
 		}
-		StatHandler.updateGame(this);
 		gameStats.saveGameData();
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
@@ -478,7 +476,6 @@ public class HungerGame implements Runnable, Game {
 			if (isFinished) GeneralUtils.rewardPlayer(player);
 		}
 		for (String stat : stats.keySet()) {
-			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
 			gameStats.addPlayer(stats.get(stat));
 			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 		}
