@@ -47,7 +47,7 @@ public class HawkEyeResetter extends Resetter{
 		for (World w : game.getWorlds()) {
 			worlds.add(w.getName());
 		}
-		parser.worlds = (String[]) worlds.toArray();
+		parser.worlds = worlds.toArray(new String[worlds.size()]);
 		HawkEyeAPI.performSearch(new RollbackCallback(new PlayerSession(new Logging.LogCommandSender("HawkEye")), RollbackType.LOCAL), parser, SearchDir.DESC);
 		parser.worlds = null;
 		worlds.clear();
