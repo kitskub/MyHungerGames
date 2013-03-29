@@ -11,13 +11,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 
 
 public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void playerChat(AsyncPlayerChatEvent event) {
+	public void playerChat(PlayerChatEvent event) {
 		Game chatterGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
 			Game receipientGame = HungerGames.getInstance().getGameManager().getRawSession(p);
