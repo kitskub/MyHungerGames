@@ -1,7 +1,6 @@
 package com.randude14.hungergames.utils;
 
 import com.randude14.hungergames.Defaults;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;

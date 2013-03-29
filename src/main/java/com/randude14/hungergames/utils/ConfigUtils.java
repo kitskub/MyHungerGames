@@ -1,6 +1,5 @@
 package com.randude14.hungergames.utils;
 
-import com.randude14.hungergames.Files;
 import com.randude14.hungergames.Logging;
 
 import java.util.ArrayList;

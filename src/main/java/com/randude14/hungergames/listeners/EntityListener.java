@@ -1,11 +1,8 @@
 package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.Defaults.Config;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.api.Game;
-import com.randude14.hungergames.api.Game.GameState;
-import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 import com.randude14.hungergames.stats.PlayerStat.Team;
@@ -61,6 +58,8 @@ public class EntityListener implements Listener{
 					}
 				}
 			}
+		}else if(Config.PVP_OUTSIDE_GAME.getGlobalBoolean() == false && event instanceof EntityDamageByEntityEvent){
+			event.setCancelled(true);
 		}
 
 		// Spectators

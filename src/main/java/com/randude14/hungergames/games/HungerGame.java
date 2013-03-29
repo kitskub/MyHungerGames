@@ -11,8 +11,8 @@ import com.randude14.hungergames.stats.PlayerStat;
 import com.randude14.hungergames.api.event.*;
 import com.randude14.hungergames.listeners.TeleportListener;
 import com.randude14.hungergames.register.HGPermission;
+import com.randude14.hungergames.stats.GameStats;
 import com.randude14.hungergames.stats.PlayerStat.Team;
-import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 import com.randude14.hungergames.utils.Cuboid;
 import com.randude14.hungergames.utils.GeneralUtils;
@@ -51,6 +51,8 @@ public class HungerGame implements Runnable, Game {
 	private final List<Location> randomLocs;
 	private final Map<String, List<String>> sponsors; // Just a list for info, <sponsor, sponsee>
 	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
+	private final PlayerLightningRunnable playerLightningRunnable;
+	private final GracePeriodEndedRunnable gracePeriodEndedRunnable;
 	private final List<Long> startTimes;
 	private final List<Long> endTimes;
 	private final List<Team> teams;
@@ -81,6 +83,7 @@ public class HungerGame implements Runnable, Game {
 	private final List<String> readyToPlay;
 	private GameCountdown countdown;
 	private BukkitTask locTask;
+	private GameStats gameStats;
 
 	public HungerGame(String name) {
 		this(name, null);
@@ -91,6 +94,8 @@ public class HungerGame implements Runnable, Game {
 		spawnsTaken = new HashMap<String, Location>();
 		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
+		playerLightningRunnable = new PlayerLightningRunnable(this);
+		gracePeriodEndedRunnable = new GracePeriodEndedRunnable(this);
 		randomLocs = new ArrayList<Location>();
 		startTimes = new ArrayList<Long>();
 		endTimes = new ArrayList<Long>();
@@ -293,7 +298,8 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	public void run() {
-		if (state != RUNNING) return;
+		if (state != RUNNING) return;			
+		
 		Random rand = HungerGames.getRandom();
 		int size = getRemainingPlayers().size();
 		if (size < 0) {
@@ -446,7 +452,7 @@ public class HungerGame implements Runnable, Game {
 				InventorySave.loadGameInventory(p);
 			}
 		}
-		StatHandler.updateGame(this);
+		gameStats.saveGameData();
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = player.getInventory().getContents();
@@ -468,7 +474,7 @@ public class HungerGame implements Runnable, Game {
 			if (isFinished) GeneralUtils.rewardPlayer(player);
 		}
 		for (String stat : stats.keySet()) {
-			StatHandler.updateStat(stats.get(stat));// TODO: this might be a little slow to do it this way. Thread?
+			gameStats.addPlayer(stats.get(stat));
 			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 		}
 		stats.clear();
@@ -478,6 +484,8 @@ public class HungerGame implements Runnable, Game {
 			removeSpectator(spectator);
 		}
 		spectatorSponsoringRunnable.cancel();
+		playerLightningRunnable.cancel();
+		gracePeriodEndedRunnable.cancel();
 		if (locTask != null) {
 			locTask.cancel();
 			locTask = null;
@@ -488,6 +496,7 @@ public class HungerGame implements Runnable, Game {
 			GameEndEvent event = new GameEndEvent(this, false);
 			Bukkit.getPluginManager().callEvent(event);
 		}
+		gameStats.submit();
 		clear();
 		ResetHandler.resetChanges(this);
 		return null;
@@ -544,8 +553,10 @@ public class HungerGame implements Runnable, Game {
 		if (stats.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
+		// TODO Task ticks every second. Maybe split up into multiple tasks for randomLoc, lightning and grace message?		
 		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
 		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, 1));
+		playerLightningRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), playerLightningRunnable, 0, 20));
 		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
@@ -561,7 +572,12 @@ public class HungerGame implements Runnable, Game {
 		state = RUNNING;
 		run(); // Add at least one randomLoc
 		readyToPlay.clear();
+		gameStats = new GameStats(this);
 		ChatUtils.broadcast(this, "Starting %s. Go!!", name);
+		if(Config.GRACE_PERIOD.getDouble(setup) > 0){
+			ChatUtils.broadcast(this, ChatColor.DARK_PURPLE, getGracePeriodStarted(Config.GRACE_PERIOD.getDouble(setup)));
+			gracePeriodEndedRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), gracePeriodEndedRunnable, 0, 20));
+		}
 		return null;
 	}
 
@@ -1108,8 +1124,25 @@ public class HungerGame implements Runnable, Game {
 			event = new PlayerKilledEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		String deathMessage = killer == null ? getDeathMessage(killed.getName()) : getKillMessage(killed.getDisplayName(), killer.getDisplayName()); 
+		String deathMessage = "";
+		GameStats.Death death = new GameStats.Death();
+		death.setPlayer(killed.getName());
+		death.setTime(System.currentTimeMillis() - getInitialStartTime());
+		if(killer == null){
+			String cause = GeneralUtils.getNonPvpDeathCause(deathEvent);
+			deathMessage = getDeathMessage(killed.getName(), cause);
+			death.setKiller(null);
+			death.setCause(cause.toUpperCase());
+		} else {
+			deathMessage = getKillMessage(killed.getDisplayName(), killer.getDisplayName());
+			death.setKiller(killer.getName());
+			String weapon = (killer.getItemInHand() == null) ? "AIR" : killer.getItemInHand().getType().name();
+			death.setCause(weapon);
+		}
 		event.setDeathMessage(deathMessage);
+		gameStats.addDeath(death);
+				
+				
 		Bukkit.getPluginManager().callEvent(event);
 		if (killedStat.getState() == PlayerState.DEAD) {
 			for (ItemStack i : deathEvent.getDrops()) {
@@ -1128,10 +1161,15 @@ public class HungerGame implements Runnable, Game {
 
 			});
 
+			Location strikeLocation = killed.getLocation();
+			strikeLocation.setY(1); // Let lightning hit near bedrock so we don't hurt anyone
 			teleportPlayerToSpawn(killed);
 			int deathCannon = Config.DEATH_CANNON.getInt(setup);
 			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
-			if (deathCannon == 1 || deathCannon == 2) playCannonBoom();
+			if (deathCannon == 1 || deathCannon == 2){
+				playCannonBoom();
+				killed.getWorld().strikeLightning(strikeLocation);
+			}
 			if (deathMessages == 1 || deathMessages == 2) {
 				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
@@ -1146,8 +1184,13 @@ public class HungerGame implements Runnable, Game {
 				respawn = randomLocs.get(HungerGames.getRandom().nextInt(randomLocs.size()));
 			}
 			TeleportListener.allowTeleport(killed);
+			Location strikeLocation = killed.getLocation();
+			strikeLocation.setY(1); // Let lightning hit near bedrock so we don't hurt anyone
 			killed.teleport(respawn, TeleportCause.PLUGIN);
-			if (Config.DEATH_CANNON.getInt(setup) == 1) playCannonBoom();
+			if (Config.DEATH_CANNON.getInt(setup) == 1){
+				playCannonBoom();
+				killed.getWorld().strikeLightning(strikeLocation);
+			}
 			if (Config.SHOW_DEATH_MESSAGES.getInt(setup) == 1) {
 				ChatUtils.broadcast(this, event.getDeathMessage());
 			}
@@ -1164,11 +1207,18 @@ public class HungerGame implements Runnable, Game {
 		return message;
 	}
 
-	private String getDeathMessage(String player) {
+	private String getDeathMessage(String player, String cause) {
 		List<String> messages = Lang.getDeathMessages(setup);
 		String message = messages.get(new Random().nextInt(messages.size()));
 		message = message.replace("<player>", player);
+		message = message.replace("<cause>", Lang.getNonPvPDeathcause(setup, cause));
 		message = message.replace("<game>", name);
+		return message;
+	}
+	
+	private String getGracePeriodStarted(double time) {
+		String message = Lang.getGracePeriodStarted(setup);
+		message = message.replace("<time>", GeneralUtils.formatTime((int) Config.GRACE_PERIOD.getDouble(setup)));
 		return message;
 	}
 

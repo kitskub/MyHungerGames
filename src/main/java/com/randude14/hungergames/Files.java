@@ -1,11 +1,9 @@
 package com.randude14.hungergames;
 
 import com.randude14.hungergames.utils.ChatUtils;
-import com.randude14.hungergames.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import org.bukkit.Bukkit;
 
 import org.bukkit.configuration.InvalidConfigurationException;

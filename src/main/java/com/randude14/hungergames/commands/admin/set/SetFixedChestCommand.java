@@ -3,7 +3,6 @@ package com.randude14.hungergames.commands.admin.set;
 import com.randude14.hungergames.Defaults.Commands;
 import com.randude14.hungergames.ItemConfig;
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;
