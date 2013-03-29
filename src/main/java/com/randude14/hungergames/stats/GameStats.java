@@ -52,6 +52,11 @@ public class GameStats {
 		else {
 			map.put("winner", game.getRemainingPlayers().get(0).getName());
 		}
+		long totalDuration = 0;
+		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
+			totalDuration += game.getEndTimes().get(i) - game.getStartTimes().get(i);
+		}
+		map.put("totalDuration", String.valueOf(totalDuration));
 	}
 	
 	public void addPlayer(PlayerStat playerStat){
@@ -73,12 +78,24 @@ public class GameStats {
 	public void submit(){
 		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return;
+		StringBuilder playersSB = new StringBuilder();
 		for (PlayerStat p : players) {
+			playersSB.append("{").append(p.getPlayer().getName()).append("}");
 			String k = "players[" + p.getPlayer().getName() + "]";
 			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
 			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
-			map.put(k + "[kills]", String.valueOf(p.getNumKills()));		
+			map.put(k + "[kills]", String.valueOf(p.getNumKills()));
+			map.put(k + "[time]", new Time(p.getTime()).toString());
 		}
+		map.put("players", playersSB.toString());
+		StringBuilder sponsorsSB = new StringBuilder();
+		for (String s : game.getSponsors().keySet()) {
+			sponsorsSB.append("{").append(s).append(":");
+			for (String sponsee : game.getSponsors().get(s)) sponsorsSB.append("{").append(sponsee).append("}");
+			sponsorsSB.append("}");
+		}
+		map.put("sponsors", sponsorsSB.toString());
+		map.put("deaths", String.valueOf(deaths.size()));
 		int j = 0;
 		for (Death d : deaths) {
 			String k = "deaths[" + (j++) + "]";
@@ -87,12 +104,6 @@ public class GameStats {
 			map.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
 			map.put(k + "[cause]", d.getCause());		
 		}
-		long totalDuration = 0;
-		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
-			totalDuration += game.getEndTimes().get(i) - game.getStartTimes().get(i);
-		}
-		map.put("totalDuration", String.valueOf(totalDuration));
-		
 		try {
 			ConnectionUtils.post(urlString, map);
 		} catch (ParserConfigurationException ex) {

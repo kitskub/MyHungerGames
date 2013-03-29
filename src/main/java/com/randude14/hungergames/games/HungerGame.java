@@ -454,7 +454,6 @@ public class HungerGame implements Runnable, Game {
 				InventorySave.loadGameInventory(p);
 			}
 		}
-		gameStats.saveGameData();
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = player.getInventory().getContents();
@@ -480,6 +479,7 @@ public class HungerGame implements Runnable, Game {
 			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
 		}
 		stats.clear();
+		gameStats.saveGameData();
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
 			if (spectator == null) continue;
