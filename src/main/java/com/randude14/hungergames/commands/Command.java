@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.ChatColor;
 
 import org.bukkit.command.CommandSender;
 
@@ -82,7 +83,7 @@ public abstract class Command extends org.bukkit.command.Command {
 	}
 
 	public String getUsageAndInfo() {
-		return getUsage() + " - " + getInfo();
+		return ChatColor.GREEN + getUsage() + ChatColor.GOLD + " - " + getInfo();
 	}
 
 	protected void registerSubCommand(Command c) {

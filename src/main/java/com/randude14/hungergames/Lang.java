@@ -149,7 +149,7 @@ public class Lang {
 	}
 	
 	public static String getGlobalNonPvPDeathcause(String cause) {
-		return getGlobal("deathcause." + cause.toLowerCase(), "default:" + cause);
+		return getGlobal("deathcause." + cause.toLowerCase(), cause);
 	}
 	
 	// Setups

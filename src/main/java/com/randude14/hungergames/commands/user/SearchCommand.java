@@ -4,8 +4,8 @@ import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.commands.Command;
+import com.randude14.hungergames.stats.GameStats;
 import com.randude14.hungergames.stats.SQLStat;
-import com.randude14.hungergames.stats.StatHandler;
 import com.randude14.hungergames.utils.ChatUtils;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class SearchCommand extends Command {
 		}
 		FutureTask<SQLStat> f = new FutureTask<SQLStat>(new Callable<SQLStat>() {
 			public SQLStat call() throws Exception {
-				return StatHandler.getStat(args[0]);
+				return GameStats.getStat(args[0]);
 			}
 		});
 		synchronized(searches) {

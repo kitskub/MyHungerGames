@@ -1,16 +1,15 @@
 package com.randude14.hungergames.stats;
 
-import com.randude14.hungergames.Defaults;
-import com.randude14.hungergames.utils.ConnectionUtils;
-import com.randude14.hungergames.Logging;
-import com.randude14.hungergames.games.HungerGame;
-import com.randude14.hungergames.stats.PlayerStat.PlayerState;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -19,61 +18,80 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/*
-* Players
-*   name
-*   lastLogin
-*   totalGames
-*   wins
-*   kills
-*   deaths
-* Kills
-*   killer
-*   kill
-*   day
-*/
-public class StatHandler {
-	/**
-	 * {"requestType"; "updateGames"}
-	 * {"startTime"; game's initial start time divided by 1000 (it was in milliseconds, we want seconds)}
-	 * {"totalPlayers"; number of players in game}
-	 * {"winner"; name of winner or "N/A" if none}
-	 * {"players"; "{player1}{player2}{etc.}"}
-	 * {"totalDuration"; sum of all times divided by 1000}
-	 * {"sponsors"; "{sponsor1:{sponsee1}{sponsee2}}{sponsor2:{sponsee1}{etc.}}{etc.}"}
-	 */
-	public static void updateGame(HungerGame game) {
-		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
-		if ("0.0.0.0".equals(urlString)) return;
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("requestType", "updateGames");
-		map.put("startTime", new Date(game.getInitialStartTime()).toString());
+import com.randude14.hungergames.Defaults;
+import com.randude14.hungergames.Logging;
+import com.randude14.hungergames.games.HungerGame;
+import com.randude14.hungergames.stats.PlayerStat.PlayerState;
+import com.randude14.hungergames.utils.ConnectionUtils;
 
+public class GameStats {
+
+	private HungerGame game;
+	private List<Death> deaths = new ArrayList<Death>();
+	private List<PlayerStat> players = new ArrayList<PlayerStat>();
+	Map<String, String> map = new HashMap<String, String>();
+	
+	public GameStats(HungerGame game){
+		this.game = game;
+		map = new HashMap<String, String>();
+	}
+	
+	public void saveGameData(){
+		saveGameData(this.game);
+	}
+	
+	public void saveGameData(HungerGame game){
+		map.put("requestType", "updateGameDetails");
+		map.put("startTime", String.valueOf(game.getInitialStartTime()));
+		map.put("name", game.getName());
+		
 		map.put("totalPlayers", String.valueOf(game.getAllPlayers().size()));
 		if (game.getRemainingPlayers().size() != 1) {
 			map.put("winner", "N/A");
-
 		}
 		else {
 			map.put("winner", game.getRemainingPlayers().get(0).getName());
 		}
-		StringBuilder playersSB = new StringBuilder();
-		for (String s : game.getAllPlayers()) {
-			playersSB.append("{").append(s).append("}");
+	}
+	
+	public void addPlayer(PlayerStat playerStat){
+		players.add(playerStat);
+	}
+	
+	public void addAllPlayer(Collection<PlayerStat> playerStats){
+		players.addAll(playerStats);
+	}
+	
+	public void addDeath(String player, String killer, String cause){
+		deaths.add(new Death(player, killer, cause,  System.currentTimeMillis() / 1000));
+	}
+	
+	public void addDeath(Death death){
+		deaths.add(death);
+	}
+	
+	public void submit(){
+		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
+		if ("0.0.0.0".equals(urlString)) return;
+		for (PlayerStat p : players) {
+			String k = "players[" + p.getPlayer().getName() + "]";
+			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
+			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
+			map.put(k + "[kills]", String.valueOf(p.getNumKills()));		
 		}
-		map.put("players", playersSB.toString());
+		int j = 0;
+		for (Death d : deaths) {
+			String k = "deaths[" + (j++) + "]";
+			map.put(k + "[time]", String.valueOf(d.getTime()));
+			map.put(k + "[player]", d.getPlayer());
+			map.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
+			map.put(k + "[cause]", d.getCause());		
+		}
 		long totalDuration = 0;
 		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
 			totalDuration += game.getEndTimes().get(i) - game.getStartTimes().get(i);
 		}
-		map.put("totalDuration", new Time(totalDuration).toString());
-		StringBuilder sponsorsSB = new StringBuilder();
-		for (String s : game.getSponsors().keySet()) {
-			sponsorsSB.append("{").append(s).append(":");
-			for (String sponsee : game.getSponsors().get(s)) sponsorsSB.append("{").append(sponsee).append("}");
-			sponsorsSB.append("}");
-		}
-		map.put("sponsors", sponsorsSB.toString());
+		map.put("totalDuration", String.valueOf(totalDuration));
 		
 		try {
 			ConnectionUtils.post(urlString, map);
@@ -84,42 +102,7 @@ public class StatHandler {
 			Logging.debug("Error when updating games: " + ex.getMessage());
 		}
 	}
-
-	/**
-	 * {"requestType"; "updatePlayers"}
-	 * {"playerName"; player name}
-	 * {"totalTime"; total time (in hh:mm:ss)}
-	 * {"wins"; 0 if lost, 1 if won}
-	 * {"kills"; number of kills}
-	 * {"deaths"; number of deaths}
-	 */
-	public static void updateStat(PlayerStat stat) {
-		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
-		if ("0.0.0.0".equals(urlString)) return;
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("requestType", "updatePlayers");
-		map.put("playerName", stat.getPlayer().getName());
-		map.put("totalTime", new Time(stat.getTime()).toString());
-		String wins;
-		if (stat.getState() == PlayerState.DEAD) {
-			wins = "0";
-		}
-		else {
-			wins = "1";
-		}
-		map.put("wins", wins);
-		map.put("kills", String.valueOf(stat.getNumKills()));
-		map.put("deaths", String.valueOf(stat.getNumDeaths()));
-		try {
-			ConnectionUtils.post(urlString, map);
-		} catch (ParserConfigurationException ex) {
-			Logging.debug("Error when updating stat: " + ex.getMessage());
-		} catch (SAXException ex) {
-		} catch (IOException ex) {
-			Logging.debug("Error when updating stat: " + ex.getMessage());
-		}
-	}
-
+	
 	public static SQLStat getStat(String s) {
 		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return null;
@@ -234,4 +217,51 @@ public class StatHandler {
 			return null;
 		}
 	}
+	
+	public static class Death{
+		private String player;
+		private String killer;
+		private String cause;
+		private long time;
+		
+		public Death(){
+			
+		}
+		
+		public Death(String player, String killer, String cause, long time) {
+			this.player = player;
+			this.killer = killer;
+			this.cause = cause;
+			this.time = time;
+		}
+
+		public String getPlayer() {
+			return player;
+		}
+		public void setPlayer(String player) {
+			this.player = player;
+		}
+		public String getKiller() {
+			return killer;
+		}
+		public void setKiller(String killer) {
+			this.killer = killer;
+		}
+		public String getCause() {
+			return cause;
+		}
+		public void setCause(String cause) {
+			this.cause = cause;
+		}
+		public long getTime() {
+			return time;
+		}
+		public void setTime(long time) {
+			this.time = time;
+		}
+		
+		
+		
+	}
+	
 }
