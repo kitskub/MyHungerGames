@@ -187,7 +187,7 @@ public class Metrics {
         postPlugin(plugin, false);
 
         // Ping the server in intervals
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
             public void run() {
                 try {
                     postPlugin(plugin, true);

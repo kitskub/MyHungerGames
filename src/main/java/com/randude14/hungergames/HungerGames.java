@@ -67,7 +67,7 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	private void callTasks() {
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
 			new Runnable() {
 			public void run() {
 				Updater updater = new Updater(HungerGames.getInstance(), "myhungergames", HungerGames.getInstance().getFile(), Updater.UpdateType.NO_DOWNLOAD, true);

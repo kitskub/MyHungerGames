@@ -1,10 +1,8 @@
 package com.randude14.hungergames.commands.user;
 
-import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
-import com.randude14.hungergames.api.Game;
 import com.randude14.hungergames.commands.Command;
 import com.randude14.hungergames.utils.ChatUtils;
 

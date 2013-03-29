@@ -38,7 +38,7 @@ public class PlayerQueueHandler implements Listener, Runnable {
 	public void onGameEnd(GameEndEvent event) {
 		if (!enabled) return;
 		if (!Config.AUTO_JOIN_ALLOWED.getBoolean(event.getGame().getSetup())) return;
-		Bukkit.getScheduler().scheduleAsyncDelayedTask(HungerGames.getInstance(), this, 20 * 10);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(HungerGames.getInstance(), this, 20 * 10);
 		queuedGames.offer(new EquatableWeakReference<Game>(event.getGame()));
 	}
 	

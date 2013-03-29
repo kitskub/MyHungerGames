@@ -2,7 +2,6 @@ package com.randude14.hungergames.listeners;
 
 import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
-import com.randude14.hungergames.Logging;
 import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.ChatUtils;
 

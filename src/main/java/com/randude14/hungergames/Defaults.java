@@ -128,7 +128,8 @@ public class Defaults {
 	TEAMS_ALLOW_FRIENDLY_DAMAGE(false, "teams.allow-friendly-damage"),
 	DISABLE_FLY(true, "disable-fly"),
 	LIGHTNING_ON_PLAYER_COUNT(3, "lightning-on-players-count"),
-	LIGHTNING_ON_PLAYER_DELAY(10, "lightning-on-players-delay");
+	LIGHTNING_ON_PLAYER_DELAY(10, "lightning-on-players-delay"),
+	PVP_OUTSIDE_GAME(true, "pvp-outside-game");
 	
 	
 	private Object value;

@@ -5,16 +5,11 @@ import com.randude14.hungergames.games.HungerGame;
 import com.randude14.hungergames.utils.Cuboid;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import uk.co.oliwali.HawkEye.PlayerSession;
 import uk.co.oliwali.HawkEye.Rollback.RollbackType;
@@ -47,8 +42,8 @@ public class HawkEyeResetter extends Resetter{
 		for (World w : game.getWorlds()) {
 			worlds.add(w.getName());
 		}
-		parser.worlds = (String[]) worlds.toArray();
-		HawkEyeAPI.performSearch(new RollbackCallback(new PlayerSession(new Logging.LogCommandSender("HawkEye")), RollbackType.LOCAL), parser, SearchDir.DESC);
+		parser.worlds = worlds.toArray(new String[worlds.size()]);
+		HawkEyeAPI.performSearch(new RollbackCallback(new PlayerSession(new Logging.LogCommandSender("HawkEye")), RollbackType.GLOBAL), parser, SearchDir.DESC);
 		parser.worlds = null;
 		worlds.clear();
 		for (Cuboid c : game.getCuboids()) {

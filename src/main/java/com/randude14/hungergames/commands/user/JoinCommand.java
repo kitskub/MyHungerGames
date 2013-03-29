@@ -2,7 +2,6 @@ package com.randude14.hungergames.commands.user;
 
 import com.randude14.hungergames.Defaults;
 import com.randude14.hungergames.Defaults.Perm;
-import com.randude14.hungergames.GameManager;
 import com.randude14.hungergames.HungerGames;
 import com.randude14.hungergames.Lang;
 import com.randude14.hungergames.commands.PlayerCommand;

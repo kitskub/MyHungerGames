@@ -172,6 +172,9 @@ global:
   
 # Delay between lightning strikes in seconds
   lightning-on-players-delay: 10
+
+# Allow PvP for players currently not in a game
+  pvp-outside-game: true
   
 # Contains options relating to teams
   teams:

@@ -8,13 +8,10 @@ import de.diddiz.LogBlock.LogBlock;
 import de.diddiz.LogBlock.QueryParams;
 import de.diddiz.LogBlock.QueryParams.BlockChangeType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class LogBlockResetter extends Resetter{
     private LogBlock plugin;
