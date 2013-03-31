@@ -290,8 +290,8 @@ public class Defaults {
 
     public enum Perm {
 
-		ALL(new Permission("hungergame.*"), null, "gives the player all permissions"),
-		ADMIN(new Permission("hungergame.admin.*"), ALL, "gives the player all admin permissions"),
+		ALL(new Permission("hungergame"), null, "gives the player all permissions"),
+		ADMIN(new Permission("hungergame.admin"), ALL, "gives the player all admin permissions"),
 		ADMIN_ALLOW_FLIGHT(new Permission("hungergame.admin.allowflight"), ADMIN, "allows the player to fly in game"),
 		ADMIN_ADD_CUBOID(new Permission("hungergame.add.cuboid"), ADMIN),
 		ADMIN_ADD_FIXED_CHEST(new Permission("hungergame.add.fixedchest"), ADMIN),
@@ -337,7 +337,7 @@ public class Defaults {
 		ADMIN_KILL(new Permission("hungergame.admin.kill"), ADMIN),
 		ADMIN_HELP(new Permission("hungergame.admin.help"), ADMIN, "allows a player to view admin commands"),
 		ADMIN_RESTOCK(new Permission("hungergame.admin.restock"), ADMIN),
-		USER(new Permission("hungergame.user.*"), ALL),
+		USER(new Permission("hungergame.user"), ALL),
 		USER_ABOUT(new Permission("hungergame.user.about"), USER),
 		USER_AUTO_SUBSCRIBE(new Permission("hungergame.user.autosubscribe"), null, "whether a user autosubscribes to a game or not; is not inherited from *"),
 		USER_AUTO_JOIN_ALLOWED(new Permission("hungergame.user.autojoinallowed"), USER, "whether a user can autojoin games; can also have hungergame.user.autojoinallowed.<game>"),

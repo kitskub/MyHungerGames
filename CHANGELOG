@@ -26,6 +26,7 @@ v1.0
 - Don't allow damage during countdown
 - Don't allow mobs to target while at the spawnpoint, at all
 - Fix Hawkeye resetter
+- Change permission nodes to not use .* - BREAKING
 
 v0.9.2
 - Fixed Death Messages
