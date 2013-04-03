@@ -78,7 +78,7 @@ public class HungerGames extends JavaPlugin{
 
 	private void callTasks() {
 		int delay = Defaults.Config.UPDATE_DELAY.getGlobalInt();
-		if (delay == 0) return;
+		if (!Defaults.Config.UPDATE_CHECK.getGlobalBoolean()) return;
 		Bukkit.getScheduler().runTaskTimer(this,
 			new Runnable() {
 			public void run() {

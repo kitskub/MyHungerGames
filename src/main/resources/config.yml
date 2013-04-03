@@ -6,6 +6,8 @@ global:
 # GLOBAL ONLY
   update-delay: 30
   
+  do-update-check: true
+  
 # IP/URL to use to connect to webstats
 # use 0.0.0.0 to not record webstats
 # GLOBAL ONLY

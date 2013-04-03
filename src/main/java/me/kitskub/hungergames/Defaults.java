@@ -121,6 +121,7 @@ public class Defaults {
 	MIN_VOTE(5, "min-vote"),
 	MIN_PLAYERS(2, "min-players"),
 	UPDATE_DELAY(30, "update-delay"),
+	UPDATE_CHECK(true, "do-update-check"),
 	AUTO_JOIN(false, "auto-join"),
 	AUTO_JOIN_ALLOWED(true, "auto-join-allowed"),
 	DEFAULT_TIME(10, "default-time"),
