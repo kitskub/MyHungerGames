@@ -77,14 +77,16 @@ public class HungerGames extends JavaPlugin{
 	}
 
 	private void callTasks() {
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(this,
+		int delay = Defaults.Config.UPDATE_DELAY.getGlobalInt();
+		if (delay == 0) return;
+		Bukkit.getScheduler().runTaskTimer(this,
 			new Runnable() {
 			public void run() {
 				Updater updater = new Updater(HungerGames.getInstance(), "myhungergames", HungerGames.getInstance().getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
 				if (updater.getResult().equals(Updater.UpdateResult.UPDATE_AVAILABLE))
 					Logging.warning("There is a new version: %s (You are running %s)", updater.getLatestVersionString(), getDescription().getVersion());
 				}
-		}, 0L, Defaults.Config.UPDATE_DELAY.getGlobalInt() * 20L * 60L);
+		}, 0L,  delay * 20L * 60L);
 	}
 
 	@Override
