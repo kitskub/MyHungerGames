@@ -187,6 +187,7 @@ public class SessionListener implements Listener {
 		//Logging.debug("Failed to get sessionlistener.");
 		break;
 	    }
+	    HungerGames.getInstance().getGameManager().saveGame(game);
 	}
 	
 	public static void addSession(SessionType type, Player player, String game) {

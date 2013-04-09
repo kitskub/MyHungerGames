@@ -710,7 +710,7 @@ public class HungerGame implements Runnable, Game {
 		if (fixedChests.containsKey(chest.getLocation())) return;
 		if(!chests.keySet().contains(chest.getLocation()) && !blacklistedChests.contains(chest.getLocation())) {
 			//Logging.debug("Inventory Location was not in randomInvs.");
-			GeneralUtils.fillChest(chest, 0, itemsets);
+			GeneralUtils.fillChest(chest, 1, itemsets);
 			addChest(chest.getLocation(), 1f);
 		}
 	}
