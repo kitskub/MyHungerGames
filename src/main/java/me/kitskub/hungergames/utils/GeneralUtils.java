@@ -139,7 +139,7 @@ public class GeneralUtils {
 		final int numCounts = itemMap.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(itemMap.size()))/Math.sqrt(maxItemSize));
 		final int minItems = (int) Math.floor(numCounts/2);
 		int count = HungerGames.getRandom().nextInt(numCounts - minItems) + minItems;
-		List<Integer> slots = range(1, count);//By adding this, we know that we won't pick an index that has been used before
+		List<Integer> slots = range(1, size);//By adding this, we know that we won't pick an index that has been used before
 		for (int i = 0; i < count; i++) {
 			int index;
 			do {
