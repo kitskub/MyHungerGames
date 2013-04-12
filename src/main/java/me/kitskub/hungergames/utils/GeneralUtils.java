@@ -135,7 +135,8 @@ public class GeneralUtils {
 		List<Integer> slots = range(1, size);//By adding this, we know that we won't pick an index that has been used before
 
 		//This calculate the amount of items that will be in the chest.
-		int amountCount = HungerGames.getRandom().nextInt(5) + 1;
+		final int maxItemSize = 100;
+		final int amountCount = map.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(map.size()))/Math.sqrt(maxItemSize));
 
 		//Let's calculate what item we can have.
 		Iterator<Map.Entry<ItemStack, Double>> iterator = map.entrySet().iterator();
