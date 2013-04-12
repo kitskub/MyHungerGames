@@ -1,24 +1,20 @@
 package me.kitskub.hungergames.utils;
 
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
+
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.ItemConfig;
 import me.kitskub.hungergames.Logging;
 import me.kitskub.hungergames.WorldNotFoundException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import org.apache.commons.lang.ArrayUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -130,32 +126,34 @@ public class GeneralUtils {
 		}
 		chest.getInventory().clear();
 
-		Map<ItemStack, Double> map = ItemConfig.getAllChestLootWithGlobal(itemsets);		
-		SortedMap<ItemStack, Double> itemMap =  new TreeMap<ItemStack, Double>(Ordering.natural().onResultOf(Functions.forMap(map)).reverse());//Sorted high to low
-		itemMap.putAll(map);
+		//Contains the whole itemset.
+		Map<ItemStack, Double> map = ItemConfig.getAllChestLootWithGlobal(itemsets);
 
-		final int size = chest.getInventory().getSize();
-		final int maxItemSize = 100;
-		final int numCounts = itemMap.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(itemMap.size()))/Math.sqrt(maxItemSize));
-		final int minItems = (int) Math.floor(numCounts/2);
-		int count = HungerGames.getRandom().nextInt(numCounts - minItems) + minItems;
+		//Chest size
+		final int size = chest.getInventory().getSize() - 1;
+
 		List<Integer> slots = range(1, size);//By adding this, we know that we won't pick an index that has been used before
-		for (int i = 0; i < count; i++) {
-			int index;
-			do {
-				int slotindex = HungerGames.getRandom().nextInt(slots.size());
-				index = slotindex + 1;
-				slots.remove(slotindex);
-			} while (chest.getInventory().getItem(index) != null);//Shouldn't ever loop unless an item stack was larger than maxstacksize
-			final double minValue = HungerGames.getRandom().nextFloat() / weight;
-			Map<ItemStack, Double> filtered = Maps.filterValues(itemMap, new Predicate<Double>() {
-								      public boolean apply(Double d) {
-									      if (d >= minValue) return true;
-									      return false;
-								      }
-							      });
-			ItemStack item = new ArrayList<ItemStack>(filtered.keySet()).get(HungerGames.getRandom().nextInt(filtered.size()));
-			chest.getInventory().setItem(index, item);
+
+		//This calculate the amount of items that will be in the chest.
+		int amountCount = HungerGames.getRandom().nextInt(5) + 1;
+
+		//Let's calculate what item we can have.
+		Iterator<Map.Entry<ItemStack, Double>> iterator = map.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<ItemStack, Double> entry = iterator.next();
+			if (HungerGames.getRandom().nextDouble() >= entry.getValue()) {
+				iterator.remove();
+			}
+
+		}
+
+		ArrayList<ItemStack> arrayItemStack = new ArrayList<ItemStack>(map.keySet());
+		//We add the items in the chest.
+		for (int i = 0; i < amountCount; i++) {
+			ItemStack stack = arrayItemStack.get(HungerGames.getRandom().nextInt(arrayItemStack.size()));
+			int slot = HungerGames.getRandom().nextInt(slots.size());
+			chest.getInventory().setItem(slot, stack);
+			slots.remove(slot);
 		}
 	}
 
