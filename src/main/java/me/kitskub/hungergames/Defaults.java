@@ -170,6 +170,7 @@ public class Defaults {
 	TEAMS_ALLOW_TEAMS(true, "teams.allow-teams"),
 	TEAMS_ALLOW_FRIENDLY_DAMAGE(false, "teams.allow-friendly-damage"),
 	DISABLE_FLY(true, "disable-fly"),
+	USE_SCOREBOARD(true, "use-scoreboard"),
 	LIGHTNING_ON_PLAYER_COUNT(3, "lightning-on-players-count"),
 	LIGHTNING_ON_PLAYER_DELAY(10, "lightning-on-players-delay");
 	

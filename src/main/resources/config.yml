@@ -175,6 +175,9 @@ global:
 # Delay between lightning strikes in seconds
   lightning-on-players-delay: 10
   
+# Whether or not to use Bukkit's scoreboard
+  use-scoreboard: true
+  
 # Contains options relating to teams
   teams:
     

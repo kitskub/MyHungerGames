@@ -169,9 +169,9 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 			spectated.get().removeSpectator(player);
 			return;
 		}
-		WeakReference<HungerGame> game = getSession(player);
-		if (game == null || game.get() == null) return;
-		game.get().leave(player, true);
+		HungerGame game = getRawSession(player);
+		if (game == null) return;
+		game.leave(player, true);
 	}
 
 	public void loadGames() {

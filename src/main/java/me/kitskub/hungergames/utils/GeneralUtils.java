@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.ItemConfig;
@@ -126,22 +131,25 @@ public class GeneralUtils {
 		}
 		chest.getInventory().clear();
 
-		//Contains the whole itemset.
+		//Contains the whole itemset.		
 		Map<ItemStack, Double> map = ItemConfig.getAllChestLootWithGlobal(itemsets);
-
+		ItemStack last = null;
+		
 		//Chest size
-		final int size = chest.getInventory().getSize() - 1;
+		final int size = chest.getInventory().getSize();
 
 		List<Integer> slots = range(1, size);//By adding this, we know that we won't pick an index that has been used before
 
 		//This calculate the amount of items that will be in the chest.
 		final int maxItemSize = 100;
 		final int amountCount = map.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(map.size()))/Math.sqrt(maxItemSize));
+		final int minItems = (int) Math.floor(amountCount/2);
 
 		//Let's calculate what item we can have.
 		Iterator<Map.Entry<ItemStack, Double>> iterator = map.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<ItemStack, Double> entry = iterator.next();
+			if (!iterator.hasNext()) last = entry.getKey();
 			if (HungerGames.getRandom().nextDouble() >= entry.getValue()) {
 				iterator.remove();
 			}
@@ -149,11 +157,13 @@ public class GeneralUtils {
 		}
 
 		ArrayList<ItemStack> arrayItemStack = new ArrayList<ItemStack>(map.keySet());
+		if (arrayItemStack.isEmpty()) arrayItemStack.add(last);//Just in case
 		//We add the items in the chest.
-		for (int i = 0; i < amountCount; i++) {
+		int amount = HungerGames.getRandom().nextInt((amountCount - minItems) * (arrayItemStack.size() / map.size())) + minItems;
+		for (int i = 0; i < amount; i++) {
 			ItemStack stack = arrayItemStack.get(HungerGames.getRandom().nextInt(arrayItemStack.size()));
 			int slot = HungerGames.getRandom().nextInt(slots.size());
-			chest.getInventory().setItem(slot, stack);
+			chest.getInventory().setItem(slots.get(slot), stack);
 			slots.remove(slot);
 		}
 	}

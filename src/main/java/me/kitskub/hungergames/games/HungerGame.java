@@ -1,5 +1,6 @@
 package me.kitskub.hungergames.games;
 
+import com.google.common.base.Stopwatch;
 import me.kitskub.hungergames.api.event.GameSaveEvent;
 import me.kitskub.hungergames.api.event.GamePauseEvent;
 import me.kitskub.hungergames.api.event.GameEndEvent;
@@ -457,6 +458,7 @@ public class HungerGame implements Runnable, Game {
 		clearWaitingPlayers();
 		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
 		
+		HungerGames.TimerManager.start();
 		endTimes.add(System.currentTimeMillis());
 		if (countdown != null) countdown.cancel();
 		if (state == PAUSED) { // Needed for inventory stuff
@@ -514,6 +516,7 @@ public class HungerGame implements Runnable, Game {
 		gameStats.submit();
 		clear();
 		ResetHandler.resetChanges(this);
+		HungerGames.TimerManager.stop("HungerGame.stopGame");
 		return null;
 	}
 
@@ -907,12 +910,11 @@ public class HungerGame implements Runnable, Game {
 	@Override
 	public synchronized boolean leave(Player player, boolean callEvent) {
 		if (state != RUNNING && state != PAUSED) return quit(player, true);
-		
 		if (!isPlaying(player)) {
 			ChatUtils.error(player, "You are not playing the game %s.", name);
 			return false;
 		}
-
+		HungerGames.TimerManager.start();
 		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
 			stats.get(player.getName()).die();
 		}
@@ -930,8 +932,8 @@ public class HungerGame implements Runnable, Game {
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(this,mess);
 		checkForGameOver(false);
-
-		return true;
+		HungerGames.TimerManager.stop("HungerGame.leave");
+		return true; 
 	}
 	
 	@Override
@@ -970,6 +972,7 @@ public class HungerGame implements Runnable, Game {
 	 * @param player
 	 */
 	private synchronized void playerLeaving(Player player, boolean temporary) {
+		HungerGames.TimerManager.start();
 		for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
 		    if (spectator == null) continue;
@@ -993,6 +996,7 @@ public class HungerGame implements Runnable, Game {
 			PlayerQueueHandler.addPlayer(player);
 			HungerGames.getInstance().getGameManager().removedSubscribedPlayer(player, this);
 		}
+		HungerGames.TimerManager.stop("HungerGame.playerLeaving");
 	}
 
 	// Complete clear just to be sure
@@ -1029,6 +1033,7 @@ public class HungerGame implements Runnable, Game {
 				ChatUtils.error(player, "There was no spawn set for %s. Teleporting to back location.", name);
 			}
 		}
+		HungerGames.TimerManager.start();
 		Location loc = ((GameManager) HungerGames.getInstance().getGameManager()).getAndRemoveBackLocation(player);
 		if (loc != null) {
 			player.teleport(loc, TeleportCause.UNKNOWN);
@@ -1037,11 +1042,13 @@ public class HungerGame implements Runnable, Game {
 			ChatUtils.error(player, "For some reason, there was no back location. Please contact an admin for help.", name);
 			player.teleport(player.getWorld().getSpawnLocation(), TeleportCause.UNKNOWN);
 		}
+		HungerGames.TimerManager.stop("HungerGame.teleportPlayerToSpawn");
 	}
 
 	@Override
 	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 		if (state != RUNNING) return false;
+		HungerGames.TimerManager.start();
 		List<Player> remaining = getRemainingPlayers();
 		List<Team> teamsLeft = new ArrayList<Team>();
 		int left = 0;
@@ -1077,6 +1084,7 @@ public class HungerGame implements Runnable, Game {
 			}
 			Bukkit.getPluginManager().callEvent(event);
 			stopGame(true);
+			HungerGames.TimerManager.stop("HungerGame.checkForGameOver");
 			return true;
 		}
 
@@ -1408,11 +1416,13 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	private static void dropInventory(Player player) {
+		HungerGames.TimerManager.start();
 		for (ItemStack i : player.getInventory().getContents()) {
 			if (i == null || i.getType().equals(Material.AIR)) continue;
 			player.getWorld().dropItemNaturally(player.getLocation(), i);
 		}
 		player.getInventory().clear();
+		HungerGames.TimerManager.stop("HungerGame.dropInventory");
 	}
 
 	@Override

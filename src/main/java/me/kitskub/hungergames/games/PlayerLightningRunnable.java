@@ -20,8 +20,11 @@ public class PlayerLightningRunnable implements Runnable{
 	public void run() {
 		if(Config.LIGHTNING_ON_PLAYER_COUNT.getInt(game.getSetup()) > 0 && game.getRemainingPlayers().size() <= Config.LIGHTNING_ON_PLAYER_COUNT.getInt(game.getSetup())){
 			if(lastLightningTime == 0 || System.currentTimeMillis() > lastLightningTime + Config.LIGHTNING_ON_PLAYER_DELAY.getInt(game.getSetup()) * 1000){
-				if(nextLightningIndex >= game.getRemainingPlayers().size())
-					nextLightningIndex = 0;
+				if (game.getRemainingPlayers().isEmpty()) {
+					cancel();
+					return;
+				}
+				if(nextLightningIndex >= game.getRemainingPlayers().size()) nextLightningIndex = 0;
 				
 				Player target = game.getRemainingPlayers().get(nextLightningIndex);
 				Location location = target.getLocation();

@@ -1,5 +1,6 @@
 package me.kitskub.hungergames;
 
+import com.google.common.base.Stopwatch;
 import me.kitskub.hungergames.listeners.ActivityListener;
 import me.kitskub.hungergames.listeners.CommandListener;
 import me.kitskub.hungergames.listeners.LobbyListener;
@@ -26,6 +27,8 @@ import me.kitskub.hungergames.utils.ChatUtils;
 import me.kitskub.hungergames.utils.Item;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Random;
 import me.kitskub.hungergames.listeners.SessionListener;
 
@@ -47,6 +50,7 @@ public class HungerGames extends JavaPlugin{
 	private static Economy econ;
 	private static Random rand;
 	private static GameManager gameManager;
+	private static ScoreboardHandler scoreboard;
 	
 	@Override
 	public void onEnable() {
@@ -55,6 +59,12 @@ public class HungerGames extends JavaPlugin{
 		ConfigurationSerialization.registerClass(Item.class, "Item");
 		Files.loadAll();
 		rand = new Random(getName().hashCode());
+		try {
+			Class.forName("org.bukkit.scoreboard.ScoreboardManager");
+			scoreboard = new ScoreboardHandler();
+		} catch (ClassNotFoundException ex) {
+			Logging.warning("Running on pre Bukkit-R0.2 server. Scoreboard will not be enabled.");
+		}
 		registerEvents();
 		loadRegistry();
 		loadResetter();
@@ -166,6 +176,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TimedGameListener(), instance);
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
+		//if (scoreboard != null) pm.registerEvents(new ScoreboardHandler(), instance);
 		if (Defaults.Config.AUTO_JOIN.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
@@ -230,5 +241,18 @@ public class HungerGames extends JavaPlugin{
 	
 	public me.kitskub.hungergames.api.GameManager getGameManager() {
 		return gameManager;
+	}
+	
+	public static class TimerManager {// TODO remove timer
+		private static final Deque<Stopwatch> timers = new ArrayDeque<Stopwatch>();
+		
+		public static void start() {
+			timers.addLast(new Stopwatch().start());
+		}
+		
+		public static void stop(String name) {
+			Stopwatch stop = timers.removeLast().stop();
+			Logging.debug("Method [" + name + "]: " + stop);
+		}
 	}
 }

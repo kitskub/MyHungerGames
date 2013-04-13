@@ -1,7 +1,9 @@
 package me.kitskub.hungergames.games;
 
+import com.google.common.base.Stopwatch;
 import java.util.HashMap;
 import java.util.Map;
+import me.kitskub.hungergames.HungerGames;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,6 +53,8 @@ public class InventorySave {
 
 	public static void loadGameInventory(Player player){
 		if(!savedGameInventories.containsKey(player)) return;
+		HungerGames.TimerManager.start();
 		savedGameInventories.remove(player).loadInventoryTo(player);
+		HungerGames.TimerManager.stop("InventorySave.loadGameInventory");
 	}
 }
