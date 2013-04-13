@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -131,8 +132,11 @@ public class GeneralUtils {
 		}
 		chest.getInventory().clear();
 
-		//Contains the whole itemset.		
-		Map<ItemStack, Double> map = ItemConfig.getAllChestLootWithGlobal(itemsets);
+		//Contains the whole itemset.
+		
+		Map<ItemStack, Double> oldmap = ItemConfig.getAllChestLootWithGlobal(itemsets);
+		Map<ItemStack, Double> map = new HashMap<ItemStack, Double>(oldmap);
+		if (map.isEmpty()) return;
 		ItemStack last = null;
 		
 		//Chest size
@@ -150,7 +154,8 @@ public class GeneralUtils {
 		while (iterator.hasNext()) {
 			Map.Entry<ItemStack, Double> entry = iterator.next();
 			if (!iterator.hasNext()) last = entry.getKey();
-			if (HungerGames.getRandom().nextDouble() >= entry.getValue()) {
+			double rand = HungerGames.getRandom().nextDouble();
+			if (rand >= entry.getValue()) {
 				iterator.remove();
 			}
 
@@ -159,7 +164,7 @@ public class GeneralUtils {
 		ArrayList<ItemStack> arrayItemStack = new ArrayList<ItemStack>(map.keySet());
 		if (arrayItemStack.isEmpty()) arrayItemStack.add(last);//Just in case
 		//We add the items in the chest.
-		int amount = HungerGames.getRandom().nextInt((amountCount - minItems) * (arrayItemStack.size() / map.size())) + minItems;
+		int amount = HungerGames.getRandom().nextInt((amountCount - minItems) * (arrayItemStack.size() / oldmap.size())) + minItems;
 		for (int i = 0; i < amount; i++) {
 			ItemStack stack = arrayItemStack.get(HungerGames.getRandom().nextInt(arrayItemStack.size()));
 			int slot = HungerGames.getRandom().nextInt(slots.size());

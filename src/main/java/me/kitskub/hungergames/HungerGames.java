@@ -176,7 +176,7 @@ public class HungerGames extends JavaPlugin{
 		pm.registerEvents(new TimedGameListener(), instance);
 		pm.registerEvents(new TimeListener(), instance);
 		pm.registerEvents(new LobbyListener(), instance);
-		//if (scoreboard != null) pm.registerEvents(new ScoreboardHandler(), instance);
+		if (scoreboard != null) pm.registerEvents(new ScoreboardHandler(), instance);
 		if (Defaults.Config.AUTO_JOIN.getGlobalBoolean()) pm.registerEvents(new PlayerQueueHandler(), instance);
 	}
 	
