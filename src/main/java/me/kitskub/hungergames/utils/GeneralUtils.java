@@ -142,7 +142,7 @@ public class GeneralUtils {
 		//Chest size
 		final int size = chest.getInventory().getSize();
 
-		List<Integer> slots = range(1, size);//By adding this, we know that we won't pick an index that has been used before
+		List<Integer> slots = range(0, size - 1);//By adding this, we know that we won't pick an index that has been used before
 
 		//This calculate the amount of items that will be in the chest.
 		final int maxItemSize = 100;
