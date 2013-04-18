@@ -4,6 +4,8 @@ import me.kitskub.hungergames.Defaults;
 import me.kitskub.hungergames.games.HungerGame;
 
 import java.util.*;
+import me.kitskub.hungergames.HungerGames;
+import me.kitskub.hungergames.ScoreboardHandler;
 
 import org.bukkit.entity.Player;
 
@@ -62,6 +64,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		if (lives == 0 || deaths.size() >= lives) {
 			die();
 		}
+		ScoreboardHandler.updateLives(game, player, lives - deaths.size());
 	}
 	
 	public int getLivesLeft() {

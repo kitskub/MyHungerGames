@@ -1372,7 +1372,7 @@ public class HungerGame implements Runnable, Game {
 		}
 		if (chests.remove(loc) == null & fixedChests.remove(loc) == null) {
 			blacklistedChests.add(loc);
-			return false;
+			return true;
 		}
 		return true;
 	}

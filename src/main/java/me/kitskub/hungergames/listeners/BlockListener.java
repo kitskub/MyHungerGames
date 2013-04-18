@@ -7,6 +7,7 @@ import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.games.HungerGame;
 import me.kitskub.hungergames.stats.PlayerStat.PlayerState;
 import me.kitskub.hungergames.utils.ChatUtils;
+import org.bukkit.Bukkit;
 
 import org.bukkit.Material;
 
@@ -114,12 +115,17 @@ public class BlockListener implements Listener {
 		if (!(event.getClickedBlock().getState() instanceof Chest)) return;
 
                 Player player = event.getPlayer();
-                HungerGame game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+                final HungerGame game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
                 if(game == null) return;
 		if(!Defaults.Config.AUTO_ADD.getBoolean(game.getSetup())) return;
-		
+		final Chest state = (Chest) event.getClickedBlock().getState();
 		// Logging.log(Level.FINEST, "Inventory opened and checking for fill. Player: {0}", player.getName());
-                game.addAndFillChest((Chest) event.getClickedBlock().getState());
+		Bukkit.getScheduler().runTaskLater(HungerGames.getInstance(), new Runnable() {
+
+			public void run() {
+				game.addAndFillChest(state);
+			}
+		}, 1);
 	}
 
 	@EventHandler(ignoreCancelled = true)
