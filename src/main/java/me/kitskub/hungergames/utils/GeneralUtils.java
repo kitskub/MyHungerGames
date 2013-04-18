@@ -147,6 +147,7 @@ public class GeneralUtils {
 		//This calculate the amount of items that will be in the chest.
 		final int maxItemSize = 100;
 		final int amountCount = map.size() >= maxItemSize ? size : (int) Math.ceil((size * Math.sqrt(map.size()))/Math.sqrt(maxItemSize));
+		if (amountCount == 0) return; // If there are no items, don't continue with method
 		final int minItems = (int) Math.floor(amountCount/2);
 
 		//Let's calculate what item we can have.
@@ -164,7 +165,8 @@ public class GeneralUtils {
 		ArrayList<ItemStack> arrayItemStack = new ArrayList<ItemStack>(map.keySet());
 		if (arrayItemStack.isEmpty()) arrayItemStack.add(last);//Just in case
 		//We add the items in the chest.
-		int amount = HungerGames.getRandom().nextInt((amountCount - minItems) * (arrayItemStack.size() / oldmap.size())) + minItems;
+		int toRandom = (amountCount - minItems) * (arrayItemStack.size() / oldmap.size());
+		int amount = toRandom == 0 ? minItems : HungerGames.getRandom().nextInt(toRandom) + minItems;
 		for (int i = 0; i < amount; i++) {
 			ItemStack stack = arrayItemStack.get(HungerGames.getRandom().nextInt(arrayItemStack.size()));
 			int slot = HungerGames.getRandom().nextInt(slots.size());
