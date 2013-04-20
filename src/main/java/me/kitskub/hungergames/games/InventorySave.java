@@ -28,6 +28,7 @@ public class InventorySave {
 		player.getInventory().setArmorContents(armorContents);
 		player.setLevel(level);
 		player.setExp(exp);
+		player.updateInventory();
 	}
 	
 	public static void saveAndClearInventory(Player player){
