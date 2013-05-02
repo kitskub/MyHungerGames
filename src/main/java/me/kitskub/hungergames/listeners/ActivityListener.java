@@ -67,9 +67,8 @@ public class ActivityListener implements Listener, Runnable {
 	}
 	
 	public void update(Player p) {
-		WeakReference<HungerGame> game = (WeakReference<HungerGame>) HungerGames.getInstance().getGameManager().getPlayingSession(p);
-		if (game == null) return;
-		EquatableWeakReference<HungerGame> eGame = new EquatableWeakReference<HungerGame>(game);
+		EquatableWeakReference<HungerGame> eGame = (EquatableWeakReference<HungerGame>) HungerGames.getInstance().getGameManager().getPlayingSession(p);
+		if (eGame == null) return;
 		if (!times.containsKey(eGame)) times.put(eGame, new HashMap<String, Long>());
 		times.get(eGame).put(p.getName(), System.currentTimeMillis());
 	}

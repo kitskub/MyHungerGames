@@ -38,6 +38,7 @@ public class ScoreboardHandler implements Listener {
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
 		if (!Defaults.Config.USE_SCOREBOARD.getBoolean(event.getGame().getSetup())) return;
 		Scoreboard get = boards.get(event.getGame());
+		if (get == null) return;
 		get.resetScores(event.getPlayer());
 	}
 	
@@ -52,6 +53,9 @@ public class ScoreboardHandler implements Listener {
 	
 	public static void updateLives(Game game, OfflinePlayer p, int newLives) {
 		Scoreboard get = boards.get(game);
-		if (get != null) get.getObjective("Players").getScore(p).setScore(newLives);
+		if (get != null) {
+			if (newLives > 0) get.getObjective("Players").getScore(p).setScore(newLives);
+			else get.resetScores(p);
+		}
 	}
 }

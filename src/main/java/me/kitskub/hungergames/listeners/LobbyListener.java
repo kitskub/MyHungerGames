@@ -33,10 +33,11 @@ public class LobbyListener implements Listener, Runnable {
 	private static Map<Location, EquatableWeakReference<? extends Game>> joinSigns = new HashMap<Location, EquatableWeakReference<? extends Game>>();
 	private static Map<Location, EquatableWeakReference<? extends Game>> gameSigns = new HashMap<Location, EquatableWeakReference<? extends Game>>();
 	private static List<InfoWall> infoWalls = new ArrayList<InfoWall>();
-	private static int currentCheckPeriod = 0, maxCheckPeriod = 5;
+	private static int currentCheckPeriod = 0;
+	private static final int MAX_CHECK_PERIOD = 5;
 	
 	public LobbyListener() {
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGames.getInstance(), this, 0, 40);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGames.getInstance(), this, 0, 20);//Update once a second
 	}
 	
 	public static void removeSign(Location loc) {
@@ -181,19 +182,17 @@ public class LobbyListener implements Listener, Runnable {
 
 	public void run() {
 		currentCheckPeriod++;
-		if (currentCheckPeriod >= maxCheckPeriod) {
-			for (Location l : joinSigns.keySet()) {
-				EquatableWeakReference<? extends Game> game = joinSigns.get(l);
-				if (game == null || game.get() == null) {
-					joinSigns.remove(l);
-				}
-				if (game.get().getState() == HungerGame.GameState.DELETED) {
-					joinSigns.remove(l);
-				}
+		if (currentCheckPeriod < MAX_CHECK_PERIOD) return;//Only MAX_CHECK_PERIOD seconds
+		currentCheckPeriod = 0;
+		for (Location l : joinSigns.keySet()) {
+			EquatableWeakReference<? extends Game> game = joinSigns.get(l);
+			if (game == null || game.get() == null) {
+				joinSigns.remove(l);
 			}
-			currentCheckPeriod = 0;
+			if (game.get().getState() == HungerGame.GameState.DELETED) {
+				joinSigns.remove(l);
+			}
 		}
-
 		updateGameSigns();
 		for (Iterator<InfoWall> it = infoWalls.iterator(); it.hasNext();) {
 			InfoWall w = it.next();
@@ -377,8 +376,8 @@ public class LobbyListener implements Listener, Runnable {
 			this.game = game;
 			update();
 		}
-		public void update() {
-			if (game.get() == null) return;
+		
+		private List<Sign> getSignsWithVerification() {
 			List<Sign> signList = new ArrayList<Sign>();
 			for (Iterator<Location> it = signs.iterator(); it.hasNext();) {
 				Location l = it.next();
@@ -388,11 +387,16 @@ public class LobbyListener implements Listener, Runnable {
 				}
 				signList.add((Sign) l.getBlock().getState());
 			}
-			Iterator<Sign> signIt = signList.iterator();
+			return signList;
+		}
+		
+		public void update() {
+			if (game.get() == null) return;
+			List<Sign> signList = getSignsWithVerification();
 			TreeSet<PlayerStat> stats = new TreeSet<PlayerStat>(new PlayerStat.StatComparator());
 			stats.addAll(game.get().getStats());
 			Iterator<PlayerStat> statIt = stats.iterator();
-			
+			Iterator<Sign> signIt = signList.iterator();
 			while(signIt.hasNext()) {
 				Sign nextSign = signIt.next();
 				if (statIt.hasNext()) {
