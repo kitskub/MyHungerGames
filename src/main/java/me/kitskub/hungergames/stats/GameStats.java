@@ -19,21 +19,21 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import me.kitskub.hungergames.Defaults;
+import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.Logging;
 import me.kitskub.hungergames.games.HungerGame;
 import me.kitskub.hungergames.stats.PlayerStat.PlayerState;
 import me.kitskub.hungergames.utils.ConnectionUtils;
+import org.bukkit.Bukkit;
 
 public class GameStats {
-
-	private HungerGame game;
-	private List<Death> deaths = new ArrayList<Death>();
-	private List<PlayerStat> players = new ArrayList<PlayerStat>();
-	Map<String, String> map = new HashMap<String, String>();
+	private final HungerGame game;
+	private final List<Death> deaths = new ArrayList<Death>();
+	private final List<PlayerStat> players = new ArrayList<PlayerStat>();
+	private final Map<String, String> map = new HashMap<String, String>();
 	
 	public GameStats(HungerGame game){
 		this.game = game;
-		map = new HashMap<String, String>();
 	}
 	
 	public void saveGameData(){
@@ -75,43 +75,51 @@ public class GameStats {
 		deaths.add(death);
 	}
 	
-	public void submit(){
-		String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
+	public void submit(){//Also clears
+		final Map<String, String> localMap = new HashMap<String, String>(map);
+		map.clear();
+		final String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return;
 		StringBuilder playersSB = new StringBuilder();
 		for (PlayerStat p : players) {
 			playersSB.append("{").append(p.getPlayer().getName()).append("}");
 			String k = "players[" + p.getPlayer().getName() + "]";
-			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
-			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
-			map.put(k + "[kills]", String.valueOf(p.getNumKills()));
-			map.put(k + "[time]", new Time(p.getTime()).toString());
+			localMap.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
+			localMap.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
+			localMap.put(k + "[kills]", String.valueOf(p.getNumKills()));
+			localMap.put(k + "[time]", new Time(p.getTime()).toString());
 		}
-		map.put("players", playersSB.toString());
+		players.clear();
+		localMap.put("players", playersSB.toString());
 		StringBuilder sponsorsSB = new StringBuilder();
 		for (String s : game.getSponsors().keySet()) {
 			sponsorsSB.append("{").append(s).append(":");
 			for (String sponsee : game.getSponsors().get(s)) sponsorsSB.append("{").append(sponsee).append("}");
 			sponsorsSB.append("}");
 		}
-		map.put("sponsors", sponsorsSB.toString());
-		map.put("deaths", String.valueOf(deaths.size()));
+		localMap.put("sponsors", sponsorsSB.toString());
+		localMap.put("deaths", String.valueOf(deaths.size()));
 		int j = 0;
 		for (Death d : deaths) {
 			String k = "deaths[" + (j++) + "]";
-			map.put(k + "[time]", String.valueOf(d.getTime()));
-			map.put(k + "[player]", d.getPlayer());
-			map.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
-			map.put(k + "[cause]", d.getCause());		
+			localMap.put(k + "[time]", String.valueOf(d.getTime()));
+			localMap.put(k + "[player]", d.getPlayer());
+			localMap.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
+			localMap.put(k + "[cause]", d.getCause());		
 		}
-		try {
-			ConnectionUtils.post(urlString, map);
-		} catch (ParserConfigurationException ex) {
-			Logging.debug("Error when updating games: " + ex.getMessage());
-		} catch (SAXException ex) {
-		} catch (IOException ex) {
-			Logging.debug("Error when updating games: " + ex.getMessage());
-		}
+		deaths.clear();
+		Bukkit.getScheduler().runTaskAsynchronously(HungerGames.getInstance(), new Runnable() {
+			public void run() {
+				try {
+					ConnectionUtils.post(urlString, localMap);
+				} catch (ParserConfigurationException ex) {
+					Logging.debug("Error when updating games: " + ex.getMessage());
+				} catch (SAXException ex) {
+				} catch (IOException ex) {
+					Logging.debug("Error when updating games: " + ex.getMessage());
+				}
+			}
+		});
 	}
 	
 	public static SQLStat getStat(String s) {

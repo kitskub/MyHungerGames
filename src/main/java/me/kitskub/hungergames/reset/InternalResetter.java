@@ -55,25 +55,31 @@ public class InternalResetter extends Resetter implements Listener, Runnable {
 	}
 
 	@Override
-	public boolean resetChanges(HungerGame game) {
+	public boolean resetChanges(final HungerGame game) {
 		synchronized (toCheck) {
 			toCheck.clear();
 			toCheckInvs.clear();
 		}
-		if(!changedBlocks.containsKey(game)) return true;
-		Map<Location, BlockState> map = changedBlocks.get(game);
-		int chests = 0;
-		for(Location l : map.keySet()) {
-			BlockState state = map.get(l);
-			state.update(true);
-			if (!(state instanceof InventoryHolder)) continue;
-			if (!changedInvs.get(game).containsKey(l)) continue;
-			((InventoryHolder) state).getInventory().setContents(changedInvs.get(game).get(l));
-			chests++;
-
-		}
-		Logging.debug("Reset " + chests + " chests");
+		if(!changedBlocks.containsKey(game)) return false;
+		final Map<Location, BlockState> map = new HashMap<Location, BlockState>(changedBlocks.get(game));
+		final Map<Location, ItemStack[]> invMap = new HashMap<Location, ItemStack[]>(changedInvs.get(game));
 		changedBlocks.get(game).clear();
+		changedInvs.get(game).clear();
+		Bukkit.getScheduler().runTask(HungerGames.getInstance(), new Runnable() {
+			public void run() {
+				int chests = 0;
+				for(Location l : map.keySet()) {
+					BlockState state = map.get(l);
+					state.update(true);
+					if (!(state instanceof InventoryHolder)) continue;
+					if (!invMap.containsKey(l)) continue;
+					((InventoryHolder) state).getInventory().setContents(invMap.get(l));
+					chests++;
+
+				}
+				Logging.debug("Reset " + chests + " chests");
+			}
+		});
 		return true;
 	}
 
