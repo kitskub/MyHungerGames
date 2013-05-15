@@ -9,7 +9,7 @@ global:
       stack:
         ==: org.bukkit.inventory.ItemStack
         type: DIAMOND_PICKAXE
-        # if no amount give, defaults to 0
+        # if no amount given, defaults to 0
         damage: 1
         # if no amount given, defaults to 1
         amount: 1
