@@ -13,11 +13,11 @@ global:
 # GLOBAL ONLY
   webstats-ip: http://mcmyhg.com/dbproxy.php
   
-# whether players should automatically join the game when there is an available spot in a game
+# Whether players should automatically join the game when there is an available spot in a game
 # GLOBAL ONLY
   auto-join: false
   
-# with this false, you cannot use item names, but you can use custom blocks
+# With this false, you cannot use item names, but you can use custom blocks
   use-match-material: true
   
 # Time, in seconds, after game starts before players can move
@@ -40,62 +40,62 @@ global:
 # If a winner gets to keep his items
   winner-keeps-items: true
   
-# number of lives a player has. 0 is unlimited
+# Number of lives a player has. 0 is unlimited lifes
   lives: 1
   
-# whether players should clear their inventory before joining
+# Whether players should clear their inventory before joining
   require-inv-clear: false
   
 # Whether to save and clear a players inventory on join
   clear-inv: true
   
-# require everyone that has joined the game to vote before the game is auto-starterd
+# Requires everyone that has joined the game to vote before the game is auto-starterd
 # will not work when auto-vote is on
   all-vote: false
   
-# when a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
+# When a player joins a game, they are auto-voted as ready. If true, all-vote is disregarded
   auto-vote: false
   
-# whether players can use commands. Does not disallow HungerGames commands.
+# Whether players can use commands. Does not disallow HungerGames commands.
   use-command: false
   
-# Commands that are the opposite of use-command ex. [time, weather]
+# Commands that are execluted of use-command ex. [time, weather]
   special-commands: []
   
-# whether players can teleport
+# Whether players can teleport
   can-teleport: false
   
-# add chest and fill the first time a chest is opened
+# Add chest and fill the first time a chest is opened
   auto-add: true
   
-# whether to force a player into surval for games
+# Whether to force a player into surval for games
   force-survival: true
 
-# whether to freeze players when they join a game
+# Whether to freeze players when they join a game
   freeze-players: true
 
-# whether to force damage done to a player, regardless if another plugin has cancelled it or not
+# Whether to force damage done to a player, regardless if another plugin has cancelled it or not
 # Can be used to stop plugins like Factions from cancelling player damage
   force-damage: false
   
-# whether players can place blocks
+# Whether players can place blocks
   can-place-block: false
   
-# whether players can break blocks
+# Whether players can break blocks
   can-break-block: false
 
-# whether players can interact with blocks (Chests, Enchant tables, ect...)
+# Whether players can interact with blocks (Chests, Enchant tables, ect...)
   can-interact-block: false
 
-# blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
+# Blocks players can place (NOTE: if "can-place-blocks" is false, they cannot
 # place blocks except for these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-place: []
 
-# blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
+# Blocks players can break (NOTE: if "can-break-blocks" is false, they cannot
 # break blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-break: []
 
-# blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
+# Blocks players can interact (NOTE: if "can-interact-blocks" is false, they cannot
 # interact with blocks except these blocks, and vice versa) ex: "[1]", "[1, 10, 28]"
   special-blocks-interact: []
 
@@ -108,17 +108,17 @@ global:
   
   isolate-player-chat: true
   
-# if isolate-player-chat is enabled, this is the maximum distance a player can hear another player from
-# if this is 0, then in-game players can hear each other, but they can't hear out-of-game players
+# If isolate-player-chat is enabled, this is the maximum distance a player can hear another player from
+# If this is 0, then in-game players can hear each other, but they can't hear out-of-game players
   chat-distance: 15
   
-# if this is true, players who haven't done "/hg subscribe" won't see most messages
+# If this is true, players who haven't done "/hg subscribe" won't see most messages
 # players automatically get subscribed when they enter a game
 # subscribers are not persistent between server restarts
 # GLOBAL ONLY
   allow-minimal-messages: true
   
-# whether to remove items off the ground when a game ends
+# Whether to remove items off the ground when a game ends
   remove-items: true
   
 # This is the amount of time, in seconds, before spectators can sponsor a random item for free. Restarts once reaches time.
@@ -189,7 +189,7 @@ global:
     
   
 # Setups ADD to global in any list
-setups:
+Setups:
 #  test1:
 #    inherits: parentSetup, parentSetup2
 #    default-time: 5
