@@ -1,18 +1,16 @@
 package me.kitskub.hungergames;
 
 import me.kitskub.hungergames.utils.ChatUtils;
-import me.kitskub.hungergames.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import org.bukkit.Bukkit;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Files {
-	CONFIG("config.yml", FileType.YML, true),
+	CONFIG("config.yml", FileType.YML, true, false),
 	ITEMCONFIG("itemconfig.yml", FileType.YML, true),
 	GAMES("games.yml", FileType.YML, false),
 	LANG("lang.yml", FileType.YML, true),
@@ -20,15 +18,24 @@ public enum Files {
 	SIGNS("signs.yml", FileType.YML, false),
 	LOBBY_SIGNS("lobbysigns.yml", FileType.YML, false);
 
-	private String path;
-	private FileType type;
-	private boolean hasDefault;
+	private final String path;
+	private final FileType type;
+	private final boolean hasDefault;
 	private YamlConfiguration yamlConfig;
+	private final boolean isSavable;
 
 	private Files(String path, FileType type, boolean hasDefault) {
 		this.path = path;
 		this.type = type;
 		this.hasDefault = hasDefault;
+		this.isSavable = true;
+	}
+
+	private Files(String path, FileType type, boolean hasDefault, boolean isSavable) {
+		this.path = path;
+		this.type = type;
+		this.hasDefault = hasDefault;
+		this.isSavable = isSavable;
 	}
 
 	public static enum FileType {
@@ -70,6 +77,7 @@ public enum Files {
 	}
 	
 	public void save() {
+		if (!isSavable) return;
 		try {
 			if (type == FileType.YML) {
 				yamlConfig.save(getFile());

@@ -1,5 +1,12 @@
 v1.1
 - Fix chest fill lag
+- Fix update delay
+- New random chest fill algorithm
+- Fix lightning error
+- Fix config comments getting resets
+- Add scoreboard
+- Fix chest resetting
+- Fix game end lag
 
 v1.0
 - Fixed InternalResetter problem
