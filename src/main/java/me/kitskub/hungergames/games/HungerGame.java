@@ -472,21 +472,31 @@ public class HungerGame implements Runnable, Game {
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = player.getInventory().getContents();
+			ItemStack[] armor = player.getInventory().getArmorContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
 			for (ItemStack i : contents) {
 				if (i != null) list.add(i); // Remove all null elements
 			}
 			contents = list.toArray(new ItemStack[list.size()]);
+			list.clear();
+			for (ItemStack i : armor) {
+				if (i != null) list.add(i); // Remove all null elements
+			}
+			armor = list.toArray(new ItemStack[list.size()]);
+			list.clear();
 			playerLeaving(player, false);
+			teleportPlayerToSpawn(player);
 			if (isFinished && Config.WINNER_KEEPS_ITEMS.getBoolean(setup)) {
 				for (ItemStack i : player.getInventory().addItem(contents).values()) {
+					player.getLocation().getWorld().dropItem(player.getLocation(), i);
+				}
+				for (ItemStack i : player.getInventory().addItem(armor).values()) {
 					player.getLocation().getWorld().dropItem(player.getLocation(), i);
 				}
 			}
 			else {
 				for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
 			}
-			teleportPlayerToSpawn(player);
 			if (isFinished) GeneralUtils.rewardPlayer(player);
 		}
 		for (String stat : stats.keySet()) {
