@@ -37,6 +37,7 @@ public class InventorySave {
 		player.getInventory().clear();
 		player.setLevel(0);
 		player.setExp(0);
+		player.updateInventory();
 	}
 
 	public static void loadInventory(Player player){
