@@ -895,7 +895,7 @@ public class HungerGame implements Runnable, Game {
 	    if (Config.CLEAR_INV.getBoolean(setup)) InventorySave.saveAndClearInventory(player);
 	    for (String kit : ItemConfig.getKits()) {
 		    if (HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName()) || HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName() + "." + kit)) {
-			    player.getInventory().addItem((ItemStack[]) ItemConfig.getKit(kit).toArray());
+			    player.getInventory().addItem(ItemConfig.getKit(kit).toArray(new ItemStack[ItemConfig.getKit(kit).size()]));
 		    }
 	    }
 	    for (String string : spectators.keySet()) {
