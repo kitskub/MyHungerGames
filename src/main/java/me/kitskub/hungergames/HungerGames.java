@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
+import me.kitskub.hungergames.listeners.ArenaListener;
 import me.kitskub.hungergames.listeners.SessionListener;
 
 import net.h31ix.updater.Updater;
@@ -50,6 +51,7 @@ public class HungerGames extends JavaPlugin{
 	private static Economy econ;
 	private static Random rand;
 	private static GameManager gameManager;
+	private static ArenaMaster arenaMaster;
 	private static ScoreboardHandler scoreboard;
 	
 	@Override
@@ -69,6 +71,8 @@ public class HungerGames extends JavaPlugin{
 		loadRegistry();
 		loadResetter();
 		callTasks();
+		arenaMaster = new ArenaMaster();
+		arenaMaster.load();
 		gameManager = new GameManager();
 		gameManager.loadGames();
 		LobbyListener.load();
@@ -105,6 +109,7 @@ public class HungerGames extends JavaPlugin{
 			game.stopGame(false);
 		}
 		gameManager.saveGames();
+		arenaMaster.save();
 		SignListener.saveSigns();
 		Logging.info("Games saved.");
 		Files.saveAll();
@@ -164,6 +169,7 @@ public class HungerGames extends JavaPlugin{
 	private static void registerEvents() {
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new ActivityListener(), instance);
+		pm.registerEvents(new ArenaListener(), instance);
 		pm.registerEvents(new BlockListener(), instance);
 		pm.registerEvents(new CommandListener(), instance);
 		pm.registerEvents(new PlayerListener(), instance);
@@ -242,7 +248,11 @@ public class HungerGames extends JavaPlugin{
 	public me.kitskub.hungergames.api.GameManager getGameManager() {
 		return gameManager;
 	}
-	
+
+	public static ArenaMaster getArenaMaster() {
+		return arenaMaster;
+	}
+
 	public static class TimerManager {// TODO remove timer
 		private static final Deque<Stopwatch> timers = new ArrayDeque<Stopwatch>();
 		

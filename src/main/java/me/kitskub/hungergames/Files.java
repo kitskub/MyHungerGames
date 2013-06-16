@@ -1,6 +1,7 @@
 package me.kitskub.hungergames;
 
 import me.kitskub.hungergames.utils.ChatUtils;
+import me.kitskub.hungergames.utils.config.Config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +14,7 @@ public enum Files {
 	CONFIG("config.yml", FileType.YML, true, false),
 	ITEMCONFIG("itemconfig.yml", FileType.YML, true),
 	GAMES("games.yml", FileType.YML, false),
+	ARENAS("arenas.yml", FileType.YML, false),
 	LANG("lang.yml", FileType.YML, true),
 	LOG("myhungergames.log", FileType.LOG, false),
 	SIGNS("signs.yml", FileType.YML, false),
@@ -21,7 +23,7 @@ public enum Files {
 	private final String path;
 	private final FileType type;
 	private final boolean hasDefault;
-	private YamlConfiguration yamlConfig;
+	private Config yamlConfig;
 	private final boolean isSavable;
 
 	private Files(String path, FileType type, boolean hasDefault) {
@@ -57,8 +59,9 @@ public enum Files {
 			}
 			if (type == FileType.YML) {
 				//Logging.debug("Loading: " + path);
-				yamlConfig = new YamlConfiguration();
-				yamlConfig.load(file);
+				//yamlConfig = new YamlConfiguration();
+				//yamlConfig.load(file);
+				yamlConfig = new Config(file);
 			}
 			else if (type == FileType.LOG) {
 			}
@@ -66,10 +69,10 @@ public enum Files {
 			Logging.warning("Tried to create " + file.getName() + " but could not.");
 		} catch (IOException ex) {
 			Logging.warning("Something went wrong when loading: " + path);
-		} catch (InvalidConfigurationException ex) {
+		}/* catch (InvalidConfigurationException ex) {
 			Logging.warning(ex.getMessage());
 			ex.printStackTrace();
-		}		
+		}*/		
 	}
 	
 	public File getFile() {
@@ -90,7 +93,7 @@ public enum Files {
 		}
 	}
 	
-	public YamlConfiguration getConfig() {
+	public Config getConfig() {
 		if (type != FileType.YML) {
 			throw new IllegalStateException("This Files type is not a YML file!");
 		}

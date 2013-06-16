@@ -1553,8 +1553,8 @@ public class HungerGame implements Runnable, Game {
 			Logging.debug("Checked: ", count);
 		}
 		for (Cuboid c : cuboids) {
-			if (worlds.contains(c.getLower().getWorld().getName())) continue;
-			for (Entity e : c.getLower().getWorld().getEntities()) {
+			if (worlds.contains(c.getWorld())) continue;
+			for (Entity e : c.getWorld().getEntities()) {
 				if (!(e instanceof Item)) continue;
 				if (!c.isLocationWithin(e.getLocation())) continue;
 				e.remove();

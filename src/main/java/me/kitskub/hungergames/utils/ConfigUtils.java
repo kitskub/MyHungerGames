@@ -1,10 +1,10 @@
 package me.kitskub.hungergames.utils;
 
-import me.kitskub.hungergames.Files;
 import me.kitskub.hungergames.Logging;
 
 import java.util.ArrayList;
 import java.util.List;
+import me.kitskub.hungergames.utils.config.ConfigSection;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +16,15 @@ import org.bukkit.material.MaterialData;
 public class ConfigUtils {
 	public static final String MONEY = "money";
 	public static final String CHANCE = "chance";
+	
+	public static ConfigSection getOrCreateSection(ConfigSection section, String string) {
+		ConfigSection config = section.getConfigSection(string);
+		if (config == null) {
+			
+			config = section.createSection(string);
+		}
+		return config;
+	}
 	
 	public static ConfigurationSection getOrCreateSection(ConfigurationSection section, String string) {
 		ConfigurationSection config = section.getConfigurationSection(string);

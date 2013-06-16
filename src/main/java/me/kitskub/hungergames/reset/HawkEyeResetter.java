@@ -52,12 +52,12 @@ public class HawkEyeResetter extends Resetter{
 		parser.worlds = null;
 		worlds.clear();
 		for (Cuboid c : game.getCuboids()) {
-			if (game.getWorlds().contains(c.getLower().getWorld())) continue;
+			if (game.getWorlds().contains(c.getWorld())) continue;
 			worlds.clear();
-			worlds.add(c.getLower().getWorld().getName());
+			worlds.add(c.getWorld().getName());
 			parser.worlds = (String[]) worlds.toArray();
-			parser.minLoc = c.getLower().toVector();
-			parser.maxLoc = c.getUpper().toVector();
+			parser.minLoc = c.getLower();
+			parser.maxLoc = c.getUpper();
 		}
 		return true;
 	}

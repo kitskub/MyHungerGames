@@ -10,6 +10,7 @@ import java.util.Map;
 import com.google.common.base.Strings;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -18,7 +19,9 @@ import java.util.TreeSet;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.ItemConfig;
 import me.kitskub.hungergames.Logging;
+import me.kitskub.hungergames.OutdatedException;
 import me.kitskub.hungergames.WorldNotFoundException;
+import me.kitskub.hungergames.games.Arena;
 import org.apache.commons.lang.ArrayUtils;
 
 import org.bukkit.Bukkit;
@@ -32,6 +35,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 
 public class GeneralUtils {
 	public static boolean equals(Location loc1, Location loc2) {
@@ -39,6 +43,38 @@ public class GeneralUtils {
 			&& loc1.getBlockX() == loc2.getBlockX()
 			&& loc1.getBlockY() == loc2.getBlockY()
 			&& loc1.getBlockZ() == loc2.getBlockZ();
+	}
+
+	public static Set<Arena> getArenasIn(Location loc) {
+		Set<Arena> ret = new HashSet<Arena>();
+		for (Arena a : HungerGames.getArenaMaster().getArenas()) {
+			if (a.getRegion().contains(loc)) {
+				ret.add(a);
+			}
+		}
+		return ret;
+	}
+	
+	public static String parseToString(Vector vector) {
+		if (vector == null) return "";
+		DecimalFormat df = new DecimalFormat();
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		df.setDecimalFormatSymbols(symbols);
+		df.setGroupingUsed(false);
+		return String.format("%s %s %s", df.format((Number) vector.getX()), df.format((Number) vector.getY()), df.format((Number) vector.getZ()));
+	}
+
+	public static Vector parseToVector(String str) throws NumberFormatException, IllegalArgumentException {
+		Strings.emptyToNull(str);
+		if (str == null) {
+			throw new IllegalArgumentException("Location can not be null.");
+		}
+		String[] strs = str.split(" ");
+		double x = Double.parseDouble(strs[0]);
+		double y = Double.parseDouble(strs[1]);
+		double z = Double.parseDouble(strs[2]);
+		return new Vector(x, y, z);
 	}
 	
 	public static String parseToString(Location loc) {
@@ -58,6 +94,7 @@ public class GeneralUtils {
 			throw new IllegalArgumentException("Location can not be null.");
 		}
 		String[] strs = str.split(" ");
+		
 		double x = Double.parseDouble(strs[0]);
 		double y = Double.parseDouble(strs[1]);
 		double z = Double.parseDouble(strs[2]);
