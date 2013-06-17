@@ -75,43 +75,44 @@ public class GameStats {
 		deaths.add(death);
 	}
 	
-	public void submit(){//Also clears
-		final Map<String, String> localMap = new HashMap<String, String>(map);
-		map.clear();
+	public void submit() {//Also clears
 		final String urlString = Defaults.Config.WEBSTATS_IP.getGlobalString();
 		if ("0.0.0.0".equals(urlString)) return;
+
 		StringBuilder playersSB = new StringBuilder();
 		for (PlayerStat p : players) {
 			playersSB.append("{").append(p.getPlayer().getName()).append("}");
 			String k = "players[" + p.getPlayer().getName() + "]";
-			localMap.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
-			localMap.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
-			localMap.put(k + "[kills]", String.valueOf(p.getNumKills()));
-			localMap.put(k + "[time]", new Time(p.getTime()).toString());
+			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
+			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
+			map.put(k + "[kills]", String.valueOf(p.getNumKills()));
+			map.put(k + "[time]", new Time(p.getTime()).toString());
 		}
+		map.put("players", playersSB.toString());
 		players.clear();
-		localMap.put("players", playersSB.toString());
+
 		StringBuilder sponsorsSB = new StringBuilder();
 		for (String s : game.getSponsors().keySet()) {
 			sponsorsSB.append("{").append(s).append(":");
 			for (String sponsee : game.getSponsors().get(s)) sponsorsSB.append("{").append(sponsee).append("}");
 			sponsorsSB.append("}");
 		}
-		localMap.put("sponsors", sponsorsSB.toString());
-		localMap.put("deaths", String.valueOf(deaths.size()));
+		map.put("sponsors", sponsorsSB.toString());
+
+		map.put("deaths", String.valueOf(deaths.size()));
 		int j = 0;
 		for (Death d : deaths) {
 			String k = "deaths[" + (j++) + "]";
-			localMap.put(k + "[time]", String.valueOf(d.getTime()));
-			localMap.put(k + "[player]", d.getPlayer());
-			localMap.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
-			localMap.put(k + "[cause]", d.getCause());		
+			map.put(k + "[time]", String.valueOf(d.getTime()));
+			map.put(k + "[player]", d.getPlayer());
+			map.put(k + "[killer]", d.getKiller() == null ? "" : d.getKiller());	
+			map.put(k + "[cause]", d.getCause());		
 		}
 		deaths.clear();
 		Bukkit.getScheduler().runTaskAsynchronously(HungerGames.getInstance(), new Runnable() {
 			public void run() {
 				try {
-					ConnectionUtils.post(urlString, localMap);
+					ConnectionUtils.post(urlString, map);
 				} catch (ParserConfigurationException ex) {
 					Logging.debug("Error when updating games: " + ex.getMessage());
 				} catch (SAXException ex) {
