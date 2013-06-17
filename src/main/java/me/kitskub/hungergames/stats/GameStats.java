@@ -115,6 +115,7 @@ public class GameStats {
 				} catch (ParserConfigurationException ex) {
 					Logging.debug("Error when updating games: " + ex.getMessage());
 				} catch (SAXException ex) {
+					Logging.debug("Error when updating games: " + ex.getMessage());
 				} catch (IOException ex) {
 					Logging.debug("Error when updating games: " + ex.getMessage());
 				}

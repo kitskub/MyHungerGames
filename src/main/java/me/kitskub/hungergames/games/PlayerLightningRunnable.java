@@ -29,7 +29,7 @@ public class PlayerLightningRunnable implements Runnable{
 				Player target = game.getRemainingPlayers().get(nextLightningIndex);
 				Location location = target.getLocation();
 				location.setY(1);
-				target.getWorld().strikeLightning(location);
+				target.getWorld().strikeLightningEffect(location);
 								
 				nextLightningIndex++;
 				lastLightningTime = System.currentTimeMillis();				
