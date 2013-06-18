@@ -32,6 +32,7 @@ import me.kitskub.hungergames.utils.Cuboid;
 import me.kitskub.hungergames.utils.GeneralUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -452,6 +453,20 @@ public class HungerGame implements Runnable, Game {
 		return true;
 	}
 	
+	private ItemStack[] filterNulls(ItemStack[] stack) {
+		List<ItemStack> list = new ArrayList<ItemStack>();
+		for (ItemStack i : stack) {
+			if (i != null) list.add(i); // Remove all null elements
+		}
+		return list.toArray(new ItemStack[list.size()]);
+	}
+	
+	private ItemStack[] removeAll(ItemStack[] start, ItemStack[] toRemove) {
+		List<ItemStack> list = Arrays.asList(start);
+		list.removeAll(Arrays.asList(toRemove));
+		return list.toArray(new ItemStack[list.size()]);
+	}
+
 	@Override
 	public String stopGame(boolean isFinished) {
 		if (state == DELETED) return "That game does not exist anymore.";
@@ -471,21 +486,16 @@ public class HungerGame implements Runnable, Game {
 		}
 		for (Player player : getRemainingPlayers()) {
 			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
-			ItemStack[] contents = player.getInventory().getContents();
-			ItemStack[] armor = player.getInventory().getArmorContents();
-			List<ItemStack> list = new ArrayList<ItemStack>();
-			for (ItemStack i : contents) {
-				if (i != null) list.add(i); // Remove all null elements
-			}
-			contents = list.toArray(new ItemStack[list.size()]);
-			list.clear();
-			for (ItemStack i : armor) {
-				if (i != null) list.add(i); // Remove all null elements
-			}
-			armor = list.toArray(new ItemStack[list.size()]);
-			list.clear();
+			ItemStack[] contents = filterNulls(player.getInventory().getContents());
+			ItemStack[] armor = filterNulls(player.getInventory().getArmorContents());
 			playerLeaving(player, false);
 			teleportPlayerToSpawn(player);
+			// If we didn't clear inventory before, don't drop inventory items
+			if (!Config.CLEAR_INV.getBoolean(setup)) {
+				contents = removeAll(contents, player.getInventory().getContents());
+				armor = removeAll(contents, player.getInventory().getArmorContents());
+
+			}
 			if (isFinished && Config.WINNER_KEEPS_ITEMS.getBoolean(setup)) {
 				for (ItemStack i : player.getInventory().addItem(contents).values()) {
 					player.getLocation().getWorld().dropItem(player.getLocation(), i);
@@ -493,8 +503,7 @@ public class HungerGame implements Runnable, Game {
 				for (ItemStack i : player.getInventory().addItem(armor).values()) {
 					player.getLocation().getWorld().dropItem(player.getLocation(), i);
 				}
-			}
-			else {
+			} else {
 				for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
 			}
 			if (isFinished) GeneralUtils.rewardPlayer(player);
@@ -893,6 +902,7 @@ public class HungerGame implements Runnable, Game {
 	    }
 	    if (Config.HIDE_PLAYERS.getBoolean(setup)) player.setSneaking(true);
 	    if (Config.CLEAR_INV.getBoolean(setup)) InventorySave.saveAndClearInventory(player);
+	    else InventorySave.saveInventoryNoClear(player);
 	    for (String kit : ItemConfig.getKits()) {
 		    if (HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName()) || HGPermission.INSTANCE.hasPermission(player, Perm.USER_KIT.getPermission().getName() + "." + kit)) {
 			    player.getInventory().addItem(ItemConfig.getKit(kit).toArray(new ItemStack[ItemConfig.getKit(kit).size()]));

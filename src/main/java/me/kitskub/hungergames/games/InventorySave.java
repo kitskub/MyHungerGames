@@ -15,6 +15,12 @@ public class InventorySave {
 	private ItemStack[] armorContents;
 	private float exp = 0;
 	private int level = 0;
+	private boolean noClear;
+
+	private InventorySave setNoClear(boolean clear) {
+		this.noClear = clear;
+		return this;
+	}
 
 	private InventorySave(Player player) {
 		armorContents = player.getInventory().getArmorContents();
@@ -24,10 +30,17 @@ public class InventorySave {
 	}
 
 	private void loadInventoryTo(Player player) {
+		// Counter intuitive - if the inventory wasn't cleared before, we only want to give them what they had before.
+		if (noClear) {
+			player.getInventory().clear();
+			player.getInventory().setArmorContents(new ItemStack[player.getInventory().getArmorContents().length]);
+		}
 		player.getInventory().setContents(contents);
 		player.getInventory().setArmorContents(armorContents);
-		player.setLevel(level);
-		player.setExp(exp);
+		if (!noClear) {
+			player.setLevel(level);
+			player.setExp(exp);
+		}
 		player.updateInventory();
 	}
 	
@@ -37,6 +50,11 @@ public class InventorySave {
 		player.getInventory().clear();
 		player.setLevel(0);
 		player.setExp(0);
+		player.updateInventory();
+	}
+	
+	public static void saveInventoryNoClear(Player player){
+		savedInventories.put(player, new InventorySave(player).setNoClear(true));
 		player.updateInventory();
 	}
 
