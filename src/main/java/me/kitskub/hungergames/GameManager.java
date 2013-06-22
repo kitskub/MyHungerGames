@@ -120,8 +120,6 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 		}
 		return null;
 	}
-	
-	
 
 	@Override
 	public WeakReference<HungerGame> getSession(Player player) {
