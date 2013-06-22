@@ -14,46 +14,25 @@ public class GameCountdown implements Runnable {
 	private int countdown;
 	private int task;
 	private CommandSender starter;
-	private boolean isResuming;
 	
-	public GameCountdown(final HungerGame game, int num, boolean isResuming) {
+	public GameCountdown(final HungerGame game, int num) {
 		this.game = game;
 		countdown = num;
 		task = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20L, 20L).getTaskId();
-		this.isResuming = isResuming;
 		starter = Bukkit.getConsoleSender();
-		if(isResuming) {
-			ChatUtils.broadcast(game, "Resuming %s in %s...",
-					game.getName(), GeneralUtils.formatTime(countdown));
-		}
-		else {
-			ChatUtils.broadcast(game, "Starting %s in %s...",
-					game.getName(), GeneralUtils.formatTime(countdown));
-		}
-
+		ChatUtils.broadcast(game, "Starting %s in %s...", game.getName(), GeneralUtils.formatTime(countdown));
 	}
 	
-	public GameCountdown(final HungerGame game, int num, boolean isResuming, Player starter) {
-		this(game, num, isResuming);
+	public GameCountdown(final HungerGame game, int num, Player starter) {
+		this(game, num);
 		this.starter = starter;
 	}
 
-	public GameCountdown(final HungerGame game, int num) {
-		this(game, num, false);
+
+	public GameCountdown(final HungerGame game) {
+		this(game, Defaults.Config.DEFAULT_TIME.getInt(game.getSetup()));
 	}
 
-	public GameCountdown(final HungerGame game, int num, Player starter) {
-		this(game, num, false, starter);
-	}
-	
-	public GameCountdown(final HungerGame game, boolean isResuming) {
-		this(game, Defaults.Config.DEFAULT_TIME.getInt(game.getSetup()), isResuming);
-	}
-	
-	public GameCountdown(final HungerGame game) {
-		this(game, Defaults.Config.DEFAULT_TIME.getInt(game.getSetup()), false);
-	}
-	
 	public void cancel() {
 		Bukkit.getScheduler().cancelTask(task);
 	}
@@ -66,12 +45,7 @@ public class GameCountdown implements Runnable {
 		if (countdown <= 1) {
 			cancel();
 			game.setDoneCounting();
-			if (isResuming) {
-				game.resumeGame(starter, 0);
-			}
-			else {
-				game.startGame(starter, 0);
-			}
+			game.startGame(starter, 0);
 			return;
 		}
 		countdown--;

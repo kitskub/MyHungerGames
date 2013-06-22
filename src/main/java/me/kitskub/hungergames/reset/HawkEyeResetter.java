@@ -42,7 +42,7 @@ public class HawkEyeResetter extends Resetter{
 		SearchParser parser = new SearchParser();
 		parser.players = game.getAllPlayers();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		parser.dateFrom = sdf.format(new Date(game.getInitialStartTime()));
+		parser.dateFrom = sdf.format(new Date(game.getStartTime()));
 		Set<String> worlds = new HashSet<String>();
 		for (World w : game.getWorlds()) {
 			worlds.add(w.getName());

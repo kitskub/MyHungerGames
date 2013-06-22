@@ -4,7 +4,9 @@ import me.kitskub.hungergames.Defaults.Commands;
 import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
+import me.kitskub.hungergames.api.Game;
 import me.kitskub.hungergames.api.event.GameCreateEvent;
+import me.kitskub.hungergames.api.event.GameCreatedEvent;
 import me.kitskub.hungergames.commands.PlayerCommand;
 import me.kitskub.hungergames.utils.ChatUtils;
 
@@ -29,21 +31,20 @@ public class AddGameCommand extends PlayerCommand {
 		    ChatUtils.error(player, "%s already exists.", args[0]);
 		    return;
 	    }
+	    GameCreateEvent first = new GameCreateEvent(args[0]);
+	    if(first.isCancelled()) {
+	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[0]);
+		return;
+	    }
 	    if(args.length == 1){
-		    HungerGames.getInstance().getGameManager().createGame(args[0]);
+		    game = HungerGames.getInstance().getGameManager().createGame(args[0]);
 	    }
 	    else{
-		    HungerGames.getInstance().getGameManager().createGame(args[0], args[1]);
+		    game = HungerGames.getInstance().getGameManager().createGame(args[0], args[1]);
 	    }
-	    GameCreateEvent event = new GameCreateEvent(HungerGames.getInstance().getGameManager().getRawGame(args[0]));
-	    if(event.isCancelled()) {
-	    	HungerGames.getInstance().getGameManager().removeGame(args[0]);
-	    	ChatUtils.error(player, "Creation of game %s was cancelled.", args[0]);
-	    }
-	    else {
-	    	ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
-	    	ChatUtils.send(player, ChatColor.GREEN, "type the command 'add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
-	    }
+	    GameCreatedEvent event = new GameCreatedEvent(game);
+	    ChatUtils.send(player, ChatColor.GREEN, "%s has been created. To add spawn points, simply", args[0]);
+	    ChatUtils.send(player, ChatColor.GREEN, "type the command 'add spawnpoint <game name>'", HungerGames.CMD_ADMIN);
 	}
 
 	@Override

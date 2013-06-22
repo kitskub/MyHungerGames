@@ -1,18 +1,16 @@
 package me.kitskub.hungergames.api.event;
 
+import me.kitskub.hungergames.api.Game;
 import org.bukkit.event.HandlerList;
 
-import me.kitskub.hungergames.games.HungerGame;
-
-// called when a Hunger Game is paused
-public class GamePauseEvent extends GameEvent  {
+public class GameCreatedEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
 	
-	public GamePauseEvent(final HungerGame game) {
+
+	public GameCreatedEvent(final Game game) {
 		super(game);
 	}
-
-	@Override
+	
 	public HandlerList getHandlers() {
 		return handlers;
 	}
@@ -20,5 +18,4 @@ public class GamePauseEvent extends GameEvent  {
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
-
 }

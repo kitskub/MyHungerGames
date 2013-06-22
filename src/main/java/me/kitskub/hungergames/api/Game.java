@@ -53,44 +53,11 @@ public interface Game extends Comparable<Game> {
 	 */
 	public String startGame(int ticks);
 
-	
- 	public boolean resumeGame(CommandSender notifier, int ticks);	
-	
-	public boolean resumeGame(CommandSender notifier, boolean immediate);
-	
-	public boolean resumeGame(boolean immediate);
-	
-	/**
-	 * Resumes the game
-	 * 
-	 * @param ticks 
-	 * @return Null if game or countdown was not successfully started. Otherwise, error message.
-	 */
-	public String resumeGame(int ticks);
-	
-	public boolean pauseGame(CommandSender notifier);
-	
-	/**
-	 * 
-	 * @return null if successful, message if not
-	 */
-	public String pauseGame();
-	
 	public void addAndFillChest(Chest chest);
         
 	public void fillInventories();
-	
-	/**
-	 * Only used for players that have left the game, but not quitted. Only valid while game is running
-	 * 
-	 * @param player
-	 * @return true if successful
-	 */
-	public boolean rejoin(Player player);
 
 	public boolean join(Player player);
-	
-	public boolean leave(Player player, boolean callEvent);
 	
 	public boolean quit(Player player, boolean callEvent);
 	
@@ -186,23 +153,17 @@ public interface Game extends Comparable<Game> {
 
 	public void playCannonBoom();
 
-	public List<Long> getEndTimes();
+	public long getStartTime();
 
-	public long getInitialStartTime();
-
-	public List<Long> getStartTimes();
+	public long getEndTime();
 	
 	public GameState getState();
 	
 	public enum GameState {
 		DISABLED,
-		DELETED,
 		STOPPED,
 		RUNNING,
-		PAUSED,
 		COUNTING_FOR_START,
-		COUNTING_FOR_RESUME,
 		ABOUT_TO_START;
-		
 	}
 }

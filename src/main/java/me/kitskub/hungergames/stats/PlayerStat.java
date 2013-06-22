@@ -106,7 +106,6 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		NOT_IN_GAME,
 		PLAYING,
 		NOT_PLAYING,
-		GAME_PAUSED,
 		DEAD,
 		WAITING;
 	}

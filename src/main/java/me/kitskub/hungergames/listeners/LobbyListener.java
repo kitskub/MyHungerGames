@@ -190,9 +190,6 @@ public class LobbyListener implements Listener, Runnable {
 			if (game == null || game.get() == null) {
 				joinSigns.remove(l);
 			}
-			if (game.get().getState() == HungerGame.GameState.DELETED) {
-				joinSigns.remove(l);
-			}
 		}
 		updateGameSigns();
 		for (Iterator<InfoWall> it = infoWalls.iterator(); it.hasNext();) {
@@ -337,7 +334,7 @@ public class LobbyListener implements Listener, Runnable {
 			}
 			Game game = gameRef.get();
 			BlockState b = l.getBlock().getState();
-			if (game.getState() == HungerGame.GameState.DELETED || !(b instanceof Sign)) {
+			if (!(b instanceof Sign)) {
 				it.remove();
 				continue;
 			}
@@ -350,16 +347,12 @@ public class LobbyListener implements Listener, Runnable {
 				sign.setLine(2, "");
 				sign.setLine(3, "");
 			}
-			else if (game.getState() == HungerGame.GameState.PAUSED) {
-				sign.setLine(1, "Paused");
-				sign.setLine(2, "In-game:" + game.getRemainingPlayers().size());
-			}
 			else if (game.getState() == HungerGame.GameState.STOPPED) {
 				sign.setLine(1, "Stopped");
 				sign.setLine(2, "Ready:" + game.getRemainingPlayers().size());
 				sign.setLine(3, "Available:" + (game.getSize() - game.getRemainingPlayers().size()));
 			}
-			else if (game.getState() == HungerGame.GameState.RUNNING || game.getState() == HungerGame.GameState.COUNTING_FOR_RESUME || game.getState() == HungerGame.GameState.COUNTING_FOR_START) {
+			else if (game.getState() == HungerGame.GameState.RUNNING || game.getState() == HungerGame.GameState.COUNTING_FOR_START) {
 				sign.setLine(1, "Running");
 				sign.setLine(2, "Remaining:" + game.getRemainingPlayers().size());
 			}

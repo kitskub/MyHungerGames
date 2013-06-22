@@ -42,7 +42,7 @@ public class GameStats {
 	
 	public void saveGameData(HungerGame game){
 		map.put("requestType", "updateGameDetails");
-		map.put("startTime", String.valueOf(game.getInitialStartTime()));
+		map.put("startTime", String.valueOf(game.getStartTime()));
 		map.put("name", game.getName());
 		
 		map.put("totalPlayers", String.valueOf(game.getAllPlayers().size()));
@@ -52,10 +52,7 @@ public class GameStats {
 		else {
 			map.put("winner", game.getRemainingPlayers().get(0).getPlayer().getName());
 		}
-		long totalDuration = 0;
-		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
-			totalDuration += game.getEndTimes().get(i) - game.getStartTimes().get(i);
-		}
+		long totalDuration = game.getEndTime() - game.getStartTime();
 		map.put("totalDuration", String.valueOf(totalDuration));
 	}
 	

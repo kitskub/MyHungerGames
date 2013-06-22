@@ -2,7 +2,6 @@ package me.kitskub.hungergames.games;
 
 import com.google.common.base.Stopwatch;
 import me.kitskub.hungergames.api.event.GameSaveEvent;
-import me.kitskub.hungergames.api.event.GamePauseEvent;
 import me.kitskub.hungergames.api.event.GameEndEvent;
 import me.kitskub.hungergames.api.event.GameStartEvent;
 import me.kitskub.hungergames.api.event.PlayerKilledEvent;
@@ -72,10 +71,9 @@ public class HungerGame implements Runnable, Game {
 	private final SpectatorSponsoringRunnable spectatorSponsoringRunnable;
 	private final PlayerLightningRunnable playerLightningRunnable;
 	private final GracePeriodEndedRunnable gracePeriodEndedRunnable;
-	private final List<Long> startTimes;
-	private final List<Long> endTimes;
 	private final List<Team> teams;
-	private long initialStartTime;
+	private long startTime;
+	private long endTime;
 
 	// Persistent
 	private final Map<Location, Float> chests;
@@ -118,10 +116,8 @@ public class HungerGame implements Runnable, Game {
 		playerLightningRunnable = new PlayerLightningRunnable(this);
 		gracePeriodEndedRunnable = new GracePeriodEndedRunnable(this);
 		randomLocs = new ArrayList<Location>();
-		startTimes = new ArrayList<Long>();
-		endTimes = new ArrayList<Long>();
 		teams = new ArrayList<Team>();
-		initialStartTime = 0;
+		startTime = 0;
 		
 		chests = new HashMap<Location, Float>();
 		fixedChests = new HashMap<Location, String>();
@@ -337,24 +333,16 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	public boolean addReadyPlayer(Player player) {
-		if (state == DELETED) {
-			ChatUtils.error(player, "That game does not exist anymore.");
-			return false;
-		}
 		if (readyToPlay.contains(player.getName())) {
 			ChatUtils.error(player, "You have already cast your vote that you are ready to play.");
 			return false;
 		}
-		if (state == COUNTING_FOR_RESUME || state == COUNTING_FOR_START) {
+		if (state == COUNTING_FOR_START) {
 			ChatUtils.error(player, Lang.getAlreadyCountingDown(setup).replace("<game>", name));
 			return false;
 		}
 		if (state == RUNNING) {
 			ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
-			return false;
-		}
-		if(state == PAUSED) {
-			ChatUtils.error(player, "%s has been paused.", name);
 			return false;
 		}
 		readyToPlay.add(player.getName());
@@ -475,21 +463,12 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public String stopGame(boolean isFinished) {
-		if (state == DELETED) return "That game does not exist anymore.";
 		clearWaitingPlayers();
-		if (state != RUNNING && state != PAUSED && state != COUNTING_FOR_RESUME && state != COUNTING_FOR_START) return "Game is not started";
+		if (state != RUNNING && state != COUNTING_FOR_START) return "Game is not started";
 		
 		HungerGames.TimerManager.start();
-		endTimes.add(System.currentTimeMillis());
+		endTime = System.currentTimeMillis();
 		if (countdown != null) countdown.cancel();
-		if (state == PAUSED) { // Needed for inventory stuff
-			for(String playerName : playerLocs.keySet()) {
-				Player p = Bukkit.getPlayer(playerName);
-				if (p == null) continue;
-				playerEntering(p, true);
-				InventorySave.loadGameInventory(p);
-			}
-		}
 		for (User user : getRemainingPlayers()) {
 			user.setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = filterNulls(user.getPlayer().getInventory().getContents());
@@ -570,7 +549,6 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public String startGame(int ticks) {
-		if (state == DELETED) return "Game no longer exists.";
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
 		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
 		if (users.size() < Config.MIN_PLAYERS.getInt(setup)) return String.format("There are not enough players in %s", name);
@@ -594,8 +572,7 @@ public class HungerGame implements Runnable, Game {
 			return "Start was cancelled.";
 		}
 		if (users.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
-		initialStartTime = System.currentTimeMillis();
-		startTimes.add(System.currentTimeMillis());
+		startTime = System.currentTimeMillis();
 		// TODO Task ticks every second. Maybe split up into multiple tasks for randomLoc, lightning and grace message?		
 		locTask = Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), this, 20 * 120, 20 * 10);
 		spectatorSponsoringRunnable.setTask(Bukkit.getScheduler().runTaskTimer(HungerGames.getInstance(), spectatorSponsoringRunnable, 0, 1));
@@ -623,104 +600,6 @@ public class HungerGame implements Runnable, Game {
 		return null;
 	}
 
-	@Override
- 	public boolean resumeGame(CommandSender cs, int ticks) {		
-		if (ticks <= 0) {
-			String result = resumeGame(0);
-			if (result != null) {
-				ChatUtils.error(cs, result);
-				return false;
-			}
-		} else {
-			countdown = new GameCountdown(this, ticks, true);
-			state = COUNTING_FOR_RESUME;
-		}
-		return true;
-	}
-	
-	@Override
-	public boolean resumeGame(CommandSender cs, boolean immediate) {
-		if (!immediate) return resumeGame(cs, Config.DEFAULT_TIME.getInt(setup));
-		return resumeGame(cs, 0);
-	}
-	
-	@Override
-	public boolean resumeGame(boolean immediate) {
-		if (!immediate) return resumeGame(Config.DEFAULT_TIME.getInt(setup)) == null;
-		return resumeGame(0) == null;
-	}
-
-	@Override
-	public String resumeGame(int ticks) {
-		if (state == DELETED) return "That game does not exist anymore.";
-		if(state != PAUSED && state != ABOUT_TO_START) return "Cannot resume a game that has not been paused.";
-		if (ticks > 0) {
-			countdown = new GameCountdown(this, ticks, true);
-			state = COUNTING_FOR_RESUME;
-			return null;
-		}
-		startTimes.add(System.currentTimeMillis());
-		GameStartEvent event = new GameStartEvent(this, true);
-		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			return "Start was cancelled.";
-		}
-		for(String playerName : playerLocs.keySet()) {
-			Player p = Bukkit.getPlayer(playerName);
-			User.get(p).setState(PlayerState.PLAYING);
-			playerEntering(p, true);
-			InventorySave.loadGameInventory(p);
-			World world = p.getWorld();
-			world.setFullTime(0L);
-			p.setHealth(20);
-			p.setFoodLevel(20);
-		}
-		state = RUNNING;
-		countdown = null;
-		ChatUtils.broadcast(this, "Resuming %s. Go!!", name);
-		return null;
-	}
-	
-	@Override
-	public boolean pauseGame(CommandSender cs) {
-		String result = pauseGame();
-		if (result != null) {
-			ChatUtils.error(cs, "Cannot pause a game that has been paused.");
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * 
-	 * @return null if successful, message if not
-	 */
-	@Override
-	public String pauseGame() {
-		if (state == DELETED) return "That game does not exist anymore.";
-		if(state == PAUSED) return "Cannot pause a game that has been paused.";
-		
-		state = PAUSED;
-		endTimes.add(System.currentTimeMillis());
-		if(countdown != null) {
-			countdown.cancel();
-			countdown = null;
-		}
-		for(User p : getRemainingPlayers()) {
-			p.setState(PlayerState.GAME_PAUSED);
-			playerLocs.put(p.getPlayer().getName(), p.getPlayer().getLocation());
-			InventorySave.saveAndClearGameInventory(p.getPlayer());
-			playerLeaving(p.getPlayer(), true);
-			teleportUserToSpawn(p);
-		}
-		for (String spectatorName : spectators.keySet()) {
-			Player spectator = Bukkit.getPlayer(spectatorName);
-			removeSpectator(spectator);
-		}
-		Bukkit.getPluginManager().callEvent(new GamePauseEvent(this));
-		return null;
-	}
-	
 	private void releasePlayers() {
 		for (User u : users) {
 			HungerGames.getInstance().getGameManager().unfreezePlayer(u.getPlayer());
@@ -771,38 +650,6 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	@Override
-	public synchronized boolean rejoin(Player player) {
-		if (state != RUNNING) {
-			ChatUtils.error(player, Lang.getNotRunning(setup).replace("<game>", name));
-			return false;
-		}
-		if(!playerEnteringPreCheck(player)) return false;
-		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
-			ChatUtils.error(player, "You are not allowed to rejoin a game.");
-			return false;
-		}
-		PlayerStat stat = User.get(player).getStat(this);
-		if (stat == null || !users.contains(User.get(player)) || User.get(player).getState() != PlayerState.NOT_PLAYING) {
-			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
-			return false;
-		}
-		if (stat != null && User.get(player).getState() == PlayerState.PLAYING){
-			ChatUtils.error(player, "You can't rejoin a game while you are in it.");
-			return false;
-		}
-		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
-		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCancelled()) return false;
-		if (!playerEntering(player, false)) return false;
-		User.get(player).setState(PlayerState.PLAYING);
-		
-		String mess = Lang.getRejoinMessage(setup);
-		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-		ChatUtils.broadcast(this, mess);
-		return true;
-	}
-
-	@Override
 	public synchronized boolean join(Player player) {
 	    if (User.get(player).getGameInEntry().getGame() != null) {
 		    ChatUtils.error(player, "You are already in a game. Leave that game before joining another.");
@@ -815,10 +662,6 @@ public class HungerGame implements Runnable, Game {
 	    if (!playerEnteringPreCheck(player)) return false;
 	    if (state == RUNNING && !Config.ALLOW_JOIN_DURING_GAME.getBoolean(setup)) {
 		    ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
-		    return false;
-	    }
-	    if(state == PAUSED) {
-		    ChatUtils.error(player, "%s has been paused.", name);
 		    return false;
 	    }
 	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
@@ -842,10 +685,6 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	private synchronized boolean playerEnteringPreCheck(Player player) {
-	    if (state == DELETED) {
-		    ChatUtils.error(player, "That game does not exist anymore.");
-		    return false;
-	    }
 	    if (state == DISABLED) {
 		    ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
 		    return false;
@@ -929,37 +768,7 @@ public class HungerGame implements Runnable, Game {
 		} while (loc == null || spawnsTaken.containsValue(loc));
 		return loc;
 	}
-	
-	@Override
-	public synchronized boolean leave(Player player, boolean callEvent) {
-		if (state != RUNNING && state != PAUSED) return quit(player, true);
-		User user = User.get(player);
-		if (!isPlaying(user)) {
-			ChatUtils.error(player, "You are not playing the game %s.", name);
-			return false;
-		}
-		HungerGames.TimerManager.start();
-		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
-			user.getStat(this).die();
-		}
-		else {
-			user.setState(PlayerState.NOT_PLAYING);
-			user.getStat(this).death(PlayerStat.NODODY);
-		}
-		if (callEvent) Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
-		if (state == PAUSED) playerEntering(player, true);
-		InventorySave.loadGameInventory(player);
-		dropInventory(player);
-		playerLeaving(player, false);
-		teleportUserToSpawn(user);
-		String mess = Lang.getLeaveMessage(setup);
-		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-		ChatUtils.broadcast(this,mess);
-		checkForGameOver(false);
-		HungerGames.TimerManager.stop("HungerGame.leave");
-		return true; 
-	}
-	
+
 	@Override
 	public synchronized boolean quit(Player p, boolean callEvent) {
 	    User user = User.get(p);
@@ -1130,7 +939,6 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public boolean contains(User... userArray) {
-		if (state == DELETED) return false;
 		for (User user : userArray) {
 			if (!users.contains(user)) return false;
 			PlayerState pState = user.getState();
@@ -1152,7 +960,7 @@ public class HungerGame implements Runnable, Game {
 	
 	public void killed(final Player killer, final Player killed, PlayerDeathEvent deathEvent) {
 		User killedUser = User.get(killed);
-		if (state == DELETED || state != RUNNING || killedUser.getState() != PlayerState.PLAYING) return;
+		if (state != RUNNING || killedUser.getState() != PlayerState.PLAYING) return;
 
 		deathEvent.setDeathMessage(null);
 		killed.setHealth(20);
@@ -1172,7 +980,7 @@ public class HungerGame implements Runnable, Game {
 		String deathMessage;
 		GameStats.Death death = new GameStats.Death();
 		death.setPlayer(killed.getName());
-		death.setTime(System.currentTimeMillis() - getInitialStartTime());
+		death.setTime(System.currentTimeMillis() - getStartTime());
 		if(killer == null){
 			String cause = GeneralUtils.getNonPvpDeathCause(deathEvent);
 			deathMessage = getDeathMessage(killed.getName(), cause);
@@ -1410,9 +1218,8 @@ public class HungerGame implements Runnable, Game {
 					if (GeneralUtils.equals(l, comp)) {
 						spawnsTaken.remove(playerName);
 						if (Bukkit.getPlayer(playerName) == null) continue;
-						ChatUtils.error(Bukkit.getPlayer(playerName),
-							"Your spawn point has been recently removed. Try rejoining by typing '/hg rejoin %s'", name);
-						leave(Bukkit.getPlayer(playerName), true);
+						ChatUtils.error(Bukkit.getPlayer(playerName), "Your spawn point has been recently removed. Try joining the next game.", name);
+						quit(Bukkit.getPlayer(playerName), true);
 					}
 				}
 				return true;
@@ -1433,7 +1240,6 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public void setEnabled(boolean flag) {
-		if (state == DELETED) return;
 		if (!flag) {
 			stopGame(false);
 			clear();
@@ -1565,35 +1371,18 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	@Override
-	public List<Long> getEndTimes() {
-		return endTimes;
+	public long getStartTime() {
+		return startTime;
 	}
 
 	@Override
-	public long getInitialStartTime() {
-		return initialStartTime;
+	public long getEndTime() {
+		return endTime;
 	}
 
-	@Override
-	public List<Long> getStartTimes() {
-		return startTimes;
-	}
-	
 	@Override
 	public GameState getState() {
 		return state;
-	}
-
-	public void delete() {
-		clear();
-		state = DELETED;
-		chests.clear();
-		fixedChests.clear();
-		setup = null;
-		itemsets.clear();
-		worlds.clear();
-		cuboids.clear();
-		spawn = null;
 	}
 
 	@Override

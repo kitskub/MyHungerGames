@@ -39,7 +39,7 @@ public class KickCommand extends Command {
 		}
 		ChatUtils.broadcast(game, "%s has been kicked from the game %s.", cs.getName(), game.getName());
 		Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(game, kick, PlayerLeaveGameEvent.Type.KICK));
-		game.leave(kick, false);
+		game.quit(kick, false);
 	}
 
 	@Override

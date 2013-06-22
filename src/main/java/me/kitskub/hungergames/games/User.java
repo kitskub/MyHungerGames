@@ -123,7 +123,7 @@ public class User {
 			stats.remove(previous.in);
 			state = PlayerState.NOT_IN_GAME;
 			if (previous.type == Type.PLAYING) {
-				previous.in.leave(getPlayer(), true);
+				previous.in.quit(getPlayer(), true);
 			} else if (previous.type == Type.SPECTATING) {
 				((HungerGame)previous.in).removeSpectator(getPlayer());
 			}

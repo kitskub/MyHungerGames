@@ -12,8 +12,6 @@ public abstract class GameManager {
 
 	public abstract Game createGame(String name, String setup);
 
-	public abstract boolean removeGame(String name);
-
 	public abstract <T extends Game> List<EquatableWeakReference<T>> getGames();
 
 	public abstract List<? extends Game> getRawGames();

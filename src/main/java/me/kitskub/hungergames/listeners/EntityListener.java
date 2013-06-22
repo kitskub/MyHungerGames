@@ -37,7 +37,7 @@ public class EntityListener implements Listener{
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent newEvent = (EntityDamageByEntityEvent) event;
 				double period = Config.GRACE_PERIOD.getDouble(hurtGame.getSetup());
-				long startTime = hurtGame.getInitialStartTime();
+				long startTime = hurtGame.getStartTime();
 				Entity damager = newEvent.getDamager() instanceof Projectile ? ((Projectile) newEvent.getDamager()).getShooter() : newEvent.getDamager();
 				if (((System.currentTimeMillis() - startTime) / 1000) < period) {
 					event.setCancelled(true);

@@ -58,25 +58,6 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 	    }
 	}
 	
-	@Override
-	public boolean removeGame(String name) {
-		HungerGame game = null;
-		if (Strings.nullToEmpty(name).equals("")) return false;
-		for (HungerGame g : games) {
-			if (g.getName().equalsIgnoreCase(name)) {
-				game = g;
-			}
-
-		}
-		if(game == null) return false;
-		boolean attempt = games.remove(game);
-		game.delete();
-		if(attempt){
-			saveGames();
-		}
-		return attempt;
-	}
-		
 	//public PlayerStat createStat(HungerGame game, Player player) {
 	//	PlayerStat stat = new PlayerStat(game, player);
 	//	if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<EquatableWeakReference<HungerGame>, PlayerStat>());
@@ -150,8 +131,7 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 				game.loadFrom(gamesSection.getConfigurationSection(game.getName()));
 			}
 			else {
-				game.delete();
-				it.remove();
+				Logging.warning("A game has been deleted from the games.yml. The game will continue to exist until the server is restarted.");
 			}
 		}
 		for (String name : gamesSection.getKeys(false)) {

@@ -9,16 +9,13 @@ import me.kitskub.hungergames.commands.user.JoinCommand;
 import me.kitskub.hungergames.commands.user.TeamCommand;
 import me.kitskub.hungergames.commands.user.SpectateCommand;
 import me.kitskub.hungergames.commands.user.BackCommand;
-import me.kitskub.hungergames.commands.user.LeaveCommand;
 import me.kitskub.hungergames.commands.user.AboutCommand;
 import me.kitskub.hungergames.commands.user.SponsorCommand;
 import me.kitskub.hungergames.commands.user.SubscribeCommand;
-import me.kitskub.hungergames.commands.user.RejoinCommand;
 import me.kitskub.hungergames.commands.admin.set.SetFixedChestCommand;
 import me.kitskub.hungergames.commands.admin.set.SetHelp;
 import me.kitskub.hungergames.commands.admin.set.SetEnabledCommand;
 import me.kitskub.hungergames.commands.admin.set.SetSpawnCommand;
-import me.kitskub.hungergames.commands.admin.remove.RemoveGameCommand;
 import me.kitskub.hungergames.commands.admin.remove.RemoveSpawnPointCommand;
 import me.kitskub.hungergames.commands.admin.remove.RemoveItemSetCommand;
 import me.kitskub.hungergames.commands.admin.remove.RemoveSignCommand;
@@ -40,10 +37,8 @@ import me.kitskub.hungergames.commands.admin.add.AddItemSetCommand;
 import me.kitskub.hungergames.commands.admin.add.AddChestCommand;
 import me.kitskub.hungergames.commands.admin.StopCommand;
 import me.kitskub.hungergames.commands.admin.ForceClearCommand;
-import me.kitskub.hungergames.commands.admin.PauseCommand;
 import me.kitskub.hungergames.commands.admin.ReloadCommand;
 import me.kitskub.hungergames.commands.admin.KickCommand;
-import me.kitskub.hungergames.commands.admin.ResumeCommand;
 import me.kitskub.hungergames.commands.admin.RestockCommand;
 import me.kitskub.hungergames.commands.admin.StartCommand;
 import me.kitskub.hungergames.commands.admin.KillCommand;
@@ -354,17 +349,14 @@ public class Defaults {
 		ADMIN_CHAT(new Permission("hungergame.admin.chat"), ADMIN, "Allows an admin to chat to a game by typing \"hg\" in front of their message"),
 		ADMIN_CREATE_SIGN(new Permission("hungergame.create.sign"), ADMIN, "Allows player to create a sign listener"),
 		ADMIN_CREATE_SIGN_GAMEEND(new Permission("hungergame.create.sign.gameend"), ADMIN_CREATE_SIGN),
-		ADMIN_CREATE_SIGN_GAMEPAUSE(new Permission("hungergame.create.sign.gamepause"), ADMIN_CREATE_SIGN),
 		ADMIN_CREATE_SIGN_GAMESTART(new Permission("hungergame.create.sign.gamestart"), ADMIN_CREATE_SIGN),
 		ADMIN_CREATE_SIGN_PLAYERJOIN(new Permission("hungergame.create.sign.playerjoin"), ADMIN_CREATE_SIGN),
 		ADMIN_CREATE_SIGN_PLAYERKICK(new Permission("hungergame.create.sign.playerkick"), ADMIN_CREATE_SIGN),
 		ADMIN_CREATE_SIGN_PLAYERKILL(new Permission("hungergame.create.sign.playerkill"), ADMIN_CREATE_SIGN),
-		ADMIN_CREATE_SIGN_PLAYERLEAVE(new Permission("hungergame.create.sign.playerleave"), ADMIN_CREATE_SIGN),
 		ADMIN_CREATE_SIGN_PLAYERQUIT(new Permission("hungergame.create.sign.playerquit"), ADMIN_CREATE_SIGN),
 		ADMIN_REMOVE_HELP(new Permission("hungergame.admin.remove.help"), ADMIN, "allows the player to view remove help page"),
 		ADMIN_REMOVE_SPAWNPOINT(new Permission("hungergame.admin.remove.spawnpoint"), ADMIN),
 		ADMIN_REMOVE_CHEST(new Permission("hungergame.admin.remove.chest"), ADMIN),
-		ADMIN_REMOVE_GAME(new Permission("hungergame.admin.remove.game"), ADMIN),
 		ADMIN_REMOVE_ITEMSET(new Permission("hungergame.admin.remove.itemset"), ADMIN),
 		ADMIN_REMOVE_SIGN(new Permission("hungergame.admin.remove.sign"), ADMIN),
 		ADMIN_SET_HELP(new Permission("hungergame.admin.set.help"), ADMIN, "allows the player to view set help page"),
@@ -374,8 +366,6 @@ public class Defaults {
 		ADMIN_FORCE_CLEAR(new Permission("hungergame.admin.game.forceclear"), ADMIN),
 		ADMIN_STOP(new Permission("hungergame.admin.game.stop"), ADMIN),
 		ADMIN_START(new Permission("hungergame.admin.game.start"), ADMIN),
-		ADMIN_PAUSE(new Permission("hungergame.admin.game.pause"), ADMIN),
-		ADMIN_RESUME(new Permission("hungergame.admin.game.resume"), ADMIN),
 		ADMIN_RELOAD(new Permission("hungergame.admin.reload"), ADMIN),
 		ADMIN_KICK(new Permission("hungergame.admin.kick"), ADMIN),
 		ADMIN_KILL(new Permission("hungergame.admin.kill"), ADMIN),
@@ -391,9 +381,7 @@ public class Defaults {
 		USER_BACK(new Permission("hungergame.user.back"), USER),
 		USER_JOIN(new Permission("hungergame.user.join"), USER),
 		USER_KIT(new Permission("hungergame.user.kit"), null, "whether a user gets all kits on start; can also add specific kits with hungergame.user.kit.<kit>"),
-		USER_LEAVE(new Permission("hungergame.user.leave"), USER),
 		USER_LIST(new Permission("hungergame.user.list"), USER),
-		USER_REJOIN(new Permission("hungergame.user.rejoin"), USER),
 		USER_SEARCH(new Permission("hungergame.user.search"), USER),
 		USER_SPECTATE(new Permission("hungergame.user.spectate"), USER),
 		USER_SPONSOR(new Permission("hungergame.user.sponsor"), USER),
@@ -450,7 +438,6 @@ public class Defaults {
 	ADMIN_ADD_WORLD(new AddWorldCommand()),
 	ADMIN_REMOVE_HELP(new RemoveHelp()),
 	ADMIN_REMOVE_CHEST(new RemoveChestCommand()),
-	ADMIN_REMOVE_GAME(new RemoveGameCommand()),
 	ADMIN_REMOVE_ITEMSET(new RemoveItemSetCommand()),
 	ADMIN_REMOVE_SIGN(new RemoveSignCommand()),
 	ADMIN_REMOVE_SPAWNPOINT(new RemoveSpawnPointCommand()),
@@ -461,8 +448,6 @@ public class Defaults {
 	ADMIN_FORCE_CLEAR(new ForceClearCommand()),
 	ADMIN_START(new StartCommand()),
 	ADMIN_STOP(new StopCommand()),
-	ADMIN_PAUSE(new PauseCommand()),
-	ADMIN_RESUME(new ResumeCommand()),
 	ADMIN_RELOAD(new ReloadCommand()),
 	ADMIN_KICK(new KickCommand()),
 	ADMIN_KILL(new KillCommand()),
@@ -470,10 +455,8 @@ public class Defaults {
 	USER_ABOUT(new AboutCommand()),
 	USER_BACK(new BackCommand()),
 	USER_JOIN(new JoinCommand()),
-	USER_LEAVE(new LeaveCommand()),
 	USER_LIST(new ListCommand()),
 	USER_QUIT(new QuitCommand()),
-	USER_REJOIN(new RejoinCommand()),
 	USER_SEARCH(new SearchCommand()),
 	USER_SPECTATE(new SpectateCommand()),
 	USER_SPONSOR(new SponsorCommand()),

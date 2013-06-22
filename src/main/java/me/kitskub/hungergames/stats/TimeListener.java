@@ -1,6 +1,5 @@
 package me.kitskub.hungergames.stats;
 
-import me.kitskub.hungergames.api.event.GamePauseEvent;
 import me.kitskub.hungergames.api.event.GameEndEvent;
 import me.kitskub.hungergames.api.event.GameStartEvent;
 import me.kitskub.hungergames.api.event.PlayerKilledEvent;
@@ -29,14 +28,7 @@ public class TimeListener implements Listener {
 			playerStopped(event.getGame(), p);
 		}
 	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGamePause(GamePauseEvent event) {
-		for (User p : event.getGame().getRemainingPlayers()) {
-			playerStopped(event.getGame(), p);
-		}
-	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameStart(GameStartEvent event) {
 		for (User p : event.getGame().getRemainingPlayers()) {

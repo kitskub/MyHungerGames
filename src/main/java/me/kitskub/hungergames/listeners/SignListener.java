@@ -8,7 +8,6 @@ import me.kitskub.hungergames.WorldNotFoundException;
 import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.api.Game;
 import me.kitskub.hungergames.api.event.GameEndEvent;
-import me.kitskub.hungergames.api.event.GamePauseEvent;
 import me.kitskub.hungergames.api.event.GameStartEvent;
 import me.kitskub.hungergames.api.event.PlayerJoinGameEvent;
 import me.kitskub.hungergames.api.event.PlayerKilledEvent;
@@ -238,12 +237,7 @@ public class SignListener implements Runnable, Listener {
 	public void onGameEnd(GameEndEvent event) {
 		callListeners(ListenerType.GAME_END, event.getGame());
 	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onGamePause(GamePauseEvent event) {
-		callListeners(ListenerType.GAME_PAUSE, event.getGame());
-	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameStart(GameStartEvent event) {
 		callListeners(ListenerType.GAME_START, event.getGame());
@@ -261,10 +255,7 @@ public class SignListener implements Runnable, Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		if (event.getType().equals(PlayerLeaveGameEvent.Type.LEAVE)) {
-			callListeners(ListenerType.PLAYER_LEAVE, event.getGame());
-		}
-		else if (event.getType().equals(PlayerLeaveGameEvent.Type.QUIT)) {
+		if (event.getType().equals(PlayerLeaveGameEvent.Type.QUIT)) {
 			callListeners(ListenerType.PLAYER_QUIT, event.getGame());
 		}
 		else if (event.getType().equals(PlayerLeaveGameEvent.Type.KICK)) {
@@ -274,12 +265,10 @@ public class SignListener implements Runnable, Listener {
 	
 	public enum ListenerType {
 		GAME_END("gameend", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEEND),
-		GAME_PAUSE("gamepause", Defaults.Perm.ADMIN_CREATE_SIGN_GAMEPAUSE),
 		GAME_START("gamestart", Defaults.Perm.ADMIN_CREATE_SIGN_GAMESTART),
 		PLAYER_JOIN("playerjoin", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERJOIN),
 		PLAYER_KICK("playerkick", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKICK),
 		PLAYER_KILL("playerkill", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERKILL),
-		PLAYER_LEAVE("playerleave", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERLEAVE),
 		PLAYER_QUIT("playerquit", Defaults.Perm.ADMIN_CREATE_SIGN_PLAYERQUIT);
 		
 		private String id;

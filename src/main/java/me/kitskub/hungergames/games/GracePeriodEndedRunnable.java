@@ -17,7 +17,7 @@ public class GracePeriodEndedRunnable implements Runnable{
 	
 	public void run() {
 		double period = Config.GRACE_PERIOD.getDouble(game.getSetup());
-		if (((System.currentTimeMillis() - game.getInitialStartTime()) / 1000) >= period) {
+		if (((System.currentTimeMillis() - game.getStartTime()) / 1000) >= period) {
 			ChatUtils.broadcast(game, ChatColor.DARK_PURPLE, Lang.getGracePeriodEnded(game.getSetup()));
 			this.cancel();
 		}		

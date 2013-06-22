@@ -8,13 +8,10 @@ import de.diddiz.LogBlock.LogBlock;
 import de.diddiz.LogBlock.QueryParams;
 import de.diddiz.LogBlock.QueryParams.BlockChangeType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class LogBlockResetter extends Resetter{
     private LogBlock plugin;
@@ -33,8 +30,8 @@ public class LogBlockResetter extends Resetter{
 	QueryParams params = new QueryParams(plugin);
 	for (String p : game.getAllPlayers()) params.setPlayer(p);
 	params.bct = BlockChangeType.ALL;
-	long endTime = game.getEndTimes().get(game.getEndTimes().size() - 1);
-	long startTime = game.getInitialStartTime();
+	long endTime = game.getEndTime();
+	long startTime = game.getStartTime();
 	params.since = (int) ((endTime - startTime) / 1000*60);
 	params.needDate = true;
 	params.needType = true;
