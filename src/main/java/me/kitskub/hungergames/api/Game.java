@@ -1,12 +1,11 @@
 package me.kitskub.hungergames.api;
 
-import me.kitskub.hungergames.stats.PlayerStat;
 import me.kitskub.hungergames.utils.Cuboid;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import me.kitskub.hungergames.games.User;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
@@ -97,9 +96,9 @@ public interface Game extends Comparable<Game> {
 	
 	/**
 	 * Will be canceled if player is playing and teleporting is not allowed which should not ever happen
-	 * @param player
+	 * @param user
 	 */
-	public void teleportPlayerToSpawn(Player player);
+	public void teleportUserToSpawn(User user);
 	
 	/**
 	 * 
@@ -112,17 +111,17 @@ public interface Game extends Comparable<Game> {
 	
 	/**
 	 * Checks if players are in the game and have lives, regardless is game is running and if they are playing.
-	 * @param players players to check
+	 * @param users users to check
 	 * @return
 	 */
-	public boolean contains(Player... players);
+	public boolean contains(User... users);
 	
 	/**
 	 * 
-	 * @param players players to check
+	 * @param users users to check
 	 * @return true if players are in the game, have lives, and are playing
 	 */
-	public boolean isPlaying(Player... players);
+	public boolean isPlaying(User... users);
 
 	/**
 	 * Gets the players that have lives and are playing
@@ -130,10 +129,8 @@ public interface Game extends Comparable<Game> {
 	 * 
 	 * @return the remaining players that have lives and are playing
 	 */
-	public List<Player> getRemainingPlayers();
-	
-	public PlayerStat getPlayerStat(OfflinePlayer player);
-	
+	public List<User> getRemainingPlayers();
+
 	public void listStats(CommandSender notifier);
 	
 	public String getName();
@@ -161,7 +158,7 @@ public interface Game extends Comparable<Game> {
 
 	public List<String> getAllPlayers();
 
-	public List<PlayerStat> getStats();
+	public List<User> getUsers();
 	
 	public Location getSpawn();
 

@@ -68,11 +68,11 @@ public class ChatUtils {
 	public static void sendToTeam(PlayerStat player, String mess) {
 		Team team = player.getTeam();
 		if (team == null) {
-			send(player.getPlayer(), mess);
+			send(player.getPlayer().getPlayer(), mess);
 			return;
 		}
 		for (PlayerStat p : team.getPlayers()) {
-			send(p.getPlayer(), mess);
+			send(p.getPlayer().getPlayer(), mess);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class ChatUtils {
 			return;
 		}
 		for (PlayerStat p : team.getPlayers()) {
-			send(p.getPlayer(), mess);
+			send(p.getPlayer().getPlayer(), mess);
 		}
 	}
 

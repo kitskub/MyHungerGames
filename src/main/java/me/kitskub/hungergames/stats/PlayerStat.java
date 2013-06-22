@@ -6,25 +6,24 @@ import me.kitskub.hungergames.games.HungerGame;
 import java.util.*;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.ScoreboardHandler;
+import me.kitskub.hungergames.games.User;
 
 import org.bukkit.entity.Player;
 
 public class PlayerStat implements Comparable<PlayerStat> {
 	public static final String NODODY = "NOBODY";
-	private Player player;
+	private User player;
 	private HungerGame game;
 	private List<String> deaths;
 	private List<String> kills;
-	private PlayerState state;
 	private long elapsedTimeInMillis;
 	private Team team;
 
-	public PlayerStat(HungerGame game, Player player) {
+	public PlayerStat(HungerGame game, User player) {
 		deaths = new ArrayList<String>();
 		kills = new ArrayList<String>();
 		this.player = player;
 		this.game = game;
-		state = PlayerState.NOT_IN_GAME;
 		elapsedTimeInMillis = 0;
 		team = null;
 	}
@@ -39,7 +38,7 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	}
 	
 	public void die() {
-		state = PlayerState.DEAD;
+		player.setState(PlayerState.DEAD);
 	}
 	
 	public List<String> getKills() {
@@ -59,12 +58,12 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	}
 	
 	private void update() {
-		if (state == PlayerState.DEAD) return;
+		if (player.getState() == PlayerState.DEAD) return;
 		int lives = (game == null) ? Defaults.Config.LIVES.getGlobalInt() : Defaults.Config.LIVES.getInt(game.getSetup());
 		if (lives == 0 || deaths.size() >= lives) {
 			die();
 		}
-		ScoreboardHandler.updateLives(game, player, lives - deaths.size());
+		ScoreboardHandler.updateLives(game, player.getPlayer(), lives - deaths.size());
 	}
 	
 	public int getLivesLeft() {
@@ -72,16 +71,8 @@ public class PlayerStat implements Comparable<PlayerStat> {
 		if(lives == 0) return -1;
 		return lives - deaths.size();
 	}
-	
-	public void setState(PlayerState state) {
-		this.state = state;
-	}
-	
-	public PlayerState getState() {
-		return state;
-	}
 
-	public Player getPlayer() {
+	public User getPlayer() {
 		return player;
 	}
 	

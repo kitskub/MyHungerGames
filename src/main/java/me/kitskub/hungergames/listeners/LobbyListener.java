@@ -12,6 +12,7 @@ import me.kitskub.hungergames.utils.GeneralUtils;
 
 import java.util.*;
 import java.util.Map.Entry;
+import me.kitskub.hungergames.games.User;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -365,6 +366,15 @@ public class LobbyListener implements Listener, Runnable {
 			sign.update();
 		}
 	}
+	
+	public static class Ranker implements Comparator<User> {
+
+		public int compare(User o1, User o2) {
+			if (o1 == null) return o2 == null ? 0 : -1;
+			return o1.getStat(o1.getGameInEntry().getGame()).compareTo(o2 == null ? null : o2.getStat(o1.getGameInEntry().getGame()));
+		}
+		
+	}
 
 
 	private static final class InfoWall {
@@ -393,18 +403,18 @@ public class LobbyListener implements Listener, Runnable {
 		public void update() {
 			if (game.get() == null) return;
 			List<Sign> signList = getSignsWithVerification();
-			TreeSet<PlayerStat> stats = new TreeSet<PlayerStat>(new PlayerStat.StatComparator());
-			stats.addAll(game.get().getStats());
-			Iterator<PlayerStat> statIt = stats.iterator();
+			TreeSet<User> stats = new TreeSet<User>(new Ranker());
+			stats.addAll(game.get().getUsers());
+			Iterator<User> statIt = stats.iterator();
 			Iterator<Sign> signIt = signList.iterator();
 			while(signIt.hasNext()) {
 				Sign nextSign = signIt.next();
 				if (statIt.hasNext()) {
-					PlayerStat nextStat = statIt.next();
+					User nextStat = statIt.next();
 					nextSign.setLine(0, nextStat.getPlayer().getName());
-					nextSign.setLine(1, "Kills:" + nextStat.getKills().size());
-					nextSign.setLine(2, "Deaths:" + nextStat.getDesths().size());
-					nextSign.setLine(3, "Lives:" + nextStat.getLivesLeft());
+					nextSign.setLine(1, "Kills:" + nextStat.getStat(game.get()).getKills().size());
+					nextSign.setLine(2, "Deaths:" + nextStat.getStat(game.get()).getDesths().size());
+					nextSign.setLine(3, "Lives:" + nextStat.getStat(game.get()).getLivesLeft());
 				}
 				else {
 					nextSign.setLine(0, "");

@@ -6,6 +6,7 @@ import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.Lang;
 import me.kitskub.hungergames.api.Game;
 import me.kitskub.hungergames.commands.Command;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
@@ -24,7 +25,12 @@ public class StatCommand extends Command {
 		if(args.length < 1){
 			// No game given. Take game payer currently is in
 			Player player = Bukkit.getServer().getPlayer(cs.getName());
-			game = HungerGames.getInstance().getGameManager().getRawSession(player);
+			if (player == null) {
+				ChatUtils.error(cs, "Console must specify a game");
+				return;
+			}
+			User get = User.get(player);
+			game = get.getGameInEntry().getGame();
 			if (game == null) {
 				ChatUtils.helpCommand(cs, getUsage(), HungerGames.CMD_USER);
 				return;

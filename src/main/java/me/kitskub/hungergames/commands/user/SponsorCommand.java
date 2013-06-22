@@ -4,6 +4,7 @@ import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.commands.PlayerCommand;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ public class SponsorCommand extends PlayerCommand {
 			ChatUtils.error(player, "%s is not online.", args[0]);
 			return;
 		}
-		if (HungerGames.getInstance().getGameManager().getPlayingSession(p) == null) {
+		if (User.get(p).getGameInEntry().getGame() == null) {
 			ChatUtils.error(player, "%s is not playing in a game.", p.getName());
 			return;
 		}

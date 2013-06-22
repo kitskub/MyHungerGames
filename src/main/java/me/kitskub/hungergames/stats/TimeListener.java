@@ -12,8 +12,7 @@ import me.kitskub.hungergames.stats.PlayerStat.PlayerState;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import me.kitskub.hungergames.games.User;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,51 +25,51 @@ public class TimeListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameEnd(GameEndEvent event) {
-		for (Player p : event.getGame().getRemainingPlayers()) {
+		for (User p : event.getGame().getRemainingPlayers()) {
 			playerStopped(event.getGame(), p);
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGamePause(GamePauseEvent event) {
-		for (Player p : event.getGame().getRemainingPlayers()) {
+		for (User p : event.getGame().getRemainingPlayers()) {
 			playerStopped(event.getGame(), p);
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameStart(GameStartEvent event) {
-		for (Player p : event.getGame().getRemainingPlayers()) {
+		for (User p : event.getGame().getRemainingPlayers()) {
 			playerStarted(p);
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinGameEvent event) {
-		if (event.getGame().getState() == GameState.RUNNING) playerStarted(event.getPlayer());
+		if (event.getGame().getState() == GameState.RUNNING) playerStarted(User.get(event.getPlayer()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerKill(PlayerKilledEvent event) {
-		if (event.getGame().getPlayerStat(event.getKilled()).getState() == PlayerState.DEAD) {
-			playerStopped(event.getGame(), event.getKilled());
+		if (User.get(event.getKilled()).getState() == PlayerState.DEAD) {
+			playerStopped(event.getGame(), User.get(event.getKilled()));
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerLeave(PlayerLeaveGameEvent event) {
-		playerStopped(event.getGame(), event.getPlayer());
+		playerStopped(event.getGame(), User.get(event.getPlayer()));
 	}
 	
-	private void playerStarted(Player p) {
-		startTimes.put(p.getName(), new Date().getTime());
+	private void playerStarted(User p) {
+		startTimes.put(p.getPlayer().getName(), new Date().getTime());
 	}
 	
-	private void playerStopped(Game game, OfflinePlayer p) {
-		Long l = startTimes.get(p.getName());
+	private void playerStopped(Game game, User p) {
+		Long l = startTimes.get(p.getPlayer().getName());
 		if (l != null) {
-			game.getPlayerStat(p).addTime(new Date().getTime() - l);
-			startTimes.remove(p.getName());
+			p.getStat().get(game).addTime(new Date().getTime() - l);
+			startTimes.remove(p.getPlayer().getName());
 		}
 	}
 }

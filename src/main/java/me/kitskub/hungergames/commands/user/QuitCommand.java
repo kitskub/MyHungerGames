@@ -3,6 +3,7 @@ package me.kitskub.hungergames.commands.user;
 import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.commands.PlayerCommand;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.entity.Player;
@@ -15,7 +16,8 @@ public class QuitCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
-		game = HungerGames.getInstance().getGameManager().getRawSession(player);
+		User get = User.get(player);
+		game = get.getGameInEntry().getGame();
 		if (game == null) {
 			ChatUtils.error(player, "You are currently not in a game.");
 			return;

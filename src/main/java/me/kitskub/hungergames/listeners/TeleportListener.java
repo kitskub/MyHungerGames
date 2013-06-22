@@ -13,6 +13,7 @@ import me.kitskub.hungergames.utils.ChatUtils;
 
 import java.util.HashSet;
 import java.util.Set;
+import me.kitskub.hungergames.games.User;
 
 public class TeleportListener implements Listener {
 	private static Set<String> playerWhiteList = new HashSet<String>();
@@ -25,7 +26,7 @@ public class TeleportListener implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		boolean isWhiteListed = playerWhiteList.remove(player.getName());
-		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+		HungerGame session = (HungerGame) User.get(player).getGameInEntry().getGame();
 		if (session == null) return;
 		if (Config.CAN_TELEPORT.getBoolean(session.getSetup()) && !isWhiteListed && (event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
 			ChatUtils.error(player, "You cannot teleport while in-game!");

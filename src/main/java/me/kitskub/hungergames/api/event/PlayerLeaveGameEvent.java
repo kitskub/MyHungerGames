@@ -8,7 +8,7 @@ import org.bukkit.OfflinePlayer;
 // called when a player leaves a game
 public class PlayerLeaveGameEvent extends GameEvent {
 	private static final HandlerList handlers = new HandlerList();
-	private final OfflinePlayer player;
+	private final Player player;
 	private Type type;
 	
 	public PlayerLeaveGameEvent(final Game game, final Player player, Type type) {
@@ -17,7 +17,7 @@ public class PlayerLeaveGameEvent extends GameEvent {
 		this.type = type;
 	}
 
-	public OfflinePlayer getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 

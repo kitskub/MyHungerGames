@@ -6,6 +6,7 @@ import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.api.Game;
 
 import java.util.HashSet;
+import me.kitskub.hungergames.games.User;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +19,9 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerChat(PlayerChatEvent event) {
-		Game chatterGame = HungerGames.getInstance().getGameManager().getRawSession(event.getPlayer());
+		Game chatterGame = User.get(event.getPlayer()).getGameInEntry().getGame();
 		for (Player p : new HashSet<Player>(event.getRecipients())) {
-			Game receipientGame = HungerGames.getInstance().getGameManager().getRawSession(p);
+			Game receipientGame = User.get(p).getGameInEntry().getGame();
 			if (receipientGame != null && Config.ISOLATE_PLAYER_CHAT.getBoolean(receipientGame.getSetup())) {
 				if (chatterGame != null) {
 					if (chatterGame.compareTo(receipientGame) == 0 

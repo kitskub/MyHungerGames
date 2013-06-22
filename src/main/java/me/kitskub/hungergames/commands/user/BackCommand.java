@@ -4,6 +4,7 @@ import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.commands.PlayerCommand;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.Location;
@@ -16,8 +17,9 @@ public class BackCommand extends PlayerCommand {
 	}
 
 	@Override
-	public void handlePlayer(Player player, String cmd, String[] args) {		
-		if (HungerGames.getInstance().getGameManager().getSession(player) != null) {
+	public void handlePlayer(Player player, String cmd, String[] args) {
+		User get = User.get(player);
+		if (get.getGameInEntry().getGame() != null) {
 			ChatUtils.send(player, "You cannot use that command while you are in-game.");
 			return;
 		}

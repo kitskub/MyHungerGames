@@ -5,6 +5,7 @@ import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.commands.PlayerCommand;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.stats.PlayerStat;
 import me.kitskub.hungergames.stats.PlayerStat.Team;
 import me.kitskub.hungergames.utils.ChatUtils;
@@ -18,7 +19,8 @@ public class TeamCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String label, String[] args) {
-		game = HungerGames.getInstance().getGameManager().getRawSession(player);
+		User get = User.get(player);
+		game = get.getGameInEntry().getGame();
 		if (game == null) {
 			ChatUtils.error(player, "You are not in a game!");
 			return;
@@ -31,7 +33,8 @@ public class TeamCommand extends PlayerCommand {
 		if (args.length >= 1) {
 			team = args[0];
 		}
-		PlayerStat stat = game.getPlayerStat(player);
+		
+		PlayerStat stat = get.getStat(game);
 		boolean require = false;
 		if (stat.getTeam() != null) {
 			stat.setTeam(null);
@@ -43,7 +46,7 @@ public class TeamCommand extends PlayerCommand {
 				ChatUtils.error(player, "Must specify a team!");
 			}
 		} else {
-			game.getPlayerStat(player).setTeam(Team.get(team));
+			stat.setTeam(Team.get(team));
 		}
 	}
 

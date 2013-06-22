@@ -50,7 +50,7 @@ public class GameStats {
 			map.put("winner", "N/A");
 		}
 		else {
-			map.put("winner", game.getRemainingPlayers().get(0).getName());
+			map.put("winner", game.getRemainingPlayers().get(0).getPlayer().getName());
 		}
 		long totalDuration = 0;
 		for (int i = 0; i < Math.min(game.getEndTimes().size(), game.getStartTimes().size()); i++) {
@@ -81,9 +81,9 @@ public class GameStats {
 
 		StringBuilder playersSB = new StringBuilder();
 		for (PlayerStat p : players) {
-			playersSB.append("{").append(p.getPlayer().getName()).append("}");
-			String k = "players[" + p.getPlayer().getName() + "]";
-			map.put(k + "[wins]", p.getState() == PlayerState.DEAD ? "0" : "1");
+			playersSB.append("{").append(p.getPlayer().getPlayer().getName()).append("}");
+			String k = "players[" + p.getPlayer().getPlayer().getName() + "]";
+			map.put(k + "[wins]", p.getPlayer().getState() == PlayerState.DEAD ? "0" : "1");
 			map.put(k + "[deaths]", String.valueOf(p.getNumDeaths()));
 			map.put(k + "[kills]", String.valueOf(p.getNumKills()));
 			map.put(k + "[time]", new Time(p.getTime()).toString());

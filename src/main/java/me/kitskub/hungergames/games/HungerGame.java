@@ -63,7 +63,9 @@ import org.bukkit.scheduler.BukkitTask;
 	
 public class HungerGame implements Runnable, Game {
 	// Per game
-	private final Map<String, PlayerStat> stats;
+	private final List<User> playing;
+	private final List<User> users;
+	//private final Map<String, PlayerStat> stats;
 	private final Map<String, Location> spawnsTaken;
 	private final List<Location> randomLocs;
 	private final Map<String, List<String>> sponsors; // Just a list for info, <sponsor, sponsee>
@@ -107,7 +109,9 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	public HungerGame(final String name, final String setup) {
-		stats = new TreeMap<String, PlayerStat>();
+		playing = new ArrayList<User>();
+		users = new ArrayList<User>();
+		//stats = new TreeMap<String, PlayerStat>();
 		spawnsTaken = new HashMap<String, Location>();
 		sponsors = new HashMap<String, List<String>>();
 		spectatorSponsoringRunnable = new SpectatorSponsoringRunnable(this);
@@ -323,7 +327,7 @@ public class HungerGame implements Runnable, Game {
 			Logging.debug("HungerGame.run(): Unexpected size:" + size);
 			return;
 		}
-		Location loc = getRemainingPlayers().get(rand.nextInt(size)).getLocation();
+		Location loc = getRemainingPlayers().get(rand.nextInt(size)).getPlayer().getLocation();
 		if (randomLocs.size() >= 15) randomLocs.remove(rand.nextInt(15));
 		randomLocs.add(loc);
 	}
@@ -360,7 +364,7 @@ public class HungerGame implements Runnable, Game {
 		int minPlayers = Config.MIN_PLAYERS.getInt(setup);
 		int startTimer = Config.START_TIMER.getInt(setup);
 		int ready = readyToPlay.size();
-		int joined = stats.size();
+		int joined = users.size();
 		boolean allVote = Config.ALL_VOTE.getBoolean(setup);
 		boolean autoVote = Config.AUTO_VOTE.getBoolean(setup);
 		if (joined >= minPlayers) {
@@ -377,11 +381,11 @@ public class HungerGame implements Runnable, Game {
 	}
 	
 	public void clearWaitingPlayers() {
-		for (Iterator<String> it = stats.keySet().iterator(); it.hasNext();) {
-			String stat = it.next();
-			if (!stats.get(stat).getState().equals(PlayerState.WAITING)) continue;
-			stats.get(stat).setState(PlayerState.NOT_IN_GAME);
-			Player player = Bukkit.getPlayer(stat);
+		for (Iterator<User> it = users.iterator(); it.hasNext();) {
+			User user = it.next();
+			if (!user.getState().equals(PlayerState.WAITING)) continue;
+			user.setState(PlayerState.NOT_IN_GAME);
+			Player player = user.getPlayer();
 			ItemStack[] contents = player.getInventory().getContents();
 			List<ItemStack> list = new ArrayList<ItemStack>();
 			for (ItemStack i : contents) {
@@ -390,9 +394,9 @@ public class HungerGame implements Runnable, Game {
 			contents = list.toArray(new ItemStack[list.size()]);
 			playerLeaving(player, false);
 			for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
-			teleportPlayerToSpawn(player);
-			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
-			stats.remove(stat);
+			teleportUserToSpawn(user);
+			user.leaveGame();
+			users.remove(user);
 		}
 	}
 
@@ -417,8 +421,9 @@ public class HungerGame implements Runnable, Game {
 		spectatorFlightAllowed.put(player.getName(), player.getAllowFlight());
 		player.setAllowFlight(true);
 		player.setFlying(true);
-		for (Player p : getRemainingPlayers()) {
-			p.hidePlayer(player);
+		User.get(player).setGameIn(this, User.GameInEntry.Type.SPECTATING);
+		for (User p : getRemainingPlayers()) {
+			p.getPlayer().hidePlayer(player);
 		}
 		ChatUtils.send(player, "You are now spectating %s", name);
 		return true;
@@ -438,8 +443,9 @@ public class HungerGame implements Runnable, Game {
 		player.setFlying(spectatorFlying.get(player.getName()));
 		player.setAllowFlight(spectatorFlightAllowed.get(player.getName()));
 		player.teleport(spectators.remove(player.getName()));
-		for (Player p : getRemainingPlayers()) {
-			p.showPlayer(player);
+		User.get(player).leaveGame();
+		for (User p : getRemainingPlayers()) {
+			p.getPlayer().showPlayer(player);
 		}
 	}
 	
@@ -484,35 +490,35 @@ public class HungerGame implements Runnable, Game {
 				InventorySave.loadGameInventory(p);
 			}
 		}
-		for (Player player : getRemainingPlayers()) {
-			stats.get(player.getName()).setState(PlayerState.NOT_IN_GAME);
-			ItemStack[] contents = filterNulls(player.getInventory().getContents());
-			ItemStack[] armor = filterNulls(player.getInventory().getArmorContents());
-			playerLeaving(player, false);
-			teleportPlayerToSpawn(player);
+		for (User user : getRemainingPlayers()) {
+			user.setState(PlayerState.NOT_IN_GAME);
+			ItemStack[] contents = filterNulls(user.getPlayer().getInventory().getContents());
+			ItemStack[] armor = filterNulls(user.getPlayer().getInventory().getArmorContents());
+			playerLeaving(user.getPlayer(), false);
+			teleportUserToSpawn(user);
 			// If we didn't clear inventory before, don't drop inventory items
 			if (!Config.CLEAR_INV.getBoolean(setup)) {
-				contents = removeAll(contents, player.getInventory().getContents());
-				armor = removeAll(contents, player.getInventory().getArmorContents());
+				contents = removeAll(contents, user.getPlayer().getInventory().getContents());
+				armor = removeAll(contents, user.getPlayer().getInventory().getArmorContents());
 
 			}
 			if (isFinished && Config.WINNER_KEEPS_ITEMS.getBoolean(setup)) {
-				for (ItemStack i : player.getInventory().addItem(contents).values()) {
-					player.getLocation().getWorld().dropItem(player.getLocation(), i);
+				for (ItemStack i : user.getPlayer().getInventory().addItem(contents).values()) {
+					user.getPlayer().getLocation().getWorld().dropItem(user.getPlayer().getLocation(), i);
 				}
-				for (ItemStack i : player.getInventory().addItem(armor).values()) {
-					player.getLocation().getWorld().dropItem(player.getLocation(), i);
+				for (ItemStack i : user.getPlayer().getInventory().addItem(armor).values()) {
+					user.getPlayer().getLocation().getWorld().dropItem(user.getPlayer().getLocation(), i);
 				}
 			} else {
-				for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
+				for (ItemStack i : contents) user.getPlayer().getLocation().getWorld().dropItem(user.getPlayer().getLocation(), i);
 			}
-			if (isFinished) GeneralUtils.rewardPlayer(player);
+			if (isFinished) GeneralUtils.rewardPlayer(user.getPlayer());
 		}
-		for (String stat : stats.keySet()) {
-			gameStats.addPlayer(stats.get(stat));
-			((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(stat, this);
+		for (User u : users) {
+			gameStats.addPlayer(u.getStat(this));
+			u.leaveGame();
 		}
-		stats.clear();
+		users.clear();
 		gameStats.saveGameData();
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
@@ -567,7 +573,7 @@ public class HungerGame implements Runnable, Game {
 		if (state == DELETED) return "Game no longer exists.";
 		if (state == DISABLED) return Lang.getNotEnabled(setup).replace("<game>", name);
 		if (state == RUNNING) return Lang.getRunning(setup).replace("<game>", name);
-		if (stats.size() < Config.MIN_PLAYERS.getInt(setup)) return String.format("There are not enough players in %s", name);
+		if (users.size() < Config.MIN_PLAYERS.getInt(setup)) return String.format("There are not enough players in %s", name);
 		if (countdown != null) {
 			if (ticks < countdown.getTimeLeft()) {
 				countdown.cancel();
@@ -587,7 +593,7 @@ public class HungerGame implements Runnable, Game {
 		if (event.isCancelled()) {
 			return "Start was cancelled.";
 		}
-		if (stats.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
+		if (users.size() < 2) ChatUtils.broadcast(this, "%s is being started with only one player. This has a high potential to lead to errors.", name);
 		initialStartTime = System.currentTimeMillis();
 		startTimes.add(System.currentTimeMillis());
 		// TODO Task ticks every second. Maybe split up into multiple tasks for randomLoc, lightning and grace message?		
@@ -597,14 +603,13 @@ public class HungerGame implements Runnable, Game {
 		ResetHandler.gameStarting(this);
 		releasePlayers();
 		fillInventories();
-		for (String playerName : stats.keySet()) {
-			Player p = Bukkit.getPlayer(playerName);
-			if (p == null) continue;
+		for (User u : users) {
+			Player p = u.getPlayer();
 			World world = p.getWorld();
 			world.setFullTime(0L);
 			p.setHealth(20);
 			p.setFoodLevel(20);
-			stats.get(playerName).setState(PlayerStat.PlayerState.PLAYING);
+			u.setState(PlayerStat.PlayerState.PLAYING);
 		}
 		state = RUNNING;
 		run(); // Add at least one randomLoc
@@ -662,8 +667,7 @@ public class HungerGame implements Runnable, Game {
 		}
 		for(String playerName : playerLocs.keySet()) {
 			Player p = Bukkit.getPlayer(playerName);
-			if (p == null) continue;
-			stats.get(p.getName()).setState(PlayerState.PLAYING);
+			User.get(p).setState(PlayerState.PLAYING);
 			playerEntering(p, true);
 			InventorySave.loadGameInventory(p);
 			World world = p.getWorld();
@@ -702,13 +706,12 @@ public class HungerGame implements Runnable, Game {
 			countdown.cancel();
 			countdown = null;
 		}
-		for(Player p : getRemainingPlayers()) {
-			if (p == null) continue;
-			stats.get(p.getName()).setState(PlayerState.GAME_PAUSED);
-			playerLocs.put(p.getName(), p.getLocation());
-			InventorySave.saveAndClearGameInventory(p);
-			playerLeaving(p, true);
-			teleportPlayerToSpawn(p);
+		for(User p : getRemainingPlayers()) {
+			p.setState(PlayerState.GAME_PAUSED);
+			playerLocs.put(p.getPlayer().getName(), p.getPlayer().getLocation());
+			InventorySave.saveAndClearGameInventory(p.getPlayer());
+			playerLeaving(p.getPlayer(), true);
+			teleportUserToSpawn(p);
 		}
 		for (String spectatorName : spectators.keySet()) {
 			Player spectator = Bukkit.getPlayer(spectatorName);
@@ -719,12 +722,9 @@ public class HungerGame implements Runnable, Game {
 	}
 	
 	private void releasePlayers() {
-		for (String playerName : stats.keySet()) {
-			Player p = Bukkit.getPlayer(playerName);
-			if (p == null) continue;
-			HungerGames.getInstance().getGameManager().unfreezePlayer(p);
+		for (User u : users) {
+			HungerGames.getInstance().getGameManager().unfreezePlayer(u.getPlayer());
 		}
-
 	}
 
 	@Override
@@ -781,19 +781,20 @@ public class HungerGame implements Runnable, Game {
 			ChatUtils.error(player, "You are not allowed to rejoin a game.");
 			return false;
 		}
-		if (stats.get(player.getName()).getState() == PlayerState.PLAYING){
-			ChatUtils.error(player, "You can't rejoin a game while you are in it.");
+		PlayerStat stat = User.get(player).getStat(this);
+		if (stat == null || !users.contains(User.get(player)) || User.get(player).getState() != PlayerState.NOT_PLAYING) {
+			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
 			return false;
 		}
-		if (!stats.containsKey(player.getName()) || stats.get(player.getName()).getState() != PlayerState.NOT_PLAYING) {
-			ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
+		if (stat != null && User.get(player).getState() == PlayerState.PLAYING){
+			ChatUtils.error(player, "You can't rejoin a game while you are in it.");
 			return false;
 		}
 		PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player, true);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCancelled()) return false;
 		if (!playerEntering(player, false)) return false;
-		stats.get(player.getName()).setState(PlayerState.PLAYING);
+		User.get(player).setState(PlayerState.PLAYING);
 		
 		String mess = Lang.getRejoinMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
@@ -803,11 +804,11 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public synchronized boolean join(Player player) {
-	    if (HungerGames.getInstance().getGameManager().getSession(player) != null) {
+	    if (User.get(player).getGameInEntry().getGame() != null) {
 		    ChatUtils.error(player, "You are already in a game. Leave that game before joining another.");
 		    return false;
 	    }
-	    if (stats.containsKey(player.getName())) {
+	    if (users.contains(User.get(player))) {
 		    ChatUtils.error(player, Lang.getInGame(setup).replace("<game>", name));
 		    return false;
 	    }
@@ -824,15 +825,17 @@ public class HungerGame implements Runnable, Game {
 	    Bukkit.getPluginManager().callEvent(event);
 	    if (event.isCancelled()) return false;
 	    if(!playerEntering(player, false)) return false;
-	    stats.put(player.getName(), ((GameManager) HungerGames.getInstance().getGameManager()).createStat(this, player));
+	    User get = User.get(player);
+	    users.add(get);
+	    get.setGameIn(this, User.GameInEntry.Type.PLAYING);
 	    String mess = Lang.getJoinMessage(setup);
 	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 	    ChatUtils.broadcast(this, mess);
 	    if (state == RUNNING) {
-		    stats.get(player.getName()).setState(PlayerState.PLAYING);
+		   get.setState(PlayerState.PLAYING);
 	    }
 	    else {
-		    stats.get(player.getName()).setState(PlayerState.WAITING);
+		    get.setState(PlayerState.WAITING);
 		    if (Config.AUTO_VOTE.getBoolean(setup)) addReadyPlayer(player);
 	    }
 	    return true;
@@ -930,24 +933,25 @@ public class HungerGame implements Runnable, Game {
 	@Override
 	public synchronized boolean leave(Player player, boolean callEvent) {
 		if (state != RUNNING && state != PAUSED) return quit(player, true);
-		if (!isPlaying(player)) {
+		User user = User.get(player);
+		if (!isPlaying(user)) {
 			ChatUtils.error(player, "You are not playing the game %s.", name);
 			return false;
 		}
 		HungerGames.TimerManager.start();
 		if (!Config.ALLOW_REJOIN.getBoolean(setup)) {
-			stats.get(player.getName()).die();
+			user.getStat(this).die();
 		}
 		else {
-			stats.get(player.getName()).setState(PlayerState.NOT_PLAYING);
-			stats.get(player.getName()).death(PlayerStat.NODODY);
+			user.setState(PlayerState.NOT_PLAYING);
+			user.getStat(this).death(PlayerStat.NODODY);
 		}
 		if (callEvent) Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.LEAVE));
 		if (state == PAUSED) playerEntering(player, true);
 		InventorySave.loadGameInventory(player);
 		dropInventory(player);
 		playerLeaving(player, false);
-		teleportPlayerToSpawn(player);
+		teleportUserToSpawn(user);
 		String mess = Lang.getLeaveMessage(setup);
 		mess = mess.replace("<player>", player.getName()).replace("<game>", name);
 		ChatUtils.broadcast(this,mess);
@@ -957,30 +961,31 @@ public class HungerGame implements Runnable, Game {
 	}
 	
 	@Override
-	public synchronized boolean quit(Player player, boolean callEvent) {
-	    if (!contains(player)) {
-		    ChatUtils.error(player, Lang.getNotInGame(setup).replace("<game>", name));
+	public synchronized boolean quit(Player p, boolean callEvent) {
+	    User user = User.get(p);
+	    if (!contains(user)) {
+		    ChatUtils.error(user.getPlayer(), Lang.getNotInGame(setup).replace("<game>", name));
 		    return false;
 	    }
-	    if (callEvent)  Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(this, player, PlayerLeaveGameEvent.Type.QUIT));
-	    boolean wasPlaying = stats.get(player.getName()).getState() == PlayerState.PLAYING || stats.get(player.getName()).getState() == PlayerState.WAITING;
+	    if (callEvent)  Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(this, user.getPlayer(), PlayerLeaveGameEvent.Type.QUIT));
+	    boolean wasPlaying = user.getState() == PlayerState.PLAYING || user.getState() == PlayerState.WAITING;
 	    if (wasPlaying) {
-		    dropInventory(player);
+		    dropInventory(user.getPlayer());
 	    }
 	    if(state == RUNNING) {
-		    stats.get(player.getName()).die();
+		    user.getStat(this).die();
 	    }
 	    else {
-		    stats.remove(player.getName());
-		    ((GameManager) HungerGames.getInstance().getGameManager()).clearGamesForPlayer(player.getName(), this);
+		    user.leaveGame();
+		    users.remove(user);
 	    }
-	    playerLeaving(player, false);
+	    playerLeaving(user.getPlayer(), false);
 	    if (wasPlaying || state != RUNNING) {
-		    teleportPlayerToSpawn(player);
+		    teleportUserToSpawn(user);
 	    }
 	    
 	    String mess = Lang.getQuitMessage(setup);
-	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
+	    mess = mess.replace("<player>", user.getPlayer().getName()).replace("<game>", name);
 	    ChatUtils.broadcast(this, mess);
 	    checkForGameOver(false);
 	    return true;
@@ -1022,7 +1027,7 @@ public class HungerGame implements Runnable, Game {
 	// Complete clear just to be sure
 	public void clear() {
 		releasePlayers();
-		stats.clear();
+		users.clear();
 		spawnsTaken.clear();
 		spectators.clear();
 		sponsors.clear();
@@ -1040,27 +1045,24 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	@Override
-	public void teleportPlayerToSpawn(Player player) {
-		if (player == null) {
-			return;
-		}
+	public void teleportUserToSpawn(User user) {
 		if (Config.USE_SPAWN.getBoolean(setup)) {
 			if (spawn != null) {
-				player.teleport(spawn);
+				user.getPlayer().teleport(spawn);
 				return;
 			}
 			else {
-				ChatUtils.error(player, "There was no spawn set for %s. Teleporting to back location.", name);
+				ChatUtils.error(user.getPlayer(), "There was no spawn set for %s. Teleporting to back location.", name);
 			}
 		}
 		HungerGames.TimerManager.start();
-		Location loc = ((GameManager) HungerGames.getInstance().getGameManager()).getAndRemoveBackLocation(player);
+		Location loc = ((GameManager) HungerGames.getInstance().getGameManager()).getAndRemoveBackLocation(user.getPlayer());
 		if (loc != null) {
-			player.teleport(loc, TeleportCause.UNKNOWN);
+			user.getPlayer().teleport(loc, TeleportCause.UNKNOWN);
 		}
 		else {
-			ChatUtils.error(player, "For some reason, there was no back location. Please contact an admin for help.", name);
-			player.teleport(player.getWorld().getSpawnLocation(), TeleportCause.UNKNOWN);
+			ChatUtils.error(user.getPlayer(), "For some reason, there was no back location. Please contact an admin for help.", name);
+			user.getPlayer().teleport(user.getPlayer().getWorld().getSpawnLocation(), TeleportCause.UNKNOWN);
 		}
 		HungerGames.TimerManager.stop("HungerGame.teleportPlayerToSpawn");
 	}
@@ -1069,11 +1071,11 @@ public class HungerGame implements Runnable, Game {
 	public boolean checkForGameOver(boolean notifyOfRemaining) {// TODO config option
 		if (state != RUNNING) return false;
 		HungerGames.TimerManager.start();
-		List<Player> remaining = getRemainingPlayers();
+		List<User> remaining = getRemainingPlayers();
 		List<Team> teamsLeft = new ArrayList<Team>();
 		int left = 0;
-		for (Player p : remaining) {
-			Team team = stats.get(p.getName()).getTeam();
+		for (User user : remaining) {
+			Team team = user.getStat(this).getTeam();
 			if (team == null) {
 				left++;
 			}
@@ -1089,7 +1091,7 @@ public class HungerGame implements Runnable, Game {
 				event = new GameEndEvent(this, teamsLeft.get(0));
 			}
 			else {
-				Player winner = null;
+				User winner = null;
 				if (!remaining.isEmpty()) {
 					winner = remaining.get(0);
 				}
@@ -1097,9 +1099,9 @@ public class HungerGame implements Runnable, Game {
 					ChatUtils.broadcast(this, Lang.getNoWinner(setup));
 					event = new GameEndEvent(this, true);
 				} else {
-					ChatUtils.broadcast(this, Lang.getWin(setup).replace("<player>", winner.getName()).replace("<game>", name));
-					ChatUtils.send(winner, "Congratulations! You won!");// TODO message
-					event = new GameEndEvent(this, winner);
+					ChatUtils.broadcast(this, Lang.getWin(setup).replace("<player>", winner.getPlayer().getName()).replace("<game>", name));
+					ChatUtils.send(winner.getPlayer(), "Congratulations! You won!");// TODO message
+					event = new GameEndEvent(this, winner.getPlayer());
 				}
 			}
 			Bukkit.getPluginManager().callEvent(event);
@@ -1111,7 +1113,7 @@ public class HungerGame implements Runnable, Game {
 		if (!notifyOfRemaining) return false;
 		String mess = "Remaining players: ";
 		for (int cntr = 0; cntr < remaining.size(); cntr++) {
-			mess += remaining.get(cntr).getName();
+			mess += remaining.get(cntr).getPlayer().getName();
 			if (cntr < remaining.size() - 1) {
 				mess += ", ";
 			}
@@ -1127,38 +1129,38 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	@Override
-	public boolean contains(Player... players) {
-	    if (state == DELETED) return false;
-	    for (Player player : players) {
-		if (!stats.containsKey(player.getName())) return false;
-		PlayerState pState = stats.get(player.getName()).getState();
-		if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.DEAD) return false;
-	    }
-	    return true;
+	public boolean contains(User... userArray) {
+		if (state == DELETED) return false;
+		for (User user : userArray) {
+			if (!users.contains(user)) return false;
+			PlayerState pState = user.getState();
+			if (pState == PlayerState.NOT_IN_GAME || pState == PlayerState.DEAD) return false;
+		}
+		return true;
 	}
 	
 	@Override
-	public boolean isPlaying(Player... players) {
-	    for (Player player : players) {
-		if (state != RUNNING || !stats.containsKey(player.getName()) 
-			|| stats.get(player.getName()).getState() != PlayerState.PLAYING ){
-		    return false;
+	public boolean isPlaying(User... userArray) {
+		for (User user : userArray) {
+			if (state != RUNNING || !users.contains(user) || user.getState() != PlayerState.PLAYING) {
+				return false;
+			}
 		}
-	    }
-	    return true;
+		return true;
 	}
 
 	
 	public void killed(final Player killer, final Player killed, PlayerDeathEvent deathEvent) {
-		if (state == DELETED || state != RUNNING || stats.get(killed.getName()).getState() != PlayerState.PLAYING) return;
+		User killedUser = User.get(killed);
+		if (state == DELETED || state != RUNNING || killedUser.getState() != PlayerState.PLAYING) return;
 
 		deathEvent.setDeathMessage(null);
 		killed.setHealth(20);
 		killed.setFoodLevel(20);
-		PlayerStat killedStat = stats.get(killed.getName());
+		PlayerStat killedStat = killedUser.getStat(this);
 		PlayerKilledEvent event;
 		if (killer != null) {
-			PlayerStat killerStat = stats.get(killer.getName());
+			PlayerStat killerStat = User.get(killer).getStat(this);
 			killerStat.kill(killed.getName());
 			killedStat.death(killer.getName());
 			event = new PlayerKilledEvent(this, killed, killer);
@@ -1167,7 +1169,7 @@ public class HungerGame implements Runnable, Game {
 			event = new PlayerKilledEvent(this, killed);
 			killedStat.death(PlayerStat.NODODY);
 		}
-		String deathMessage = "";
+		String deathMessage;
 		GameStats.Death death = new GameStats.Death();
 		death.setPlayer(killed.getName());
 		death.setTime(System.currentTimeMillis() - getInitialStartTime());
@@ -1187,7 +1189,7 @@ public class HungerGame implements Runnable, Game {
 				
 				
 		Bukkit.getPluginManager().callEvent(event);
-		if (killedStat.getState() == PlayerState.DEAD) {
+		if (killedUser.getState() == PlayerState.DEAD) {
 			for (ItemStack i : deathEvent.getDrops()) {
 				killed.getWorld().dropItemNaturally(killed.getLocation(), i);
 			}
@@ -1206,7 +1208,7 @@ public class HungerGame implements Runnable, Game {
 
 			Location strikeLocation = killed.getLocation();
 			strikeLocation.setY(1); // Let lightning hit near bedrock so we don't hurt anyone
-			teleportPlayerToSpawn(killed);
+			teleportUserToSpawn(killedUser);
 			int deathCannon = Config.DEATH_CANNON.getInt(setup);
 			int deathMessages = Config.SHOW_DEATH_MESSAGES.getInt(setup);
 			if (deathCannon == 1 || deathCannon == 2){
@@ -1266,53 +1268,37 @@ public class HungerGame implements Runnable, Game {
 	}
 
 	@Override
-	public List<Player> getRemainingPlayers() {
-	    List<Player> remaining = new ArrayList<Player>();
-	    for (String playerName : stats.keySet()) {
-		Player player = Bukkit.getPlayer(playerName);
-		if (player == null) continue;
-		PlayerStat stat = stats.get(playerName);
-		if (stat.getState() == PlayerState.PLAYING || stat.getState() == PlayerState.GAME_PAUSED || stat.getState() == PlayerState.WAITING) {
-		    remaining.add(player);
-		}
-	    }
-	    return remaining;
-	}
-
-	@Override
-	public PlayerStat getPlayerStat(OfflinePlayer player) {
-		return stats.get(player.getName());
+	public List<User> getRemainingPlayers() {
+		return new ArrayList<User>(playing);
 	}
 
 	@Override
 	public void listStats(CommandSender cs) {
 		int living = 0, dead = 0;
-		List<String> players = new ArrayList<String>(stats.keySet());
 		String mess = "";
-		for (int cntr = 0; cntr < players.size(); cntr++) {
-			PlayerStat stat = stats.get(players.get(cntr));
-			Player p = stat.getPlayer();
-			if (p == null) continue;
+		for (int cntr = 0; cntr < users.size(); cntr++) {
+			User get = users.get(cntr);
+			PlayerStat stat = get.getStat(this);
 			String statName;
-			if (stat.getState() == PlayerState.DEAD) {
-				statName = ChatColor.RED.toString() + p.getName() + ChatColor.GRAY.toString();
+			if (get.getState() == PlayerState.DEAD) {
+				statName = ChatColor.RED.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
 				dead++;
 			}
-			else if (stat.getState() == PlayerState.NOT_PLAYING) {
-				statName = ChatColor.YELLOW.toString() + p.getName() + ChatColor.GRAY.toString();
+			else if (get.getState() == PlayerState.NOT_PLAYING) {
+				statName = ChatColor.YELLOW.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
 				dead++;
 			}
 			else {
-				statName = ChatColor.GREEN.toString() + p.getName() + ChatColor.GRAY.toString();
+				statName = ChatColor.GREEN.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
 				living++;
 			}
 			mess += String.format("%s [%d/%d]", statName, stat.getLivesLeft(), stat.getKills().size());
-			if (players.size() >= cntr + 1) {
+			if (users.size() >= cntr + 1) {
 				mess += ", ";
 			}
 		}
 		ChatUtils.send(cs, "<name>[lives/kills]");
-		ChatUtils.send(cs, "Total Players: %s Total Living: %s Total Dead or Not Playing: %s", stats.size(), living, dead);
+		ChatUtils.send(cs, "Total Players: %s Total Living: %s Total Dead or Not Playing: %s", users.size(), living, dead);
 		ChatUtils.send(cs, "");
 		ChatUtils.send(cs, mess);
 	}
@@ -1463,14 +1449,18 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public List<String> getAllPlayers() {
-		return new ArrayList<String>(stats.keySet());
+		List<String> list = new ArrayList<String>();
+		for (User u : users) {
+			list.add(u.getPlayer().getName());
+		}
+		return list;
 	}
 
 	@Override
-	public List<PlayerStat> getStats() {
-		return new ArrayList<PlayerStat>(stats.values());
+	public List<User> getUsers() {
+		return new ArrayList<User>(users);
 	}
-	
+
 	@Override
 	public Location getSpawn() {
 		return spawn;
@@ -1569,8 +1559,8 @@ public class HungerGame implements Runnable, Game {
 
 	@Override
 	public void playCannonBoom() {
-		for (Player p : getRemainingPlayers()) {
-			p.getWorld().createExplosion(p.getLocation(), 0f, false);
+		for (User p : getRemainingPlayers()) {
+			p.getPlayer().getWorld().createExplosion(p.getPlayer().getLocation(), 0f, false);
 		}
 	}
 

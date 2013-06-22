@@ -7,6 +7,7 @@ import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.Lang;
 import me.kitskub.hungergames.commands.PlayerCommand;
 import me.kitskub.hungergames.games.HungerGame;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.entity.Player;
@@ -19,7 +20,8 @@ public class VoteCommand extends PlayerCommand {
 
 	@Override
 	public void handlePlayer(Player player, String cmd, String[] args) {
-		game = HungerGames.getInstance().getGameManager().getRawSession(player);
+		User get = User.get(player);
+		game = get.getGameInEntry().getGame();
 		if (game == null) {
 			ChatUtils.error(player, "You must be in a game to vote. You can a game join by '" + Commands.USER_JOIN.getCommand().getUsage() + "'", HungerGames.CMD_USER);
 			return;

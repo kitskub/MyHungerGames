@@ -10,6 +10,7 @@ import me.kitskub.hungergames.utils.EquatableWeakReference;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import me.kitskub.hungergames.games.User;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,7 +26,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GameManager extends me.kitskub.hungergames.api.GameManager {
 	private static final HungerGames plugin = HungerGames.getInstance();
-	private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
+	//private static Map<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>> stats = new HashMap<String, Map<EquatableWeakReference<HungerGame>, PlayerStat>>();
 	private static final Set<HungerGame> games = new TreeSet<HungerGame>();
 	private static final Map<String, EquatableWeakReference<HungerGame>> spectators = new HashMap<String, EquatableWeakReference<HungerGame>>(); // <player, game>
 	private static final Map<String, Location> frozenPlayers = new HashMap<String, Location>();
@@ -76,16 +77,16 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 		return attempt;
 	}
 		
-	public PlayerStat createStat(HungerGame game, Player player) {
-		PlayerStat stat = new PlayerStat(game, player);
-		if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<EquatableWeakReference<HungerGame>, PlayerStat>());
-		stats.get(player.getName()).put(new EquatableWeakReference<HungerGame>(game), stat);
-		return stat;
-	}
+	//public PlayerStat createStat(HungerGame game, Player player) {
+	//	PlayerStat stat = new PlayerStat(game, player);
+	//	if (stats.get(player.getName()) == null) stats.put(player.getName(), new HashMap<EquatableWeakReference<HungerGame>, PlayerStat>());
+	//	stats.get(player.getName()).put(new EquatableWeakReference<HungerGame>(game), stat);
+	//	return stat;
+	//}
 	
-	public void clearGamesForPlayer(String player, HungerGame game) {
-		stats.get(player).remove(new EquatableWeakReference<HungerGame>(game));
-	}
+	//public void clearGamesForPlayer(String player, HungerGame game) {
+	//	stats.get(player).remove(new EquatableWeakReference<HungerGame>(game));
+	//}
 
 	@Override
 	public List<HungerGame> getRawGames() {
@@ -120,42 +121,6 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 		}
 		return null;
 	}
-	
-	
-
-	@Override
-	public WeakReference<HungerGame> getSession(Player player) {
-		if (stats.get(player.getName()) != null) {
-			for (EquatableWeakReference<HungerGame> gameGotten : stats.get(player.getName()).keySet()) {
-				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
-				if (stat != null && stat.getState() != PlayerStat.PlayerState.DEAD && stat.getState() != PlayerStat.PlayerState.NOT_IN_GAME) return gameGotten;
-			}
-		}
-		return null; 
-	}
-
-	@Override
-	public HungerGame getRawSession(Player player) {
-		WeakReference<HungerGame> session = getSession(player);
-		return session == null ? null : session.get();
-	}
-
-	@Override
-	public WeakReference<HungerGame> getPlayingSession(Player player) {
-		if (stats.get(player.getName()) != null) {
-			for (EquatableWeakReference<HungerGame> gameGotten : stats.get(player.getName()).keySet()) {
-				PlayerStat stat = stats.get(player.getName()).get(gameGotten);
-				if (stat != null && (stat.getState() == PlayerStat.PlayerState.PLAYING || stat.getState() == PlayerStat.PlayerState.WAITING)) return gameGotten;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public HungerGame getRawPlayingSession(Player player) {
-		WeakReference<HungerGame> session = getPlayingSession(player);
-		return session == null ? null : session.get();
-	}
 
 	@Override
 	public boolean doesNameExist(String name) {
@@ -169,9 +134,7 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 			spectated.get().removeSpectator(player);
 			return;
 		}
-		HungerGame game = getRawSession(player);
-		if (game == null) return;
-		game.leave(player, true);
+		User.get(player).leaveGame();
 	}
 
 	public void loadGames() {
@@ -228,18 +191,18 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 	
 	@Override
 	public boolean addSponsor(Player player, Player playerToBeSponsored) {
-	    WeakReference<HungerGame> game = getPlayingSession(playerToBeSponsored);
-	    if (game == null || game.get() == null) {
+	    Game game = User.get(playerToBeSponsored).getGameInEntry().getGame();
+	    if (game == null) {
 		    ChatUtils.error(player, player.getName() + " is not playing in a game.");
 		    return false;
 	    }
 	    ConversationFactory convo = new ConversationFactory(plugin);
-	    convo.withFirstPrompt(new SponsorBeginPrompt(game, player, playerToBeSponsored));
+	    convo.withFirstPrompt(new SponsorBeginPrompt(((HungerGame) game), player, playerToBeSponsored));
 	    convo.withEscapeSequence("quit");
 	    convo.withTimeout(120);
 	    convo.thatExcludesNonPlayersWithMessage("Players only!");
 	    convo.buildConversation(player).begin();
-	    game.get().addSponsor(player.getName(), playerToBeSponsored.getName());
+	    ((HungerGame) game).addSponsor(player.getName(), playerToBeSponsored.getName());
 	    return true;
 	}
 
@@ -348,23 +311,23 @@ public class GameManager extends me.kitskub.hungergames.api.GameManager {
 	}
 
 	private static class SponsorBeginPrompt extends NumericPrompt {
-		WeakReference<HungerGame> game;
+		HungerGame game;
 		Player player;
 		Player beingSponsored;
 		Map<ItemStack, Double> itemMap = null;
 		
-		public SponsorBeginPrompt(WeakReference<HungerGame> game, Player player, Player playerToBeSponsored) {
+		public SponsorBeginPrompt(HungerGame game, Player player, Player playerToBeSponsored) {
 			this.game = game;
 			this.player = player;
 			this.beingSponsored = playerToBeSponsored;
 		}
 		
 		public String getPromptText(ConversationContext cc) {
-			if (game.get() == null) {
+			if (game == null) {
 				cc.setSessionData("cancelled", true);
 				return "This game no longer exists. Reply to exit.";
 			}
-			List<String> itemsets = game.get().getItemSets();
+			List<String> itemsets = game.getItemSets();
 			if (ItemConfig.getGlobalSponsorLoot().isEmpty() && (itemsets == null || itemsets.isEmpty())) {
 				cc.setSessionData("cancelled", true);
 				return "No items are available to sponsor. Reply to exit.";

@@ -26,7 +26,7 @@ public class PlayerLightningRunnable implements Runnable{
 				}
 				if(nextLightningIndex >= game.getRemainingPlayers().size()) nextLightningIndex = 0;
 				
-				Player target = game.getRemainingPlayers().get(nextLightningIndex);
+				Player target = game.getRemainingPlayers().get(nextLightningIndex).getPlayer();
 				Location location = target.getLocation();
 				location.setY(1);
 				target.getWorld().strikeLightningEffect(location);

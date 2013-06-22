@@ -5,6 +5,7 @@ import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.games.HungerGame;
 import me.kitskub.hungergames.games.PlayerQueueHandler;
+import me.kitskub.hungergames.games.User;
 
 
 import org.bukkit.Location;
@@ -24,11 +25,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void playerKilled(PlayerDeathEvent event) {
 		Player killed = event.getEntity();
-		HungerGame gameOfKilled = (HungerGame) HungerGames.getInstance().getGameManager().getRawPlayingSession(killed);
+		HungerGame gameOfKilled = (HungerGame) User.get(killed).getGameInEntry().getGame();
 		if (gameOfKilled == null) return;
 		Player killer = killed.getKiller();
 		if (killer != null) {
-			HungerGame gameOfKiller = (HungerGame) HungerGames.getInstance().getGameManager().getRawPlayingSession(killer);
+			HungerGame gameOfKiller = (HungerGame) User.get(killer).getGameInEntry().getGame();
 			if (gameOfKiller == null) return;
 			if (gameOfKilled.compareTo(gameOfKiller) == 0) {
 				gameOfKiller.killed(killer, killed, event);
@@ -80,7 +81,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void playerSneak(PlayerToggleSneakEvent event) {
 		HungerGame game;
-		if ((game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(event.getPlayer())) == null) return;
+		if ((game = (HungerGame) User.get(event.getPlayer()).getGameInEntry().getGame()) == null) return;
 		if (!Config.HIDE_PLAYERS.getBoolean(game.getSetup())) return;
 		event.setCancelled(true);
 	}

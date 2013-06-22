@@ -5,6 +5,7 @@ import me.kitskub.hungergames.Defaults;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.games.HungerGame;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.stats.PlayerStat.PlayerState;
 import me.kitskub.hungergames.utils.ChatUtils;
 import org.bukkit.Bukkit;
@@ -68,9 +69,10 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+		User user = User.get(player);
+		HungerGame session = (HungerGame) user.getGameInEntry().getGame();
 		if(session != null) {
-			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+			if (user.getState() == PlayerState.WAITING) {
 				event.setCancelled(true);
 				return;
 			}
@@ -90,9 +92,10 @@ public class BlockListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+		User user = User.get(player);
+		HungerGame session = (HungerGame) user.getGameInEntry().getGame();
 		if(session != null) {
-			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+			if (user.getState() == PlayerState.WAITING) {
 				event.setCancelled(true);
 				return;
 			}
@@ -115,7 +118,8 @@ public class BlockListener implements Listener {
 		if (!(event.getClickedBlock().getState() instanceof Chest)) return;
 
                 Player player = event.getPlayer();
-                final HungerGame game = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+		User user = User.get(player);
+                final HungerGame game = (HungerGame) user.getGameInEntry().getGame();
                 if(game == null) return;
 		if(!Defaults.Config.AUTO_ADD.getBoolean(game.getSetup())) return;
 		final Chest state = (Chest) event.getClickedBlock().getState();
@@ -132,9 +136,10 @@ public class BlockListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
-		HungerGame session = ((GameManager) HungerGames.getInstance().getGameManager()).getRawPlayingSession(player);
+		User user = User.get(player);
+		HungerGame session = (HungerGame) user.getGameInEntry().getGame();
 		if(session != null) {
-			if (session.getPlayerStat(player).getState().equals(PlayerState.WAITING)) {
+			if (user.getState() == PlayerState.WAITING) {
 				event.setCancelled(true);
 				return;
 			}

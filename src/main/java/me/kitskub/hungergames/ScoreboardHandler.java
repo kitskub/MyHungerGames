@@ -6,6 +6,7 @@ import me.kitskub.hungergames.api.Game;
 import me.kitskub.hungergames.api.event.GameEndEvent;
 import me.kitskub.hungergames.api.event.GameStartEvent;
 import me.kitskub.hungergames.api.event.PlayerLeaveGameEvent;
+import me.kitskub.hungergames.games.User;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -28,9 +29,9 @@ public class ScoreboardHandler implements Listener {
 		Objective players = board.registerNewObjective("Players", "dummy");
 		players.setDisplaySlot(DisplaySlot.SIDEBAR);
 		players.setDisplayName("Players - Lives left");
-		for (Player p : event.getGame().getRemainingPlayers()) {
-			players.getScore(p).setScore(event.getGame().getPlayerStat(p).getLivesLeft());
-			p.setScoreboard(board);
+		for (User p : event.getGame().getRemainingPlayers()) {
+			players.getScore(p.getPlayer()).setScore(p.getStat(event.getGame()).getLivesLeft());
+			p.getPlayer().setScoreboard(board);
 		}
 	}
 	
@@ -46,8 +47,8 @@ public class ScoreboardHandler implements Listener {
 	public void onGameEnd(GameEndEvent event) {
 		if (!Defaults.Config.USE_SCOREBOARD.getBoolean(event.getGame().getSetup())) return;
 		Scoreboard get = boards.get(event.getGame());
-		for (Player p : event.getGame().getRemainingPlayers()) {
-			get.resetScores(p);
+		for (User p : event.getGame().getRemainingPlayers()) {
+			get.resetScores(p.getPlayer());
 		}
 	}
 	

@@ -4,6 +4,7 @@ import me.kitskub.hungergames.Defaults.Perm;
 import me.kitskub.hungergames.GameManager;
 import me.kitskub.hungergames.HungerGames;
 import me.kitskub.hungergames.commands.Command;
+import me.kitskub.hungergames.games.User;
 import me.kitskub.hungergames.utils.ChatUtils;
 
 import org.bukkit.Bukkit;
@@ -28,7 +29,8 @@ public class KillCommand extends Command {
 		    ChatUtils.error(cs, "%s is not online.", args[0]);
 		    return;
 		}
-		game = HungerGames.getInstance().getGameManager().getRawSession(kill);
+		User get = User.get(kill);
+		game = get.getGameInEntry().getGame();
 		if (game == null) {
 		    ChatUtils.error(cs, "%s is currently not in a game.", kill.getName());
 		    return;
