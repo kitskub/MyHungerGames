@@ -380,8 +380,8 @@ public class HungerGame implements Runnable, Game {
 				if (i != null) list.add(i);
 			}
 			contents = list.toArray(new ItemStack[list.size()]);
-			playerLeaving(player, false);
 			for (ItemStack i : contents) player.getLocation().getWorld().dropItem(player.getLocation(), i);
+			playerLeaving(player);
 			teleportUserToSpawn(user);
 			user.leaveGame();
 			users.remove(user);
@@ -447,7 +447,7 @@ public class HungerGame implements Runnable, Game {
 		return true;
 	}
 	
-	private ItemStack[] filterNulls(ItemStack[] stack) {
+	private static ItemStack[] filterNulls(ItemStack[] stack) {
 		List<ItemStack> list = new ArrayList<ItemStack>();
 		for (ItemStack i : stack) {
 			if (i != null) list.add(i); // Remove all null elements
@@ -455,7 +455,7 @@ public class HungerGame implements Runnable, Game {
 		return list.toArray(new ItemStack[list.size()]);
 	}
 	
-	private ItemStack[] removeAll(ItemStack[] start, ItemStack[] toRemove) {
+	private static ItemStack[] removeAll(ItemStack[] start, ItemStack[] toRemove) {
 		List<ItemStack> list = Arrays.asList(start);
 		list.removeAll(Arrays.asList(toRemove));
 		return list.toArray(new ItemStack[list.size()]);
@@ -473,9 +473,10 @@ public class HungerGame implements Runnable, Game {
 			user.setState(PlayerState.NOT_IN_GAME);
 			ItemStack[] contents = filterNulls(user.getPlayer().getInventory().getContents());
 			ItemStack[] armor = filterNulls(user.getPlayer().getInventory().getArmorContents());
-			playerLeaving(user.getPlayer(), false);
+			Location dropLoc = user.getPlayer().getLocation();
+			playerLeaving(user.getPlayer());
 			teleportUserToSpawn(user);
-			// If we didn't clear inventory before, don't drop inventory items
+			// If we didn't clear inventory before the game, don't drop inventory items
 			if (!Config.CLEAR_INV.getBoolean(setup)) {
 				contents = removeAll(contents, user.getPlayer().getInventory().getContents());
 				armor = removeAll(contents, user.getPlayer().getInventory().getArmorContents());
@@ -489,7 +490,7 @@ public class HungerGame implements Runnable, Game {
 					user.getPlayer().getLocation().getWorld().dropItem(user.getPlayer().getLocation(), i);
 				}
 			} else {
-				for (ItemStack i : contents) user.getPlayer().getLocation().getWorld().dropItem(user.getPlayer().getLocation(), i);
+				for (ItemStack i : contents) dropLoc.getWorld().dropItem(dropLoc, i);
 			}
 			if (isFinished) GeneralUtils.rewardPlayer(user.getPlayer());
 		}
@@ -659,32 +660,6 @@ public class HungerGame implements Runnable, Game {
 		    ChatUtils.error(player, Lang.getInGame(setup).replace("<game>", name));
 		    return false;
 	    }
-	    if (!playerEnteringPreCheck(player)) return false;
-	    if (state == RUNNING && !Config.ALLOW_JOIN_DURING_GAME.getBoolean(setup)) {
-		    ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
-		    return false;
-	    }
-	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
-	    Bukkit.getPluginManager().callEvent(event);
-	    if (event.isCancelled()) return false;
-	    if(!playerEntering(player, false)) return false;
-	    User get = User.get(player);
-	    users.add(get);
-	    get.setGameIn(this, User.GameInEntry.Type.PLAYING);
-	    String mess = Lang.getJoinMessage(setup);
-	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
-	    ChatUtils.broadcast(this, mess);
-	    if (state == RUNNING) {
-		   get.setState(PlayerState.PLAYING);
-	    }
-	    else {
-		    get.setState(PlayerState.WAITING);
-		    if (Config.AUTO_VOTE.getBoolean(setup)) addReadyPlayer(player);
-	    }
-	    return true;
-	}
-
-	private synchronized boolean playerEnteringPreCheck(Player player) {
 	    if (state == DISABLED) {
 		    ChatUtils.error(player, Lang.getNotEnabled(setup).replace("<game>", name));
 		    return false;
@@ -701,25 +676,15 @@ public class HungerGame implements Runnable, Game {
 			    return false;
 		    }
 	    }
-	    return true;
-	}
-
-	/**
-	 * When a player enters the game. Does not handle stats.
-	 * This handles the teleporting.
-	 * @param player
-	 * @param fromTemporary if the player leaving was temporary. Leave is not temporary.
-	 * @return
-	 */
-	 private synchronized boolean playerEntering(Player player, boolean fromTemporary) {
-	    Location loc;
-	    if (!fromTemporary) {
-		    loc = getNextOpenSpawnPoint();
-		    spawnsTaken.put(player.getName(), loc);
+	    if (state == RUNNING && !Config.ALLOW_JOIN_DURING_GAME.getBoolean(setup)) {
+		    ChatUtils.error(player, Lang.getRunning(setup).replace("<game>", name));
+		    return false;
 	    }
-	    else {
-		    loc = spawnsTaken.get(player.getName());
-	    }
+	    PlayerJoinGameEvent event = new PlayerJoinGameEvent(this, player);
+	    Bukkit.getPluginManager().callEvent(event);
+	    if (event.isCancelled()) return false;
+	    Location loc = getNextOpenSpawnPoint();
+	    spawnsTaken.put(player.getName(), loc);
 	    HungerGames.getInstance().getGameManager().addSubscribedPlayer(player, this);
 	    ((GameManager) HungerGames.getInstance().getGameManager()).addBackLocation(player);
 	    TeleportListener.allowTeleport(player);
@@ -755,9 +720,22 @@ public class HungerGame implements Runnable, Game {
 		    if (spectator == null) continue;
 		    player.hidePlayer(spectator);
 	    }
+	    User get = User.get(player);
+	    users.add(get);
+	    get.setGameIn(this, User.GameInEntry.Type.PLAYING);
+	    String mess = Lang.getJoinMessage(setup);
+	    mess = mess.replace("<player>", player.getName()).replace("<game>", name);
+	    ChatUtils.broadcast(this, mess);
+	    if (state == RUNNING) {
+		   get.setState(PlayerState.PLAYING);
+	    }
+	    else {
+		    get.setState(PlayerState.WAITING);
+		    if (Config.AUTO_VOTE.getBoolean(setup)) addReadyPlayer(player);
+	    }
 	    return true;
 	}
-	
+
 	public Location getNextOpenSpawnPoint() {
 		Random rand = HungerGames.getRandom();
 		Location loc;
@@ -777,10 +755,7 @@ public class HungerGame implements Runnable, Game {
 		    return false;
 	    }
 	    if (callEvent)  Bukkit.getPluginManager().callEvent(new PlayerLeaveGameEvent(this, user.getPlayer(), PlayerLeaveGameEvent.Type.QUIT));
-	    boolean wasPlaying = user.getState() == PlayerState.PLAYING || user.getState() == PlayerState.WAITING;
-	    if (wasPlaying) {
-		    dropInventory(user.getPlayer());
-	    }
+	    dropInventory(user.getPlayer());
 	    if(state == RUNNING) {
 		    user.getStat(this).die();
 	    }
@@ -788,11 +763,8 @@ public class HungerGame implements Runnable, Game {
 		    user.leaveGame();
 		    users.remove(user);
 	    }
-	    playerLeaving(user.getPlayer(), false);
-	    if (wasPlaying || state != RUNNING) {
-		    teleportUserToSpawn(user);
-	    }
-	    
+	    playerLeaving(user.getPlayer());
+	    teleportUserToSpawn(user);
 	    String mess = Lang.getQuitMessage(setup);
 	    mess = mess.replace("<player>", user.getPlayer().getName()).replace("<game>", name);
 	    ChatUtils.broadcast(this, mess);
@@ -805,7 +777,7 @@ public class HungerGame implements Runnable, Game {
 	 * This does not handle teleporting and should be used before the teleport.
 	 * @param player
 	 */
-	private synchronized void playerLeaving(Player player, boolean temporary) {
+	private synchronized void playerLeaving(Player player) {
 		HungerGames.TimerManager.start();
 		for (String string : spectators.keySet()) {
 		    Player spectator = Bukkit.getPlayer(string);
@@ -825,11 +797,9 @@ public class HungerGame implements Runnable, Game {
 		}
 		if (Config.HIDE_PLAYERS.getBoolean(setup)) player.setSneaking(false);
 		readyToPlay.remove(player.getName());
-		if (!temporary) {
-			spawnsTaken.remove(player.getName());
-			PlayerQueueHandler.addPlayer(player);
-			HungerGames.getInstance().getGameManager().removedSubscribedPlayer(player, this);
-		}
+		spawnsTaken.remove(player.getName());
+		PlayerQueueHandler.addPlayer(player);
+		HungerGames.getInstance().getGameManager().removedSubscribedPlayer(player, this);
 		HungerGames.TimerManager.stop("HungerGame.playerLeaving");
 	}
 
@@ -1002,7 +972,7 @@ public class HungerGame implements Runnable, Game {
 				killed.getWorld().dropItemNaturally(killed.getLocation(), i);
 			}
 			deathEvent.getDrops().clear();
-			playerLeaving(killed, false);
+			playerLeaving(killed);
 			final ItemStack[] armor = killed.getInventory().getArmorContents();
 			final ItemStack[] inventory = killed.getInventory().getContents();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(HungerGames.getInstance(), new Runnable() {
@@ -1091,12 +1061,7 @@ public class HungerGame implements Runnable, Game {
 			if (get.getState() == PlayerState.DEAD) {
 				statName = ChatColor.RED.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
 				dead++;
-			}
-			else if (get.getState() == PlayerState.NOT_PLAYING) {
-				statName = ChatColor.YELLOW.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
-				dead++;
-			}
-			else {
+			} else {
 				statName = ChatColor.GREEN.toString() + get.getPlayer().getName() + ChatColor.GRAY.toString();
 				living++;
 			}

@@ -105,7 +105,6 @@ public class PlayerStat implements Comparable<PlayerStat> {
 	public enum PlayerState {
 		NOT_IN_GAME,
 		PLAYING,
-		NOT_PLAYING,
 		DEAD,
 		WAITING;
 	}
