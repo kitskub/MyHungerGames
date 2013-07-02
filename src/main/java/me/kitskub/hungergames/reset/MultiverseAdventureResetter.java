@@ -33,7 +33,7 @@ public class MultiverseAdventureResetter extends Resetter{
 				continue;
 			}
 			AdventureWorldsManager manager = MultiverseAdventure.getInstance().getAdventureWorldsManager();
-			manager.createWorld(world.getName());
+			//manager.createWorld(world.getName());
 			AdventureWorld aWorld = manager.getMVAInfo(world.getName());
 			aWorld.resetNow();
 		}
